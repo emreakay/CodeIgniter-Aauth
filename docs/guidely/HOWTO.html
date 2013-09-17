@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Guidely - MadeByAmp</title>
+	
+<style type="text/css" media="screen">
+
+	
+* { padding: 0; margin: 0; }
+
+body
+{
+	background: #DDD;
+	font: 12px/1.7em arial, sans-serif;
+	margin: 0 auto 75px;
+}
+
+button { padding: 4px 8px; }
+
+ul { margin-left: 24px; margin-bottom: 2em; }
+
+.demo { font-size: 16px; }
+</style>
+
+<link rel="stylesheet" href="./example_files/style.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+
+
+
+</head>
+
+<body id="">
+	
+<div id="wrapper">
+	
+<h1>Guidely - MadeByAmp</h1>
+
+<p>Guidely is a functional jQuery plugin that facilitates guided website tours for your new or returning website users.</p>
+ 
+<br />
+
+<p>To get started with Guidely, add the guidely.css stylesheet to your document:</p>
+
+<pre>
+&lt;link rel="stylesheet" href="guidely/guidely.css" type="text/css" charset="utf-8" /&gt;
+</pre>
+
+<p>Also add the Guidely javascript file to your document:</p>
+
+<pre>
+&lt;script src="guidely/guidely.js"&gt;&lt;/script&gt;
+</pre>
+
+
+
+<p class="demo"><a href="./demos/website-1/">Demo #1</a></p>
+<p class="demo"><a href="./demos/website-2/">Demo #2</a></p>
+<p class="demo"><a href="./demos/website-3/">Demo #3</a></p>
+<p class="demo"><a href="./demos/positions/">Positions</a></p>
+
+
+<p style="background: #FFC;">For support email the author through his Code Canyon author page <a href="http://codecanyon.net/user/MadeByAmp">http://codecanyon.net/user/MadeByAmp</a></p>
+
+	<br />
+	<hr />
+	
+	<br /><br />
+	
+<h2>Adding Guides</h2>
+
+<ul>
+<li>All guides must be added before calling the init ()</li>
+<li>Required options are attachTo and text.</li>
+<li>Valid values for anchor are top-left, top-middle,
+top-right, middle-left, middle-middle, middle-right, bottom-left, bottom-middle, bottom-right</li>
+</ul>
+
+
+<pre><code>guidely.add ({ 
+	attachTo: '#header'
+	, title: 'Guide Title'
+	, text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit'
+	, anchor: 'top-left'		
+});	
+</code></pre>
+
+	<br />
+	<hr />
+	
+	<br /><br />
+	
+	
+<h2>Starting Guidely</h2>
+
+<ul>
+<li>Before you initialize make sure all of the guides you need are set up.</li>
+<li>If welcome option is set to true, welcomeTitle and welcomeText default messages will show. You can customize
+  this option by passing in a welcome and/or initial text for your guide.</li>
+<li>All other options are set to true as a default (please see table below).</li>
+</ul>
+
+
+<pre><code>guidely.init ({
+	welcome: true
+	, welcomeTitle: 'Welcome to the guided tour!'
+	, welcomeText: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit'			
+});	
+</code></pre>
+
+	<br />
+	<hr />
+	
+	<br /><br />
+
+	
+<h2>Options</h2>
+	
+	
+
+	
+<h3>guidely.init ()</h3>
+<table border="0">
+    <tbody>
+        <tr>
+            <th width="130">Option Name</th>
+
+            <th width="130">Default Value</th>
+
+            <th>Explanation</th>
+        </tr>
+
+		<tr>
+            <td>welcome</td>
+
+            <td><em>true</em></td>
+
+            <td>Displays the welcome screen before initializing the guide numbers & content.</td>
+        </tr>
+
+		<tr>
+            <td>overlay</td>
+
+            <td><em>true</em></td>
+
+            <td>Adds an overlay on top of website content</td>
+        </tr>
+
+		<tr>
+            <td>startTrigger</td>
+
+            <td><em>true</em></td>
+
+            <td>Displays a start tour button so users can view the guide when necessary.</td>
+        </tr>
+
+		<tr>
+            <td>escClose</td>
+
+            <td><em>true</em></td>
+
+            <td>Enables the guide to be closed using the esc key</td>
+        </tr>
+
+		<tr>
+            <td>keyNav</td>
+
+            <td><em>true</em></td>
+
+            <td>Allows users to navigate the guides using the left & right arrow keys.</td>
+        </tr>
+
+		<tr>
+            <td>welcomeTitle</td>
+
+            <td><em>Welcome to the guided tour!</em></td>
+
+            <td>Replaces the default welcome title.</td>
+        </tr>
+
+		<tr>
+            <td>welcomeText</td>
+
+            <td><em>Click start to view a brief walk through of our website.</em></td>
+
+            <td>Replaces the default welcome text.</td>
+        </tr>
+    </tbody>
+</table>
+
+<br />
+
+<h3>guidely.add ()</h3>
+<table border="0">
+    <tbody>
+        <tr>
+            <th width="130">Option Name</th>
+
+            <th width="130">Default Value</th>
+
+            <th>Explanation</th>
+        </tr>
+
+		<tr>
+            <td>attachTo</td>
+
+            <td><em>empty selector</em></td>
+
+            <td>Accepts a jQuery selector to attach the number to.</td>
+        </tr>
+
+		<tr>
+            <td>anchor</td>
+
+            <td><em>top-left</em></td>
+
+            <td>Defines where on the selected object the guide number will be attached to. Valid options are <strong><em>top-left, top-middle, top-right, middle-left, middle-middle, middle-right, bottom-left, bottom-middle, bottom-right</em></strong></td>
+        </tr>
+
+		<tr>
+            <td>title</td>
+
+            <td><em>(optional string)</em></td>
+
+            <td>Optional title to display in the guide.</td>
+        </tr>
+
+		<tr>
+            <td>text</td>
+
+            <td><em>(required string)</em></td>
+
+            <td>Required text to display in the guide.</td>
+        </tr>
+
+
+    </tbody>
+</table>
+
+<br /><br />
+<hr />
+<br /><br />	
+
+<h2>API</h2>
+
+<table border="0">
+    <tbody>
+        <tr>
+            <th width="130">Option Name</th>
+
+            <th width="130">Parameters</th>
+
+            <th>Explanation</th>
+        </tr>
+
+        <tr>
+            <td>init</td>
+
+            <td>config</td>
+
+            <td>Accepts options config and prepares guidely</td>
+        </tr>
+
+        <tr>
+            <td>add</td>
+
+            <td>config</td>
+
+            <td>Accepts an options config and queues the guide for creation</td>
+        </tr>
+
+        <tr>
+            <td>start</td>
+
+            <td></td>
+
+            <td>Starts guidely. Shows the numbers and first guide</td>
+        </tr>
+
+        <tr>
+            <td>show</td>
+
+            <td><em>guide number</em></td>
+
+            <td>Accepts a guide number and displays the corresponding guide</em></td>
+        </tr>
+
+        <tr>
+            <td>next</td>
+
+            <td><em></em></td>
+
+            <td>Cycles to the next guide if available.</td>
+        </tr>
+
+        <tr>
+            <td>prev</td>
+
+            <td><em></em></td>
+
+            <td>Cycles to the previous guide if available</td>
+        </tr>
+
+        <tr>
+            <td>close</td>
+
+            <td></td>
+
+            <td>Disables guidely; can be restarted using guidely.start ()</td>
+        </tr>
+
+        <tr>
+            <td>hideGuides</td>
+
+            <td></td>
+
+            <td>Hides all visible guides</td>
+        </tr>
+
+        <tr>
+            <td>showNumbers</td>
+
+            <td></td>
+
+            <td>Makes all guide numbers visible</td>
+        </tr>
+
+        <tr>
+            <td>hideNumbers</td>
+
+            <td></td>
+
+            <td>Hides all guide numbers</td>
+        </tr>
+
+        <tr>
+            <td>showOverlay</td>
+
+            <td></td>
+
+            <td>Makes the overlay visible</td>
+        </tr>
+
+        <tr>
+            <td>hideOverlay</td>
+
+            <td></td>
+
+            <td>Hides the overlady</td>
+        </tr>
+
+    </tbody>
+</table>
+	
+</div> <!-- #wrapper -->
+
+</body>
+
+</html>

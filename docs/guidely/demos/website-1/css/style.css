@@ -1,0 +1,752 @@
+/* Handcoded by http://psdcssxhtml.com */
+
+/* reset */
+body,div,dl,dt,dd,ul,ol,li,pre,form,fieldset,input,textarea,blockquote,th,td {
+    margin:0;
+    padding:0;
+    font-family:Georgia, "Times New Roman", Times, serif;
+}
+
+fieldset,img {
+    border:0;
+}
+
+html {
+    height:100%;
+    margin-bottom:1px;
+}
+
+body {
+    position:relative;
+}
+
+:focus {
+    outline:hidden;
+}
+
+/* links */
+a {
+    color:#60131d;
+    text-decoration:none;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+/* header elements */
+h1, h2, h3, h4, h5, h6 {
+    font-family:Georgia, "Times New Roman", Times, serif;
+    font-weight:bold;
+}
+
+h1 {
+    font-size:300%;
+    color:#000;
+}
+
+h2 {
+    font-size:250%;
+    color:#b4b4b4;
+}
+
+h3 {
+    font-size:200%;
+    color:#000;
+}
+
+h4 {
+    font-size:175%;
+    color:#000;
+}
+
+h5 {
+    font-size:150%;
+    color:#787878;
+}
+
+h6 {
+    font-size:125%;
+    color:#000;
+}
+
+/* page setup */
+body {
+    background:#e4e4cd url(../images/page_bg.png) 50% 0 no-repeat;
+    font-family:Arial, Helvetica, sans-serif;
+    line-height:150%;
+    color:#646464;
+    font-size:12px;
+}
+
+/*\*/* html body {
+    background:#e4e4cd url(../images/page_bg.png) 49% 0 no-repeat;
+}/*end*/
+
+/*\*/html*body {
+    background:#e4e4cd url(../images/page_bg.png) 49% 0 no-repeat;
+}/*end*/
+
+/* wrapper setup */
+div.rapidxwpr {
+    margin:auto;
+    width:980px;
+    background:url(../images/header-bg.png) 5px 0 no-repeat;
+}
+
+/* header */
+div#header {
+    position:relative;
+    height:85px;
+    margin:0px 0px 0px 0px;
+}
+
+/* logo */
+span#logo, img#logo {
+    position:absolute;
+    top:13px;
+    left:105px;
+    width:325px;
+    height:82px;
+    border:0;
+}
+
+/* main body setup */
+div#middle {
+    width:auto;
+    margin:0px 0px 0px 0px;
+    clear:both;
+    background:#FFF url(../images/middle-bg.png) 0 100% no-repeat;
+    padding:0 0 25px 0;
+}
+
+/*\*/* html div#middle {
+    margin:-28px 0px 0px 0px;
+}/*end*/
+
+div#middle .background {
+    min-height:140px;
+    border-left:#000 5px solid;
+    border-right:#000 5px solid;
+    padding:0 19px 0 24px;
+}
+
+div#middle .layoutleft {
+    background:none;
+}
+
+div#middle .layoutright {
+    background:none;
+}
+
+/* left column */
+div#left {
+    width:200px;
+}
+
+div#middle .layoutleft div#left {
+    float:left;
+    padding:0px 0px 0px 0px;
+}
+
+div#middle .layoutright div#left {
+    float:right;
+    padding:0px 0px 0px 0px;
+}
+
+/* right column */
+div#right {
+    width:297px;
+    padding:0px 0px 0px 0px;
+    float:right;
+    margin:0 0 0 0;
+}
+
+div#right_container {
+    padding:0 10px 0 10px;
+}
+
+/* content column */
+div#main {
+    width:auto;
+    background:url(../images/right-bg.png) 100% 100% no-repeat;
+}
+
+div#middle .layoutleft div#main {
+    margin:0px 0px 0px 0px;
+    padding:0px 0px 0px 0px;
+}
+
+div#middle .layoutright div#main {
+    margin:0px 200px 0px 0px;
+    padding:0px 0px 0px 0px;
+}
+
+div#middle .withoutleft div#main {
+    margin:0px 0px 0px 0px;
+}
+
+div#mainmiddle {
+    margin:0px 0px 0px 0px;
+}
+
+div#main .withoutright {
+    background:transparent;
+}
+
+div#content {
+    width:auto;
+}
+
+div#main .withright div#content {
+    margin:0px 317px 0px 0px;
+    padding:0px 0px 0px 0px;
+}
+
+div#main .withoutright div#content {
+    margin:0px 0px 0px 0px;
+    padding:0px 0px 0px 0px;
+}
+
+/* footer */
+div#footer {
+    width:900px;
+    margin:15px auto;
+    padding:13px 30px 10px 50px;
+    clear:both;
+    color:#492D1F;
+    background:url(../images/footer-bg.png) 0 0 no-repeat;
+}
+
+/* clearing & floating */
+.clearingfix:after {
+    content:".";
+    display:block;
+    line-height:0px;
+    clear:both;
+    visibility:hidden;
+}
+
+.clearingfix {
+    display:block;
+}
+
+.floatbox {
+    overflow:hidden;
+}
+
+/* navigation menu */
+div#menu {
+    margin:35px 0 0 0;
+    padding:0 15px;
+    overflow:hidden;
+}
+
+div#menu .nav {
+    float:left;
+}
+
+div#menu ul.mainmenu {
+    padding:0px;
+    margin:0px;
+    list-style:none;
+}
+
+div#menu ul.mainmenu li {
+    float:left;
+    display:block;
+}
+
+div#menu ul.mainmenu li a {
+    float:left;
+    display:block;
+    position:relative;
+    height:50px;
+    padding:0px 10px 0px 10px;
+    line-height:46px;
+    overflow:hidden;
+    color:#fff;
+    font-size:23px;
+    font-family:Georgia, "Times New Roman", Times, serif;
+}
+
+div#menu ul.mainmenu li a:hover {
+    text-decoration:underline;
+}
+
+div#menu ul.submenu {
+    padding:0px;
+    margin:0px;
+    list-style:none;
+    clear:both;
+}
+
+div#menu ul.submenu li {
+    float:left;
+    display:block;
+}
+
+div#menu ul.submenu li a {
+    float:left;
+    display:block;
+    position:relative;
+    height:25px;
+    padding:0px 7px 0px 7px;
+    line-height:18px;
+    overflow:hidden;
+    color:#f3e8bf;
+    font-size:15px;
+}
+
+div#menu ul.submenu li a:hover {
+    text-decoration:underline;
+}
+
+/* searchform */
+div.searchform {
+    float:right;
+    width:290px;
+}
+
+div.searchform ul {
+    list-style:none;
+}
+
+div.searchform ul li {
+    float:left;
+}
+
+div.searchform input.search-field {
+    border:#b0b0a1 1px solid;
+    padding:3px 2px 2px 2px;
+    margin:0 6px 0 0;
+    color:#7a7a7a;
+    font-size:12px;
+    width:190px;
+}
+
+div.searchform input.search-submit {
+    border:0;
+    padding:0;
+    margin:0;
+    width:63px;
+    height:22px;
+    background:url(../images/search-submit.png) 0 0 no-repeat;
+    cursor:pointer;
+    color:#FFF;
+}
+
+/* loginform */
+div.loginform {
+    background:url(../images/loginform-bg.png) 0 0 no-repeat;
+    width:275px;
+    height:80px;
+    float:right;
+    margin:0 15px 0 0;
+    padding:5px 15px 0 80px;
+    text-align:right;
+    font-size:12px;
+    color:#393535;
+    font-style:italic;
+}
+
+div.loginform ul {
+    list-style:none;
+    margin:0 0 13px 0;
+}
+
+div.loginform ul li {
+    float:left;
+}
+
+div.loginform ul li input.login-field {
+    border:#b0b0a1 1px solid;
+    padding:1px;
+    margin:0 6px 0 0;
+    font-size:10px;
+    color:#7a7a7a;
+}
+
+div.loginform ul li input.login-submit {
+    border:#8c8a72 1px solid;
+    padding:0 1px;
+    margin:0;
+    font-size:10px;
+    color:#f6eed0;
+    background:#090909;
+    cursor:pointer;
+}
+
+/* intro */
+.intro {
+    margin:28px 0 0 0;
+    background:url(../images/line.png) 0 100% no-repeat;
+    padding:0 0 10px 0;
+    overflow:hidden;
+}
+
+.intro h3 {
+    margin:0px;
+    font-size:22px;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+
+.intro p {
+    font-size:15px;
+    color:#711b1a;
+    margin:10px 0 10px 0;
+}
+
+.intro ul {
+    padding:0 0 0 35px;
+    font-family:Georgia, "Times New Roman", Times, serif;
+    float:left;
+}
+
+.intro ul li {
+    font-size:15px;
+    color:#534741;
+    font-style:italic;
+}
+
+/* learn more box */
+.learn_more {
+    background:url(../images/learn_bg.png) 0 0 no-repeat;
+    text-transform:uppercase;
+    text-align:center;
+    float:right;
+    padding:20px 45px 20px 45px;
+}
+
+.learn_more span.learn {
+    font-size:25px;
+    font-weight:bold;
+    color:#616161;
+}
+
+.learn_more span.more {
+    color:#711b1a;
+    font-size:12px;
+}
+
+.learn_more a {
+    color:#39480e;
+    font-size:14px;
+    text-decoration:underline;
+}
+
+.learn_more a:hover {
+    text-decoration:none;
+}
+
+/* wine reviews */
+.wine_reviews {
+    margin:20px 0 0 0;
+    background:url(../images/line.png) 0 100% no-repeat;
+    padding:0 0 20px 0;
+}
+
+.wine_reviews h3 {
+    margin:0px;
+    font-size:22px;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+
+.wine_reviews ul {
+    list-style:none;
+    margin:0;
+}
+
+.wine_reviews ul li {
+    margin:0;
+    overflow:hidden;
+}
+
+.reviews_imgborder {
+    width:103px;
+    height:108px;
+    border:#bdbd8c solid 1px;
+    background:#FFF;
+    margin:30px 10px 35px 0;
+    float:left;
+}
+
+.reviews_img {
+    background:#f3f2e1;
+    width:99px;
+    height:104px;
+    margin:2px auto;
+}
+
+.reviews_img img {
+    border:#bdbd8c solid 1px;
+    margin:3px 0 5px 2px;
+}
+
+.reviews_img a {
+    font-size:13px;
+    text-decoration:underline;
+    color:#362f2d;
+}
+
+.reviews_img a:hover {
+    text-decoration:none;
+}
+
+.reviews_img .reviews_link {
+    background:url(../images/list_icon.png) 0 2px no-repeat;
+    padding:0 0 0 13px;
+    margin:10px 0 0 7px;
+}
+
+.reviews_detail {
+    margin:0;
+    padding:30px 0 0 0;
+}
+
+.reviews_detail h4 {
+    margin:0;
+    font-size:16px;
+    color:#711b1a;
+    padding:0px;
+    font-weight:bold;
+}
+
+.reviews_detail span {
+    margin:0px;
+    font-size:14px;
+    font-weight:bold;
+    color:#534741;
+}
+
+.reviews_detail span.date {
+    float:right;
+    margin:-25px 0 0 0;
+    font-size:12px;
+    color:#534741;
+}
+
+.reviews_detail span.title a {
+    font-size:14px;
+    font-weight:bold;
+    color:#000;
+    text-decoration:underline;
+    margin:0 5px 0 3px;
+}
+
+.reviews_detail span.title a:hover {
+    text-decoration:none;
+}
+
+.reviews_detail span.tags a {
+    font-size:14px;
+    font-weight:normal;
+    color:#000;
+    text-decoration:underline;
+    margin:0 5px 0 3px;
+}
+
+.reviews_detail span.tags a:hover {
+    text-decoration:none;
+}
+
+.reviews_detail p {
+    margin:0px;
+    color:#534741;
+    font-size:14px;
+    line-height:18px;
+}
+
+/* winery reviews */
+.winery_reviews {
+    margin:25px 0 0 0;
+    padding:0 0 20px 0;
+}
+
+.winery_reviews h3 {
+    margin:0px;
+    font-size:22px;
+    color:#000;
+    font-style:italic;
+}
+
+.winery_reviews ul {
+    list-style:none;
+}
+
+.winery_reviews ul li {
+    margin:0;
+    overflow:hidden;
+}
+
+.winery_reviews .reviews_imgborder {
+    width:103px;
+    height:108px;
+    border:#bdbd8c solid 1px;
+    background:#FFF;
+    margin:30px 10px 55px 0;
+    float:left;
+}
+
+/* top rated winery */
+.more_links a {
+    background:#872F2D;
+    display:block;
+    float:left;
+    margin:0 10px 0 0;
+    padding:1px 10px 2px 10px;
+    color:#FFF;
+    font-family:Arial, Helvetica, sans-serif;
+    outline:#711B1A 1px solid;
+    border:#865532 1px solid;
+}
+
+/* Articles */
+.articles {
+    background:url(../images/line_right.png) 0 100% no-repeat;
+    padding:0 0 20px 0;
+}
+
+.articles h5, .active_member h5, .just_recommended h5, .new_wines h5 {
+    font-size:19px;
+    font-style:italic;
+    color:#000;
+    margin:0 0 8px 10px;
+}
+
+.articles span {
+    font-size:15px;
+    color:#711b1a;
+    font-weight:bold;
+    margin:0 0 0 10px;
+}
+
+.articles p {
+    margin:5px 0 5px 10px;
+    font-size:13px;
+    color:#534741;
+}
+
+.articles a {
+    color:#000;
+    text-decoration:underline;
+    font-weight:bold;
+}
+
+.articles a:hover {
+    color:#000;
+    text-decoration:none;
+}
+
+/* active members */
+.active_member {
+    margin:15px 0 0 0;
+    background:url(../images/line_right.png) 0 100% no-repeat;
+    padding:0 0 20px 0;
+}
+
+.active_member ul {
+    list-style:none;
+    margin:15px 0 0 0;
+}
+
+.active_member ul li {
+    margin:20px 0 20px 0;
+}
+
+.active_img img {
+    float:left;
+    border:solid 1px #6c6c6a;
+    margin:0 10px 0 10px;
+}
+
+.active_link {
+    padding:7px 0 0 0;
+    font-size:15px;
+    color:#711b1a;
+    font-weight:bold;
+}
+
+.active_member a {
+    text-decoration:underline;
+}
+
+.active_member a:hover {
+    text-decoration:none;
+}
+
+/* just recommended */
+.just_recommended {
+    margin:15px 0 0 0;
+    background:url(../images/line_right.png) 0 100% no-repeat;
+    padding:0 0 20px 0;
+}
+
+.just_recommended ul {
+    list-style:none;
+    margin:15px 10px 0 12px;
+}
+
+.just_recommended ul li {
+    margin:7px 0;
+    background:url(../images/list_icon.png) 0 5px no-repeat;
+    padding:0 0 0 15px;
+}
+
+.just_recommended ul li a {
+    color:#534741;
+    text-decoration:underline;
+}
+
+.just_recommended ul li a:hover {
+    text-decoration:none;
+}
+
+/* new wines */
+.new_wines {
+    margin:15px 0 0 0;
+    padding:0 0 10px 0;
+}
+
+.new_wines ul {
+    list-style:none;
+    margin:15px 10px 0 12px;
+}
+
+.new_wines ul li {
+    margin:7px 0;
+    background:url(../images/list_icon.png) 0 5px no-repeat;
+    padding:0 0 0 15px;
+}
+
+.new_wines ul li a {
+    color:#534741;
+    text-decoration:underline;
+}
+
+.new_wines ul li a:hover {
+    text-decoration:none;
+}
+
+/* footermenu */
+.footermenu {
+    float:left;
+}
+
+.footermenu ul {
+    list-style:none;
+}
+
+.footermenu ul li {
+    float:left;
+    margin:0 10px 0 0;
+    font-size:12px;
+}
+
+.footer-logo {
+    float:right;
+}
