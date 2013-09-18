@@ -7,34 +7,7 @@
  * 
  */
 
-/**
- * Coming with v2
- * -------------
- * public id sini 0 a eşitleyip öyle kontrol yapabilirdik
- * permission id yi permission parametre yap
- * performance impr. // tablo isimlerini configden çekmesin
- * captcha
- * errorlar düzenlenecek hepisiiii
- * mail fonksiyonları imtihanı
- *
- * Done staff
- * -----------
- * tamam hacı // control die bi fonksiyon yazıp adam önce login omuşmu sonra da yetkisi var mı die kontrol et. yetkisi yoksa yönlendir ve aktivitiyi güncelle
- * tamam hacı // grupları yetkilendirme, yetki ekleme, alma alow deny
- * tamam gibi // Email and pass validation with form helper
- * biraz oldu // laguage file support
- * tamam // forget pass
- * tamam // yetkilendirme sistemi
- * tamam // Login e remember eklencek
- * tamam // şifremi unuttum ve random string
- * sanırım şimdi tamam // hatalı girişde otomatik süreli kilit
- * ??  tamam heral // mail ile bilgilendirme
- * tamam heral // activasyon emaili
- * tamam gibi // yerine email check // username check
- * tamamlandı // public erişimi
- * tamam // Private messsages
- *
- */
+
 //last activity check email
 class Aauth {
 
@@ -974,4 +947,35 @@ class Aauth {
 
 }
 
+
+/**
+ * Coming with v2
+ * -------------
+ * public id sini 0 a eşitleyip öyle kontrol yapabilirdik
+ * permission id yi permission parametre yap
+ * performance impr. // tablo isimlerini configden çekmesin
+ * captcha
+ * mail fonksiyonları imtihanı
+ *
+ * Done staff
+ * -----------
+ * tamam hacı // control die bi fonksiyon yazıp adam önce login omuşmu sonra da yetkisi var mı die kontrol et. yetkisi yoksa yönlendir ve aktivitiyi güncelle
+ * tamam hacı // grupları yetkilendirme, yetki ekleme, alma alow deny
+ * tamam gibi // Email and pass validation with form helper
+ * biraz oldu // laguage file support
+ * tamam // forget pass
+ * tamam // yetkilendirme sistemi
+ * tamam // Login e remember eklencek
+ * tamam // şifremi unuttum ve random string
+ * sanırım şimdi tamam // hatalı girişde otomatik süreli kilit
+ * ??  tamam heral // mail ile bilgilendirme
+ * tamam heral // activasyon emaili
+ * tamam gibi // yerine email check // username check
+ * tamamlandı // public erişimi
+ * tamam // Private messsages
+ * tamam össen // errorlar düzenlenecek hepisiiii
+ *
+ */
+
 ?>
+
