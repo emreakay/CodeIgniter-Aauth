@@ -1,1 +1,0 @@
-This file was created by JetBrains PhpStorm 6.0.3 for binding GitHub repository
