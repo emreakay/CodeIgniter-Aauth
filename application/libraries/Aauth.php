@@ -578,6 +578,9 @@ class Aauth {
 
             $user_id = $this->CI->db->insert_id();
 
+            // set default group
+            $this->add_member($user_id, $this->config_vars['default_group']);
+
             if($this->config_vars['verification']){
                 $data = null;
                 $data['banned'] = 1;
@@ -786,16 +789,18 @@ class Aauth {
     }
 
     // aynısını ekleyince hata verio
-    public function add_member($user_id, $group_id) {
+    public function add_member($user_id, $group_par) {
+
+        $group_par = $this->get_group_id($group_par);
 
         $query = $this->CI->db->where('user_id',$user_id);
-        $query = $this->CI->db->where('group_id',$group_id);
+        $query = $this->CI->db->where('group_id',$group_par);
         $query = $this->CI->db->get($this->config_vars['user_to_group']);
 
         if ($query->num_rows() < 1) {
             $data = array(
                 'user_id' => $user_id,
-                'group_id' => $group_id
+                'group_id' => $group_par
             );
 
             return $this->CI->db->insert($this->config_vars['user_to_group'], $data);
