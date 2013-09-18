@@ -20,6 +20,7 @@ class Login extends CI_Controller {
 
         echo "<pre>";
 
+
         print_r(
         //$this->aauth->is_admin()
             //$this->aauth->get_user()
