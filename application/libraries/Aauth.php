@@ -218,6 +218,7 @@ class Aauth {
         return $query = $this->CI->db->insert( $this->config_vars['pm'], $data );
     }
 
+
     // updates user's last activity date
     public function update_activity($user_id = FALSE) {
 
@@ -961,6 +962,7 @@ class Aauth {
  * performance impr. // tablo isimlerini configden çekmesin
  * captcha
  * mail fonksiyonları imtihanı
+ * pm için okundu ve göster, sil, engelle? die fonksiyonlar eklencek
  *
  * Done staff
  * -----------

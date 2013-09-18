@@ -19,7 +19,7 @@ $config['aauth'] = array(
     'no_permission' => '/',
     //name of admin group
     'admin_group' => 'admin',
-    //the new user is added in it
+    //name of default group, the new user is added in it
     'default_group' => 'default',
     // public group , people who not logged in
     'public_group' => 'public',
