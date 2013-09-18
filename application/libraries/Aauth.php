@@ -6,7 +6,6 @@
  * @author Emre Akay
  *
  *
- * xxxxx
  */
 
 
