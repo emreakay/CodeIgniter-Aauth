@@ -30,7 +30,7 @@ class Aauth {
         $this->CI->load->helper('url');
         $this->CI->load->helper('string');
         $this->CI->load->helper('email');
-        
+
 
         // config/aauth.php
         $this->CI->config->load('aauth');
