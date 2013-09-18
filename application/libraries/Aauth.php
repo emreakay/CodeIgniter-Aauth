@@ -964,7 +964,7 @@ class Aauth {
  * mail fonksiyonları imtihanı
  * pm için okundu ve göster, sil, engelle? die fonksiyonlar eklencek
  *
- * 
+ *
  *
  * Done staff
  * -----------
