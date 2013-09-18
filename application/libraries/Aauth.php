@@ -964,6 +964,8 @@ class Aauth {
  * mail fonksiyonları imtihanı
  * pm için okundu ve göster, sil, engelle? die fonksiyonlar eklencek
  *
+ * 
+ *
  * Done staff
  * -----------
  * tamam hacı // control die bi fonksiyon yazıp adam önce login omuşmu sonra da yetkisi var mı die kontrol et. yetkisi yoksa yönlendir ve aktivitiyi güncelle
