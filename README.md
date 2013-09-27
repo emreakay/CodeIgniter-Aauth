@@ -4,14 +4,15 @@ Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make ea
 After Quick Start, Take a look [detailed Documentation from wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages)  
 
 ### Features 
-User Management and Operations (login, logout, register, vertification via e-mail, forgoten password, ban management, login ddos protection)
-Group Operations (Creaing, deleting groups, membership management)
-Admin and Public Group support (Public permissions)
+***
+* User Management and Operations (login, logout, register, vertification via e-mail, forgoten password, ban management, login ddos protection)
+* Group Operations (Creaing, deleting groups, membership management)
+* Admin and Public Group support (Public permissions)
 Permission Management (creating,deleting permissons, allow, deny groups, public permissions, permission checking)
-Private Messages (pm between users)
-Error Mesages and Validations
-Langugage and config file support
-Flexible
+* Private Messages (pm between users)
+* Error Mesages and Validations
+* Langugage and config file support
+* Flexible
 
 ### Quick Start 
 ***
