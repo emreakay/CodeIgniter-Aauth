@@ -34,10 +34,10 @@ $config['aauth'] = array(
     // perms to group
     'perm_to_group' => 'aauth_perm_to_group',
     // pm table
-    'pm' => 'aauth_pm',
+    'pms' => 'aauth_pms',
 
 
-    // remember time // 60*60*24*3 (default 3 days)
+    // remember time
     'remember' => ' +3 days',
 
     // pasword maximum char long (min is 4)
@@ -50,14 +50,15 @@ $config['aauth'] = array(
     // default 10 times in one minute
     'try' => 10,
 
+    // to register email verifitaion need? true / false
+    'verification' => false,
+
     // system email.
-    'email' => 'emre@emreakay.com',
+    'email' => 'admin@admin.com',
     'name' => 'Emre Akay',
     'subject' => 'Account Vertification',
     'reset' => 'Pasword Reset',
 
-    // to register email verifitaion need? true / false
-    'verification' => true,
 
     // error mesages
     // change to your language
@@ -80,6 +81,8 @@ $config['aauth'] = array(
     'exceeded' => 'Login try limit exceeded.',
     'no_user' => 'User not Exist',
     'group_exist' => 'Group already exists',
+    'self_pm' => 'It is not reasonable to send pm to yourself :)',
+    'no_pm' => 'Pm not found',
 
     //info
     'already_member' => 'User already member of group',

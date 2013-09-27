@@ -8,7 +8,7 @@ if (!defined('BASEPATH'))
  * @property Login_control $Login_control
  * @property Aauth $aauth Description
  */
-class Login extends CI_Controller {
+class Example extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -16,10 +16,17 @@ class Login extends CI_Controller {
         $this->load->library("Aauth");
     }
 
-    function deneme(){
+    public function index() {
+
+        if ($this->aauth->login('admin@admin.com', 'password', true))
+            echo 'tmm';
+
+        //echo date("Y-m-d H:i:s");
+    }
+
+    function debug(){
 
         echo "<pre>";
-
 
         print_r(
         //$this->aauth->is_admin()
@@ -45,15 +52,22 @@ class Login extends CI_Controller {
         //$this->aauth->send_pm(1,2,'asd')
         //$this->session->flashdata('d')
         //$this->aauth->add_member(1,1)
-        $this->aauth->create_user('asd@asd.co','d')
-
+        //$this->aauth->create_user('asd@asd.co','d')
+        //$this->aauth->send_pm(1,2,'asd','sad')
+        //$this->aauth->list_pms(1,0,3,1)
+        //$this->aauth->get_pm(6, false)
+        //$this->aauth->delete_pm(6)
+        //$this->aauth->set_as_read_pm(13)
+        //$this->aauth->create_group('aa')
+         $this->aauth->create_perm('asdda')
+         //''
 
         );
 
-        echo '<br>---- errrroor --- <br>';
+        echo '<br>---- error --- <br>';
         echo $this->aauth->get_errors();
 
-        echo '<br>---- infoviç --- <br>';
+        echo '<br>---- info --- <br>';
         echo $this->aauth->get_infos();
 
         echo "</pre>";
@@ -71,20 +85,12 @@ class Login extends CI_Controller {
     }
 
 
-    function ayar() {
+    function settings() {
         
         //echo $this->aauth->_get_login_attempts(4);
         //echo $this->aauth->get_user_id('emre@emreakay.com');
         //$this->aauth->_increase_login_attempts('emre@emreakay.com');
         //$this->aauth->_reset_login_attempts(1);
-    }
-
-    public function index() {
-
-        if ($this->aauth->login('emre@emreakay.com', '111111', true))
-            echo 'tmm';
-        
-        //echo date("Y-m-d H:i:s");
     }
 
     
