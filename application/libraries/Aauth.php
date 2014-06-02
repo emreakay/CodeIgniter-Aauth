@@ -1071,6 +1071,3 @@ class Aauth {
  * tamm// already existedleri info yap onlar error değil hacım
  *
  */
-
-?>
-
