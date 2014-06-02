@@ -46,7 +46,14 @@ class Aauth {
     public function login($email, $pass, $remember = FALSE) {
 
         // remove cookies first
-        setcookie("user", "", time()-3600, '/');
+        $cookie = array(
+            'name'   => 'user',
+            'value'  => '',
+            'expire' => time()-3600,
+            'path'   => '/',
+        );
+
+        $this->CI->input->set_cookie($cookie);
 
         if( !valid_email($email) or !ctype_alnum($pass) or strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ) {
             $this->error($this->config_vars['wrong']);
@@ -95,7 +102,14 @@ class Aauth {
                 $random_string = random_string('alnum', 16);
                 $this->update_remember($row->id, $random_string, $remember_date );
 
-                setcookie( 'user', $row->id . "-" . $random_string, time() + 99*999*999, '/');
+                $cookie = array(
+                    'name'   => 'user',
+                    'value'  => $row->id . "-" . $random_string,
+                    'expire' => time() + 99*999*999,
+                    'path'   => '/',
+                );
+
+                $this->CI->input->set_cookie($cookie);
             }
 
             // update last login
@@ -143,10 +157,10 @@ class Aauth {
         {return true;}
 
         else{
-            if( !array_key_exists('user', $_COOKIE) ){
+            if( !$this->CI->input->cookie('user', TRUE) ){
                 return false;
             }else{
-                $cookie = explode('-', $_COOKIE['user']);
+                $cookie = explode('-', $this->CI->input->cookie('user', TRUE));
                 if(!is_numeric( $cookie[0] ) or strlen($cookie[1]) < 13 ){return false;}
                 else{
                     $query = $this->CI->db->where('id', $cookie[0]);
