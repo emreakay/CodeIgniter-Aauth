@@ -73,6 +73,17 @@ class Aauth {
 
         $query = null;
         $query = $this->CI->db->where('email', $email);
+        $query = $this->CI->db->where('banned', 1);
+        $query = $this->CI->db->where('verification_code !=', '');
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0) {
+            $this->error($this->config_vars['not_verified']);
+            return false;
+        }
+
+        $query = null;
+        $query = $this->CI->db->where('email', $email);
 
         // database stores pasword md5 cripted
         $query = $this->CI->db->where('pass', md5($pass));
