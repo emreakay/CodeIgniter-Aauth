@@ -43,6 +43,9 @@ $config['aauth'] = array(
     // pasword maximum char long (min is 4)
     'max' => 13,
 
+    // non alphanumeric characters that are allowed in a name
+    'valid_chars' => array(' ', '\''),
+
     // it limits login attempts
     'dos_protection' => true,
 
