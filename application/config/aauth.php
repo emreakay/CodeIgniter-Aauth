@@ -43,6 +43,9 @@ $config['aauth'] = array(
     // pasword maximum char long (min is 4)
     'max' => 13,
 
+    // non alphanumeric characters that are allowed in a name
+    'valid_chars' => array(' ', '\''),
+
     // it limits login attempts
     'dos_protection' => true,
 
@@ -80,6 +83,7 @@ $config['aauth'] = array(
     'wrong' => 'E-mail or Password is wrong.',
     'exceeded' => 'Login try limit exceeded.',
     'no_user' => 'User not Exist',
+    'not_verified' => 'Please verify your account.',
     'group_exist' => 'Group already exists',
     'self_pm' => 'It is not reasonable to send pm to yourself :)',
     'no_pm' => 'Pm not found',
