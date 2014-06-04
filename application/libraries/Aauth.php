@@ -52,12 +52,12 @@ class Aauth {
      */
     public function __construct() {
 
-        // delete all errors at first :)
+        // Delete all errors at first
         $this->errors = array();
 
         $this->CI = & get_instance();
 
-        // dependancies
+        // Dependancies
         $this->CI->load->library('session');
         $this->CI->load->library('email');
         $this->CI->load->database();
@@ -68,9 +68,6 @@ class Aauth {
 
         // config/aauth.php
         $this->CI->config->load('aauth');
-
-        // the array which came from aauth config file
-        // $this->config_vars
         $this->config_vars = & $this->CI->config->item('aauth');
     }
 
@@ -88,7 +85,7 @@ class Aauth {
      */
     public function login($email, $pass, $remember = FALSE) {
 
-        // remove cookies first
+        // Remove cookies first
         $cookie = array(
             'name'   => 'user',
             'value'  => '',
@@ -117,7 +114,7 @@ class Aauth {
         $query = null;
         $query = $this->CI->db->where('email', $email);
 
-        // database stores pasword md5 cripted
+        // Database stores pasword md5 cripted
         $query = $this->CI->db->where('pass', md5($pass));
         $query = $this->CI->db->where('banned', 0);
         $query = $this->CI->db->get($this->config_vars['users']);
@@ -126,7 +123,7 @@ class Aauth {
 
         if ($query->num_rows() > 0) {
 
-            // if email and pass matches
+            // If email and pass matches
             // create session
             $data = array(
                 'id' => $row->id,
@@ -263,6 +260,7 @@ class Aauth {
      * @return bool If session destroy successful
      */
     public function logout() {
+
         return $this->CI->session->sess_destroy();
     }
 
@@ -318,6 +316,7 @@ class Aauth {
      * @param int $user_id User id to log in
      */
     public function login_fast($user_id){
+
         $query = $this->CI->db->where('id', $user_id);
         $query = $this->CI->db->where('banned', 0);
         $query = $this->CI->db->get($this->config_vars['users']);
@@ -374,7 +373,6 @@ class Aauth {
             'email' => $email,
             'pass' => md5($pass),
             'name' => $name,
-            //'banned' => 1
         );
 
         if ( $this->CI->db->insert($this->config_vars['users'], $data )){
@@ -456,7 +454,6 @@ class Aauth {
             $this->config_vars['link'] . $user_id . '/' . $ver_code );
             $this->CI->email->send();
         }
-        //echo $this->CI->email->print_debugger();
     }
 
     /**
@@ -910,6 +907,7 @@ class Aauth {
      * @return bool
      */
     public function is_admin() {
+
         return $this->is_member($this->config_vars['admin_group']);
     }
 
@@ -1243,6 +1241,7 @@ class Aauth {
      * @return bool Delete success/failure
      */
     public function delete_pm($pm_id){
+        
         return $this->CI->db->delete( $this->config_vars['pms'], array('id' => $pm_id) );
     }
 
