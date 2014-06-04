@@ -41,8 +41,17 @@ class Aauth {
         $this->config_vars = & $this->CI->config->item('aauth');
     }
 
+    /**
+     * Hash password
+     * Hash the password for storage in the database
+     * @param string $pass Password to hash
+     * @return string Hashed password
+     */
+    function hash_password($pass) {
 
-    // open sessions
+        return md5($pass);
+    }
+
     public function login($email, $pass, $remember = FALSE) {
 
         // remove cookies first
@@ -74,8 +83,8 @@ class Aauth {
         $query = null;
         $query = $this->CI->db->where('email', $email);
 
-        // database stores pasword md5 cripted
-        $query = $this->CI->db->where('pass', md5($pass));
+        // Database stores pasword hashed password
+        $query = $this->CI->db->where('pass', hash_password($pass));
         $query = $this->CI->db->where('banned', 0);
         $query = $this->CI->db->get($this->config_vars['users']);
 
@@ -306,7 +315,7 @@ class Aauth {
 
         $data = array(
             'email' => $email,
-            'pass' => md5($pass),
+            'pass' => hash_password($pass),
             'name' => $name,
             //'banned' => 1
         );
@@ -344,7 +353,7 @@ class Aauth {
         }
 
         if ($pass != FALSE) {
-            $data['pass'] = md5($pass);
+            $data['pass'] = hash_password($pass);
         }
 
         if ($name != FALSE) {
@@ -506,7 +515,7 @@ class Aauth {
 
             $data =  array(
                 'verification_code' => '',
-                'pass' => md5($pass)
+                'pass' => hash_password($pass)
             );
 
             $row = $query->row();
