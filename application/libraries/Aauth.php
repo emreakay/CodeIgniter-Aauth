@@ -308,7 +308,7 @@ class Aauth {
             $this->error($this->config_vars['pass_invalid']);
             $valid = false;
         }
-        if ($name !='' and !ctype_alnum($name)){
+        if ($name !='' and !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
             $this->error($this->config_vars['name_invalid']);
             $valid = false;
         }
