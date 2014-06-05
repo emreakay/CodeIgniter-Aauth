@@ -77,9 +77,10 @@ class Aauth {
      * @param string $pass Password to hash
      * @return string Hashed password
      */
-    function hash_password($pass) {
+    function hash_password($pass, $userid) {
 
-        return md5($pass);
+        $salt = md5($userid);
+        return hash('sha256', $salt.$pass);
     }
 
     ########################
@@ -113,6 +114,8 @@ class Aauth {
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->get($this->config_vars['users']);
 
+        $user_id = $query->row()->id;
+
         if ($query->num_rows() > 0) {
             $row = $query->row();
 
@@ -137,7 +140,7 @@ class Aauth {
         $query = $this->CI->db->where('email', $email);
 
         // Database stores pasword hashed password
-        $query = $this->CI->db->where('pass', hash_password($pass));
+        $query = $this->CI->db->where('pass', $this->hash_password($pass, $user_id));
         $query = $this->CI->db->where('banned', 0);
         $query = $this->CI->db->get($this->config_vars['users']);
 
@@ -393,7 +396,7 @@ class Aauth {
 
         $data = array(
             'email' => $email,
-            'pass' => hash_password($pass),
+            'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
             'name' => $name,
         );
 
@@ -412,6 +415,12 @@ class Aauth {
                 $this->CI->db->update($this->config_vars['users'], $data);
                 $this->send_verification($user_id);
             }
+
+            // Update to correct salted password
+            $data = null;
+            $data['pass'] = $this->hash_password($pass, $user_id);
+            $this->CI->db->where('id', $user_id);
+            $this->CI->db->update($this->config_vars['users'], $data);
 
             return $user_id;
 
@@ -438,7 +447,7 @@ class Aauth {
         }
 
         if ($pass != FALSE) {
-            $data['pass'] = hash_password($pass);
+            $data['pass'] = $this->hash_password($pass, $user_id);
         }
 
         if ($name != FALSE) {
@@ -649,7 +658,7 @@ class Aauth {
 
             $data =  array(
                 'verification_code' => '',
-                'pass' => hash_password($pass)
+                'pass' => $this->hash_password($pass, $user_id)
             );
 
             $row = $query->row();
