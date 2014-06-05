@@ -7,6 +7,7 @@ if (!defined('BASEPATH'))
  * 
  * @property Login_control $Login_control
  * @property Aauth $aauth Description
+ *
  */
 class Example extends CI_Controller {
 
