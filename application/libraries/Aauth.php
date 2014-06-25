@@ -6,7 +6,7 @@
  * Despite ease of use, it has also very advanced features like private messages, 
  * groupping, access management, public access etc..
  *
- * @author      Emre Akay
+ * @author      Emre Akay <emreakayfb@hotmail.com>
  * @contributor Jacob Tomlinson
  *
  * @copyright 2014 Emre Akay
@@ -57,6 +57,7 @@ class Aauth {
         // Delete all errors at first
         $this->errors = array();
 
+        // get main CI object
         $this->CI = & get_instance();
 
         // Dependancies
@@ -121,12 +122,14 @@ class Aauth {
         if ($query->num_rows() > 0) {
             $row = $query->row();
 
+            // DDos protection
             if ( $this->config_vars['dos_protection'] and $row->last_login_attempt != '' and (strtotime("now") + 30 * $this->config_vars['try'] ) < strtotime($row->last_login_attempt) ) {
                 $this->error($this->config_vars['exceeded']);
                 return false;
             }
         }
 
+        // banned or nor verified
         $query = null;
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->where('banned', 1);
@@ -226,6 +229,7 @@ class Aauth {
         if($this->CI->session->userdata('loggedin'))
         {return true;}
 
+        // cookie control
         else{
             if( !$this->CI->input->cookie('user', TRUE) ){
                 return false;
@@ -409,12 +413,15 @@ class Aauth {
             // set default group
             $this->add_member($user_id, $this->config_vars['default_group']);
 
+            // if verification activated
             if($this->config_vars['verification']){
                 $data = null;
                 $data['banned'] = 1;
 
                 $this->CI->db->where('id', $user_id);
                 $this->CI->db->update($this->config_vars['users'], $data);
+
+                // sends verifition ( !! e-mail settings must be set)
                 $this->send_verification($user_id);
             }
 
@@ -549,6 +556,7 @@ class Aauth {
     /**
      * Unban user
      * Activates user account
+     * Same with unban_user()
      * @param int $user_id User id to activate
      * @return bool Activation fails/succeeds
      */
@@ -562,6 +570,19 @@ class Aauth {
 
         return $this->CI->db->update($this->config_vars['users'], $data);
     }
+
+    /**
+     * Unban user
+     * Activates user account
+     * Same with unlock_user()
+     * @param int $user_id User id to activate
+     * @return bool Activation fails/succeeds
+     */
+    public function unban_user($user_id) {
+
+        return $this->unlock_user($user_id);
+    }
+
 
     /**
      * Check user banned
@@ -884,12 +905,24 @@ class Aauth {
      * @param int|string $group_par Group id or name to remove user from
      * @return bool Remove success/failure
      */
-    public function fire_member($user_id, $group_par) {
+    public function remove_member($user_id, $group_par) {
 
         $group_par = $this->get_group_id($group_par);
         $this->CI->db->where('user_id', $user_id);
         $this->CI->db->where('group_id', $group_par);
         return $this->CI->db->delete($this->config_vars['user_to_group']);
+    }
+
+    /**
+     * Fire member
+     * Remove a user from a group same as remove member
+     * @param int $user_id User id to remove from group
+     * @param int|string $group_par Group id or name to remove user from
+     * @return bool Remove success/failure
+     */
+    public function fire_member($user_id, $group_par) {
+
+        return $this->remove_member($user_id,$group_par);
     }
 
     /**
@@ -1050,16 +1083,18 @@ class Aauth {
 
         $this->CI->db->where('id', $perm_id);
         return $this->CI->db->delete($this->config_vars['perms']);
+
+        // also deletes from permission table
     }
 
     /**
      * Is allowed
      * Check if group is allowed to do specified action, admin always allowed
-     * @param int|string|bool $group_par Group id or name to check, or if false checks all user groups
      * @param int $perm_par Permission id or name to check
+     * @param int|string|bool $group_par Group id or name to check, or if false checks all user groups
      * @return bool
      */
-    public function is_allowed($group_par=false, $perm_par){
+    public function is_allowed($perm_par, $group_par=false){
 
         $perm_id = $this->get_perm_id($perm_par);
 
@@ -1102,13 +1137,13 @@ class Aauth {
     }
 
     /**
-     * Allow
+     * Allow Group
      * Add group to permission
      * @param int|string|bool $group_par Group id or name to allow
      * @param int $perm_par Permission id or name to allow
      * @return bool Allow success/failure
      */
-    public function allow($group_par, $perm_par) {
+    public function allow_group($group_par, $perm_par) {
 
         $perm_id = $this->get_perm_id($perm_par);
 
@@ -1130,13 +1165,13 @@ class Aauth {
     }
 
     /**
-     * Deny
+     * Deny Group
      * Remove group from permission
      * @param int|string|bool $group_par Group id or name to deny
      * @param int $perm_par Permission id or name to deny
      * @return bool Deny success/failure
      */
-    public function deny($group_par, $perm_par) {
+    public function deny_group($group_par, $perm_par) {
 
         $perm_id = $this->get_perm_id($perm_par);
 
@@ -1423,12 +1458,26 @@ class Aauth {
  * config
  * stacoverflow
  * login e ip aderesi de eklemek lazım
- * list_users da grup_par verilirse ve adamın birden fazla grubu varsa nolurkun?
+ * list_users da grup_par verilirse ve adamın birden fazla grubu varsa nolurkun? // bi denemek lazım belki distinct ile düzelir
  * eğer grup silinmişse kullanıcıları da o gruptan sil (fire)
  * ismember la is admine 2. parametre olarak user id ekle
  * kepp infos errors die bişey yap ajax requestlerinde silinir errorlar
+ * user variables
+ * sistem variables
+ * user perms
+ * parametre olarak array alma
+ * mysql index fulltext index??
  *
- * Done staff
+ *
+ * -----------
+ * ok
+ *
+ * unban_user() added // unlock_user
+ * remove member added // fire_member
+ * allow changed to allow_group
+ * deny changed to deny_user
+ *
+ * Done staff v1
  * -----------
  * tamam hacı // control die bi fonksiyon yazıp adam önce login omuşmu sonra da yetkisi var mı die kontrol et. yetkisi yoksa yönlendir ve aktivitiyi güncelle
  * tamam hacı // grupları yetkilendirme, yetki ekleme, alma alow deny

@@ -33,9 +33,14 @@ $config['aauth'] = array(
     'perms' => 'aauth_perms',
     // perms to group
     'perm_to_group' => 'aauth_perm_to_group',
+    // perms to group
+    'perm_to_user' => 'aauth_perm_to_user',
     // pm table
     'pms' => 'aauth_pms',
-
+    // system variables
+    'system_variables' => 'aauth_system_variables',
+    // user variables
+    'user_variables' => 'aauth_user_variables',
 
     // remember time
     'remember' => ' +3 days',
