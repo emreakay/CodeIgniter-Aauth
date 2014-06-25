@@ -1113,13 +1113,10 @@ class Aauth {
             }
         }
         else {
-            // all doors open to admin :)
-            if ( $this->is_admin( $this->CI->session->userdata('id')) ) {return true;}
-
-            // if public is allowed
-            if( !$this->is_loggedin() and $this->is_allowed($perm_id, $this->config_vars['public_group']) ){
-                return true;
-            }
+            // if public is allowed ot he is admin
+            if ( $this->is_admin( $this->CI->session->userdata('id')) or
+                $this->is_allowed($perm_id, $this->config_vars['public_group']) )
+            {return true;}
 
             if (!$this->is_loggedin()){return false;}
 
