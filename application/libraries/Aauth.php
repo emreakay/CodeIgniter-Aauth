@@ -870,6 +870,11 @@ class Aauth {
      */
     public function delete_group($group_id) {
 
+        // bug fixed
+        // now users are deleted from user_to_group table
+        $this->CI->db->where('group_id', $group_id);
+        $this->CI->db->delete($this->config_vars['user_to_group']);
+
         $this->CI->db->where('id', $group_id);
         return $this->CI->db->delete($this->config_vars['groups']);
     }
@@ -1535,7 +1540,7 @@ class Aauth {
  * captcha (hmm bi bakalım)
  * mail fonksiyonları imtihanı
  * stacoverflow
- * login e ip aderesi de eklemek lazım
+ * tamam // login e ip aderesi de eklemek lazım
  * list_users da grup_par verilirse ve adamın birden fazla grubu varsa nolurkun? // bi denemek lazım belki distinct ile düzelir
  * eğer grup silinmişse kullanıcıları da o gruptan sil (fire)
  * ismember la is admine 2. parametre olarak user id ekle
