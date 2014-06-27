@@ -735,6 +735,7 @@ class Aauth {
             $user_id = $this->CI->session->userdata('id');
 
         $data['last_login'] = date("Y-m-d H:i:s");
+        $data['ip_address'] = $this->CI->input->ip_address();
 
         $this->CI->db->where('id', $user_id);
         return $this->CI->db->update($this->config_vars['users'], $data);
@@ -1528,12 +1529,11 @@ class Aauth {
 /**
  * Coming with v2
  * -------------
- * public id sini 0 a eşitleyip öyle kontrol yapabilirdik
+ * public id sini 0 a eşitleyip öyle kontrol yapabilirdik (oni boşver uşağum)
  * permission id yi permission parametre yap
- * performance impr. // tablo isimlerini configden çekmesin
- * captcha
+ * performance impr. // tablo isimlerini configden çekmesin (şimdilik çeksin)
+ * captcha (hmm bi bakalım)
  * mail fonksiyonları imtihanı
- * config
  * stacoverflow
  * login e ip aderesi de eklemek lazım
  * list_users da grup_par verilirse ve adamın birden fazla grubu varsa nolurkun? // bi denemek lazım belki distinct ile düzelir
@@ -1555,6 +1555,8 @@ class Aauth {
  * allow changed to allow_group
  * deny changed to deny_group
  * is member a yeni parametre eklendi
+ * allow_user() added
+ * deny_user() added
  *
  * Done staff v1
  * -----------
