@@ -970,12 +970,12 @@ class Aauth {
     /**
      * Is admin
      * Check if current user is a member of the admin group
-     * @param int|string $group_par Group id or name to check
+     * @param int $user_id User id to check, if it is not given checks current user
      * @return bool
      */
-    public function is_admin() {
+    public function is_admin( $user_id = false ) {
 
-        return $this->is_member($this->config_vars['admin_group']);
+        return $this->is_member($this->config_vars['admin_group'],$user_id);
     }
 
     /**
@@ -1431,7 +1431,7 @@ class Aauth {
     }
 
     ########################
-    # Error/Info Functions
+    # Error / Info Functions
     ########################
 
     /**
@@ -1443,6 +1443,16 @@ class Aauth {
 
         $this->errors[] = $message;
         $this->CI->session->set_flashdata('errors', $this->errors);
+    }
+
+    /**
+     * Keep Errors
+     * keeps the flash data flash data
+     * more info about flash data
+     * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+     */
+    public function keep_errors(){
+        $this->session->keep_flashdata('errors');
     }
 
     /**
@@ -1465,7 +1475,7 @@ class Aauth {
      * @param string $divider Separator for errors
      * @return string String of errors separated by delimiter
      */
-    public function get_errors($divider = '<br />'){
+    public function print_errors($divider = '<br />'){
 
         $msg = '';
         $msg_num = count($this->errors);
@@ -1493,6 +1503,16 @@ class Aauth {
     }
 
     /**
+     * Keep Infos
+     * keeps the flash data
+     * more info about flash data
+     * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+     */
+    public function keep_infos(){
+        $this->session->keep_flashdata('infos');
+    }
+
+    /**
      * Get Info Array
      * Return array of info
      * @return array|bool Array of messages or false if no errors
@@ -1512,7 +1532,7 @@ class Aauth {
      * @param string $divider Separator for info
      * @return string String of info separated by delimiter
      */
-    public function get_infos($divider = '<br />'){
+    public function print_infos($divider = '<br />'){
 
         $msg = '';
         $msg_num = count($this->infos);
@@ -1542,14 +1562,14 @@ class Aauth {
  * stacoverflow
  * tamam // login e ip aderesi de eklemek lazım
  * list_users da grup_par verilirse ve adamın birden fazla grubu varsa nolurkun? // bi denemek lazım belki distinct ile düzelir
- * eğer grup silinmişse kullanıcıları da o gruptan sil (fire)
- * ismember la is admine 2. parametre olarak user id ekle
- * kepp infos errors die bişey yap ajax requestlerinde silinir errorlar
+ * tamam // eğer grup silinmişse kullanıcıları da o gruptan sil (fire)
+ * tamam //  ismember la is admine 2. parametre olarak user id ekle
+ * tamam // kepp infos errors die bişey yap ajax requestlerinde silinir errorlar
  * user variables
  * sistem variables
- * user perms
+ * tamam // user perms
  * parametre olarak array alma
- * mysql index fulltext index??
+ * biraz tamam // 4mysql index fulltext index??
  *
  *
  * -----------
@@ -1557,11 +1577,17 @@ class Aauth {
  *
  * unban_user() added // unlock_user
  * remove member added // fire_member
- * allow changed to allow_group
- * deny changed to deny_group
+ * allow() changed to allow_group
+ * deny() changed to deny_group
  * is member a yeni parametre eklendi
  * allow_user() added
  * deny_user() added
+ * keep_infos() added
+ * kepp_errors() added
+ * get_errors() changed to print_errors()
+ * get_infos() changed to print_infos()
+ *
+ *
  *
  * Done staff v1
  * -----------
