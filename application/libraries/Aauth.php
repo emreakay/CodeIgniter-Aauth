@@ -18,6 +18,9 @@
  *
  * The latest version of Aauth can be obtained from:
  * https://github.com/emreakay/CodeIgniter-Aauth
+ *
+ *
+ * $this->CI->session->userdata('id')
  */
 class Aauth {
 
@@ -164,7 +167,7 @@ class Aauth {
 
             $this->CI->session->set_userdata($data);
 
-            // id remember selected
+            // if remember selected
             if ($remember){
                 $expire = $this->config_vars['remember'];
                 $today = date("Y-m-d");
@@ -226,14 +229,14 @@ class Aauth {
      */
     public function is_loggedin() {
 
-        if($this->CI->session->userdata('loggedin'))
-        {return true;}
+        if ( $this->CI->session->userdata('loggedin') )
+        { return true; }
 
         // cookie control
-        else{
-            if( !$this->CI->input->cookie('user', TRUE) ){
+        else {
+            if( ! $this->CI->input->cookie('user', TRUE) ){
                 return false;
-            }else{
+            } else {
                 $cookie = explode('-', $this->CI->input->cookie('user', TRUE));
                 if(!is_numeric( $cookie[0] ) or strlen($cookie[1]) < 13 ){return false;}
                 else{
@@ -261,28 +264,27 @@ class Aauth {
 
             }
         }
+
         return false;
     }
 
     /**
-     * Controls if a logged or public user has permiision
+     * Controls if a logged or public user has permission
      * If no permission, it stops script, it also updates last activity every time function called
      * @param bool $perm_par If not given just control user logged in or not
      */
-    public function control($perm_par = false){
+    public function control( $perm_par ){
 
-        if(!$perm_par and !$this->is_loggedin()){
-            echo $this->config_vars['no_access'];
-            die();
-        }
-
+        // if perm_par is given
         $perm_id = $this->get_perm_id($perm_par);
         $this->update_activity();
 
-        if( !$this->is_allowed($perm_id) ) {
+        // if user or user's group allowed
+        if ( !$this->is_allowed($perm_id) or !$this->is_group_allowed($perm_id)){
             echo $this->config_vars['no_access'];
             die();
         }
+
     }
 
     /**
@@ -929,15 +931,19 @@ class Aauth {
      * Is member
      * Check if current user is a member of a group
      * @param int|string $group_par Group id or name to check
+     * @param int|bool $user_id User id, if not given current user
      * @return bool
      */
-    public function is_member($group_par) {
+    public function is_member( $group_par, $user_id = false ) {
 
-        $user_id = $this->CI->session->userdata('id');
+        // if user_id false (not given), current user
+        if(!$user_id){
+            $user_id = $this->CI->session->userdata('id');
+        }
 
-        $this->get_group_id($group_par);
-        // group_id given
-        if (is_numeric($group_par)) {
+        $group_id = $this->get_group_id($group_par);
+        // if found
+        if (is_numeric($group_id)) {
 
             $query = $this->CI->db->where('user_id', $user_id);
             $query = $this->CI->db->where('group_id', $group_par);
@@ -950,19 +956,8 @@ class Aauth {
             } else {
                 return FALSE;
             }
-        }
-
-        // group_name given
-        else {
-
-            $query = $this->CI->db->where('name', $group_par);
-            $query = $this->CI->db->get($this->config_vars['groups']);
-
-            if ($query->num_rows() == 0)
-                return FALSE;
-
-            $row = $query->row();
-            return $this->is_member($row->id);
+        } else {
+            return false;
         }
     }
 
@@ -1081,23 +1076,61 @@ class Aauth {
      */
     public function delete_perm($perm_id) {
 
+        // deletes from perm_to_gropup table
+        $this->CI->db->where('pern_id', $perm_id);
+        $this->CI->db->delete($this->config_vars['perm_to_group']);
+
+        // deletes from perm_to_user table
+        $this->CI->db->where('pern_id', $perm_id);
+        $this->CI->db->delete($this->config_vars['perm_to_group']);
+
+        // deletes from permission table
         $this->CI->db->where('id', $perm_id);
         return $this->CI->db->delete($this->config_vars['perms']);
-
-        // also deletes from permission table
     }
 
     /**
-     * Is allowed
+     * Is user allowed
+     * Check if user allowed to do specified action, admin always allowed
+     * fist checks user permissions then check group permissions
+     * @param int $perm_par Permission id or name to check
+     * @param int|bool $user_id User id to check, or if false checks current user
+     * @return bool
+     */
+    public function is_allowed($perm_par, $user_id=false){
+
+        $perm_id = $this->get_perm_id($perm_par);
+
+        if( $user_id == false){
+            $user_id = $this->CI->session->userdata('id');
+        }
+
+        $query = $this->CI->db->where('perm_id', $perm_id);
+        $query = $this->CI->db->where('user_id', $user_id);
+        $query = $this->CI->db->get( $this->config_vars['perm_to_user'] );
+
+        if( $query->num_rows() > 0){
+            return true;
+        } elseif ($this->is_group_allowed($perm_id)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Is Group allowed
      * Check if group is allowed to do specified action, admin always allowed
      * @param int $perm_par Permission id or name to check
      * @param int|string|bool $group_par Group id or name to check, or if false checks all user groups
      * @return bool
      */
-    public function is_allowed($perm_par, $group_par=false){
+    public function is_group_allowed($perm_par, $group_par=false){
 
         $perm_id = $this->get_perm_id($perm_par);
 
+        // if group par is given
         if($group_par != false){
 
             $group_par = $this->get_group_id($group_par);
@@ -1112,26 +1145,74 @@ class Aauth {
                 return false;
             }
         }
+        // if group par is not given
+        // checks current user's all groups
         else {
-            // if public is allowed ot he is admin
+            // if public is allowed or he is admin
             if ( $this->is_admin( $this->CI->session->userdata('id')) or
-                $this->is_allowed($perm_id, $this->config_vars['public_group']) )
+                $this->is_group_allowed($perm_id, $this->config_vars['public_group']) )
             {return true;}
 
+            // if is not login
             if (!$this->is_loggedin()){return false;}
 
             $group_pars = $this->list_groups( $this->CI->session->userdata('id') );
 
             foreach ($group_pars as $g ){
-                if($this->is_allowed($perm_id, $g -> id)){
+                if($this->is_group_allowed($perm_id, $g -> id)){
                     return true;
                 }
             }
 
-
             return false;
         }
     }
+
+    /**
+     * Allow User
+     * Add User to permission
+     * @param int $user_id User id to deny
+     * @param int $perm_par Permission id or name to allow
+     * @return bool Allow success/failure
+     */
+    public function allow_user($user_id, $perm_par) {
+
+        $perm_id = $this->get_perm_id($perm_par);
+
+        $query = $this->CI->db->where('user_id',$user_id);
+        $query = $this->CI->db->where('perm_id',$perm_id);
+        $query = $this->CI->db->get($this->config_vars['perm_to_user']);
+
+        // if not inserted before
+        if ($query->num_rows() < 1) {
+
+            $data = array(
+                'user_id' => $user_id,
+                'perm_id' => $perm_id
+            );
+
+            return $this->CI->db->insert($this->config_vars['perm_to_group'], $data);
+        }
+        return true;
+    }
+
+    /**
+     * Deny User
+     * Remove user from permission
+     * @param int $user_id User id to deny
+     * @param int $perm_par Permission id or name to deny
+     * @return bool Deny success/failure
+     */
+    public function deny_user($user_id, $perm_par) {
+
+        $perm_id = $this->get_perm_id($perm_par);
+
+        $this->CI->db->where('user_id', $user_id);
+        $this->CI->db->where('perm_id', $perm_id);
+
+        return $this->CI->db->delete($this->config_vars['perm_to_group']);
+    }
+
 
     /**
      * Allow Group
@@ -1472,7 +1553,8 @@ class Aauth {
  * unban_user() added // unlock_user
  * remove member added // fire_member
  * allow changed to allow_group
- * deny changed to deny_user
+ * deny changed to deny_group
+ * is member a yeni parametre eklendi
  *
  * Done staff v1
  * -----------
