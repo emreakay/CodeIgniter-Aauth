@@ -20,7 +20,7 @@
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
  *
- * $this->CI->session->userdata('id')
+ *
  */
 class Aauth {
 
@@ -1448,6 +1448,7 @@ class Aauth {
     /**
      * Keep Errors
      * keeps the flash data flash data
+     * Benefitial by using Ajax Requests
      * more info about flash data
      * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
      */
@@ -1505,6 +1506,7 @@ class Aauth {
     /**
      * Keep Infos
      * keeps the flash data
+     * Benefitial by using Ajax Requests
      * more info about flash data
      * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
      */
@@ -1552,11 +1554,35 @@ class Aauth {
     # User Variables
     ########################
 
+    /**
+     * Set User Variable as key value
+     * if variable not set before, it will ve set
+     * if set, overwrites the value
+     * @param string $key
+     * @param string $value
+     * @param int $user_id ; if not given current user
+     * @return bool
+     */
     public function set_user_var( $key, $value, $user_id = false ) {
+
+        if ( ! $user_id ){
+            $user_id = $this->CI->session->userdata('id');
+        }
 
     }
 
+    /**
+     * Get User Variable by key
+     * Return string of variable value or false
+     * @param string $key
+     * @param int $user_id ; if not given current user
+     * @return bool|string , false if var is not set, the value of var if set
+     */
     public function get_user_var( $key, $user_id = false){
+
+        if ( ! $user_id ){
+            $user_id = $this->CI->session->userdata('id');
+        }
 
     }
 
@@ -1564,16 +1590,32 @@ class Aauth {
     # Aauth System Variables
     ########################
 
+    /**
+     * Set Aauth System Variable as key value
+     * if variable not set before, it will be set
+     * if set, overwrites the value
+     * @param string $key
+     * @param string $value
+     * @return bool
+     */
     public function set_aauth_var( $key, $value ) {
+
 
     }
 
+    /**
+     * Get Aauth System Variable by key
+     * Return string of variable value or false
+     * @param string $key
+     * @return bool|string , false if var is not set, the value of var if set
+     */
     public function get_aauth_var( $key ){
 
     }
 
 } // end class
 
+// $this->CI->session->userdata('id')
 
 /**
  * Coming with v2
@@ -1594,6 +1636,8 @@ class Aauth {
  * tamam // user perms
  * parametre olarak array alma
  * biraz tamam // 4mysql index fulltext index??
+ * geçici ban ve e-mail ile tkrar aktifleştime olayı
+ *
  *
  *
  * -----------
@@ -1610,6 +1654,14 @@ class Aauth {
  * kepp_errors() added
  * get_errors() changed to print_errors()
  * get_infos() changed to print_infos()
+ * User and Aauth System Variables.
+set_user_var( $key, $value, $user_id = false )
+get_user_var( $key, $user_id = false)
+set_aauth_var( $key, $value, $user_id = false )
+get_aauth_var( $key, $user_id = false)
+functions added
+ *
+ *
  *
  *
  *
