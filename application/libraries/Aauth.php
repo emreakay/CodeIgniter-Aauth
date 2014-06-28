@@ -1548,7 +1548,31 @@ class Aauth {
         return $msg;
     }
 
-}
+    ########################
+    # User Variables
+    ########################
+
+    public function set_user_var( $key, $value, $user_id = false ) {
+
+    }
+
+    public function get_user_var( $key, $user_id = false){
+
+    }
+
+    ########################
+    # Aauth System Variables
+    ########################
+
+    public function set_aauth_var( $key, $value ) {
+
+    }
+
+    public function get_aauth_var( $key ){
+
+    }
+
+} // end class
 
 
 /**
