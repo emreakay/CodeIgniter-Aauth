@@ -1584,7 +1584,7 @@ class Aauth {
                 'user_id' => $user_id
             );
 
-            $this->db->insert( $this->config_vars['user_variables'] , $data);
+            return $this->db->insert( $this->config_vars['user_variables'] , $data);
 
         }
         // if var already set, overwrite
@@ -1598,8 +1598,8 @@ class Aauth {
 
             $this->db->where( 'key', $key );
             $this->db->where( 'user_id', $user_id);
-            $this->db->update( $this->config_vars['user_variables'], $data);
 
+            return $this->db->update( $this->config_vars['user_variables'], $data);
         }
     }
 
@@ -1616,6 +1616,10 @@ class Aauth {
             $user_id = $this->CI->session->userdata('id');
         }
 
+        $this->db->where('key', $key);
+        $this->db->where('user_id', $user_id);
+
+        return $this->db->delete( $this->config_vars['user_variables'] );
 
     }
 
