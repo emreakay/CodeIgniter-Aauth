@@ -80,7 +80,9 @@ class Aauth {
     /**
      * Hash password
      * Hash the password for storage in the database
+     * (thanks to Jacob Tomlinson for contribution)
      * @param string $pass Password to hash
+     * @param $userid
      * @return string Hashed password
      */
     function hash_password($pass, $userid) {
@@ -1058,12 +1060,14 @@ class Aauth {
     /**
      * Update permission
      * Updates permission name and description
-     * @param int $perm_id Permission id
+     * @param int|string $perm_par Permission id or permission name
      * @param string $perm_name New permission name
      * @param string $definition Permission description
      * @return bool Update success/failure
      */
-    public function update_perm($perm_id, $perm_name, $definition=false) {
+    public function update_perm($perm_par, $perm_name, $definition=false) {
+
+        $perm_id = $this->get_perm_id($perm_par);
 
         $data['name'] = $perm_name;
 
@@ -1077,10 +1081,12 @@ class Aauth {
     /**
      * Delete permission
      * Delete a permission from database. WARNING Can't be undone
-     * @param int $perm_id Permission id to delete
+     * @param int|string $perm_par Permission id or perm name to delete
      * @return bool Delete success/failure
      */
-    public function delete_perm($perm_id) {
+    public function delete_perm($perm_par) {
+
+        $perm_id = $this->get_perm_id($perm_par);
 
         // deletes from perm_to_gropup table
         $this->CI->db->where('pern_id', $perm_id);
@@ -1569,7 +1575,25 @@ class Aauth {
             $user_id = $this->CI->session->userdata('id');
         }
 
+
     }
+
+
+    /**
+     * Unset User Variable as key value
+     * @param string $key
+     * @param int $user_id ; if not given current user
+     * @return bool
+     */
+    public function unset_user_var( $key, $user_id = false ) {
+
+        if ( ! $user_id ){
+            $user_id = $this->CI->session->userdata('id');
+        }
+
+
+    }
+
 
     /**
      * Get User Variable by key
@@ -1582,6 +1606,16 @@ class Aauth {
 
         if ( ! $user_id ){
             $user_id = $this->CI->session->userdata('id');
+        }
+
+        $query = $this->CI->db->where('user_id', $user_id);
+        $query = $this->CI->db->where('key', $key);
+
+        $query = $this->CI->db->get( $this->config_vars['user_variables'] );
+
+        // if variable not set
+        if ($query->num_rows() < 1) {
+            return false;
         }
 
     }
@@ -1617,25 +1651,30 @@ class Aauth {
 
 // $this->CI->session->userdata('id')
 
+/* coming with v3
+----------------
+ * captcha (hmm bi bakalım)
+ * parametre olarak array alma
+ * stacoverflow
+ * public id sini 0 a eşitleyip öyle kontrol yapabilirdik (oni boşver uşağum)
+ *
+*/
+
 /**
  * Coming with v2
  * -------------
- * public id sini 0 a eşitleyip öyle kontrol yapabilirdik (oni boşver uşağum)
- * permission id yi permission parametre yap
- * performance impr. // tablo isimlerini configden çekmesin (şimdilik çeksin)
- * captcha (hmm bi bakalım)
+ *
+ * tmam // permission id yi permission parametre yap
  * mail fonksiyonları imtihanı
- * stacoverflow
  * tamam // login e ip aderesi de eklemek lazım
  * list_users da grup_par verilirse ve adamın birden fazla grubu varsa nolurkun? // bi denemek lazım belki distinct ile düzelir
  * tamam // eğer grup silinmişse kullanıcıları da o gruptan sil (fire)
  * tamam //  ismember la is admine 2. parametre olarak user id ekle
  * tamam // kepp infos errors die bişey yap ajax requestlerinde silinir errorlar
- * user variables
+ * tmam // user variables
  * sistem variables
- * tamam // user perms
- * parametre olarak array alma
- * biraz tamam // 4mysql index fulltext index??
+ *  user perms
+ * tamam gibi // 4mysql index fulltext index??
  * geçici ban ve e-mail ile tkrar aktifleştime olayı
  *
  *
