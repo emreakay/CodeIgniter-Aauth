@@ -1575,7 +1575,32 @@ class Aauth {
             $user_id = $this->CI->session->userdata('id');
         }
 
+        // if var not set, set
+        if ( ! $this->get_user_var($key,$user_id) ) {
 
+            $data = array(
+                'key' => $key,
+                'value' => $value,
+                'user_id' => $user_id
+            );
+
+            $this->db->insert( $this->config_vars['user_variables'] , $data);
+
+        }
+        // if var already set, overwrite
+        else {
+
+            $data = array(
+                'key' => $key,
+                'value' => $value,
+                'user_id' => $user_id
+            );
+
+            $this->db->where( 'key', $key );
+            $this->db->where( 'user_id', $user_id);
+            $this->db->update( $this->config_vars['user_variables'], $data);
+
+        }
     }
 
 
