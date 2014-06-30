@@ -1614,8 +1614,12 @@ class Aauth {
         $query = $this->CI->db->get( $this->config_vars['user_variables'] );
 
         // if variable not set
-        if ($query->num_rows() < 1) {
-            return false;
+        if ($query->num_rows() < 1) { return false;}
+
+        else {
+
+            $row = $query->row();
+            return $row->value;
         }
 
     }
