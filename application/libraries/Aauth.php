@@ -1667,6 +1667,41 @@ class Aauth {
      */
     public function set_aauth_var( $key, $value ) {
 
+        // if var not set, set
+        if ( ! $this->get_aauth_var($key) ) {
+
+            $data = array(
+                'key' => $key,
+                'value' => $value,
+            );
+
+            return $this->db->insert( $this->config_vars['aauth_variables'] , $data);
+
+        }
+        // if var already set, overwrite
+        else {
+
+            $data = array(
+                'key' => $key,
+                'value' => $value,
+            );
+
+            $this->db->where( 'key', $key );
+            return $this->db->update( $this->config_vars['aauth_variables'], $data);
+        }
+
+    }
+
+    /**
+     * Unset Aauth System Variable as key value
+     * @param string $key
+     * @return bool
+     */
+    public function unset_aauth_var( $key  ) {
+
+        $this->db->where('key', $key);
+
+        return $this->db->delete( $this->config_vars['aauth_variables'] );
 
     }
 
@@ -1678,6 +1713,18 @@ class Aauth {
      */
     public function get_aauth_var( $key ){
 
+        $query = $this->CI->db->where('key', $key);
+
+        $query = $this->CI->db->get( $this->config_vars['aauth_variables'] );
+
+        // if variable not set
+        if ($query->num_rows() < 1) { return false;}
+
+        else {
+
+            $row = $query->row();
+            return $row->value;
+        }
     }
 
 } // end class

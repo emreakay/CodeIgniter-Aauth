@@ -38,7 +38,7 @@ $config['aauth'] = array(
     // pm table
     'pms' => 'aauth_pms',
     // system variables
-    'system_variables' => 'aauth_system_variables',
+    'aauth_variables' => 'aauth_system_variables',
     // user variables
     'user_variables' => 'aauth_user_variables',
 
