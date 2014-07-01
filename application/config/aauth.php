@@ -51,9 +51,6 @@ $config['aauth'] = array(
     // non alphanumeric characters that are allowed in a name
     'valid_chars' => array(' ', '\''),
 
-    // it limits login attempts
-    'dos_protection' => true,
-
     // login attempts time interval
     // default 10 times in one minute
     'try' => 10,

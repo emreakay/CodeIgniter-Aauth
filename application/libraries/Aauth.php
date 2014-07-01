@@ -115,26 +115,15 @@ class Aauth {
 
         $this->CI->input->set_cookie($cookie);
 
-        if( !valid_email($email) or !ctype_alnum($pass) or strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ) {
+        // verification
+        if( !valid_email($email) or !ctype_alnum($pass) or strlen($pass) < 5 or
+            strlen($pass) > $this->config_vars['max'] )
+        {
             $this->error($this->config_vars['wrong']);
-            return false;}
-
-        $query = $this->CI->db->where('email', $email);
-        $query = $this->CI->db->get($this->config_vars['users']);
-
-        $user_id = $query->row()->id;
-
-        if ($query->num_rows() > 0) {
-            $row = $query->row();
-
-            // DDos protection
-            if ( $this->config_vars['dos_protection'] and $row->last_login_attempt != '' and (strtotime("now") + 30 * $this->config_vars['try'] ) < strtotime($row->last_login_attempt) ) {
-                $this->error($this->config_vars['exceeded']);
-                return false;
-            }
+            return false;
         }
 
-        // banned or nor verified
+        // if user is not verified
         $query = null;
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->where('banned', 1);
@@ -146,6 +135,12 @@ class Aauth {
             return false;
         }
 
+        // to find user id
+        $query = $this->CI->db->where('email', $email);
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        $user_id = $query->row()->id;
+
         $query = null;
         $query = $this->CI->db->where('email', $email);
 
@@ -156,7 +151,7 @@ class Aauth {
 
         $row = $query->row();
 
-        if ($query->num_rows() > 0) {
+        if ( $query->num_rows() > 0 ) {
 
             // If email and pass matches
             // create session
@@ -170,7 +165,7 @@ class Aauth {
             $this->CI->session->set_userdata($data);
 
             // if remember selected
-            if ($remember){
+            if ( $remember ){
                 $expire = $this->config_vars['remember'];
                 $today = date("Y-m-d");
                 $remember_date = date("Y-m-d", strtotime($today . $expire) );
@@ -385,15 +380,15 @@ class Aauth {
 
         $valid = true;
 
-        if (!$this->check_email($email)) {
+        if ( ! $this->check_email($email)) {
             $this->error($this->config_vars['email_taken']);
             $valid = false;
         }
-        if (!valid_email($email)){
+        if ( ! valid_email($email)){
             $this->error($this->config_vars['email_invalid']);
             $valid = false;
         }
-        if (strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ){
+        if ( strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ){
             $this->error($this->config_vars['pass_invalid']);
             $valid = false;
         }
@@ -513,7 +508,8 @@ class Aauth {
         $query = $this->CI->db->where('verification_code', $ver_code);
         $query = $this->CI->db->get( $this->config_vars['users'] );
 
-        if( $query->num_rows() >0 ){
+        // if ver code is true
+        if( $query->num_rows() > 0 ){
 
             $data =  array(
                 'verification_code' => '',
@@ -549,7 +545,8 @@ class Aauth {
     public function ban_user($user_id) {
 
         $data = array(
-            'banned' => 1
+            'banned' => 1,
+            'verification_code' => ''
         );
 
         $this->CI->db->where('id', $user_id);
@@ -1104,7 +1101,7 @@ class Aauth {
     /**
      * Is user allowed
      * Check if user allowed to do specified action, admin always allowed
-     * fist checks user permissions then check group permissions
+     * first checks user permissions then check group permissions
      * @param int $perm_par Permission id or name to check
      * @param int|bool $user_id User id to check, or if false checks current user
      * @return bool
@@ -1702,7 +1699,6 @@ class Aauth {
         $this->db->where('key', $key);
 
         return $this->db->delete( $this->config_vars['aauth_variables'] );
-
     }
 
     /**
@@ -1752,11 +1748,11 @@ class Aauth {
  * tamam //  ismember la is admine 2. parametre olarak user id ekle
  * tamam // kepp infos errors die bişey yap ajax requestlerinde silinir errorlar
  * tmam // user variables
- * sistem variables
- *  user perms
+ * tamam // sistem variables
+ * tmam // user perms
  * tamam gibi // 4mysql index fulltext index??
  * geçici ban ve e-mail ile tkrar aktifleştime olayı
- *
+ * ddos protect olayını daha mantıklı hale getür
  *
  *
  * -----------
@@ -1804,4 +1800,25 @@ functions added
  * tamam ama engelleme ve limit olayı koymadım. // pm için okundu ve göster, sil, engelle? die fonksiyonlar eklencek , gönderilen pmler, alınan pmler, arasındaki pmler,
  * tamm// already existedleri info yap onlar error değil hacım
  *
+
+
+
+
+/*
+// if user's email is found
+if ($query->num_rows() > 0) {
+$row = $query->row();
+
+// DDos protection
+if ( $this->config_vars['dos_protection'] and $row->last_login_attempt != '' and
+(strtotime("now") + 30 * $this->config_vars['try'] ) < strtotime($row->last_login_attempt) ) {
+$this->error($this->config_vars['exceeded']);
+return false;
+}
+}
  */
+
+
+
+
+
