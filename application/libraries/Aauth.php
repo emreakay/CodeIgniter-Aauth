@@ -286,10 +286,19 @@ class Aauth {
 
     /**
      * Logout user
-     * Destroys the CodeIgniter session to log out user.
+     * Destroys the CodeIgniter session and remove cookies to log out user.
      * @return bool If session destroy successful
      */
     public function logout() {
+
+        $cookie = array(
+            'name'   => 'user',
+            'value'  => '',
+            'expire' => time()-3600,
+            'path'   => '/',
+        );
+
+        $this->CI->input->set_cookie($cookie);
 
         return $this->CI->session->sess_destroy();
     }
