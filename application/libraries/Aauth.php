@@ -133,7 +133,6 @@ class Aauth {
 
             $this->error($this->config_vars['wrong']);
             return false;
-
         }
 
         // if user is not verified
