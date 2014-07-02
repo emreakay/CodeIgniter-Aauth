@@ -129,7 +129,7 @@ class Aauth {
         $row = $query->row();
 
         // only email found and login attempts exceeded
-        if ($query->num_rows() > 0 and ! $this->update_login_attempts($row->email)) {
+        if ($query->num_rows() > 0 and $this->config_vars['ddos_protection'] and ! $this->update_login_attempts($row->email)) {
 
             $this->error($this->config_vars['wrong']);
             return false;
