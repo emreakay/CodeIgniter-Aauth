@@ -123,6 +123,7 @@ class Aauth {
             return false;
         }
 
+
         $query = null;
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->get($this->config_vars['users']);
