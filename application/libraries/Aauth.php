@@ -123,6 +123,19 @@ class Aauth {
             return false;
         }
 
+        $query = null;
+        $query = $this->CI->db->where('email', $email);
+        $query = $this->CI->db->get($this->config_vars['users']);
+        $row = $query->row();
+
+        // only email found and login attempts exceeded
+        if ($query->num_rows() > 0 and ! $this->update_login_attempts($row->email)) {
+
+            $this->error($this->config_vars['wrong']);
+            return false;
+
+        }
+
         // if user is not verified
         $query = null;
         $query = $this->CI->db->where('email', $email);
@@ -135,7 +148,7 @@ class Aauth {
             return false;
         }
 
-        // to find user id
+        // to find user id, create sessions and cookies
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->get($this->config_vars['users']);
 
@@ -147,10 +160,12 @@ class Aauth {
         // Database stores pasword hashed password
         $query = $this->CI->db->where('pass', $this->hash_password($pass, $user_id));
         $query = $this->CI->db->where('banned', 0);
+
         $query = $this->CI->db->get($this->config_vars['users']);
 
         $row = $query->row();
 
+        // if email and pass matches and not banned
         if ( $query->num_rows() > 0 ) {
 
             // If email and pass matches
@@ -187,32 +202,9 @@ class Aauth {
             $this->update_activity();
 
             return TRUE;
-
-        } else {
-
-            $query = $this->CI->db->where('email', $email);
-            $query = $this->CI->db->get($this->config_vars['users']);
-            $row = $query->row();
-
-            if ($query->num_rows() > 0) {
-
-                if ( $row->last_login_attempt == null or  (strtotime("now") - 600) > strtotime($row->last_login_attempt) )
-                {
-                    $data = array(
-                        'last_login_attempt' =>  date("Y-m-d H:i:s")
-                    );
-
-                } else if (!($row->last_login_attempt != '' and (strtotime("now") + 30 * $this->config_vars['try'] ) < strtotime($row->last_login_attempt))) {
-
-                    $newtimestamp = strtotime("$row->last_login_attempt + 30 seconds");
-                    $data = array(
-                        'last_login_attempt' =>  date( 'Y-m-d H:i:s', $newtimestamp )
-                    );
-                }
-
-                $query = $this->CI->db->where('email', $email);
-                $this->CI->db->update($this->config_vars['users'], $data);
-            }
+        }
+        // if not matches
+        else {
 
             $this->error($this->config_vars['wrong']);
             return FALSE;
@@ -272,12 +264,11 @@ class Aauth {
      */
     public function control( $perm_par ){
 
-        // if perm_par is given
         $perm_id = $this->get_perm_id($perm_par);
         $this->update_activity();
 
-        // if user or user's group allowed
-        if ( !$this->is_allowed($perm_id) or !$this->is_group_allowed($perm_id)){
+        // if user or user's group not allowed
+        if ( ! $this->is_allowed($perm_id) or ! $this->is_group_allowed($perm_id) ){
             echo $this->config_vars['no_access'];
             die();
         }
@@ -747,6 +738,48 @@ class Aauth {
 
         $this->CI->db->where('id', $user_id);
         return $this->CI->db->update($this->config_vars['users'], $data);
+    }
+
+
+    /**
+     * Update login attempt and if exceeds return false
+     * Update user's last login attemp date and number date
+     * @param string $email User email
+     * @return bool
+     */
+    public function update_login_attempts($email) {
+
+        $user_id = $this->get_user_id($email);
+
+        $query = $this->CI->db->where('id', $user_id);
+        $query = $this->CI->db->get( $this->config_vars['users'] );
+        $row = $query->row();
+
+        $data = [];
+
+        if ( $row->last_login_attempt == date("Y-m-d H:0:0")) {
+
+            $data['login_attempts'] = $row->login_attempts + 1;
+
+            $query = $this->CI->db->where('id', $user_id);
+            $this->CI->db->update($this->config_vars['users'], $data);
+
+        } else {
+
+            $data['last_login_attempt'] = date("Y-m-d H:0:0");
+            $data['login_attempts'] = 1;
+
+            $this->CI->db->where('id', $user_id);
+            $this->CI->db->update($this->config_vars['users'], $data);
+
+        }
+
+        if ( $data['login_attempts'] > $this->config_vars['max_login_attempt'] ) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     /**
@@ -1762,6 +1795,9 @@ class Aauth {
  * tamam gibi // 4mysql index fulltext index??
  * geçici ban ve e-mail ile tkrar aktifleştime olayı
  * ddos protect olayını daha mantıklı hale getür
+ *
+ * lock_user (until parametrsi)
+ * unlock_user
  *
  *
  * -----------

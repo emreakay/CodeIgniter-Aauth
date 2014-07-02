@@ -51,9 +51,13 @@ $config['aauth'] = array(
     // non alphanumeric characters that are allowed in a name
     'valid_chars' => array(' ', '\''),
 
+    // ddos protection,
+    //if it is true, the user will be banned temporary when he exceed the login 'try'
+    'ddos_protection' => true,
+
     // login attempts time interval
-    // default 10 times in one minute
-    'try' => 10,
+    // default 20 times in one hour
+    'max_login_attempt' => 20,
 
     // to register email verifitaion need? true / false
     'verification' => false,
