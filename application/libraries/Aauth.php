@@ -397,13 +397,17 @@ class Aauth {
             $valid = false;
         }
 
-        if (!$valid) { return false; }
+        if (!$valid) {
+            echo "2";
+            return false; }
 
         $data = array(
             'email' => $email,
             'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
             'name' => $name,
         );
+
+        echo "3";
 
         if ( $this->CI->db->insert($this->config_vars['users'], $data )){
 
@@ -755,7 +759,8 @@ class Aauth {
         $query = $this->CI->db->get( $this->config_vars['users'] );
         $row = $query->row();
 
-        $data = [];
+
+        $data = array();
 
         if ( $row->last_login_attempt == date("Y-m-d H:0:0")) {
 
@@ -1516,10 +1521,9 @@ class Aauth {
     }
 
     /**
-     * Get Errors
-     * Return string of errors separated by delimiter
+     * Print Errors
+     * Prints string of errors separated by delimiter
      * @param string $divider Separator for errors
-     * @return string String of errors separated by delimiter
      */
     public function print_errors($divider = '<br />'){
 
@@ -1534,7 +1538,7 @@ class Aauth {
 
             $i++;
         }
-        return $msg;
+        echo $msg;
     }
 
     /**
@@ -1574,10 +1578,10 @@ class Aauth {
     }
 
     /**
-     * Get Info
-     * Return string of info separated by delimiter
+     * Print Info
+     * Print string of info separated by delimiter
      * @param string $divider Separator for info
-     * @return string String of info separated by delimiter
+     *
      */
     public function print_infos($divider = '<br />'){
 
@@ -1592,7 +1596,7 @@ class Aauth {
 
             $i++;
         }
-        return $msg;
+        echo $msg;
     }
 
     ########################

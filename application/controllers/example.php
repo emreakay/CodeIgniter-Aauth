@@ -21,7 +21,8 @@ class Example extends CI_Controller {
 
         if ($this->aauth->login('admin@admin.com', 'password', true))
             echo 'tmm';
-
+        else
+            echo 'hyr';
         //echo date("Y-m-d H:i:s");
     }
 
@@ -161,9 +162,14 @@ class Example extends CI_Controller {
     }
 
     function create_user() {
-        $a = $this->aauth->create_user("ess@as.com", "asd", "asdasd");
+
+        echo "as";
+
+        $a = $this->aauth->create_user("aaasada@aaasda.com", "asd", "asdasd11");
 
         print_r($this->aauth->get_user($a));
+
+        $this->aauth->print_errors();
     }
 
     public function is_banned() {
