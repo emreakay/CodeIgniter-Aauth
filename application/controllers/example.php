@@ -173,7 +173,7 @@ class Example extends CI_Controller {
 
     function create_user() {
 
-        $a = $this->aauth->create_user("aaa@a.com", "12345", "aa");
+        $a = $this->aauth->create_user("admin@admin.com", "12345", "Admin");
 
         if ($a)
             echo "tmm   ";
