@@ -57,9 +57,6 @@ class Aauth {
      */
     public function __construct() {
 
-        // Delete all errors at first
-        $this->errors = array();
-
         // get main CI object
         $this->CI = & get_instance();
 
@@ -77,24 +74,12 @@ class Aauth {
         $this->config_vars = & $this->CI->config->item('aauth');
     }
 
-    /**
-     * Hash password
-     * Hash the password for storage in the database
-     * (thanks to Jacob Tomlinson for contribution)
-     * @param string $pass Password to hash
-     * @param $userid
-     * @return string Hashed password
-     */
-    function hash_password($pass, $userid) {
-
-        $salt = md5($userid);
-        return hash('sha256', $salt.$pass);
-    }
 
     ########################
-    # User Functions
+    # Login Functions
     ########################
 
+    //tested
     /**
      * Login user
      * Check provided details against the database. Add items to error array on fail, create session if success
@@ -132,7 +117,7 @@ class Aauth {
         // only email found and login attempts exceeded
         if ($query->num_rows() > 0 and $this->config_vars['ddos_protection'] and ! $this->update_login_attempts($row->email)) {
 
-            $this->error($this->config_vars['wrong']);
+            $this->error($this->config_vars['exceeded']);
             return false;
         }
 
@@ -211,6 +196,7 @@ class Aauth {
         }
     }
 
+    //tested
     /**
      * Check user login
      * Checks if user logged in, also checks remember.
@@ -275,6 +261,7 @@ class Aauth {
 
     }
 
+    //tested
     /**
      * Logout user
      * Destroys the CodeIgniter session and remove cookies to log out user.
@@ -294,52 +281,7 @@ class Aauth {
         return $this->CI->session->sess_destroy();
     }
 
-    /**
-     * List users
-     * Return users as an object array
-     * @param bool|int $group_par Specify group id to list group or false for all users
-     * @param string $limit Limit of users to be returned
-     * @param bool $offset Offset for limited number of users
-     * @param bool $include_banneds Include banned users
-     * @return array Array of users
-     */
-    public function list_users($group_par = FALSE, $limit = FALSE, $offset = FALSE, $include_banneds = FALSE) {
-
-        // if group_par is given
-        if ($group_par != FALSE) {
-
-            $group_par = $this->get_group_id($group_par);
-            $this->CI->db->select('*')
-                ->from($this->config_vars['users'])
-                ->join($this->config_vars['user_to_group'], $this->config_vars['users'] . ".id = " . $this->config_vars['user_to_group'] . ".user_id")
-                ->where($this->config_vars['user_to_group'] . ".group_id", $group_par);
-
-        // if group_par is not given, lists all users
-        } else {
-
-            $this->CI->db->select('*')
-                ->from($this->config_vars['users']);
-        }
-
-        // banneds
-        if (!$include_banneds) {
-            $this->CI->db->where('banned != ', 1);
-        }
-
-        // limit
-        if ($limit) {
-
-            if ($offset == FALSE)
-                $this->CI->db->limit($limit);
-            else
-                $this->CI->db->limit($limit, $offset);
-        }
-
-        $query = $this->CI->db->get();
-
-        return $query->result();
-    }
-
+    //tested
     /**
      * Fast login
      * Login with just a user id
@@ -369,165 +311,6 @@ class Aauth {
     }
 
     /**
-     * Create user
-     * Creates a new user
-     * @param string $email User's email address
-     * @param string $pass User's password
-     * @param string $name User's name
-     * @return int|bool False if create fails or returns user id if successful
-     */
-    public function create_user($email, $pass, $name='') {
-
-        $valid = true;
-
-        if ( ! $this->check_email($email)) {
-            $this->error($this->config_vars['email_taken']);
-            $valid = false;
-        }
-        if ( ! valid_email($email)){
-            $this->error($this->config_vars['email_invalid']);
-            $valid = false;
-        }
-        if ( strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ){
-            $this->error($this->config_vars['pass_invalid']);
-            $valid = false;
-        }
-        if ($name !='' and !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
-            $this->error($this->config_vars['name_invalid']);
-            $valid = false;
-        }
-
-        if (!$valid) {
-            echo "2";
-            return false; }
-
-        $data = array(
-            'email' => $email,
-            'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
-            'name' => $name,
-        );
-
-        echo "3";
-
-        if ( $this->CI->db->insert($this->config_vars['users'], $data )){
-
-            $user_id = $this->CI->db->insert_id();
-
-            // set default group
-            $this->add_member($user_id, $this->config_vars['default_group']);
-
-            // if verification activated
-            if($this->config_vars['verification']){
-                $data = null;
-                $data['banned'] = 1;
-
-                $this->CI->db->where('id', $user_id);
-                $this->CI->db->update($this->config_vars['users'], $data);
-
-                // sends verifition ( !! e-mail settings must be set)
-                $this->send_verification($user_id);
-            }
-
-            // Update to correct salted password
-            $data = null;
-            $data['pass'] = $this->hash_password($pass, $user_id);
-            $this->CI->db->where('id', $user_id);
-            $this->CI->db->update($this->config_vars['users'], $data);
-
-            return $user_id;
-
-        } else {
-            return FALSE;
-        }
-    }
-
-    /**
-     * Update user
-     * Updates existing user details
-     * @param int $user_id User id to update
-     * @param string|bool $email User's email address, or false if not to be updated
-     * @param string|bool $pass User's password, or false if not to be updated
-     * @param string|bool $name User's name, or false if not to be updated
-     * @return bool Update fails/succeeds
-     */
-    public function update_user($user_id, $email = FALSE, $pass = FALSE, $name = FALSE) {
-
-        $data = array();
-
-        if ($email != FALSE) {
-            $data['email'] = $email;
-        }
-
-        if ($pass != FALSE) {
-            $data['pass'] = $this->hash_password($pass, $user_id);
-        }
-
-        if ($name != FALSE) {
-            $data['name'] = $name;
-        }
-
-        $this->CI->db->where('id', $user_id);
-        return $this->CI->db->update($this->config_vars['users'], $data);
-    }
-
-    /**
-     * Send verification email
-     * Sends a verification email based on user id
-     * @param int $user_id User id to send verification email to
-     */
-    public function send_verification($user_id){
-
-        $query = $this->CI->db->where( 'id', $user_id );
-        $query = $this->CI->db->get( $this->config_vars['users'] );
-
-        if ($query->num_rows() > 0){
-            $row = $query->row();
-
-            $ver_code = random_string('alnum', 16);
-
-            $data['verification_code'] = $ver_code;
-
-            $this->CI->db->where('id', $user_id);
-            $this->CI->db->update($this->config_vars['users'], $data);
-
-            $this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
-            $this->CI->email->to($row->email);
-            $this->CI->email->subject($this->config_vars['email']);
-            $this->CI->email->message($this->config_vars['code'] . $ver_code .
-            $this->config_vars['link'] . $user_id . '/' . $ver_code );
-            $this->CI->email->send();
-        }
-    }
-
-    /**
-     * Verify user
-     * Activates user account based on verification code
-     * @param int $user_id User id to activate
-     * @param string $ver_code Code to validate against
-     * @return bool Activation fails/succeeds
-     */
-    public function verify_user($user_id, $ver_code){
-
-        $query = $this->CI->db->where('id', $user_id);
-        $query = $this->CI->db->where('verification_code', $ver_code);
-        $query = $this->CI->db->get( $this->config_vars['users'] );
-
-        // if ver code is true
-        if( $query->num_rows() > 0 ){
-
-            $data =  array(
-                'verification_code' => '',
-                'banned' => 0
-            );
-
-            $this->CI->db->where('id', $user_id);
-            $this->CI->db->update($this->config_vars['users'] , $data);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Reset last login attempts
      * Sets a users 'last login attempts' to null
      * @param int $user_id User id to reset
@@ -538,104 +321,6 @@ class Aauth {
         $data['last_login_attempts'] = null;
         $this->CI->db->where('id', $user_id);
         return $this->CI->db->update($this->config_vars['users'], $data);
-    }
-
-    /**
-     * Ban user
-     * Bans a user account
-     * @param int $user_id User id to ban
-     * @return bool Ban fails/succeeds
-     */
-    public function ban_user($user_id) {
-
-        $data = array(
-            'banned' => 1,
-            'verification_code' => ''
-        );
-
-        $this->CI->db->where('id', $user_id);
-
-        return $this->CI->db->update($this->config_vars['users'], $data);
-    }
-
-    /**
-     * Unban user
-     * Activates user account
-     * Same with unban_user()
-     * @param int $user_id User id to activate
-     * @return bool Activation fails/succeeds
-     */
-    public function unlock_user($user_id) {
-
-        $data = array(
-            'banned' => 0
-        );
-
-        $this->CI->db->where('id', $user_id);
-
-        return $this->CI->db->update($this->config_vars['users'], $data);
-    }
-
-    /**
-     * Unban user
-     * Activates user account
-     * Same with unlock_user()
-     * @param int $user_id User id to activate
-     * @return bool Activation fails/succeeds
-     */
-    public function unban_user($user_id) {
-
-        return $this->unlock_user($user_id);
-    }
-
-
-    /**
-     * Check user banned
-     * Checks if a user is banned
-     * @param int $user_id User id to check
-     * @return bool Flase if banned, True if not
-     */
-    public function is_banned($user_id) {
-
-        $query = $this->CI->db->where('id', $user_id);
-        $query = $this->CI->db->where('banned', 1);
-
-        $query = $this->CI->db->get($this->config_vars['users']);
-
-        if ($query->num_rows() > 0)
-            return TRUE;
-        else
-            return FALSE;
-    }
-
-    /**
-     * Delete user
-     * Delete a user from database. WARNING Can't be undone
-     * @param int $user_id User id to delete
-     */
-    public function delete_user($user_id) {
-
-        $this->CI->db->where('id', $user_id);
-        $this->CI->db->delete($this->config_vars['users']);
-    }
-
-    /**
-     * Check email
-     * Checks if an email address is available
-     * @param string $email Email to check
-     * @return bool True if available, False if not
-     */
-    public function check_email($email) {
-
-        $this->CI->db->where("email", $email);
-        $query = $this->CI->db->get($this->config_vars['users']);
-
-        if ($query->num_rows() > 0) {
-            $this->info($this->config_vars['email_taken']);
-            return FALSE;
-        }
-        else
-            return TRUE;
     }
 
     /**
@@ -707,25 +392,7 @@ class Aauth {
         return false;
     }
 
-    /**
-     * Update activity
-     * Update user's last activity date
-     * @param int|bool $user_id User id to update or false for current user
-     * @return bool Update fails/succeeds
-     */
-    public function update_activity($user_id = FALSE) {
-
-        if ($user_id == FALSE)
-            $user_id = $this->CI->session->userdata('id');
-
-        if($user_id==false){return false;}
-
-        $data['last_activity'] = date("Y-m-d H:i:s");
-
-        $query = $this->CI->db->where('id',$user_id);
-        return $this->CI->db->update($this->config_vars['users'], $data);
-    }
-
+    //tested
     /**
      * Update last login
      * Update user's last login date
@@ -745,6 +412,7 @@ class Aauth {
     }
 
 
+    //tested
     /**
      * Update login attempt and if exceeds return false
      * Update user's last login attemp date and number date
@@ -762,7 +430,7 @@ class Aauth {
 
         $data = array();
 
-        if ( $row->last_login_attempt == date("Y-m-d H:0:0")) {
+        if ( strtotime($row->last_login_attempt) == strtotime(date("Y-m-d H:0:0"))) {
 
             $data['login_attempts'] = $row->login_attempts + 1;
 
@@ -804,6 +472,162 @@ class Aauth {
         return $this->CI->db->update($this->config_vars['users'], $data);
     }
 
+
+    ########################
+    # User Functions
+    ########################
+
+    //tested
+    /**
+     * Create user
+     * Creates a new user
+     * @param string $email User's email address
+     * @param string $pass User's password
+     * @param string $name User's name
+     * @return int|bool False if create fails or returns user id if successful
+     */
+    public function create_user($email, $pass, $name='') {
+
+        $valid = true;
+
+        // if email is already exist
+        if ( ! $this->check_email($email)) {
+            $this->error($this->config_vars['email_taken']);
+            $valid = false;
+        }
+
+        if ( ! valid_email($email)){
+            $this->error($this->config_vars['email_invalid']);
+            $valid = false;
+        }
+        if ( strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ){
+            $this->error($this->config_vars['pass_invalid']);
+            $valid = false;
+        }
+        if ($name !='' and !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
+            $this->error($this->config_vars['name_invalid']);
+            $valid = false;
+        }
+
+        if (!$valid) {
+            return false; }
+
+        $data = array(
+            'email' => $email,
+            'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
+            'name' => $name,
+        );
+
+        if ( $this->CI->db->insert($this->config_vars['users'], $data )){
+
+            $user_id = $this->CI->db->insert_id();
+
+            // set default group
+            $this->add_member($user_id, $this->config_vars['default_group']);
+
+            // if verification activated
+            if($this->config_vars['verification']){
+                $data = null;
+                $data['banned'] = 1;
+
+                $this->CI->db->where('id', $user_id);
+                $this->CI->db->update($this->config_vars['users'], $data);
+
+                // sends verifition ( !! e-mail settings must be set)
+                $this->send_verification($user_id);
+            }
+
+            // Update to correct salted password
+            $data = null;
+            $data['pass'] = $this->hash_password($pass, $user_id);
+            $this->CI->db->where('id', $user_id);
+            $this->CI->db->update($this->config_vars['users'], $data);
+
+            return $user_id;
+
+        } else {
+            return FALSE;
+        }
+    }
+
+    //tested
+    /**
+     * Update user
+     * Updates existing user details
+     * @param int $user_id User id to update
+     * @param string|bool $email User's email address, or false if not to be updated
+     * @param string|bool $pass User's password, or false if not to be updated
+     * @param string|bool $name User's name, or false if not to be updated
+     * @return bool Update fails/succeeds
+     */
+    public function update_user($user_id, $email = FALSE, $pass = FALSE, $name = FALSE) {
+
+        $data = array();
+
+        if ($email != FALSE) {
+            $data['email'] = $email;
+        }
+
+        if ($pass != FALSE) {
+            $data['pass'] = $this->hash_password($pass, $user_id);
+        }
+
+        if ($name != FALSE) {
+            $data['name'] = $name;
+        }
+
+        $this->CI->db->where('id', $user_id);
+        return $this->CI->db->update($this->config_vars['users'], $data);
+    }
+
+    //tested
+    /**
+     * List users
+     * Return users as an object array
+     * @param bool|int $group_par Specify group id to list group or false for all users
+     * @param string $limit Limit of users to be returned
+     * @param bool $offset Offset for limited number of users
+     * @param bool $include_banneds Include banned users
+     * @return array Array of users
+     */
+    public function list_users($group_par = FALSE, $limit = FALSE, $offset = FALSE, $include_banneds = FALSE) {
+
+        // if group_par is given
+        if ($group_par != FALSE) {
+
+            $group_par = $this->get_group_id($group_par);
+            $this->CI->db->select('*')
+                ->from($this->config_vars['users'])
+                ->join($this->config_vars['user_to_group'], $this->config_vars['users'] . ".id = " . $this->config_vars['user_to_group'] . ".user_id")
+                ->where($this->config_vars['user_to_group'] . ".group_id", $group_par);
+
+            // if group_par is not given, lists all users
+        } else {
+
+            $this->CI->db->select('*')
+                ->from($this->config_vars['users']);
+        }
+
+        // banneds
+        if (!$include_banneds) {
+            $this->CI->db->where('banned != ', 1);
+        }
+
+        // limit
+        if ($limit) {
+
+            if ($offset == FALSE)
+                $this->CI->db->limit($limit);
+            else
+                $this->CI->db->limit($limit, $offset);
+        }
+
+        $query = $this->CI->db->get();
+
+        return $query->result();
+    }
+
+    //tested
     /**
      * Get user
      * Get user information
@@ -826,14 +650,153 @@ class Aauth {
     }
 
     /**
+     * Verify user
+     * Activates user account based on verification code
+     * @param int $user_id User id to activate
+     * @param string $ver_code Code to validate against
+     * @return bool Activation fails/succeeds
+     */
+    public function verify_user($user_id, $ver_code){
+
+        $query = $this->CI->db->where('id', $user_id);
+        $query = $this->CI->db->where('verification_code', $ver_code);
+        $query = $this->CI->db->get( $this->config_vars['users'] );
+
+        // if ver code is true
+        if( $query->num_rows() > 0 ){
+
+            $data =  array(
+                'verification_code' => '',
+                'banned' => 0
+            );
+
+            $this->CI->db->where('id', $user_id);
+            $this->CI->db->update($this->config_vars['users'] , $data);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Send verification email
+     * Sends a verification email based on user id
+     * @param int $user_id User id to send verification email to
+     */
+    public function send_verification($user_id){
+
+        $query = $this->CI->db->where( 'id', $user_id );
+        $query = $this->CI->db->get( $this->config_vars['users'] );
+
+        if ($query->num_rows() > 0){
+            $row = $query->row();
+
+            $ver_code = random_string('alnum', 16);
+
+            $data['verification_code'] = $ver_code;
+
+            $this->CI->db->where('id', $user_id);
+            $this->CI->db->update($this->config_vars['users'], $data);
+
+            $this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
+            $this->CI->email->to($row->email);
+            $this->CI->email->subject($this->config_vars['email']);
+            $this->CI->email->message($this->config_vars['code'] . $ver_code .
+                $this->config_vars['link'] . $user_id . '/' . $ver_code );
+            $this->CI->email->send();
+        }
+    }
+
+    //not tested excatly
+    /**
+     * Delete user
+     * Delete a user from database. WARNING Can't be undone
+     * @param int $user_id User id to delete
+     */
+    public function delete_user($user_id) {
+
+        $this->CI->db->where('id', $user_id);
+        $this->CI->db->delete($this->config_vars['users']);
+
+        // delete from perm_to_user
+        $this->CI->db->where('user_id', $user_id);
+        $this->CI->db->delete($this->config_vars['perm_to_user']);
+
+        // delete from user_to_group
+        $this->CI->db->where('user_id', $user_id);
+        $this->CI->db->delete($this->config_vars['user_to_group']);
+
+        // delete user vars
+        $this->CI->db->where('user_id', $user_id);
+        $this->CI->db->delete($this->config_vars['user_variables']);
+    }
+
+    //tested
+    /**
+     * Ban user
+     * Bans a user account
+     * @param int $user_id User id to ban
+     * @return bool Ban fails/succeeds
+     */
+    public function ban_user($user_id) {
+
+        $data = array(
+            'banned' => 1,
+            'verification_code' => ''
+        );
+
+        $this->CI->db->where('id', $user_id);
+
+        return $this->CI->db->update($this->config_vars['users'], $data);
+    }
+
+    //tested
+    /**
+     * Unban user
+     * Activates user account
+     * Same with unlock_user()
+     * @param int $user_id User id to activate
+     * @return bool Activation fails/succeeds
+     */
+    public function unban_user($user_id) {
+
+        $data = array(
+            'banned' => 0
+        );
+
+        $this->CI->db->where('id', $user_id);
+
+        return $this->CI->db->update($this->config_vars['users'], $data);
+    }
+
+    //tested
+    /**
+     * Check user banned
+     * Checks if a user is banned
+     * @param int $user_id User id to check
+     * @return bool False if banned, True if not
+     */
+    public function is_banned($user_id) {
+
+        $query = $this->CI->db->where('id', $user_id);
+        $query = $this->CI->db->where('banned', 1);
+
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
      * Get user id
-     * Get user id from email address
-     * @param string $email Email address for user
+     * Get user id from email address, if par. not given, return current user's id
+     * @param string|bool $email Email address for user
      * @return int User id
      */
     public function get_user_id($email=false) {
 
-        if(!$email){
+        if( ! $email){
             $query = $this->CI->db->where('id', $this->CI->session->userdata('id'));
         } else {
             $query = $this->CI->db->where('email', $email);
@@ -866,10 +829,66 @@ class Aauth {
         return $query = $this->CI->db->get()->result();
     }
 
+    //tested
+    /**
+     * Check email
+     * Checks if an email address is available
+     * @param string $email Email to check
+     * @return bool True if available, False if not
+     */
+    public function check_email($email) {
+
+        $this->CI->db->where("email", $email);
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0) {
+            $this->info($this->config_vars['email_taken']);
+            return FALSE;
+        }
+        else
+            return TRUE;
+    }
+
+    //tested
+    /**
+     * Update activity
+     * Update user's last activity date
+     * @param int|bool $user_id User id to update or false for current user
+     * @return bool Update fails/succeeds
+     */
+    public function update_activity($user_id = FALSE) {
+
+        if ($user_id == FALSE)
+            $user_id = $this->CI->session->userdata('id');
+
+        if($user_id==false){return false;}
+
+        $data['last_activity'] = date("Y-m-d H:i:s");
+
+        $query = $this->CI->db->where('id',$user_id);
+        return $this->CI->db->update($this->config_vars['users'], $data);
+    }
+
+    //tested
+    /**
+     * Hash password
+     * Hash the password for storage in the database
+     * (thanks to Jacob Tomlinson for contribution)
+     * @param string $pass Password to hash
+     * @param $userid
+     * @return string Hashed password
+     */
+    function hash_password($pass, $userid) {
+
+        $salt = md5($userid);
+        return hash('sha256', $salt.$pass);
+    }
+
     ########################
     # Group Functions
     ########################
 
+    //tested
     /**
      * Create group
      * Creates a new group
@@ -893,6 +912,7 @@ class Aauth {
         return FALSE;
     }
 
+    //tested
     /**
      * Update group
      * Change a groups name
@@ -900,7 +920,9 @@ class Aauth {
      * @param string $group_name New group name
      * @return bool Update success/failure
      */
-    public function update_group($group_id, $group_name) {
+    public function update_group($group_par, $group_name) {
+
+        $group_id = $this->get_group_id($group_par);
 
         $data['name'] = $group_name;
 
@@ -908,13 +930,16 @@ class Aauth {
         return $this->CI->db->update($this->config_vars['groups'], $data);
     }
 
+    //tested
     /**
      * Delete group
      * Delete a group from database. WARNING Can't be undone
      * @param int $group_id User id to delete
      * @return bool Delete success/failure
      */
-    public function delete_group($group_id) {
+    public function delete_group($group_par) {
+
+        $group_id = $this->get_group_id($group_par);
 
         // bug fixed
         // now users are deleted from user_to_group table
@@ -925,6 +950,7 @@ class Aauth {
         return $this->CI->db->delete($this->config_vars['groups']);
     }
 
+    //tested
     /**
      * Add member
      * Add a user to a group
@@ -934,16 +960,22 @@ class Aauth {
      */
     public function add_member($user_id, $group_par) {
 
-        $group_par = $this->get_group_id($group_par);
+        $group_id = $this->get_group_id($group_par);
+
+        if( ! $group_id ) {
+
+            $this->error( $this->config_vars['group_exist'] );
+            return false;
+        }
 
         $query = $this->CI->db->where('user_id',$user_id);
-        $query = $this->CI->db->where('group_id',$group_par);
+        $query = $this->CI->db->where('group_id',$group_id);
         $query = $this->CI->db->get($this->config_vars['user_to_group']);
 
         if ($query->num_rows() < 1) {
             $data = array(
                 'user_id' => $user_id,
-                'group_id' => $group_par
+                'group_id' => $group_id
             );
 
             return $this->CI->db->insert($this->config_vars['user_to_group'], $data);
@@ -952,6 +984,7 @@ class Aauth {
         return true;
     }
 
+    //tested
     /**
      * Remove member
      * Remove a user from a group
@@ -967,18 +1000,7 @@ class Aauth {
         return $this->CI->db->delete($this->config_vars['user_to_group']);
     }
 
-    /**
-     * Fire member
-     * Remove a user from a group same as remove member
-     * @param int $user_id User id to remove from group
-     * @param int|string $group_par Group id or name to remove user from
-     * @return bool Remove success/failure
-     */
-    public function fire_member($user_id, $group_par) {
-
-        return $this->remove_member($user_id,$group_par);
-    }
-
+    //tested
     /**
      * Is member
      * Check if current user is a member of a group
@@ -989,30 +1011,26 @@ class Aauth {
     public function is_member( $group_par, $user_id = false ) {
 
         // if user_id false (not given), current user
-        if(!$user_id){
+        if( ! $user_id){
             $user_id = $this->CI->session->userdata('id');
         }
 
         $group_id = $this->get_group_id($group_par);
-        // if found
-        if (is_numeric($group_id)) {
 
-            $query = $this->CI->db->where('user_id', $user_id);
-            $query = $this->CI->db->where('group_id', $group_par);
-            $query = $this->CI->db->get($this->config_vars['user_to_group']);
+        $query = $this->CI->db->where('user_id', $user_id);
+        $query = $this->CI->db->where('group_id', $group_id);
+        $query = $this->CI->db->get($this->config_vars['user_to_group']);
 
-            $row = $query->row();
+        $row = $query->row();
 
-            if ($query->num_rows() > 0) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
+        if ($query->num_rows() > 0) {
+            return TRUE;
         } else {
-            return false;
+            return FALSE;
         }
     }
 
+    //tested
     /**
      * Is admin
      * Check if current user is a member of the admin group
@@ -1021,9 +1039,10 @@ class Aauth {
      */
     public function is_admin( $user_id = false ) {
 
-        return $this->is_member($this->config_vars['admin_group'],$user_id);
+        return $this->is_member($this->config_vars['admin_group'], $user_id);
     }
 
+    //tested
     /**
      * List groups
      * List all groups
@@ -1035,6 +1054,8 @@ class Aauth {
         return $query->result();
     }
 
+
+    //tested
     /**
      * Get group name
      * Get group name from group id
@@ -1053,13 +1074,14 @@ class Aauth {
         return $row->name;
     }
 
+    //tested
     /**
      * Get group id
-     * Get group id from group name or id
+     * Get group id from group name or id ( ! Case sensitive)
      * @param int|string $group_par Group id or name to get
      * @return int Group id
      */
-    public function get_group_id($group_par) {
+    public function get_group_id ( $group_par ) {
 
         if( is_numeric($group_par) ) { return $group_par; }
 
@@ -1077,6 +1099,7 @@ class Aauth {
     # Permission Functions
     ########################
 
+    //tested
     /**
      * Create permission
      * Creates a new permission type
@@ -1101,6 +1124,7 @@ class Aauth {
         return FALSE;
     }
 
+    //tested
     /**
      * Update permission
      * Updates permission name and description
@@ -1109,19 +1133,21 @@ class Aauth {
      * @param string $definition Permission description
      * @return bool Update success/failure
      */
-    public function update_perm($perm_par, $perm_name, $definition=false) {
+    public function update_perm($perm_par, $perm_name=false, $definition=false) {
 
         $perm_id = $this->get_perm_id($perm_par);
 
-        $data['name'] = $perm_name;
+        if ($perm_name != false)
+            $data['name'] = $perm_name;
 
-        if ($definition!=false)
-            $data['definition'] = $perm_name;
+        if ($definition != false)
+            $data['definition'] = $definition;
 
         $this->CI->db->where('id', $perm_id);
         return $this->CI->db->update($this->config_vars['perms'], $data);
     }
 
+    //not ok
     /**
      * Delete permission
      * Delete a permission from database. WARNING Can't be undone
@@ -1219,11 +1245,11 @@ class Aauth {
                     return true;
                 }
             }
-
             return false;
         }
     }
 
+    //tested
     /**
      * Allow User
      * Add User to permission
@@ -1247,11 +1273,12 @@ class Aauth {
                 'perm_id' => $perm_id
             );
 
-            return $this->CI->db->insert($this->config_vars['perm_to_group'], $data);
+            return $this->CI->db->insert($this->config_vars['perm_to_user'], $data);
         }
         return true;
     }
 
+    //tested
     /**
      * Deny User
      * Remove user from permission
@@ -1266,10 +1293,10 @@ class Aauth {
         $this->CI->db->where('user_id', $user_id);
         $this->CI->db->where('perm_id', $perm_id);
 
-        return $this->CI->db->delete($this->config_vars['perm_to_group']);
+        return $this->CI->db->delete($this->config_vars['perm_to_user']);
     }
 
-
+    //tested
     /**
      * Allow Group
      * Add group to permission
@@ -1280,24 +1307,26 @@ class Aauth {
     public function allow_group($group_par, $perm_par) {
 
         $perm_id = $this->get_perm_id($perm_par);
+        $group_id = $this->get_group_id($group_par);
 
-        $query = $this->CI->db->where('group_id',$group_par);
+        $query = $this->CI->db->where('group_id',$group_id);
         $query = $this->CI->db->where('perm_id',$perm_id);
         $query = $this->CI->db->get($this->config_vars['perm_to_group']);
 
         if ($query->num_rows() < 1) {
 
-            $group_par = $this->get_group_id($group_par);
             $data = array(
-                'group_id' => $group_par,
+                'group_id' => $group_id,
                 'perm_id' => $perm_id
             );
 
             return $this->CI->db->insert($this->config_vars['perm_to_group'], $data);
         }
+
         return true;
     }
 
+    //tested
     /**
      * Deny Group
      * Remove group from permission
@@ -1308,14 +1337,15 @@ class Aauth {
     public function deny_group($group_par, $perm_par) {
 
         $perm_id = $this->get_perm_id($perm_par);
+        $group_id = $this->get_group_id($group_par);
 
-        $group_par = $this->get_group_id($group_par);
-        $this->CI->db->where('group_id', $group_par);
+        $this->CI->db->where('group_id', $group_id);
         $this->CI->db->where('perm_id', $perm_id);
 
         return $this->CI->db->delete($this->config_vars['perm_to_group']);
     }
 
+    //tested
     /**
      * List Permissions
      * List all permissions
@@ -1327,6 +1357,7 @@ class Aauth {
         return $query->result();
     }
 
+    //tested
     /**
      * Get permission id
      * Get permission id from permisison name or id
@@ -1351,6 +1382,7 @@ class Aauth {
     # Private Message Functions
     ########################
 
+    //tested
     /**
      * Send Private Message
      * Send a private message to another user
@@ -1378,6 +1410,18 @@ class Aauth {
             return false;
         }
 
+        $query = $this->CI->db->where('id', $sender_id);
+        $query = $this->CI->db->where('banned', 0);
+
+        $query = $this->CI->db->get( $this->config_vars['users'] );
+
+        // if user not exist or banned
+        if ( $query->num_rows() < 1 ){
+            $this->error($this->config_vars['no_user']);
+            return false;
+        }
+
+
         $data = array(
             'sender_id' => $sender_id,
             'receiver_id' => $receiver_id,
@@ -1389,6 +1433,7 @@ class Aauth {
         return $query = $this->CI->db->insert( $this->config_vars['pms'], $data );
     }
 
+    //tested
     /**
      * List Private Messages
      * If receiver id not given retruns current user's pms, if sender_id given, it returns only pms from given sender
@@ -1415,6 +1460,7 @@ class Aauth {
         return $query->result();
     }
 
+    //tested
     /**
      * Get Private Message
      * Get private message by id
@@ -1424,8 +1470,6 @@ class Aauth {
      */
     public function get_pm($pm_id, $set_as_read = true){
 
-        if ($set_as_read) $this->set_as_read_pm($pm_id);
-
         $query = $this->CI->db->where('id', $pm_id);
         $query = $this->CI->db->get( $this->config_vars['pms'] );
 
@@ -1433,9 +1477,12 @@ class Aauth {
             $this->error( $this->config_vars['no_pm'] );
         }
 
+        if ($set_as_read) $this->set_as_read_pm($pm_id);
+
         return $query->result();
     }
 
+    //tested
     /**
      * Delete Private Message
      * Delete private message by id
@@ -1447,6 +1494,7 @@ class Aauth {
         return $this->CI->db->delete( $this->config_vars['pms'], array('id' => $pm_id) );
     }
 
+    //tested
     /**
      * Count unread Private Message
      * Count number of unread private messages
@@ -1459,13 +1507,14 @@ class Aauth {
             $receiver_id = $this->CI->session->userdata('id');
         }
 
-        $query = $this->CI->db->where('reciever_id', $receiver_id);
+        $query = $this->CI->db->where('receiver_id', $receiver_id);
         $query = $this->CI->db->where('read', 0);
         $query = $this->CI->db->get( $this->config_vars['pms'] );
 
         return $query->num_rows();
     }
 
+    //tested
     /**
      * Set Private Message as read
      * Set private message as read
@@ -1484,6 +1533,7 @@ class Aauth {
     # Error / Info Functions
     ########################
 
+    //tested
     /**
      * Error
      * Add message to error array and set flash data
@@ -1495,6 +1545,7 @@ class Aauth {
         $this->CI->session->set_flashdata('errors', $this->errors);
     }
 
+    //not working
     /**
      * Keep Errors
      * keeps the flash data flash data
@@ -1503,9 +1554,10 @@ class Aauth {
      * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
      */
     public function keep_errors(){
-        $this->session->keep_flashdata('errors');
+        $this->CI->session->keep_flashdata('errors');
     }
 
+    //tested
     /**
      * Get Errors Array
      * Return array of errors
@@ -1520,6 +1572,7 @@ class Aauth {
         }
     }
 
+    //tested
     /**
      * Print Errors
      * Prints string of errors separated by delimiter
@@ -1541,6 +1594,7 @@ class Aauth {
         echo $msg;
     }
 
+    //tested
     /**
      * Info
      * Add message to info array and set flash data
@@ -1552,6 +1606,7 @@ class Aauth {
         $this->CI->session->set_flashdata('infos', $this->errors);
     }
 
+    //not working
     /**
      * Keep Infos
      * keeps the flash data
@@ -1563,6 +1618,7 @@ class Aauth {
         $this->session->keep_flashdata('infos');
     }
 
+    //tested
     /**
      * Get Info Array
      * Return array of info
@@ -1577,6 +1633,7 @@ class Aauth {
         }
     }
 
+    //tested
     /**
      * Print Info
      * Print string of info separated by delimiter
@@ -1603,6 +1660,7 @@ class Aauth {
     # User Variables
     ########################
 
+    //tested
     /**
      * Set User Variable as key value
      * if variable not set before, it will ve set
@@ -1618,6 +1676,11 @@ class Aauth {
             $user_id = $this->CI->session->userdata('id');
         }
 
+        // if specified user is not found
+        if ( ! $this->get_user($user_id)){
+            return false;
+        }
+
         // if var not set, set
         if ( ! $this->get_user_var($key,$user_id) ) {
 
@@ -1627,7 +1690,7 @@ class Aauth {
                 'user_id' => $user_id
             );
 
-            return $this->db->insert( $this->config_vars['user_variables'] , $data);
+            return $this->CI->db->insert( $this->config_vars['user_variables'] , $data);
 
         }
         // if var already set, overwrite
@@ -1639,14 +1702,14 @@ class Aauth {
                 'user_id' => $user_id
             );
 
-            $this->db->where( 'key', $key );
-            $this->db->where( 'user_id', $user_id);
+            $this->CI->db->where( 'key', $key );
+            $this->CI->db->where( 'user_id', $user_id);
 
-            return $this->db->update( $this->config_vars['user_variables'], $data);
+            return $this->CI->db->update( $this->config_vars['user_variables'], $data);
         }
     }
 
-
+    //tested
     /**
      * Unset User Variable as key value
      * @param string $key
@@ -1659,14 +1722,19 @@ class Aauth {
             $user_id = $this->CI->session->userdata('id');
         }
 
-        $this->db->where('key', $key);
-        $this->db->where('user_id', $user_id);
+        // if specified user is not found
+        if ( ! $this->get_user($user_id)){
+            return false;
+        }
 
-        return $this->db->delete( $this->config_vars['user_variables'] );
+        $this->CI->db->where('key', $key);
+        $this->CI->db->where('user_id', $user_id);
+
+        return $this->CI->db->delete( $this->config_vars['user_variables'] );
 
     }
 
-
+    //tested
     /**
      * Get User Variable by key
      * Return string of variable value or false
@@ -1678,6 +1746,11 @@ class Aauth {
 
         if ( ! $user_id ){
             $user_id = $this->CI->session->userdata('id');
+        }
+
+        // if specified user is not found
+        if ( ! $this->get_user($user_id)){
+            return false;
         }
 
         $query = $this->CI->db->where('user_id', $user_id);
@@ -1700,6 +1773,7 @@ class Aauth {
     # Aauth System Variables
     ########################
 
+    //tested
     /**
      * Set Aauth System Variable as key value
      * if variable not set before, it will be set
@@ -1708,17 +1782,17 @@ class Aauth {
      * @param string $value
      * @return bool
      */
-    public function set_aauth_var( $key, $value ) {
+    public function set_system_var( $key, $value ) {
 
         // if var not set, set
-        if ( ! $this->get_aauth_var($key) ) {
+        if ( ! $this->get_system_var($key) ) {
 
             $data = array(
                 'key' => $key,
                 'value' => $value,
             );
 
-            return $this->db->insert( $this->config_vars['aauth_variables'] , $data);
+            return $this->CI->db->insert( $this->config_vars['system_variables'] , $data);
 
         }
         // if var already set, overwrite
@@ -1729,35 +1803,37 @@ class Aauth {
                 'value' => $value,
             );
 
-            $this->db->where( 'key', $key );
-            return $this->db->update( $this->config_vars['aauth_variables'], $data);
+            $this->CI->db->where( 'key', $key );
+            return $this->CI->db->update( $this->config_vars['system_variables'], $data);
         }
 
     }
 
+    //tested
     /**
      * Unset Aauth System Variable as key value
      * @param string $key
      * @return bool
      */
-    public function unset_aauth_var( $key  ) {
+    public function unset_system_var( $key  ) {
 
-        $this->db->where('key', $key);
+        $this->CI->db->where('key', $key);
 
-        return $this->db->delete( $this->config_vars['aauth_variables'] );
+        return $this->CI->db->delete( $this->config_vars['system_variables'] );
     }
 
+    //tested
     /**
      * Get Aauth System Variable by key
      * Return string of variable value or false
      * @param string $key
      * @return bool|string , false if var is not set, the value of var if set
      */
-    public function get_aauth_var( $key ){
+    public function get_system_var( $key ){
 
         $query = $this->CI->db->where('key', $key);
 
-        $query = $this->CI->db->get( $this->config_vars['aauth_variables'] );
+        $query = $this->CI->db->get( $this->config_vars['system_variables'] );
 
         // if variable not set
         if ($query->num_rows() < 1) { return false;}
@@ -1779,7 +1855,11 @@ class Aauth {
  * parametre olarak array alma
  * stacoverflow
  * public id sini 0 a eşitleyip öyle kontrol yapabilirdik (oni boşver uşağum)
- *
+ * lock_user (until parametrsi)
+ * unlock_user
+ * send_pm() in errounda receiver ve sender için ayrı errorlar olabilür
+ * ddos protect olayını daha mantıklı hale getür
+ * geçici ban ve e-mail ile tkrar aktifleştime olayı
 */
 
 /**
@@ -1797,11 +1877,9 @@ class Aauth {
  * tamam // sistem variables
  * tmam // user perms
  * tamam gibi // 4mysql index fulltext index??
- * geçici ban ve e-mail ile tkrar aktifleştime olayı
- * ddos protect olayını daha mantıklı hale getür
+ * tamam //delete_user dan sonra grup ve perms ler de silinmeli
+ * login() içinde login'i doğru şekilde olsa da yine de login attempt artıyo kesin düzeltilecek
  *
- * lock_user (until parametrsi)
- * unlock_user
  *
  *
  * -----------
@@ -1821,8 +1899,10 @@ class Aauth {
  * User and Aauth System Variables.
 set_user_var( $key, $value, $user_id = false )
 get_user_var( $key, $user_id = false)
-set_aauth_var( $key, $value, $user_id = false )
-get_aauth_var( $key, $user_id = false)
+unset
+set_system_var( $key, $value, $user_id = false )
+get_system_var( $key, $user_id = false)
+unset
 functions added
  *
  *

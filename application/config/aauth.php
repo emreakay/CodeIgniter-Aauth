@@ -38,7 +38,7 @@ $config['aauth'] = array(
     // pm table
     'pms' => 'aauth_pms',
     // system variables
-    'aauth_variables' => 'aauth_system_variables',
+    'system_variables' => 'aauth_system_variables',
     // user variables
     'user_variables' => 'aauth_user_variables',
 
@@ -57,7 +57,7 @@ $config['aauth'] = array(
 
     // login attempts time interval
     // default 20 times in one hour
-    'max_login_attempt' => 20,
+    'max_login_attempt' => 10,
 
     // to register email verifitaion need? true / false
     'verification' => false,
@@ -91,6 +91,7 @@ $config['aauth'] = array(
     'no_user' => 'User not Exist',
     'not_verified' => 'Please verify your account.',
     'group_exist' => 'Group already exists',
+    'no_group' => 'Group doesn\'t exists',
     'self_pm' => 'It is not reasonable to send pm to yourself :)',
     'no_pm' => 'Pm not found',
 
