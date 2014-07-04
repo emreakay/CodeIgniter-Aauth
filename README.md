@@ -28,7 +28,7 @@ Permission Management (creating,deleting permissons, allow, deny groups, public 
 
 ### Migration
 ***
-* if you have been using Version 1 before, take a look at Migration Page from here.
+* if you have been using Version 1 before, take a look at Migration Page
 
 ### Quick Start 
 ***
