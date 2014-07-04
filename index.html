@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Codeigniter-aauth by emreakay</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Codeigniter-aauth</h1>
+        <h2>Authorization, authentication and User Management library for Codeigniter 2.x to make easy user management and permission operations</h2>
+        <a href="https://github.com/emreakay/CodeIgniter-Aauth" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <hr><p>Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make easy some essential jobs such as login, permissions and access operations. Despite ease of use, it has also very advanced features like private messages, groupping, access management, public access etc..</p>
+
+<p>After Quick Start, Take a look <a href="https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages">detailed Documentation from wiki</a>  </p>
+
+<h3>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<hr><ul>
+<li>User Management and Operations (login, logout, register, vertification via e-mail, forgoten password, ban management, login ddos protection)</li>
+<li>Group Operations (Creaing, deleting groups, membership management)</li>
+<li>Admin and Public Group support (Public permissions)
+Permission Management (creating,deleting permissons, allow, deny groups, public permissions, permission checking)</li>
+<li>Group Permissions </li>
+<li>User Permissions (new)</li>
+<li>User and System Variables (new)</li>
+<li>Login Ddos Protection (new)</li>
+<li>Private Messages (pm between users)</li>
+<li>Error Mesages and Validations</li>
+<li>Langugage and config file support</li>
+<li>Flexible</li>
+</ul><h3>
+<a name="what-is-new-in-version-2" class="anchor" href="#what-is-new-in-version-2"><span class="octicon octicon-link"></span></a>What is new in Version 2</h3>
+
+<hr><ul>
+<li>User Permissions</li>
+<li>User and System Variables</li>
+<li>Login Ddos Protection</li>
+<li>Some functions has changed</li>
+<li>Some bugs fixed</li>
+</ul><h3>
+<a name="migration" class="anchor" href="#migration"><span class="octicon octicon-link"></span></a>Migration</h3>
+
+<hr><ul>
+<li>if you have been using Version 1 before, take a look at Migration Page</li>
+</ul><h3>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h3>
+
+<hr><p>Let's start :)<br>
+Firstly we will load Aauth Library to system</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s2">"Aauth"</span><span class="p">);</span>
+</pre></div>
+
+<p>thats OK.  </p>
+
+<p>Now we will create 2 new users, Ali and John  </p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_user</span><span class="p">(</span><span class="s1">'ali@ali.com'</span><span class="p">,</span><span class="s1">'alispass'</span><span class="p">,</span><span class="s1">'Ali Akay'</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_user</span><span class="p">(</span><span class="s1">'john@john.com'</span><span class="p">,</span><span class="s1">'johnspass'</span><span class="p">,</span><span class="s1">'John Button'</span><span class="p">);</span>
+</pre></div>
+
+<p>thats it. now we have two users.</p>
+
+<p>Lets Create two group governors and commons :)</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_group</span><span class="p">(</span><span class="s1">'governors'</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_group</span><span class="p">(</span><span class="s1">'commons'</span><span class="p">);</span>
+</pre></div>
+
+<p>Then, Lets Create a User with power whic is Obama (having id=12)</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_user</span><span class="p">(</span><span class="s1">'obama@usa.gov'</span><span class="p">,</span> <span class="s1">'pass-cia-fbi'</span><span class="p">,</span> <span class="s1">'Barrack Obama'</span><span class="p">);</span>
+</pre></div>
+
+<p>ok now we have two groups and one user.</p>
+
+<p>Lets create a permissions 'incrase_tax' and 'change_government' </p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_perm</span><span class="p">(</span><span class="s1">'increase_tax'</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">create_perm</span><span class="p">(</span><span class="s1">'change_government'</span><span class="p">);</span>
+</pre></div>
+
+<p>Ok, now lets give accesses. logically 'governors' will have 'increase_tax' permission and 'commons' will have 'change_government' access.<br>
+ok lets give proper access with <em>alow_group()</em> function</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">allow_group</span><span class="p">(</span><span class="s1">'governors'</span><span class="p">,</span><span class="s1">'increase_tax'</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">allow_group</span><span class="p">(</span><span class="s1">'commons'</span><span class="p">,</span><span class="s1">'change_government'</span><span class="p">);</span>
+
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">allow_group</span><span class="p">(</span><span class="s1">'commons'</span><span class="p">,</span><span class="s1">'increase_tax'</span><span class="p">);</span>
+</pre></div>
+
+<p>Ops wait a minute.  commons cannot 'increase_tax'. we need to fix it, we will use deny() to take back permission.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">deny</span><span class="p">(</span><span class="s1">'commons'</span><span class="p">,</span><span class="s1">'increase_tax'</span><span class="p">);</span>
+</pre></div>
+
+<p>Obama also can increse tax ha?</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">allow_user</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="s1">'increase_tax'</span><span class="p">);</span>
+</pre></div>
+
+<p>Ok now lets check if commons can 'increase_tax'</p>
+
+<div class="highlight highlight-php"><pre><span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">is_group_allowed</span><span class="p">(</span><span class="s1">'commons'</span><span class="p">,</span><span class="s1">'increase_tax'</span><span class="p">)){</span>
+    <span class="c1">// i dont think so</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+   <span class="c1">// do sth in the middle</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Can Obama increase_tax ? Let's check it.</p>
+
+<div class="highlight highlight-php"><pre><span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">is_allowed</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="s1">'increase_tax'</span><span class="p">)){</span>
+    <span class="c1">// i guess so</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+   <span class="c1">// piece of code</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>i think 'increse_tax' must have never been created. just delete it</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">delete_perm</span><span class="p">(</span><span class="s1">'increase_tax'</span><span class="p">);</span>
+</pre></div>
+
+<p>now better.  </p>
+
+<p>So what about public people? (public means not logged users). Can public people travel? Lets assume we have permissions namely 'travel' , of course.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">allow_group</span><span class="p">(</span><span class="s1">'public'</span><span class="p">,</span><span class="s1">'travel'</span><span class="p">);</span>
+</pre></div>
+
+<p>So Admin? what can he do? He can access everthing, You dont need to give permiision ( using allow_group() or allow_user() ) him, he already has.  </p>
+
+<p>What about User Variables?
+for every individual user, variables can be defined as key-value.</p>
+
+<p>this is a simple example to set a variable.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">set_user_var</span><span class="p">(</span><span class="s2">"key"</span><span class="p">,</span><span class="s2">"value"</span><span class="p">);</span>
+</pre></div>
+
+<p>For example if you want to keep users phones</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">set_user_var</span><span class="p">(</span><span class="s2">"phone"</span><span class="p">,</span><span class="s2">"0216 313 23 33"</span><span class="p">);</span>
+</pre></div>
+
+<p>to get the variable</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">set_user_var</span><span class="p">(</span><span class="s2">"key"</span><span class="p">);</span>
+</pre></div>
+
+<p>Aauth also permits you to define System Variables which can be accesed by every user in the system.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">set_system_var</span><span class="p">(</span><span class="s2">"key"</span><span class="p">,</span><span class="s2">"Value"</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">set_system_var</span><span class="p">(</span><span class="s2">"key"</span><span class="p">);</span>
+</pre></div>
+
+<p>ok lets look at private messages. John (his id=3) will send pm to Ali(id=4)</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">send_pm</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s1">'Hi bro. i need you'</span><span class="p">,</span><span class="s1">' can you gimme your credit card?'</span><span class="p">)</span>
+</pre></div>
+
+<p>sorry John you will be banned :(</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aauth</span><span class="o">-&gt;</span><span class="na">ban_user</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</pre></div>
+
+<p>Quick Start is done but thats not the end<br>
+Take a look <a href="https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages">detailed Documentation from wiki</a>   </p>
+
+<p>Dont forget to watch Aauth.<br>
+You can also contribute and help me :)</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/emreakay/CodeIgniter-Aauth/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/emreakay/CodeIgniter-Aauth/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/emreakay/CodeIgniter-Aauth"></a> is maintained by <a href="https://github.com/emreakay">emreakay</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
