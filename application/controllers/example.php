@@ -19,10 +19,13 @@ class Example extends CI_Controller {
 
     public function index() {
 
-        if ($this->aauth->login('admin@admin.com', 'password', true))
+        if ($this->aauth->login('aa@a.com', '12345'))
             echo 'tmm';
-
+        else
+            echo 'hyr';
         //echo date("Y-m-d H:i:s");
+
+        $this->aauth->print_errors();
     }
 
     function debug(){
@@ -31,14 +34,14 @@ class Example extends CI_Controller {
 
         print_r(
         //$this->aauth->is_admin()
-            //$this->aauth->get_user()
-            //$this->aauth->control_group("Mod")
-            //$this->aauth->control_perm(1)
-            //$this->aauth->list_groups()
-            //$this->aauth->list_users()
-            //$this->aauth->is_allowed(1)
-            //$this->aauth->is_admin()
-            //$this->aauth->create_perm("deneme",'defff')
+        //$this->aauth->get_user()
+        //$this->aauth->control_group("Mod")
+        //$this->aauth->control_perm(1)
+        //$this->aauth->list_groups()
+        //$this->aauth->list_users()
+        //$this->aauth->is_allowed(1)
+        //$this->aauth->is_admin()
+        //$this->aauth->create_perm("deneme",'defff')
         //$this->aauth->update_perm(3,'dess','asd')
         //$this->aauth->allow(1,1)
         //$this->aauth->add_member(1,1)
@@ -94,11 +97,16 @@ class Example extends CI_Controller {
         //$this->aauth->_reset_login_attempts(1);
     }
 
+    public function login_fast(){
+        $this->aauth->login_fast(1);
+    }
     
     public function is_loggedin() {
 
         if ($this->aauth->is_loggedin())
             echo 'girdin';
+
+        print_r( $this->aauth->get_user() );
     }
 
     public function logout() {
@@ -108,7 +116,7 @@ class Example extends CI_Controller {
 
     public function is_member() {
 
-        if ($this->aauth->is_member('Admin'))
+        if ($this->aauth->is_member('deneme',9))
             echo 'uye';
     }
 
@@ -127,14 +135,19 @@ class Example extends CI_Controller {
         }
     }
 
-    public function group() {
+    public function get_group_name() {
+
+        echo $this->aauth->get_group_name(1);
+    }
+
+    public function get_group_id() {
 
         echo $this->aauth->get_group_id("Admin");
     }
 
     public function list_users() {
         echo '<pre>';
-        print_r($this->aauth->list_users("Mod"));
+        print_r($this->aauth->list_users());
         echo '</pre>';
     }
 
@@ -146,24 +159,31 @@ class Example extends CI_Controller {
 
     public function check_email() {
 
-        if ($this->aauth->check_email("emre@emreakay.com"))
+        if ($this->aauth->check_email("aa@a.com"))
             echo 'uygun ';
         else
             echo 'alindi ';
 
-        echo $this->aauth->get_errors();
-
-        echo ' sadsad';
+        $this->aauth->print_errors();
     }
 
     public function get_user() {
-        print_r($this->aauth->get_user(1));
+        print_r($this->aauth->get_user());
     }
 
     function create_user() {
-        $a = $this->aauth->create_user("ess@as.com", "asd", "asdasd");
+
+        $a = $this->aauth->create_user("admin@admin.com", "12345", "Admin");
+
+        if ($a)
+            echo "tmm   ";
+        else
+            echo "hyr  ";
+
 
         print_r($this->aauth->get_user($a));
+
+        $this->aauth->print_errors();
     }
 
     public function is_banned() {
@@ -177,39 +197,180 @@ class Example extends CI_Controller {
         print_r($a);
     }
 
+    function delete_user() {
+
+        $a = $this->aauth->delete_user(7);
+
+        print_r($a);
+    }
+
+    function unban_user() {
+
+        $a = $this->aauth->unban_user(6);
+
+        print_r($a);
+    }
+
     function update_user() {
-        $a = $this->aauth->update_user(3, "xxx@ssdas.com", "asd", "asdasd");
+        $a = $this->aauth->update_user(6, "a@a.com", "12345", "tested");
+
+        print_r($a);
+    }
+
+    function update_activity() {
+        $a = $this->aauth->update_activity();
+
+        print_r($a);
+    }
+
+    function update_login_attempt() {
+        $a = $this->aauth->update_login_attempts("a@a.com");
 
         print_r($a);
     }
 
     function create_group() {
 
-        $a = $this->aauth->create_group("denemeee");
+        $a = $this->aauth->create_group("deneme");
     }
 
     function delete_group() {
 
-        $a = $this->aauth->delete_group(3);
+        $a = $this->aauth->delete_group("deneme");
     }
 
     function update_group() {
 
-        $a = $this->aauth->update_group(4, "zxxx");
+        $a = $this->aauth->update_group("deneme", "zxxx");
     }
 
     function add_member() {
 
-        $a = $this->aauth->add_member(1, 4);
+        $a = $this->aauth->add_member(8, "deneme");
     }
 
     function fire_member() {
 
-        $a = $this->aauth->fire_member(1, 4);
+        $a = $this->aauth->fire_member(8, "deneme");
     }
-    
-    
 
-}
+
+    function create_perm() {
+
+        $a = $this->aauth->create_perm("deneme","def");
+    }
+
+
+    function update_perm() {
+
+        $a = $this->aauth->update_perm("deneme","deneme","xxx");
+    }
+
+    function delete_perm() {
+
+        $a = $this->aauth->update_perm("deneme","deneme","xxx");
+    }
+
+    function allow_user() {
+
+        $a = $this->aauth->allow_user(9,"deneme");
+    }
+
+
+    function deny_user() {
+
+        $a = $this->aauth->deny_user(9,"deneme");
+    }
+
+    function allow_group() {
+
+        $a = $this->aauth->allow_group("deneme","deneme");
+    }
+
+    function deny_group() {
+
+        $a = $this->aauth->deny_group("deneme","deneme");
+    }
+
+    function list_perms() {
+
+        $a = $this->aauth->list_perms();
+        print_r($a);
+    }
+
+    function get_perm_id() {
+
+        $a = $this->aauth->get_perm_id("deneme");
+        print_r($a);
+    }
+
+
+    function send_pm() {
+
+        $a = $this->aauth->send_pm(1,8,'s',"w");
+        $this->aauth->print_errors();
+    }
+
+    function list_pms(){
+
+        print_r( $this->aauth->list_pms() );
+    }
+
+    function get_pm(){
+
+        print_r( $this->aauth->get_pm(39,false));
+    }
+
+    function delete_pm(){
+
+        $this->aauth->delete_pm(41);
+    }
+
+
+    function count_unread_pms(){
+
+        echo $this->aauth->count_unread_pms(8);
+    }
+
+    function error(){
+
+        $this->aauth->error("asd");
+        $this->aauth->error("xasd");
+        $this->aauth->keep_errors();
+        $this->aauth->print_errors();
+
+    }
+
+    function keep_errors(){
+
+        $this->aauth->print_errors();
+        //$this->aauth->keep_errors();
+    }
+
+    function set_user_var(){
+        $this->aauth->set_user_var("emre","akasy");
+    }
+
+    function unset_user_var(){
+        $this->aauth->unset_user_var("emre");
+    }
+
+    function get_user_var(){
+        echo $this->aauth->get_user_var("emre");
+    }
+
+    function set_system_var(){
+        $this->aauth->set_system_var("emre","akay");
+    }
+
+    function unset_system_var(){
+        $this->aauth->unset_system_var("emre");
+    }
+
+    function get_system_var(){
+        echo $this->aauth->get_system_var("emre");
+    }
+
+}//end
 
 /* End of file welcome.php */

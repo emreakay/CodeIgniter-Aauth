@@ -33,9 +33,14 @@ $config['aauth'] = array(
     'perms' => 'aauth_perms',
     // perms to group
     'perm_to_group' => 'aauth_perm_to_group',
+    // perms to group
+    'perm_to_user' => 'aauth_perm_to_user',
     // pm table
     'pms' => 'aauth_pms',
-
+    // system variables
+    'system_variables' => 'aauth_system_variables',
+    // user variables
+    'user_variables' => 'aauth_user_variables',
 
     // remember time
     'remember' => ' +3 days',
@@ -46,12 +51,13 @@ $config['aauth'] = array(
     // non alphanumeric characters that are allowed in a name
     'valid_chars' => array(' ', '\''),
 
-    // it limits login attempts
-    'dos_protection' => true,
+    // ddos protection,
+    //if it is true, the user will be banned temporary when he exceed the login 'try'
+    'ddos_protection' => true,
 
     // login attempts time interval
-    // default 10 times in one minute
-    'try' => 10,
+    // default 20 times in one hour
+    'max_login_attempt' => 10,
 
     // to register email verifitaion need? true / false
     'verification' => false,
@@ -85,6 +91,7 @@ $config['aauth'] = array(
     'no_user' => 'User not Exist',
     'not_verified' => 'Please verify your account.',
     'group_exist' => 'Group already exists',
+    'no_group' => 'Group doesn\'t exists',
     'self_pm' => 'It is not reasonable to send pm to yourself :)',
     'no_pm' => 'Pm not found',
 
