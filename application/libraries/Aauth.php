@@ -1691,7 +1691,6 @@ class Aauth {
             );
 
             return $this->CI->db->insert( $this->config_vars['user_variables'] , $data);
-
         }
         // if var already set, overwrite
         else {
@@ -1731,7 +1730,6 @@ class Aauth {
         $this->CI->db->where('user_id', $user_id);
 
         return $this->CI->db->delete( $this->config_vars['user_variables'] );
-
     }
 
     //tested
@@ -1879,6 +1877,7 @@ class Aauth {
  * tamam gibi // 4mysql index fulltext index??
  * tamam //delete_user dan sonra grup ve perms ler de silinmeli
  * login() içinde login'i doğru şekilde olsa da yine de login attempt artıyo kesin düzeltilecek
+ * keep_errors ve keep_infos calismiyor
  *
  *
  *
