@@ -100,8 +100,16 @@ class Aauth {
 
         $this->CI->input->set_cookie($cookie);
 
-        // verification
-        if( !valid_email($email) or !ctype_alnum($pass) or strlen($pass) < 5 or
+ 
+        /*
+        *
+        * User Verification
+        *
+        * Removed or !ctype_alnum($pass) from the IF statement
+        * It was causing issues with special characters in passwords
+        * and returning false even if the password matches.
+        */
+        if( !valid_email($email) or strlen($pass) < 5 or
             strlen($pass) > $this->config_vars['max'] )
         {
             $this->error($this->config_vars['wrong']);
