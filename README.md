@@ -1,7 +1,7 @@
 ***
 Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make easy some essential jobs such as login, permissions and access operations. Despite ease of use, it has also very advanced features like private messages, groupping, access management, public access etc..
 
-After Quick Start, Take a look [detailed Documentation from wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages)  
+**This is Quick Start page. After Quick Start, Take a look [detailed Documentation from wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) to learn other great Features**
 
 ### Features 
 ***
@@ -28,7 +28,7 @@ Permission Management (creating,deleting permissons, allow, deny groups, public 
 
 ### Migration
 ***
-* if you have been using Version 1 before, take a look at Migration Page
+* if you have been using Version 1 before, take a look at [migration page from here.](https://github.com/emreakay/CodeIgniter-Aauth/wiki/1%29-Migration-from-V1).
 
 ### Quick Start 
 ***
@@ -144,13 +144,13 @@ $this->aauth->set_user_var("phone","0216 313 23 33");
 
 to get the variable
 ```php
-$this->aauth->set_user_var("key");
+$this->aauth->get_user_var("key");
 ``` 
 
 Aauth also permits you to define System Variables which can be accesed by every user in the system.
 ```php
 $this->aauth->set_system_var("key","Value");
-$this->aauth->set_system_var("key");
+$this->aauth->get_system_var("key");
 ``` 
 
 ok lets look at private messages. John (his id=3) will send pm to Ali(id=4)
