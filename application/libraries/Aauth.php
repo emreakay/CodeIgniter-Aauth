@@ -1623,7 +1623,7 @@ class Aauth {
      * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
      */
     public function keep_infos(){
-        $this->session->keep_flashdata('infos');
+        $this->CI->session->keep_flashdata('infos');
     }
 
     //tested
