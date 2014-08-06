@@ -64,40 +64,7 @@ $config['aauth'] = array(
 
     // system email.
     'email' => 'admin@admin.com',
-    'name' => 'Emre Akay',
-    'subject' => 'Account Vertification',
-    'reset' => 'Pasword Reset',
-
-
-    // error mesages
-    // change to your language
-
-    'email_taken' => 'E-mail is already taken',
-    'email_invalid' => 'E-mail invalid',
-    'pass_invalid' => 'Password invalid',
-    'name_invalid' => 'Name invalid',
-    'code' => 'Your code is: ',
-    'link' => ' or you can copy and paste falowing link http://localhost/vert/',
-
-    'remind' => 'If you want to reset your password click the copy and go the link below http://localhost/reset/',
-    'new_password' => 'Your new password is : ',
-
-    // no access
-    'no_access' => 'You dont have access.',
-
-    //
-    'wrong' => 'E-mail or Password is wrong.',
-    'exceeded' => 'Login try limit exceeded.',
-    'no_user' => 'User not Exist',
-    'not_verified' => 'Please verify your account.',
-    'group_exist' => 'Group already exists',
-    'no_group' => 'Group doesn\'t exists',
-    'self_pm' => 'It is not reasonable to send pm to yourself :)',
-    'no_pm' => 'Pm not found',
-
-    //info
-    'already_member' => 'User already member of group',
-    'already_perm' => 'Permission name already existed'
+    'name' => 'Emre Akay'
     
 );
 
