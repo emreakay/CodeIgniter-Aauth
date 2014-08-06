@@ -67,6 +67,8 @@ class Aauth {
         $this->CI->load->helper('url');
         $this->CI->load->helper('string');
         $this->CI->load->helper('email');
+        $this->CI->load->helper('language');
+        $this->CI->lang->load('aauth');
 
 
         // config/aauth.php
@@ -112,7 +114,7 @@ class Aauth {
         if( !valid_email($email) or strlen($pass) < 5 or
             strlen($pass) > $this->config_vars['max'] )
         {
-            $this->error($this->config_vars['wrong']);
+            $this->error($this->CI->lang->line('wrong'));
             return false;
         }
 
@@ -125,7 +127,7 @@ class Aauth {
         // only email found and login attempts exceeded
         if ($query->num_rows() > 0 and $this->config_vars['ddos_protection'] and ! $this->update_login_attempts($row->email)) {
 
-            $this->error($this->config_vars['exceeded']);
+            $this->error($this->CI->lang->line('exceeded'));
             return false;
         }
 
@@ -137,16 +139,21 @@ class Aauth {
         $query = $this->CI->db->get($this->config_vars['users']);
 
         if ($query->num_rows() > 0) {
-            $this->error($this->config_vars['not_verified']);
+            $this->error($this->CI->lang->line('not_verified'));
             return false;
         }
 
         // to find user id, create sessions and cookies
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->get($this->config_vars['users']);
-
-        $user_id = $query->row()->id;
-
+		
+		if($query->num_rows() == 0){
+			$this->error($this->CI->lang->line('wrong'));
+            return false;
+		}
+		
+		$user_id = $query->row()->id;
+		
         $query = null;
         $query = $this->CI->db->where('email', $email);
 
@@ -199,7 +206,7 @@ class Aauth {
         // if not matches
         else {
 
-            $this->error($this->config_vars['wrong']);
+            $this->error($this->CI->lang->line('wrong'));
             return FALSE;
         }
     }
@@ -263,7 +270,7 @@ class Aauth {
 
         // if user or user's group not allowed
         if ( ! $this->is_allowed($perm_id) or ! $this->is_group_allowed($perm_id) ){
-            echo $this->config_vars['no_access'];
+            echo $this->CI->lang->line('no_access');
             die();
         }
 
@@ -353,9 +360,9 @@ class Aauth {
 
             $this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
             $this->CI->email->to($row->email);
-            $this->CI->email->subject($this->config_vars['reset']);
-            $this->CI->email->message($this->config_vars['remind'] . ' ' .
-            $this->config_vars['remind'] . $row->id . '/' . $ver_code );
+            $this->CI->email->subject($this->CI->lang->line('reset'));
+            $this->CI->email->message($this->CI->lang->line('remind') . ' ' .
+            $this->CI->lang->line('remind') . $row->id . '/' . $ver_code );
             $this->CI->email->send();
         }
     }
@@ -390,8 +397,8 @@ class Aauth {
 
             $this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
             $this->CI->email->to($email);
-            $this->CI->email->subject($this->config_vars['reset']);
-            $this->CI->email->message($this->config_vars['new_password'] . $pass);
+            $this->CI->email->subject($this->CI->lang->line('reset'));
+            $this->CI->email->message($this->CI->lang->line('new_password') . $pass);
             $this->CI->email->send();
 
             return true;
@@ -500,20 +507,20 @@ class Aauth {
 
         // if email is already exist
         if ( ! $this->check_email($email)) {
-            $this->error($this->config_vars['email_taken']);
+            $this->error($this->CI->lang->line('email_taken'));
             $valid = false;
         }
 
         if ( ! valid_email($email)){
-            $this->error($this->config_vars['email_invalid']);
+            $this->error($this->CI->lang->line('email_invalid'));
             $valid = false;
         }
         if ( strlen($pass) < 5 or strlen($pass) > $this->config_vars['max'] ){
-            $this->error($this->config_vars['pass_invalid']);
+            $this->error($this->CI->lang->line('pass_invalid'));
             $valid = false;
         }
         if ($name !='' and !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
-            $this->error($this->config_vars['name_invalid']);
+            $this->error($this->CI->lang->line('name_invalid'));
             $valid = false;
         }
 
@@ -651,7 +658,7 @@ class Aauth {
         $query = $this->CI->db->get($this->config_vars['users']);
 
         if ($query->num_rows() <= 0){
-            $this->error($this->config_vars['no_user']);
+            $this->error($this->CI->lang->line('no_user'));
             return FALSE;
         }
         return $query->row();
@@ -707,9 +714,9 @@ class Aauth {
 
             $this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
             $this->CI->email->to($row->email);
-            $this->CI->email->subject($this->config_vars['email']);
-            $this->CI->email->message($this->config_vars['code'] . $ver_code .
-                $this->config_vars['link'] . $user_id . '/' . $ver_code );
+            $this->CI->email->subject($this->CI->lang->line('verification_subject'));
+            $this->CI->email->message($this->CI->lang->line('code') . $ver_code .
+                $this->CI->lang->line('link') . $user_id . '/' . $ver_code );
             $this->CI->email->send();
         }
     }
@@ -813,7 +820,7 @@ class Aauth {
         $query = $this->CI->db->get($this->config_vars['users']);
 
         if ($query->num_rows() <= 0){
-            $this->error($this->config_vars['no_user']);
+            $this->error($this->CI->lang->line('no_user'));
             return FALSE;
         }
         return $query->row()->id;
@@ -850,7 +857,7 @@ class Aauth {
         $query = $this->CI->db->get($this->config_vars['users']);
 
         if ($query->num_rows() > 0) {
-            $this->info($this->config_vars['email_taken']);
+            $this->info($this->CI->lang->line('email_taken'));
             return FALSE;
         }
         else
@@ -916,7 +923,7 @@ class Aauth {
             return $this->CI->db->insert_id();
         }
 
-        $this->error($this->config_vars['group_exist']);
+        $this->error($this->CI->lang->line('group_exist'));
         return FALSE;
     }
 
@@ -972,7 +979,7 @@ class Aauth {
 
         if( ! $group_id ) {
 
-            $this->error( $this->config_vars['group_exist'] );
+            $this->error( $this->CI->lang->line('group_exist') );
             return false;
         }
 
@@ -988,7 +995,7 @@ class Aauth {
 
             return $this->CI->db->insert($this->config_vars['user_to_group'], $data);
         }
-        $this->info($this->config_vars['already_member']);
+        $this->info($this->CI->lang->line('already_member'));
         return true;
     }
 
@@ -1128,7 +1135,7 @@ class Aauth {
             $this->CI->db->insert($this->config_vars['perms'], $data);
             return $this->CI->db->insert_id();
         }
-        $this->error($this->config_vars['already_perm']);
+        $this->error($this->CI->lang->line('already_perm'));
         return FALSE;
     }
 
@@ -1403,7 +1410,7 @@ class Aauth {
     public function send_pm( $sender_id, $receiver_id, $title, $message ){
 
         if ( !is_numeric($receiver_id) or $sender_id == $receiver_id ){
-            $this->error($this->config_vars['self_pm']);
+            $this->error($this->CI->lang->line('self_pm'));
             return false;
         }
 
@@ -1414,7 +1421,7 @@ class Aauth {
 
         // if user not exist or banned
         if ( $query->num_rows() < 1 ){
-            $this->error($this->config_vars['no_user']);
+            $this->error($this->CI->lang->line('no_user'));
             return false;
         }
 
@@ -1425,7 +1432,7 @@ class Aauth {
 
         // if user not exist or banned
         if ( $query->num_rows() < 1 ){
-            $this->error($this->config_vars['no_user']);
+            $this->error($this->CI->lang->line('no_user'));
             return false;
         }
 
@@ -1482,7 +1489,7 @@ class Aauth {
         $query = $this->CI->db->get( $this->config_vars['pms'] );
 
         if ($query->num_rows() < 1) {
-            $this->error( $this->config_vars['no_pm'] );
+            $this->error( $this->CI->lang->line('no_pm') );
         }
 
         if ($set_as_read) $this->set_as_read_pm($pm_id);
@@ -1948,7 +1955,7 @@ $row = $query->row();
 // DDos protection
 if ( $this->config_vars['dos_protection'] and $row->last_login_attempt != '' and
 (strtotime("now") + 30 * $this->config_vars['try'] ) < strtotime($row->last_login_attempt) ) {
-$this->error($this->config_vars['exceeded']);
+$this->error($this->CI->lang->line('exceeded'));
 return false;
 }
 }
