@@ -1781,6 +1781,41 @@ class Aauth {
         }
 
     }
+    
+   
+    /**
+     * List User Variable Keys by UserID
+     * Return array of variable keys or false
+     * @param int $user_id ; if not given current user
+     * @return bool|string , false if var is not set, the value of var if set
+     */
+    public function get_user_var_keys($user_id = false){
+
+        if ( ! $user_id ){
+            $user_id = $this->CI->session->userdata('id');
+        }
+
+        // if specified user is not found
+        if ( ! $this->get_user($user_id)){
+            return false;
+        }
+		$query = $this->CI->db->select('key');
+
+        $query = $this->CI->db->where('user_id', $user_id);
+
+        $query = $this->CI->db->get( $this->config_vars['user_variables'] );
+
+        // if variable not set
+        if ($query->num_rows() < 1) { return false;}
+        else {
+			$clean_array = array();
+			foreach($query->result_array() as $row){
+				$clean_array[] = $row['key'];
+			}			
+            return $clean_array;
+        }
+
+    }
 
     ########################
     # Aauth System Variables
