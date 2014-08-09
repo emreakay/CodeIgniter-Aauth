@@ -1789,7 +1789,7 @@ class Aauth {
      * @param int $user_id ; if not given current user
      * @return bool|string , false if var is not set, the value of var if set
      */
-    public function get_user_var_keys($user_id = false){
+    public function list_user_var_keys($user_id = false){
 
         if ( ! $user_id ){
             $user_id = $this->CI->session->userdata('id');
@@ -1812,7 +1812,7 @@ class Aauth {
 			foreach($query->result_array() as $row){
 				$clean_array[] = $row['key'];
 			}			
-            return $clean_array;
+            return (object) $clean_array;
         }
 
     }
