@@ -1808,11 +1808,7 @@ class Aauth {
         // if variable not set
         if ($query->num_rows() < 1) { return false;}
         else {
-			$clean_array = array();
-			foreach($query->result_array() as $row){
-				$clean_array[] = $row['key'];
-			}			
-            return (object) $clean_array;
+            return $query->result();
         }
 
     }
