@@ -1888,6 +1888,22 @@ class Aauth {
             return $row->value;
         }
     }
+    
+     /**
+     * List System Variable Keys
+     * Return array of variable keys or false
+     * @return bool|array , false if var is not set, the value of var if set
+     */
+
+    public function list_system_var_keys(){
+	$query = $this->CI->db->select('key');
+	$query = $this->CI->db->get( $this->config_vars['system_variables'] );
+	// if variable not set
+	if ($query->num_rows() < 1) { return false;}
+	else {
+	    return $query->result();
+	}
+    }
 
 } // end class
 
