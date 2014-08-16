@@ -380,7 +380,7 @@ class Aauth {
         $query = $this->CI->db->where('verification_code', $ver_code);
         $query = $this->CI->db->get( $this->config_vars['users'] );
 
-        $pass = random_string('alphanum',8);
+        $pass = random_string('alnum',8);
 
         if( $query->num_rows() > 0 ){
 
@@ -1781,6 +1781,37 @@ class Aauth {
         }
 
     }
+    
+   
+    /**
+     * List User Variable Keys by UserID
+     * Return array of variable keys or false
+     * @param int $user_id ; if not given current user
+     * @return bool|string , false if var is not set, the value of var if set
+     */
+    public function list_user_var_keys($user_id = false){
+
+        if ( ! $user_id ){
+            $user_id = $this->CI->session->userdata('id');
+        }
+
+        // if specified user is not found
+        if ( ! $this->get_user($user_id)){
+            return false;
+        }
+		$query = $this->CI->db->select('key');
+
+        $query = $this->CI->db->where('user_id', $user_id);
+
+        $query = $this->CI->db->get( $this->config_vars['user_variables'] );
+
+        // if variable not set
+        if ($query->num_rows() < 1) { return false;}
+        else {
+            return $query->result();
+        }
+
+    }
 
     ########################
     # Aauth System Variables
@@ -1856,6 +1887,22 @@ class Aauth {
             $row = $query->row();
             return $row->value;
         }
+    }
+    
+     /**
+     * List System Variable Keys
+     * Return array of variable keys or false
+     * @return bool|array , false if var is not set, the value of var if set
+     */
+
+    public function list_system_var_keys(){
+	$query = $this->CI->db->select('key');
+	$query = $this->CI->db->get( $this->config_vars['system_variables'] );
+	// if variable not set
+	if ($query->num_rows() < 1) { return false;}
+	else {
+	    return $query->result();
+	}
     }
 
 } // end class
