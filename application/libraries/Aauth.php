@@ -955,6 +955,12 @@ class Aauth {
     public function delete_group($group_par) {
 
         $group_id = $this->get_group_id($group_par);
+        
+	$this->CI->db->where('id',$group_id);
+	$query = $this->CI->db->get($this->config_vars['groups']);
+	if ($query->num_rows() == 0){
+		return false;
+	}
 
         // bug fixed
         // now users are deleted from user_to_group table
@@ -1174,11 +1180,11 @@ class Aauth {
         $perm_id = $this->get_perm_id($perm_par);
 
         // deletes from perm_to_gropup table
-        $this->CI->db->where('pern_id', $perm_id);
+        $this->CI->db->where('perm_id', $perm_id);
         $this->CI->db->delete($this->config_vars['perm_to_group']);
 
         // deletes from perm_to_user table
-        $this->CI->db->where('pern_id', $perm_id);
+        $this->CI->db->where('perm_id', $perm_id);
         $this->CI->db->delete($this->config_vars['perm_to_group']);
 
         // deletes from permission table
@@ -1253,7 +1259,7 @@ class Aauth {
             // if is not login
             if (!$this->is_loggedin()){return false;}
 
-            $group_pars = $this->list_groups( $this->CI->session->userdata('id') );
+            $group_pars = $this->get_user_groups();
 
             foreach ($group_pars as $g ){
                 if($this->is_group_allowed($perm_id, $g -> id)){
@@ -1697,7 +1703,7 @@ class Aauth {
         }
 
         // if var not set, set
-        if ( ! $this->get_user_var($key,$user_id) ) {
+         if ($this->get_user_var($key,$user_id) ===false) {
 
             $data = array(
                 'key' => $key,
