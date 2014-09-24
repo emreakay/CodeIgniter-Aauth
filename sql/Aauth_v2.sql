@@ -116,22 +116,22 @@ CREATE TABLE `aauth_system_variables` (
 DROP TABLE IF EXISTS `aauth_users`;
 CREATE TABLE `aauth_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` text COLLATE utf8_turkish_ci NOT NULL,
-  `pass` text COLLATE utf8_turkish_ci NOT NULL,
-  `name` text COLLATE utf8_turkish_ci,
+  `email` text COLLATE utf8_general_ci NOT NULL,
+  `pass` text COLLATE utf8_general_ci NOT NULL,
+  `name` text COLLATE utf8_general_ci,
   `banned` int(11) DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
   `last_activity` datetime DEFAULT NULL,
   `last_login_attempt` datetime DEFAULT NULL,
-  `forgot_exp` text COLLATE utf8_turkish_ci,
+  `forgot_exp` text COLLATE utf8_general_ci,
   `remember_time` datetime DEFAULT NULL,
-  `remember_exp` text COLLATE utf8_turkish_ci,
-  `verification_code` text COLLATE utf8_turkish_ci,
-  `ip_address` text COLLATE utf8_turkish_ci,
+  `remember_exp` text COLLATE utf8_general_ci,
+  `verification_code` text COLLATE utf8_general_ci,
+  `ip_address` text COLLATE utf8_general_ci,
   `login_attempts` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id_index` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- ----------------------------
 -- Records of aauth_users
