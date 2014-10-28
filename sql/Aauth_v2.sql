@@ -54,8 +54,10 @@ CREATE TABLE `aauth_perms` (
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_perm_to_group`;
 CREATE TABLE `aauth_perm_to_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `perm_id` int(11) DEFAULT NULL,
   `group_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `perm_id_group_id_index` (`perm_id`,`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,8 +70,10 @@ CREATE TABLE `aauth_perm_to_group` (
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_perm_to_user`;
 CREATE TABLE `aauth_perm_to_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `perm_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `perm_id_user_id_index` (`perm_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -102,8 +106,10 @@ CREATE TABLE `aauth_pms` (
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_system_variables`;
 CREATE TABLE `aauth_system_variables` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` text NOT NULL,
-  `value` text
+  `value` text,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -160,9 +166,11 @@ INSERT INTO `aauth_user_to_group` VALUES ('1', '3');
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_user_variables`;
 CREATE TABLE `aauth_user_variables` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `key` text NOT NULL,
   `value` text,
+  PRIMARY KEY (`id`),
   KEY `user_id_index` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
