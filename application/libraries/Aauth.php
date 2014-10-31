@@ -804,6 +804,42 @@ class Aauth {
     }
 
     /**
+     * user_exsist_by_id
+     * Check if user exist by user id
+     * @param $user_id
+     *
+     * @return bool
+     */
+    public function user_exsist_by_id( $user_id ) {
+        $query = $this->CI->db->where('id', $user_id);
+
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
+     * user_exsist_by_email
+     * Check if user exsist by user email
+     * @param $user_email
+     *
+     * @return bool
+     */
+    public function user_exsist_by_email( $user_email ) {
+        $query = $this->CI->db->where('email', $user_email);
+
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
      * Get user id
      * Get user id from email address, if par. not given, return current user's id
      * @param string|bool $email Email address for user
