@@ -165,16 +165,7 @@ sorry John you will be banned :(
 $this->aauth->ban_user(3);
 ``` 
 
-You can check if the user exists in the database based on the user's email address
-
-```php
-if($this->aauth->user_exsist_by_email('user@domain.tld')){
-//user exsist
-}else{
-//user not exsist
-}
-```
-or user id
+You can check if the user exists in the database based on the user's id
 
 ```php
 if($this->aauth->user_exsist_by_id(3)){
