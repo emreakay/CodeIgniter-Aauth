@@ -200,6 +200,7 @@ class Aauth {
             // update last login
             $this->update_last_login($row->id);
             $this->update_activity();
+	    $this->reset_login_attempts($row->id);
 
             return TRUE;
         }
@@ -333,7 +334,7 @@ class Aauth {
      */
     public  function reset_login_attempts($user_id) {
 
-        $data['last_login_attempts'] = null;
+        $data['login_attempts'] = null;
         $this->CI->db->where('id', $user_id);
         return $this->CI->db->update($this->config_vars['users'], $data);
     }
