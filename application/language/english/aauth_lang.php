@@ -22,6 +22,7 @@ $lang['no_access'] = 'You dont have access.';
 //
 $lang['wrong'] = 'E-mail or Password is wrong.';
 $lang['exceeded'] = 'Login try limit exceeded.';
+$lang['recaptcha_not_correct'] = 'reCAPTCHA is incorrect.';
 $lang['no_user'] = 'User not Exist';
 $lang['not_verified'] = 'Please verify your account.';
 $lang['group_exist'] = 'Group already exists';

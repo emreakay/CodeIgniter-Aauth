@@ -61,6 +61,9 @@ class Aauth {
         $this->CI = & get_instance();
 
         // Dependancies
+        if(CI_VERSION >= 2.2){
+            $this->CI->load->library('driver');
+        }
         $this->CI->load->library('session');
         $this->CI->load->library('email');
         $this->CI->load->database();
@@ -68,12 +71,13 @@ class Aauth {
         $this->CI->load->helper('string');
         $this->CI->load->helper('email');
         $this->CI->load->helper('language');
+        $this->CI->load->helper('recaptchalib');
         $this->CI->lang->load('aauth');
 
 
         // config/aauth.php
         $this->CI->config->load('aauth');
-        $this->config_vars = & $this->CI->config->item('aauth');
+        $this->config_vars = $this->CI->config->item('aauth');
     }
 
 
@@ -130,6 +134,15 @@ class Aauth {
             $this->error($this->CI->lang->line('exceeded'));
             return false;
         }
+        if($query->num_rows() > 0 and $this->config_vars['ddos_protection'] and $this->config_vars['recaptcha_active'] and $row->login_attempts >= $this->config_vars['recaptcha_login_attempts']){
+            $reCAPTCHA_cookie = array(
+                'name'   => 'reCAPTCHA',
+                'value'  => 'true',
+                'expire' => time()+7200,
+                'path'   => '/',
+            );
+            $this->CI->input->set_cookie($reCAPTCHA_cookie);
+        }
 
         // if user is not verified
         $query = null;
@@ -146,14 +159,14 @@ class Aauth {
         // to find user id, create sessions and cookies
         $query = $this->CI->db->where('email', $email);
         $query = $this->CI->db->get($this->config_vars['users']);
-		
-		if($query->num_rows() == 0){
-			$this->error($this->CI->lang->line('wrong'));
+        
+        if($query->num_rows() == 0){
+            $this->error($this->CI->lang->line('wrong'));
             return false;
-		}
-		
-		$user_id = $query->row()->id;
-		
+        }
+        
+        $user_id = $query->row()->id;
+        
         $query = null;
         $query = $this->CI->db->where('email', $email);
 
@@ -164,7 +177,16 @@ class Aauth {
         $query = $this->CI->db->get($this->config_vars['users']);
 
         $row = $query->row();
+        if($this->CI->input->cookie('reCAPTCHA', TRUE) == 'true'){
+            $reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
+            $resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
+            if(!$resp->success){
+                $this->error($this->CI->lang->line('recaptcha_not_correct'));
+                return false;
+            }
+        }
+     
         // if email and pass matches and not banned
         if ( $query->num_rows() > 0 ) {
 
@@ -197,10 +219,19 @@ class Aauth {
                 $this->CI->input->set_cookie($cookie);
             }
 
+            $reCAPTCHA_cookie = array(
+                'name'   => 'reCAPTCHA',
+                'value'  => 'false',
+                'expire' => time()-3600,
+                'path'   => '/',
+            );
+            $this->CI->input->set_cookie($reCAPTCHA_cookie);
+
             // update last login
             $this->update_last_login($row->id);
             $this->update_activity();
-
+            $this->reset_login_attempts($row->id);
+            
             return TRUE;
         }
         // if not matches
@@ -333,7 +364,7 @@ class Aauth {
      */
     public  function reset_login_attempts($user_id) {
 
-        $data['last_login_attempts'] = null;
+        $data['login_attempts'] = null;
         $this->CI->db->where('id', $user_id);
         return $this->CI->db->update($this->config_vars['users'], $data);
     }
@@ -446,7 +477,6 @@ class Aauth {
         $data = array();
 
         if ( strtotime($row->last_login_attempt) == strtotime(date("Y-m-d H:0:0"))) {
-
             $data['login_attempts'] = $row->login_attempts + 1;
 
             $query = $this->CI->db->where('id', $user_id);
@@ -501,13 +531,17 @@ class Aauth {
      * @param string $name User's name
      * @return int|bool False if create fails or returns user id if successful
      */
-    public function create_user($email, $pass, $name='') {
+    public function create_user($email, $pass, $name) {
 
         $valid = true;
 
         // if email is already exist
-        if ( ! $this->check_email($email)) {
+        if ($this->user_exsist_by_email($email)) {
             $this->error($this->CI->lang->line('email_taken'));
+            $valid = false;
+        }
+        if ($this->user_exsist_by_name($name)) {
+            $this->error($this->CI->lang->line('name_taken'));
             $valid = false;
         }
 
@@ -520,6 +554,10 @@ class Aauth {
             $valid = false;
         }
         if ($name !='' and !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
+            $this->error($this->CI->lang->line('name_invalid'));
+            $valid = false;
+        }
+        if (empty($name)){
             $this->error($this->CI->lang->line('name_invalid'));
             $valid = false;
         }
@@ -804,6 +842,60 @@ class Aauth {
     }
 
     /**
+     * user_exsist_by_id
+     * Check if user exist by user id
+     * @param $user_id
+     *
+     * @return bool
+     */
+    public function user_exsist_by_id( $user_id ) {
+        $query = $this->CI->db->where('id', $user_id);
+
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
+     * user_exsist_by_name
+     * Check if user exist by name
+     * @param $user_id
+     *
+     * @return bool
+     */
+    public function user_exsist_by_name( $name ) {
+        $query = $this->CI->db->where('name', $name);
+
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
+     * user_exsist_by_email
+     * Check if user exsist by user email
+     * @param $user_email
+     *
+     * @return bool
+     */
+    public function user_exsist_by_email( $user_email ) {
+        $query = $this->CI->db->where('email', $user_email);
+
+        $query = $this->CI->db->get($this->config_vars['users']);
+
+        if ($query->num_rows() > 0)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
      * Get user id
      * Get user id from email address, if par. not given, return current user's id
      * @param string|bool $email Email address for user
@@ -842,26 +934,6 @@ class Aauth {
         $this->CI->db->where('user_id', $user_id);
 
         return $query = $this->CI->db->get()->result();
-    }
-
-    //tested
-    /**
-     * Check email
-     * Checks if an email address is available
-     * @param string $email Email to check
-     * @return bool True if available, False if not
-     */
-    public function check_email($email) {
-
-        $this->CI->db->where("email", $email);
-        $query = $this->CI->db->get($this->config_vars['users']);
-
-        if ($query->num_rows() > 0) {
-            $this->info($this->CI->lang->line('email_taken'));
-            return FALSE;
-        }
-        else
-            return TRUE;
     }
 
     //tested
@@ -956,11 +1028,11 @@ class Aauth {
 
         $group_id = $this->get_group_id($group_par);
         
-	$this->CI->db->where('id',$group_id);
-	$query = $this->CI->db->get($this->config_vars['groups']);
-	if ($query->num_rows() == 0){
-		return false;
-	}
+    $this->CI->db->where('id',$group_id);
+    $query = $this->CI->db->get($this->config_vars['groups']);
+    if ($query->num_rows() == 0){
+        return false;
+    }
 
         // bug fixed
         // now users are deleted from user_to_group table
@@ -1805,7 +1877,7 @@ class Aauth {
         if ( ! $this->get_user($user_id)){
             return false;
         }
-		$query = $this->CI->db->select('key');
+        $query = $this->CI->db->select('key');
 
         $query = $this->CI->db->where('user_id', $user_id);
 
@@ -1902,13 +1974,23 @@ class Aauth {
      */
 
     public function list_system_var_keys(){
-	$query = $this->CI->db->select('key');
-	$query = $this->CI->db->get( $this->config_vars['system_variables'] );
-	// if variable not set
-	if ($query->num_rows() < 1) { return false;}
-	else {
-	    return $query->result();
-	}
+        $query = $this->CI->db->select('key');
+        $query = $this->CI->db->get( $this->config_vars['system_variables'] );
+        // if variable not set
+        if ($query->num_rows() < 1) { return false;}
+        else {
+            return $query->result();
+        }
+    }
+
+    public function generate_recaptcha_field(){
+        $content = '';
+        if($this->config_vars['ddos_protection'] and $this->config_vars['recaptcha_active'] and $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true'){
+            $content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
+            $siteKey = $this->config_vars['recaptcha_siteKey'];
+            $content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+        }
+        return $content;
     }
 
 } // end class
