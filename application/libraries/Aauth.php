@@ -134,6 +134,12 @@ class Aauth {
             $this->error($this->CI->lang->line('exceeded'));
             return false;
         }
+
+        //recaptcha login_attempts check
+        $query = null;
+        $query = $this->CI->db->where('email', $email);
+        $query = $this->CI->db->get($this->config_vars['users']);
+        $row = $query->row();
         if($query->num_rows() > 0 and $this->config_vars['ddos_protection'] and $this->config_vars['recaptcha_active'] and $row->login_attempts >= $this->config_vars['recaptcha_login_attempts']){
             $reCAPTCHA_cookie = array(
                 'name'   => 'reCAPTCHA',
