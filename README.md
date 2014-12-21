@@ -164,6 +164,16 @@ sorry John you will be banned :(
 ```php
 $this->aauth->ban_user(3);
 ``` 
+
+You can check if the user exists in the database based on the user's id
+
+```php
+if($this->aauth->user_exsist_by_id(3)){
+//user exsist
+}else{
+//user not exsist
+}
+```
  
 Quick Start is done but thats not the end  
 Take a look [detailed Documentation from wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages)   
