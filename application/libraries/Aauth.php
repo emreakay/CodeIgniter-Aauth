@@ -20,8 +20,6 @@
  * The latest version of Aauth can be obtained from:
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
- * @todo implement same fix for "info" as was implemented for "errors"
- *
  */
 class Aauth {
 
@@ -80,8 +78,9 @@ class Aauth {
         $this->CI->config->load('aauth');
         $this->config_vars = $this->CI->config->item('aauth');
         
-        // load error messages from flashdata (but don't store back in flashdata)
+        // load error and info messages from flashdata (but don't store back in flashdata)
         $this->errors = $this->CI->session->flashdata('errors');
+        $this->infos = $this->CI->session->flashdata('infos');
     }
 
 
@@ -1711,7 +1710,7 @@ class Aauth {
     /**
      * Clear Errors
      * 
-     * Removes errors from error list and clears all flashdata
+     * Removes errors from error list and clears all associated flashdata
      */
     public function clear_errors() {
     	$this->errors = [];
@@ -1721,16 +1720,22 @@ class Aauth {
     //tested
     /**
      * Info
+     *
      * Add message to info array and set flash data
-     * @param string $message Message to add to array
+     * 
+     * @param string $message Message to add to infos array
+     * @param boolean $flashdata if true add $message to CI flashdata (deflault: true)
      */
-    public function info($message){
+    public function info($message = '', $flashdata = true){
 
         $this->infos[] = $message;
-        $this->CI->session->set_flashdata('infos', $this->errors);
+        if($flashdata) {
+			$this->CI->session->set_flashdata('infos', $this->infos);
+		}
     }
 
     //not working
+    // NOTE: This should now be working
     /**
      * Keep Infos
      * keeps the flash data
@@ -1778,6 +1783,16 @@ class Aauth {
             $i++;
         }
         echo $msg;
+    }
+    
+    /**
+     * Clear Info List
+     * 
+     * Removes info messages from info list and clears all associated flashdata
+     */
+    public function clear_errors() {
+    	$this->infos = [];
+    	$this->CI->session->set_flashdata('infos', $this->infos);
     }
 
     ########################
