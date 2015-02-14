@@ -8,6 +8,7 @@
  *
  * @author      Emre Akay <emreakayfb@hotmail.com>
  * @contributor Jacob Tomlinson
+ * @contributor Tim Swagger (Renowne, LLC) <tim@renowne.com>
  *
  * @copyright 2014 Emre Akay
  *
@@ -19,7 +20,7 @@
  * The latest version of Aauth can be obtained from:
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
- *
+ * @todo implement same fix for "info" as was implemented for "errors"
  *
  */
 class Aauth {
@@ -78,6 +79,9 @@ class Aauth {
         // config/aauth.php
         $this->CI->config->load('aauth');
         $this->config_vars = $this->CI->config->item('aauth');
+        
+        // load error messages from flashdata (but don't store back in flashdata)
+        $this->errors = $this->CI->session->flashdata('errors');
     }
 
 
@@ -297,20 +301,29 @@ class Aauth {
 
     /**
      * Controls if a logged or public user has permission
-     * If no permission, it stops script, it also updates last activity every time function called
+     * 
+     * If user does not have permission to access page, it stops script and gives
+     * error message, unless 'no_permission' value is set in config.  If 'no_permission' is
+     * set in config it redirects user to the set url and passes the 'no_access' error message.
+     * It also updates last activity every time function called.
      * @param bool $perm_par If not given just control user logged in or not
      */
-    public function control( $perm_par ){
+    public function control( $perm_par = false ){
 
-        $perm_id = $this->get_perm_id($perm_par);
-        $this->update_activity();
+		$perm_id = $this->get_perm_id($perm_par);
+		$this->update_activity();
 
         // if user or user's group not allowed
         if ( ! $this->is_allowed($perm_id) or ! $this->is_group_allowed($perm_id) ){
-            echo $this->CI->lang->line('no_access');
-            die();
+            if( $this->config_vars['no_permission'] ) {
+            	$this->error($this->CI->lang->line('no_access'));
+            	redirect($this->config_vars['no_permission']);
+            }
+            else {
+				echo $this->CI->lang->line('no_access');
+				die();
+			}
         }
-
     }
 
     //tested
@@ -1632,19 +1645,21 @@ class Aauth {
     # Error / Info Functions
     ########################
 
-    //tested
     /**
      * Error
      * Add message to error array and set flash data
      * @param string $message Message to add to array
+     * @param boolean $flashdata if true add $message to CI flashdata (deflault: true)
      */
-    public function error($message){
-
+    public function error($message = '', $flashdata = true){
         $this->errors[] = $message;
-        $this->CI->session->set_flashdata('errors', $this->errors);
+        if($flashdata) {
+			$this->CI->session->set_flashdata('errors', $this->errors);
+		}
     }
 
     //not working
+    // NOTE: this should now be working.
     /**
      * Keep Errors
      * keeps the flash data flash data
@@ -1691,6 +1706,16 @@ class Aauth {
             $i++;
         }
         echo $msg;
+    }
+    
+    /**
+     * Clear Errors
+     * 
+     * Removes errors from error list and clears all flashdata
+     */
+    public function clear_errors() {
+    	$this->errors = [];
+    	$this->CI->session->set_flashdata('errors', $this->errors);
     }
 
     //tested
