@@ -20,6 +20,8 @@
  * The latest version of Aauth can be obtained from:
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
+ * @todo separate (on some level) the unvalidated users from the "banned" users
+ * @todo remove requirement for unique name/username (or default it to use email address, perhaps via config file)
  */
 class Aauth {
 
@@ -1790,7 +1792,7 @@ class Aauth {
      * 
      * Removes info messages from info list and clears all associated flashdata
      */
-    public function clear_errors() {
+    public function clear_info() {
     	$this->infos = [];
     	$this->CI->session->set_flashdata('infos', $this->infos);
     }
@@ -2144,5 +2146,5 @@ return false;
 
 
 
-
-
+/* End of file Aauth.php */
+/* Location: ./application/libraries/Aauth.php */
