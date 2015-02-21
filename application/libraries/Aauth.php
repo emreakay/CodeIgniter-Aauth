@@ -1659,8 +1659,6 @@ class Aauth {
 		}
     }
 
-    //not working
-    // NOTE: this should now be working.
     /**
      * Keep Errors
      * keeps the flash data flash data
@@ -1736,8 +1734,6 @@ class Aauth {
 		}
     }
 
-    //not working
-    // NOTE: This should now be working
     /**
      * Keep Infos
      * keeps the flash data
@@ -1792,7 +1788,7 @@ class Aauth {
      * 
      * Removes info messages from info list and clears all associated flashdata
      */
-    public function clear_info() {
+    public function clear_infos() {
     	$this->infos = [];
     	$this->CI->session->set_flashdata('infos', $this->infos);
     }
