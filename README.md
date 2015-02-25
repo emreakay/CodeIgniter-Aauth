@@ -1,172 +1,183 @@
 ***
-Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make easy some essential jobs such as login, permissions and access operations. Despite ease of use, it has also very advanced features like private messages, groupping, access management, public access etc..
+Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make easy some essential jobs such as login, permissions and access operations. Despite its ease of use, it has also very advanced features like private messages, groupping, access management, and public access.
 
-**This is Quick Start page. After Quick Start, Take a look [detailed Documentation from wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) to learn other great Features**
+**This is Quick Start page. You can also take a look at the [detailed Documentation Wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) to learn about other great Features**
 
 ### Features 
 ***
-* User Management and Operations (login, logout, register, vertification via e-mail, forgoten password, ban management, login ddos protection)
-* Group Operations (Creaing, deleting groups, membership management)
+* User Management and Operations (login, logout, register, verification via e-mail, forgotten password, user ban, login DDoS protection)
+* Group Operations (creating/deleting groups, membership management)
 * Admin and Public Group support (Public permissions)
-Permission Management (creating,deleting permissons, allow, deny groups, public permissions, permission checking)
-* Group Permissions 
-* User Permissions (new)
-* User and System Variables (new)
-* Login Ddos Protection (new)
-* Private Messages (pm between users)
-* Error Mesages and Validations
+* Permission Management (creating/deleting permissions, allow/deny groups, public permissions, permission checking)
+* Group Permissions
+* User Permissions
+* User and System Variables
+* Login DDoS Protection
+* Private Messages (between users)
+* Error Messages and Validations
 * Langugage and config file support
-* Flexible
+* Flexible implementation
 
 ### What is new in Version 2
 ***
 * User Permissions
 * User and System Variables
-* Login Ddos Protection
-* Some functions has changed
-* Some bugs fixed
+* Login DDoS Protection
+* Updated functions (check documentation for details)
+* Bugs fixes
 
 ### Migration
 ***
-* if you have been using Version 1 before, take a look at [migration page from here.](https://github.com/emreakay/CodeIgniter-Aauth/wiki/1%29-Migration-from-V1).
+* If you are currently using Version 1, take a look at the [v1 to v2 migration page.](https://github.com/emreakay/CodeIgniter-Aauth/wiki/1%29-Migration-from-V1).
 
 ### Quick Start 
 ***
-Let's start :)  
-Firstly we will load Aauth Library to system
+Let's get started :)
+First, we will load the Aauth Library into the system
 ```php
 $this->load->library("Aauth");
 ```
-  
-thats OK.  
 
-Now we will create 2 new users, Ali and John  
+That was easy!
+
+Now let's create two new users, `Frodo` and `Legolas`.
 
 ```php
-$this->aauth->create_user('ali@ali.com','alispass','Ali Akay');
-$this->aauth->create_user('john@john.com','johnspass','John Button');
+$this->aauth->create_user('frodo@example.com','frodopass','Frodo Baggins');
+$this->aauth->create_user('legolas@example.com','legolaspass','Legolas');
 ```
    
-thats it. now we have two users.
+We now we have two users.
 
-Lets Create two group governors and commons :)
+OK, now we can create two groups, `hobbits` and `elves`.
 ```php
-$this->aauth->create_group('governors');
-$this->aauth->create_group('commons');
+$this->aauth->create_group('hobbits');
+$this->aauth->create_group('elves');
 ```  
 
-Then, Lets Create a User with power whic is Obama (having id=12)
+Now, let's create a user with power, Gandalf (for our example, let's assume he was given the `id` of 12).
 ```php
-$this->aauth->create_user('obama@usa.gov', 'pass-cia-fbi', 'Barrack Obama');
+$this->aauth->create_user('gandalf@example.com', 'gandalfpass', 'Gandalf the Gray');
 ```  
 
-ok now we have two groups and one user.
+OK, now we have two groups and three users.
 
-Lets create a permissions 'incrase_tax' and 'change_government' 
+Let's create two permissions `walk_unseen` and `immortality` 
 
 ```php
-$this->aauth->create_perm('increase_tax');
-$this->aauth->create_perm('change_government');
+$this->aauth->create_perm('walk_unseen');
+$this->aauth->create_perm('immortality');
 ```  
 
-Ok, now lets give accesses. logically 'governors' will have 'increase_tax' permission and 'commons' will have 'change_government' access.  
-ok lets give proper access with _alow_group()_ function
+Ok, now let's give accesses to our groups.  The Hobbits seem to have ability to walk unseen, so we will assign that privilage to them. The Elves have imortality, so we will assign that privilage to them.
+We will assign access with `allow_group()` function.
 
 ```php
-$this->aauth->allow_group('governors','increase_tax');
-$this->aauth->allow_group('commons','change_government');
+$this->aauth->allow_group('hobbits','walk_unseen');
+$this->aauth->allow_group('elves','immortality');
   
   
-$this->aauth->allow_group('commons','increase_tax');
+$this->aauth->allow_group('hobbits','immortality');
 ``` 
 
-Ops wait a minute.  commons cannot 'increase_tax'. we need to fix it, we will use deny() to take back permission.
+Wait a minute! Hobbits should not have `immortality`. We need to fix this, we can use `deny()` to remove the permission.
 
 ```php
-$this->aauth->deny('commons','increase_tax');
+$this->aauth->deny('hobbits','immortality');
 ``` 
 
-Obama also can increse tax ha?
+Gandalf can also live forever.
 
 ```php
-$this->aauth->allow_user(12,'increase_tax');
+$this->aauth->allow_user(12,'immortality');
 ``` 
 
-
-Ok now lets check if commons can 'increase_tax'
+Ok now let's check if Hobbits have `immortality`.
 
 ```php
-if($this->aauth->is_group_allowed('commons','increase_tax')){
-    // i dont think so
+if($this->aauth->is_group_allowed('hobbits','immortality')){
+	echo "Hobbits are immortal";
 } else {
-   // do sth in the middle
+	echo "Hobbits are NOT immortal";
+}
+```
+Results:
+```
+Hobbits are NOT immortal
+```
+
+Does Gandalf have the ability to live forever?
+
+```php
+if($this->aauth->is_allowed(12,'immortality')){
+	echo "Gandalf is immortal";
+} else {
+	echo "Gandalf is NOT immortal";
 }
 ``` 
+Results:
+```
+Gandalf is immortal
+```
 
-Can Obama increase_tax ? Let's check it.
-
-```php
-if($this->aauth->is_allowed(15,'increase_tax')){
-    // i guess so
-} else {
-   // piece of code
-}
-``` 
-
-
-i think 'increse_tax' must have never been created. just delete it
+Since we don't accually live in Middle Earth, we are not aware of actual immortality.  Alas, we must delete the permission.
 
 ```php
-$this->aauth->delete_perm('increase_tax');
+$this->aauth->delete_perm('immortality');
 ``` 
-now better.  
-  
-So what about public people? (public means not logged users). Can public people travel? Lets assume we have permissions namely 'travel' , of course.
+It is gone.
+
+#### Un-authenticated Users
+
+So, how about un-authenticated users?  In Aauth they are part of the `public` group. Let's give them permissions to `travel`.
+We will assume we already have a permission set up named `travel`.
 
 ```php
 $this->aauth->allow_group('public','travel');
 ``` 
-  
-So Admin? what can he do? He can access everthing, You dont need to give permiision ( using allow_group() or allow_user() ) him, he already has.  
-  
-What about User Variables?
-for every individual user, variables can be defined as key-value.
 
-this is a simple example to set a variable.
+#### Admin Users
+What about the Admin users? The `Admin` user and any member of the `Admin` group is a superuser who had access everthing, There is no need to grant additional permissions.
+  
+#### User Parameters/Variables
+For each user, variables can be defined as individual key/value pairs.
+
 ```php
 $this->aauth->set_user_var("key","value");
 ``` 
 
-For example if you want to keep users phones
+For example, if you want to store a user's phone number.
 ```php
-$this->aauth->set_user_var("phone","0216 313 23 33");
+$this->aauth->set_user_var("phone","1-507-555-1234");
 ``` 
 
-to get the variable
+To retreive value you will use `get_user_var()`:
 ```php
 $this->aauth->get_user_var("key");
 ``` 
 
-Aauth also permits you to define System Variables which can be accesed by every user in the system.
+Aauth also permits you to define System Variables.  These can be which can be accesed by all users in the system.
 ```php
-$this->aauth->set_system_var("key","Value");
+$this->aauth->set_system_var("key","value");
 $this->aauth->get_system_var("key");
 ``` 
 
-ok lets look at private messages. John (his id=3) will send pm to Ali(id=4)
+#### Private Messages
+OK, let's look at private messages. Frodo (`id` = 3) will send a PM to Legolas (`id` = 4);
 
 ```php
-$this->aauth->send_pm(3,4,'Hi bro. i need you',' can you gimme your credit card?')
+$this->aauth->send_pm(3,4,'New cloaks','These new cloaks are fantastic!')
 ``` 
-  
-sorry John you will be banned :(
 
+#### Banning users
+
+Frodo has broke the rules and will not need to be banned from the system.
 ```php
 $this->aauth->ban_user(3);
 ``` 
- 
-Quick Start is done but thats not the end  
-Take a look [detailed Documentation from wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages)   
 
-Dont forget to watch Aauth.  
-You can also contribute and help me :)
+You have reached the end of the Quick Start Guide, but please take a look at the [detailed Documentation Wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) for additional information.
+
+
+Don't forget to keep and eye on Aauth, we are constantly improving the system.
+You can also contribute and help me out. :)
