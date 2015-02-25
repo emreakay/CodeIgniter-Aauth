@@ -22,8 +22,7 @@ DROP TABLE IF EXISTS `aauth_groups`;
 CREATE TABLE `aauth_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text,
-  PRIMARY KEY (`id`),
-  KEY `id_index` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -41,8 +40,7 @@ CREATE TABLE `aauth_perms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text,
   `definition` text,
-  PRIMARY KEY (`id`),
-  KEY `id_index` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -135,8 +133,7 @@ CREATE TABLE `aauth_users` (
   `verification_code` text COLLATE utf8_general_ci,
   `ip_address` text COLLATE utf8_general_ci,
   `login_attempts` int(11) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `id_index` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- ----------------------------
