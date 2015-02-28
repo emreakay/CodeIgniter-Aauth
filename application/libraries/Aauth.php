@@ -21,30 +21,35 @@
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
  * @todo separate (on some level) the unvalidated users from the "banned" users
- * @todo remove requirement for unique name/username (or default it to use email address, perhaps via config file)
+ * @todo remove requirement for unique name/username (or default it to use email address, perhaps via config file).  OR remove altogether as login uses email address
+ * @todo add configuration to not use cookies if sessions are enabled.
  */
 class Aauth {
 
     /**
      * The CodeIgniter object variable
+     * @access public
      * @var object
      */
     public $CI;
 
     /**
      * Variable for loading the config array into
+     * @access public
      * @var array
      */
     public $config_vars;
 
     /**
      * Array to store error messages
+     * @access public
      * @var array
      */
     public $errors = array();
 
     /**
      * Array to store info messages
+     * @access public
      * @var array
      */
     public $infos = array();
@@ -307,6 +312,7 @@ class Aauth {
      * error message, unless 'no_permission' value is set in config.  If 'no_permission' is
      * set in config it redirects user to the set url and passes the 'no_access' error message.
      * It also updates last activity every time function called.
+     *
      * @param bool $perm_par If not given just control user logged in or not
      */
     public function control( $perm_par = false ){
@@ -352,6 +358,7 @@ class Aauth {
      * Fast login
      * Login with just a user id
      * @param int $user_id User id to log in
+     * @return bool true if login successful.
      */
     public function login_fast($user_id){
 
@@ -373,7 +380,9 @@ class Aauth {
             );
 
             $this->CI->session->set_userdata($data);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -754,6 +763,7 @@ class Aauth {
      * Send verification email
      * Sends a verification email based on user id
      * @param int $user_id User id to send verification email to
+     * @todo return success indicator
      */
     public function send_verification($user_id){
 
@@ -1650,9 +1660,9 @@ class Aauth {
      * Error
      * Add message to error array and set flash data
      * @param string $message Message to add to array
-     * @param boolean $flashdata if true add $message to CI flashdata (deflault: true)
+     * @param boolean $flashdata if true add $message to CI flashdata (deflault: false)
      */
-    public function error($message = '', $flashdata = true){
+    public function error($message = '', $flashdata = false){
         $this->errors[] = $message;
         if($flashdata) {
 			$this->CI->session->set_flashdata('errors', $this->errors);
@@ -1674,14 +1684,14 @@ class Aauth {
     /**
      * Get Errors Array
      * Return array of errors
-     * @return array|bool Array of messages or false if no errors
+     * @return array Array of messages, empty array if no errors
      */
     public function get_errors_array(){
 
         if (!count($this->errors)==0){
             return $this->errors;
         } else {
-            return false;
+            return array();
         }
     }
 
@@ -1724,9 +1734,9 @@ class Aauth {
      * Add message to info array and set flash data
      * 
      * @param string $message Message to add to infos array
-     * @param boolean $flashdata if true add $message to CI flashdata (deflault: true)
+     * @param boolean $flashdata if true add $message to CI flashdata (deflault: false)
      */
-    public function info($message = '', $flashdata = true){
+    public function info($message = '', $flashdata = false){
 
         $this->infos[] = $message;
         if($flashdata) {
@@ -1749,14 +1759,14 @@ class Aauth {
     /**
      * Get Info Array
      * Return array of info
-     * @return array|bool Array of messages or false if no errors
+     * @return array Array of messages, empty array if no errors
      */
     public function get_infos_array(){
 
         if (!count($this->infos)==0){
             return $this->infos;
         } else {
-            return false;
+            return array();
         }
     }
 
