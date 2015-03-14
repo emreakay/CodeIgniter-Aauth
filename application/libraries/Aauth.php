@@ -1087,7 +1087,7 @@ class Aauth {
 
         if( ! $group_id ) {
 
-            $this->error( $this->CI->lang->line('group_exist') );
+            $this->error( $this->CI->lang->line('no_group') );
             return false;
         }
 
@@ -1485,7 +1485,7 @@ class Aauth {
      * Get permission id
      * Get permission id from permisison name or id
      * @param int|string $perm_par Permission id or name to get
-     * @return int Permission id
+     * @return int Permission id or NULL if perm does not exist
      */
     public function get_perm_id($perm_par) {
 
@@ -1495,7 +1495,7 @@ class Aauth {
         $query = $this->CI->db->get($this->config_vars['perms']);
 
         if ($query->num_rows() == 0)
-            return false;
+            return NULL;
 
         $row = $query->row();
         return $row->id;
