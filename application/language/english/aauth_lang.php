@@ -1,35 +1,47 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-$lang['verification_subject'] = 'Account Vertification';
-$lang['reset'] = 'Pasword Reset';
+/* E-mail Messages */
 
-// error mesages
-// change to your language
+// Account verification
+$lang['aauth_email_verification_subject'] = 'Account Verification';
+$lang['aauth_email_verification_code'] = 'Your verification code is: ';
+$lang['aauth_email_verification_link'] = " You can also click on (or copy and paste) the following link\n\nhttp://yourdomain/account/verification/";
 
-$lang['email_taken'] = 'E-mail is already taken';
-$lang['email_invalid'] = 'E-mail invalid';
-$lang['pass_invalid'] = 'Password invalid';
-$lang['name_invalid'] = 'Name invalid';
-$lang['code'] = 'Your code is: ';
-$lang['link'] = ' or you can copy and paste falowing link http://localhost/vert/';
+// Password reset
+$lang['aauth_email_reset_subject'] = 'Reset Password';
+$lang['aauth_email_reset_link'] = "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\nhttp://yourdomain/account/reset_password/";
 
-$lang['remind'] = 'If you want to reset your password click the copy and go the link below http://localhost/reset/';
-$lang['new_password'] = 'Your new password is : ';
+// Password reset success
+$lang['aauth_email_reset_success_subject'] = 'Successful Pasword Reset';
+$lang['aauth_email_reset_success_new_password'] = 'Your password has successfully been reset. Your new password is : ';
 
-// no access
-$lang['no_access'] = 'You dont have access.';
 
-//
-$lang['wrong'] = 'E-mail or Password is wrong.';
-$lang['exceeded'] = 'Login try limit exceeded.';
-$lang['recaptcha_not_correct'] = 'reCAPTCHA is incorrect.';
-$lang['no_user'] = 'User not Exist';
-$lang['not_verified'] = 'Please verify your account.';
-$lang['group_exist'] = 'Group already exists';
-$lang['no_group'] = 'Group doesn\'t exists';
-$lang['self_pm'] = 'It is not reasonable to send pm to yourself :)';
-$lang['no_pm'] = 'Pm not found';
+/* Error Messages */
 
-//info
-$lang['already_member'] = 'User already member of group';
-$lang['already_perm'] = 'Permission name already existed';
+// Account creation errors
+$lang['aauth_error_email_exists'] = 'Email address already exists on the system. If you forgot your password, you can click the link below.';
+$lang['aauth_error_username_exists'] = "Account already exists on the system with that username.  Please enter a different username, or if you forgot your password, please click the link below.";
+$lang['aauth_error_email_invalid'] = 'Invalid e-mail address';
+$lang['aauth_error_password_invalid'] = 'Invalid password';
+$lang['aauth_error_username_invalid'] = 'Invalid Username';
+$lang['aauth_error_username_required'] = 'Username required';
+
+// Access errors
+$lang['aauth_error_no_access'] = 'Sorry, you do not have access to the resource you requested.';
+$lang['aauth_error_login_failed'] = 'E-mail Address and Password do not match.';
+$lang['aauth_error_login_attempts_exceeded'] = 'You have exceeded your login attempts, your account has now been locked.';
+$lang['aauth_error_recaptcha_not_correct'] = 'Sorry, the reCAPTCHA text entered was incorrect.';
+
+
+// Misc. errors
+$lang['aauth_error_no_user'] = 'User does not exist';
+$lang['aauth_error_account_not_verified'] = 'Your account has not been verified. Please check your e-mail and verify your account.';
+$lang['aauth_error_no_group'] = 'Group does not exist';
+$lang['aauth_error_self_pm'] = 'It is not possible to send a Message to yourself.';
+$lang['aauth_error_no_pm'] = 'Private Message not found';
+
+
+/* Info messages */
+$lang['aauth_info_already_member'] = 'User is already member of group';
+$lang['aauth_info_group_exists'] = 'Group name already exists';
+$lang['aauth_info_perm_exists'] = 'Permission name already exists';
