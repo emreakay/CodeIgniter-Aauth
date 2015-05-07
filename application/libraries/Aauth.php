@@ -1690,13 +1690,24 @@ class Aauth {
 
 	/**
 	 * Keep Errors
-	 * keeps the flash data flash data
-	 * Benefitial by using Ajax Requests
-	 * more info about flash data
-	 * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+	 *
+	 * Keeps the flashdata errors for one more page refresh.  Optionally adds the default errors into the
+	 * flashdata list.  This should be called last in your controller, and with care as it could continue
+	 * to revive all errors and not let them expire as intended.
+	 * Benefitial when using Ajax Requests
+	 * @see http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+	 * @param boolean $include_non_flash true if it should stow basic errors as flashdata (default = false)
 	 */
-	public function keep_errors(){
-		$this->CI->session->keep_flashdata('errors');
+	public function keep_errors($include_non_flash = FALSE)
+	{
+		// NOTE: keep_flashdata() overwrites anything new that has been added to flashdata so we are manually reviving flash data
+		// $this->CI->session->keep_flashdata('errors');
+
+		if($include_non_flash) {
+			$this->flash_errors = array_merge($this->flash_errors, $this->errors);
+		}
+		$this->flash_errors = array_merge($this->flash_errors, (array)$this->CI->session->flashdata('errors'));
+		$this->CI->session->set_flashdata('errors', $this->flash_errors);
 	}
 
 	//tested
@@ -1766,16 +1777,26 @@ class Aauth {
 
 	/**
 	 * Keep Infos
-	 * keeps the flash data
+	 *
+	 * Keeps the flashdata infos for one more page refresh.  Optionally adds the default infos into the
+	 * flashdata list.  This should be called last in your controller, and with care as it could continue
+	 * to revive all infos and not let them expire as intended.
 	 * Benefitial by using Ajax Requests
-	 * more info about flash data
-	 * http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+	 * @see http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+	 * @param boolean $include_non_flash true if it should stow basic infos as flashdata (default = false)
 	 */
-	public function keep_infos(){
-		$this->CI->session->keep_flashdata('infos');
+	public function keep_infos($include_non_flash = FALSE)
+	{
+		// NOTE: keep_flashdata() overwrites anything new that has been added to flashdata so we are manually reviving flash data
+		// $this->CI->session->keep_flashdata('infos');
+
+		if($include_non_flash) {
+			$this->flash_infos = array_merge($this->flash_infos, $this->infos);
+		}
+		$this->flash_infos = array_merge($this->flash_infos, (array)$this->CI->session->flashdata('infos'));
+		$this->CI->session->set_flashdata('infos', $this->flash_infos);
 	}
 
-	//tested
 	/**
 	 * Get Info Array
 	 * Return array of info
