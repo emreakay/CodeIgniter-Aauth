@@ -53,6 +53,25 @@ class Aauth {
 	 * @var array
 	 */
 	public $infos = array();
+	
+	/**
+	 * Local temporary storage for current flash errors
+	 *
+	 * Used to update current flash data list since flash data is only available on the next page refresh
+	 * @access public
+	 * var array
+	 */
+	public $flash_errors = array();
+
+	/**
+	 * Local temporary storage for current flash infos
+	 *
+	 * Used to update current flash data list since flash data is only available on the next page refresh
+	 * @access public
+	 * var array
+	 */
+	public $flash_infos = array();
+
 
 	########################
 	# Base Functions
@@ -1664,7 +1683,8 @@ class Aauth {
 	public function error($message = '', $flashdata = false){
 		$this->errors[] = $message;
 		if($flashdata) {
-			$this->CI->session->set_flashdata('errors', $this->errors);
+			$this->flash_errors[] = $message;
+			$this->CI->session->set_flashdata('errors', $this->flash_errors);
 		}
 	}
 
@@ -1739,7 +1759,8 @@ class Aauth {
 
 		$this->infos[] = $message;
 		if($flashdata) {
-			$this->CI->session->set_flashdata('infos', $this->infos);
+			$this->flash_infos[] = $message;
+			$this->CI->session->set_flashdata('infos', $this->flash_infos);
 		}
 	}
 
