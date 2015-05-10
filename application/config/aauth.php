@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
   | -------------------------------------------------------------------
   |  Aauth Config
@@ -74,5 +71,5 @@ $config['aauth'] = array(
 );
 
 
-/* End of file autoload.php */
-/* Location: ./application/config/autoload.php */
+/* End of file aauth.php */
+/* Location: ./application/config/aauth.php */
