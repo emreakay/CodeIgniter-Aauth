@@ -171,7 +171,7 @@ $this->aauth->send_pm(3,4,'New cloaks','These new cloaks are fantastic!')
 
 #### Banning users
 
-Frodo has broke the rules and will not need to be banned from the system.
+Frodo has broke the rules and will now need to be banned from the system.
 ```php
 $this->aauth->ban_user(3);
 ``` 
