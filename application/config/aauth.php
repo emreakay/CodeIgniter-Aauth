@@ -9,67 +9,64 @@
 
 // Config variables
 
-$config['aauth'] = array(
-    'login_page' => '/login',
-    // if user don't have permisssion to see the page he will be
-    // redirected the page spesificed below
-    'no_permission' => '/',
-    //name of admin group
-    'admin_group' => 'admin',
-    //name of default group, the new user is added in it
-    'default_group' => 'default',
-    // public group , people who not logged in
-    'public_group' => 'public',
-    // The table which contains users
-    'users' => 'aauth_users',
-    // the group table
-    'groups' => 'aauth_groups',
-    // 
-    'user_to_group' => 'aauth_user_to_group',
-    // permitions
-    'perms' => 'aauth_perms',
-    // perms to group
-    'perm_to_group' => 'aauth_perm_to_group',
-    // perms to group
-    'perm_to_user' => 'aauth_perm_to_user',
-    // pm table
-    'pms' => 'aauth_pms',
-    // system variables
-    'system_variables' => 'aauth_system_variables',
-    // user variables
-    'user_variables' => 'aauth_user_variables',
+$config['aauth']['login_page'] = '/login';
+// if user don't have permisssion to see the page he will be
+// redirected the page spesificed below
+$config['aauth']['no_permission'] = '/';
+//name of admin group
+$config['aauth']['admin_group'] = 'admin';
+//name of default group, the new user is added in it
+$config['aauth']['default_group'] = 'default';
+// public group , people who not logged in
+$config['aauth']['public_group'] = 'public';
+// The table which contains users
+$config['aauth']['users'] = 'aauth_users';
+// the group table
+$config['aauth']['groups'] = 'aauth_groups';
+// 
+$config['aauth']['user_to_group'] = 'aauth_user_to_group';
+// permitions
+$config['aauth']['perms'] = 'aauth_perms';
+// perms to group
+$config['aauth']['perm_to_group'] = 'aauth_perm_to_group';
+// perms to group
+$config['aauth']['perm_to_user'] = 'aauth_perm_to_user';
+// pm table
+$config['aauth']['pms'] = 'aauth_pms';
+// system variables
+$config['aauth']['system_variables'] = 'aauth_system_variables';
+// user variables
+$config['aauth']['user_variables'] = 'aauth_user_variables';
 
-    // remember time
-    'remember' => ' +3 days',
+// remember time
+$config['aauth']['remember'] = ' +3 days';
 
-    // pasword maximum char long (min is 4)
-    'max' => 13,
+// pasword maximum char long (min is 4)
+$config['aauth']['max'] = 13;
 
-    // non alphanumeric characters that are allowed in a name
-    'valid_chars' => array(' ', '\''),
+// non alphanumeric characters that are allowed in a name
+$config['aauth']['valid_chars'] = array(' ', '\'');
 
-    // ddos protection,
-    //if it is true, the user will be banned temporary when he exceed the login 'try'
-    'ddos_protection' => true,
+// ddos protection,
+//if it is true, the user will be banned temporary when he exceed the login 'try'
+$config['aauth']['ddos_protection'] = true;
 
-    'recaptcha_active' => false, 
-    'recaptcha_login_attempts' => 4,
-    'recaptcha_siteKey' => '', 
-    'recaptcha_secret' => '', 
+$config['aauth']['recaptcha_active'] = false;
+$config['aauth']['recaptcha_login_attempts'] = 4;
+$config['aauth']['recaptcha_siteKey'] = '';
+$config['aauth']['recaptcha_secret'] = '';
 
-    // login attempts time interval
-    // default 20 times in one hour
-    'max_login_attempt' => 10,
+// login attempts time interval
+// default 20 times in one hour
+$config['aauth']['max_login_attempt'] = 10;
 
-    // to register email verifitaion need? true / false
-    'verification' => false,
+// to register email verifitaion need? true / false
+$config['aauth']['verification'] = false;
 
-    // system email.
-    'email' => 'admin@admin.com',
-    'name' => 'Emre Akay'
+// system email.
+$config['aauth']['email'] = 'admin@admin.com';
+$config['aauth']['name'] = 'Emre Akay';
     
-);
-
 
 /* End of file aauth.php */
 /* Location: ./application/config/aauth.php */
