@@ -65,6 +65,8 @@ $config['aauth']['max_login_attempt'] = 10;
 // to register email verifitaion need? true / false
 $config['aauth']['verification'] = false;
 
+$config['aauth']['login_with_name'] = false;
+
 // system email.
 $config['aauth']['email'] = 'admin@admin.com';
 $config['aauth']['name'] = 'Emre Akay';

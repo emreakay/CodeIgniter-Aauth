@@ -129,7 +129,7 @@ class Aauth {
 	 * @param bool $remember
 	 * @return bool Indicates successful login.
 	 */
-	public function login($email, $pass, $remember = FALSE) {
+	public function login($identifier, $pass, $remember = FALSE) {
 
 		// Remove cookies first
 		$cookie = array(
@@ -141,7 +141,21 @@ class Aauth {
 
 		$this->CI->input->set_cookie($cookie);
 
- 
+ 		if( $this->config_vars['login_with_name'] == TRUE){
+			if( !$identifier OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+			{
+				$this->error($this->CI->lang->line('aauth_error_login_failed_name'));
+				return FALSE;
+			}
+			$db_identifier = 'name';
+ 		}else{
+			if( !valid_email($identifier) OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+			{
+				$this->error($this->CI->lang->line('aauth_error_login_failed_email'));
+				return FALSE;
+			}
+			$db_identifier = 'email';
+ 		}
 		/*
 		*
 		* User Verification
@@ -150,15 +164,9 @@ class Aauth {
 		* It was causing issues with special characters in passwords
 		* and returning FALSE even if the password matches.
 		*/
-		if( !valid_email($email) OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
-		{
-			$this->error($this->CI->lang->line('aauth_error_login_failed'));
-			return FALSE;
-		}
-
 
 		$query = null;
-		$query = $this->aauth_db->where('email', $email);
+		$query = $this->aauth_db->where($db_identifier, $identifier);
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		$row = $query->row();
 
@@ -171,7 +179,7 @@ class Aauth {
 
 		//recaptcha login_attempts check
 		$query = null;
-		$query = $this->aauth_db->where('email', $email);
+		$query = $this->aauth_db->where($db_identifier, $identifier);
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		$row = $query->row();
 		if($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $row->login_attempts >= $this->config_vars['recaptcha_login_attempts']){
@@ -186,7 +194,7 @@ class Aauth {
 
 		// if user is not verified
 		$query = null;
-		$query = $this->aauth_db->where('email', $email);
+		$query = $this->aauth_db->where($db_identifier, $identifier);
 		$query = $this->aauth_db->where('banned', 1);
 		$query = $this->aauth_db->where('verification_code !=', '');
 		$query = $this->aauth_db->get($this->config_vars['users']);
@@ -197,7 +205,7 @@ class Aauth {
 		}
 
 		// to find user id, create sessions and cookies
-		$query = $this->aauth_db->where('email', $email);
+		$query = $this->aauth_db->where($db_identifier, $identifier);
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		
 		if($query->num_rows() == 0){
@@ -208,7 +216,7 @@ class Aauth {
 		$user_id = $query->row()->id;
 		
 		$query = null;
-		$query = $this->aauth_db->where('email', $email);
+		$query = $this->aauth_db->where($db_identifier, $identifier);
 
 		// Database stores pasword hashed password
 		$query = $this->aauth_db->where('pass', $this->hash_password($pass, $user_id));
@@ -589,9 +597,20 @@ class Aauth {
 
 		$valid = TRUE;
 
-		if ($this->user_exsist_by_email($email)) {
-			$this->error($this->CI->lang->line('aauth_error_email_exists'));
-			$valid = FALSE;
+		if($this->config_vars['login_with_name'] == TRUE){
+			if (empty($name)){
+				$this->error($this->CI->lang->line('aauth_error_username_required'));
+				$valid = FALSE;
+			}
+			if ($this->user_exsist_by_name($name)) {
+				$this->error($this->CI->lang->line('aauth_error_username_exists'));
+				$valid = FALSE;
+			}
+		}else{
+			if ($this->user_exsist_by_email($email)) {
+				$this->error($this->CI->lang->line('aauth_error_email_exists'));
+				$valid = FALSE;
+			}
 		}
 		if (!valid_email($email)){
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
@@ -879,6 +898,24 @@ class Aauth {
 		$query = $this->aauth_db->where('banned', 1);
 
 		$query = $this->aauth_db->get($this->config_vars['users']);
+
+		if ($query->num_rows() > 0)
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	/**
+	 * user_exsist_by_name
+	 * Check if user exist by name
+	 * @param $user_id
+	 *
+	 * @return bool
+	 */
+	public function user_exsist_by_name( $name ) {
+		$query = $this->CI->db->where('name', $name);
+
+		$query = $this->CI->db->get($this->config_vars['users']);
 
 		if ($query->num_rows() > 0)
 			return TRUE;
