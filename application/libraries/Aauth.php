@@ -885,42 +885,6 @@ class Aauth {
 	}
 
 	/**
-	 * user_exsist_by_id
-	 * Check if user exist by user id
-	 * @param $user_id
-	 *
-	 * @return bool
-	 */
-	public function user_exsist_by_id( $user_id ) {
-		$query = $this->aauth_db->where('id', $user_id);
-
-		$query = $this->aauth_db->get($this->config_vars['users']);
-
-		if ($query->num_rows() > 0)
-			return TRUE;
-		else
-			return FALSE;
-	}
-
-	/**
-	 * user_exsist_by_name
-	 * Check if user exist by name
-	 * @param $user_id
-	 *
-	 * @return bool
-	 */
-	public function user_exsist_by_name( $name ) {
-		$query = $this->aauth_db->where('name', $name);
-
-		$query = $this->aauth_db->get($this->config_vars['users']);
-
-		if ($query->num_rows() > 0)
-			return TRUE;
-		else
-			return FALSE;
-	}
-
-	/**
 	 * user_exsist_by_email
 	 * Check if user exsist by user email
 	 * @param $user_email
