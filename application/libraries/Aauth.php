@@ -259,14 +259,16 @@ class Aauth {
 				$this->CI->input->set_cookie($cookie);
 			}
 
-			$reCAPTCHA_cookie = array(
-				'name'	 => 'reCAPTCHA',
-				'value'	 => 'false',
-				'expire' => time()-3600,
-				'path'	 => '/',
-			);
-			$this->CI->input->set_cookie($reCAPTCHA_cookie);
-
+			if($this->config_vars['recaptcha_active']){
+				$reCAPTCHA_cookie = array(
+					'name'	 => 'reCAPTCHA',
+					'value'	 => 'false',
+					'expire' => time()-3600,
+					'path'	 => '/',
+				);
+				$this->CI->input->set_cookie($reCAPTCHA_cookie);
+			}
+			
 			// update last login
 			$this->update_last_login($row->id);
 			$this->update_activity();
