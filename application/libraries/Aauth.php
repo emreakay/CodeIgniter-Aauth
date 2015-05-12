@@ -581,17 +581,11 @@ class Aauth {
 
 		$valid = TRUE;
 
-		// if email is already exist
 		if ($this->user_exsist_by_email($email)) {
 			$this->error($this->CI->lang->line('aauth_error_email_exists'));
 			$valid = FALSE;
 		}
-		if ($this->user_exsist_by_name($name)) {
-			$this->error($this->CI->lang->line('aauth_error_username_exists'));
-			$valid = FALSE;
-		}
-
-		if ( ! valid_email($email)){
+		if (!valid_email($email)){
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 			$valid = FALSE;
 		}
@@ -603,13 +597,9 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_username_invalid'));
 			$valid = FALSE;
 		}
-		if (empty($name)){
-			$this->error($this->CI->lang->line('aauth_error_username_required'));
-			$valid = FALSE;
-		}
-
 		if (!$valid) {
-			return FALSE; }
+			return FALSE; 
+		}
 
 		$data = array(
 			'email' => $email,
