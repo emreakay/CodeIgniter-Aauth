@@ -11,7 +11,7 @@
  * @contributor Tim Swagger (Renowne, LLC) <tim@renowne.com>
  * @contributor Raphael Jackstadt <info@rejack.de>
  *
- * @copyright 2014 Emre Akay
+ * @copyright 2014-2015 Emre Akay
  *
  * @version 2.0
  *
