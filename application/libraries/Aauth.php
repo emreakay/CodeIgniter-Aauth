@@ -583,7 +583,7 @@ class Aauth {
 	 * @param string $name User's name
 	 * @return int|bool False if create fails or returns user id if successful
 	 */
-	public function create_user($email, $pass, $name) {
+	public function create_user($email, $pass, $name='') {
 
 		$valid = TRUE;
 
