@@ -606,11 +606,10 @@ class Aauth {
 				$this->error($this->CI->lang->line('aauth_error_username_exists'));
 				$valid = FALSE;
 			}
-		}else{
-			if ($this->user_exsist_by_email($email)) {
-				$this->error($this->CI->lang->line('aauth_error_email_exists'));
-				$valid = FALSE;
-			}
+		}
+		if ($this->user_exsist_by_email($email)) {
+			$this->error($this->CI->lang->line('aauth_error_email_exists'));
+			$valid = FALSE;
 		}
 		if (!valid_email($email)){
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
