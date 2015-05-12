@@ -20,6 +20,8 @@ $config['aauth']['default_group'] = 'default';
 // public group , people who not logged in
 $config['aauth']['public_group'] = 'public';
 // The table which contains users
+$config['aauth']['db_profile'] = 'default';
+
 $config['aauth']['users'] = 'aauth_users';
 // the group table
 $config['aauth']['groups'] = 'aauth_groups';
