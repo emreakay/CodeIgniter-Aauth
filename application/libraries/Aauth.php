@@ -1053,12 +1053,18 @@ class Aauth {
 	 * @param string $group_name New group name
 	 * @return bool Update success/failure
 	 */
-	public function update_group($group_par, $group_name, $definition) {
+	public function update_group($group_par, $group_name=FALSE, $definition=FALSE) {
 
 		$group_id = $this->get_group_id($group_par);
 
-		$data['name'] = $group_name;
-		$data['definition'] = $definition;
+		if ($group_name != FALSE) {
+			$data['name'] = $group_name;
+		}
+
+		if ($definition != FALSE) {
+			$data['definition'] = $definition;
+		}
+
 
 		$this->aauth_db->where('id', $group_id);
 		return $this->aauth_db->update($this->config_vars['groups'], $data);
