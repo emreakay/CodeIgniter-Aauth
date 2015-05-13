@@ -1053,7 +1053,7 @@ class Aauth {
 	 * @param string $group_name New group name
 	 * @return bool Update success/failure
 	 */
-	public function update_group($group_par, $group_name) {
+	public function update_group($group_par, $group_name, $definition) {
 
 		$group_id = $this->get_group_id($group_par);
 
