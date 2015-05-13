@@ -1027,14 +1027,15 @@ class Aauth {
 	 * @param string $group_name New group name
 	 * @return int|bool Group id or FALSE on fail
 	 */
-	public function create_group($group_name) {
+	public function create_group($group_name, $definition) {
 
 		$query = $this->aauth_db->get_where($this->config_vars['groups'], array('name' => $group_name));
 
 		if ($query->num_rows() < 1) {
 
 			$data = array(
-				'name' => $group_name
+				'name' => $group_name,
+				'definition'=> $definition
 			);
 			$this->aauth_db->insert($this->config_vars['groups'], $data);
 			return $this->aauth_db->insert_id();
@@ -1057,6 +1058,7 @@ class Aauth {
 		$group_id = $this->get_group_id($group_par);
 
 		$data['name'] = $group_name;
+		$data['definition'] = $definition;
 
 		$this->aauth_db->where('id', $group_id);
 		return $this->aauth_db->update($this->config_vars['groups'], $data);
