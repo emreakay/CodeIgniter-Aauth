@@ -2005,11 +2005,7 @@ class Aauth {
 		// if variable not set
 		if ($query->num_rows() < 1) { return FALSE;}
 		else {
-			$key_list = array();
-			foreach( $query->result() as $row) {
-				$key_list[] = $row->key;
-			}
-			return $key_list;
+			return $query->result();
 		}
 	}
 
