@@ -9,7 +9,6 @@
 
 // Config variables
 
-$config['aauth']['login_page'] = '/login';
 // if user don't have permisssion to see the page he will be
 // redirected the page spesificed below
 $config['aauth']['no_permission'] = '/';
