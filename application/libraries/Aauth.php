@@ -2025,7 +2025,7 @@ class Aauth {
 	public function set_system_var( $key, $value ) {
 
 		// if var not set, set
-		if ( ! $this->get_system_var($key) ) {
+		if ($this->get_system_var($key) === FALSE) {
 
 			$data = array(
 				'key' => $key,
