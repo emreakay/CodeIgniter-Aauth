@@ -502,6 +502,10 @@ class Aauth {
 				'pass' => $this->hash_password($pass, $user_id)
 			);
 
+		 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_reset_over_reset_password'] == TRUE){
+		 		$data['totp_secret'] = NULL;
+		 	}
+		 	
 			$row = $query->row();
 			$email = $row->email;
 
@@ -2131,7 +2135,18 @@ class Aauth {
 		return $content;
 	}
 
-	public function generate_totp_secret(){
+	public function update_user_totp_secret($user_id = FALSE, $secret) {
+
+		if ($user_id == FALSE)
+			$user_id = $this->CI->session->userdata('id');
+
+		$data['totp_secret'] = $secret;
+
+		$this->aauth_db->where('id', $user_id);
+		return $this->aauth_db->update($this->config_vars['users'], $data);
+	}
+
+	public function generate_unique_totp_secret(){
 		$ga = new PHPGangsta_GoogleAuthenticator();
 		$stop = false;
 		while (!$stop) {
