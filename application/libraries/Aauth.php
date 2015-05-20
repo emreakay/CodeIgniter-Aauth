@@ -102,6 +102,7 @@ class Aauth {
 		$this->CI->load->helper('email');
 		$this->CI->load->helper('language');
 		$this->CI->load->helper('recaptchalib');
+		$this->CI->load->helper('googleauthenticator_helper');
 		$this->CI->lang->load('aauth');
 
  		// config/aauth.php
@@ -129,7 +130,7 @@ class Aauth {
 	 * @param bool $remember
 	 * @return bool Indicates successful login.
 	 */
-	public function login($identifier, $pass, $remember = FALSE) {
+	public function login($identifier, $pass, $remember = FALSE, $totp_code = NULL) {
 
 		// Remove cookies first
 		$cookie = array(
@@ -234,7 +235,26 @@ class Aauth {
 				return FALSE;
 			}
 		}
-	 
+	 	
+	 	if($this->config_vars['totp_active'] == TRUE){
+			$query = null;
+			$query = $this->aauth_db->where($db_identifier, $identifier);
+			$query = $this->aauth_db->where('totp_secret !=', '');
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
+			if ($query->num_rows() > 0 AND !$totp_code) {
+				$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+				return FALSE;
+			}else if ($query->num_rows() > 0 AND $totp_code) {
+				$ga = new PHPGangsta_GoogleAuthenticator();
+				$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+				if (!$checkResult) {
+					$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+					return FALSE;
+				}
+			}
+	 	}
+		
 		// if email and pass matches and not banned
 		if ( $query->num_rows() > 0 ) {
 
@@ -2109,6 +2129,25 @@ class Aauth {
 			$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
 		}
 		return $content;
+	}
+
+	public function generate_totp_secret(){
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		$stop = false;
+		while (!$stop) {
+			$secret = $ga->createSecret();
+			$query = $this->aauth_db->where('totp_secret', $secret);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			if ($query->num_rows() == 0) {
+				return $secret;
+				$stop = true;
+			}
+		}
+	}
+
+	public function generate_totp_qrcode($secret){
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		return $ga->getQRCodeGoogleUrl($this->config_vars['name'], $secret);
 	}
 
 } // end class
