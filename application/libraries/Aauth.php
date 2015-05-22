@@ -239,18 +239,19 @@ class Aauth {
 	 	if($this->config_vars['totp_active'] == TRUE){
 			$query = null;
 			$query = $this->aauth_db->where($db_identifier, $identifier);
-			$query = $this->aauth_db->where('totp_secret !=', '');
 			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
 			if ($query->num_rows() > 0 AND !$totp_code) {
 				$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
 				return FALSE;
-			}else if ($query->num_rows() > 0 AND $totp_code) {
-				$totp_secret =  $query->row()->totp_secret;
-				$ga = new PHPGangsta_GoogleAuthenticator();
-				$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
-				if (!$checkResult) {
-					$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
-					return FALSE;
+			}else {
+				if(!empty($totp_secret)){
+					$ga = new PHPGangsta_GoogleAuthenticator();
+					$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+					if (!$checkResult) {
+						$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+						return FALSE;
+					}
 				}
 			}
 	 	}
