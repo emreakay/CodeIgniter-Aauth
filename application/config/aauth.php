@@ -57,7 +57,7 @@ $config['aauth']['recaptcha_login_attempts'] = 4;
 $config['aauth']['recaptcha_siteKey'] = '';
 $config['aauth']['recaptcha_secret'] = '';
 
-$config['aauth']['totp_active'] = true;
+$config['aauth']['totp_active'] = false;
 $config['aauth']['totp_reset_over_reset_password'] = false;
 
 // login attempts time interval
