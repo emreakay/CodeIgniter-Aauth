@@ -58,8 +58,8 @@ $config['aauth']['recaptcha_siteKey'] = '';
 $config['aauth']['recaptcha_secret'] = '';
 
 $config['aauth']['totp_active'] = false;
+$config['aauth']['totp_only_on_ip_change'] = false;
 $config['aauth']['totp_reset_over_reset_password'] = false;
-
 // login attempts time interval
 // default 20 times in one hour
 $config['aauth']['max_login_attempt'] = 10;

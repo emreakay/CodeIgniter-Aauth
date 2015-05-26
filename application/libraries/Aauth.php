@@ -236,7 +236,7 @@ class Aauth {
 			}
 		}
 	 	
-	 	if($this->config_vars['totp_active'] == TRUE){
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE){
 			$query = null;
 			$query = $this->aauth_db->where($db_identifier, $identifier);
 			$query = $this->aauth_db->get($this->config_vars['users']);
@@ -251,6 +251,32 @@ class Aauth {
 					if (!$checkResult) {
 						$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
 						return FALSE;
+					}
+				}
+			}
+	 	}
+	 	
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == TRUE){
+			$query = null;
+			$query = $this->aauth_db->where($db_identifier, $identifier);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
+			$ip_address = $query->row()->ip_address;
+			$current_ip_address = $this->CI->input->ip_address();
+			if ($query->num_rows() > 0 AND !$totp_code) {
+				if($ip_address != $current_ip_address ){
+					$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+					return FALSE;
+				}
+			}else {
+				if(!empty($totp_secret)){
+					if($ip_address != $current_ip_address ){
+						$ga = new PHPGangsta_GoogleAuthenticator();
+						$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+						if (!$checkResult) {
+							$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+							return FALSE;
+						}
 					}
 				}
 			}
