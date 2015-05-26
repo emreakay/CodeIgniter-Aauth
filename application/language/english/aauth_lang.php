@@ -5,11 +5,11 @@
 // Account verification
 $lang['aauth_email_verification_subject'] = 'Account Verification';
 $lang['aauth_email_verification_code'] = 'Your verification code is: ';
-$lang['aauth_email_verification_link'] = " You can also click on (or copy and paste) the following link\n\nhttp://yourdomain/account/verification/";
+$lang['aauth_email_verification_text'] = " You can also click on (or copy and paste) the following link\n\n";
 
 // Password reset
 $lang['aauth_email_reset_subject'] = 'Reset Password';
-$lang['aauth_email_reset_link'] = "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\nhttp://yourdomain/account/reset_password/";
+$lang['aauth_email_reset_text'] = "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n";
 
 // Password reset success
 $lang['aauth_email_reset_success_subject'] = 'Successful Pasword Reset';

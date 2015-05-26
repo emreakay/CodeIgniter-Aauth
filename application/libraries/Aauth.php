@@ -455,7 +455,7 @@ class Aauth {
 			$this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
 			$this->CI->email->to($row->email);
 			$this->CI->email->subject($this->CI->lang->line('aauth_email_reset_subject'));
-			$this->CI->email->message($this->CI->lang->line('aauth_email_reset_link') . $row->id . '/' . $ver_code );
+			$this->CI->email->message($this->CI->lang->line('aauth_email_reset_text') . site_url() . $this->config_vars['reset_password_link'] . $row->id . '/' . $ver_code );
 			$this->CI->email->send();
 		}
 	}
@@ -817,7 +817,7 @@ class Aauth {
 			$this->CI->email->to($row->email);
 			$this->CI->email->subject($this->CI->lang->line('aauth_email_verification_subject'));
 			$this->CI->email->message($this->CI->lang->line('aauth_email_verification_code') . $ver_code .
-				$this->CI->lang->line('aauth_email_verification_link') . $user_id . '/' . $ver_code );
+				$this->CI->lang->line('aauth_email_verification_text') . site_url() .$this->config_vars['verification_link'] . $user_id . '/' . $ver_code );
 			$this->CI->email->send();
 		}
 	}

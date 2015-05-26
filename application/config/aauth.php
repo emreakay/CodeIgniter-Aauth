@@ -69,7 +69,11 @@ $config['aauth']['login_with_name'] = false;
 // system email.
 $config['aauth']['email'] = 'admin@admin.com';
 $config['aauth']['name'] = 'Emre Akay';
-    
+
+// Link for verification without site_url or base_url
+$config['aauth']['verification_link'] = '/account/verification/';
+// Link for reset_password without site_url or base_url
+$config['aauth']['reset_password_link'] = '/account/reset_password/';
 
 /* End of file aauth.php */
 /* Location: ./application/config/aauth.php */
