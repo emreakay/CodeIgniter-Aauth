@@ -681,7 +681,7 @@ class Aauth {
 
 		if ($email != FALSE) {
 			if ($this->user_exsist_by_email($email)) {
-				$this->error($this->CI->lang->line('aauth_error_email_exists'));
+				$this->error($this->CI->lang->line('aauth_error_update_email_exists'));
 				$valid = FALSE;
 			}
 			if (!valid_email($email)){
@@ -701,7 +701,7 @@ class Aauth {
 
 		if ($name != FALSE) {
 			if ($this->user_exsist_by_name($name)) {
-				$this->error($this->CI->lang->line('aauth_error_username_exists'));
+				$this->error($this->CI->lang->line('aauth_error_update_username_exists'));
 				$valid = FALSE;
 			}
 			if ($name !='' && !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){

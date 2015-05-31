@@ -26,6 +26,11 @@ $lang['aauth_error_password_invalid'] = 'Invalid password';
 $lang['aauth_error_username_invalid'] = 'Invalid Username';
 $lang['aauth_error_username_required'] = 'Username required';
 
+// Account update errors
+$lang['aauth_error_update_email_exists'] = 'Email address already exists on the system.  Please enter a different email address.';
+$lang['aauth_error_update_username_exists'] = "Username already exists on the system.  Please enter a different username.";
+
+
 // Access errors
 $lang['aauth_error_no_access'] = 'Sorry, you do not have access to the resource you requested.';
 $lang['aauth_error_login_failed_email'] = 'E-mail Address and Password do not match.';
