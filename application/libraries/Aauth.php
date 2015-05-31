@@ -680,15 +680,39 @@ class Aauth {
 		$data = array();
 
 		if ($email != FALSE) {
+			if ($this->user_exsist_by_email($email)) {
+				$this->error($this->CI->lang->line('aauth_error_email_exists'));
+				$valid = FALSE;
+			}
+			if (!valid_email($email)){
+				$this->error($this->CI->lang->line('aauth_error_email_invalid'));
+				$valid = FALSE;
+			}
 			$data['email'] = $email;
 		}
 
 		if ($pass != FALSE) {
+			if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+				$this->error($this->CI->lang->line('aauth_error_password_invalid'));
+				$valid = FALSE;
+			}
 			$data['pass'] = $this->hash_password($pass, $user_id);
 		}
 
 		if ($name != FALSE) {
+			if ($this->user_exsist_by_name($name)) {
+				$this->error($this->CI->lang->line('aauth_error_username_exists'));
+				$valid = FALSE;
+			}
+			if ($name !='' && !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
+				$this->error($this->CI->lang->line('aauth_error_username_invalid'));
+				$valid = FALSE;
+			}
 			$data['name'] = $name;
+		}
+
+		if (!$valid) {
+			return FALSE; 
 		}
 
 		$this->aauth_db->where('id', $user_id);
