@@ -107,7 +107,7 @@ DROP TABLE IF EXISTS `aauth_users`;
 CREATE TABLE `aauth_users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(100) COLLATE utf8_general_ci NOT NULL,
-  `pass` varchar(50) COLLATE utf8_general_ci NOT NULL,
+  `pass` varchar(64) COLLATE utf8_general_ci NOT NULL,
   `name` varchar(100) COLLATE utf8_general_ci,
   `banned` tinyint(1) DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
