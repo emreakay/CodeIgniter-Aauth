@@ -936,9 +936,9 @@ class Aauth {
 	 * @return bool
 	 */
 	public function user_exsist_by_name( $name ) {
-		$query = $this->CI->db->where('name', $name);
+		$query = $this->aauth_db->where('name', $name);
 
-		$query = $this->CI->db->get($this->config_vars['users']);
+		$query = $this->aauth_db->get($this->config_vars['users']);
 
 		if ($query->num_rows() > 0)
 			return TRUE;
