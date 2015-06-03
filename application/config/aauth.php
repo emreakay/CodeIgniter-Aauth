@@ -11,7 +11,7 @@
 
 // if user don't have permisssion to see the page he will be
 // redirected the page spesificed below
-$config['aauth']['no_permission'] = '/';
+$config['aauth']['no_permission'] = FALSE;
 //name of admin group
 $config['aauth']['admin_group'] = 'admin';
 //name of default group, the new user is added in it
@@ -43,10 +43,10 @@ $config['aauth']['user_variables'] = 'aauth_user_variables';
 $config['aauth']['remember'] = ' +3 days';
 
 // pasword maximum char long (min is 4)
-$config['aauth']['max'] = 13;
+$config['aauth']['max'] = 24;
 
 // non alphanumeric characters that are allowed in a name
-$config['aauth']['valid_chars'] = array(' ', '\'');
+$config['aauth']['valid_chars'] = array();
 
 // ddos protection,
 //if it is true, the user will be banned temporary when he exceed the login 'try'
