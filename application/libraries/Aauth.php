@@ -142,14 +142,15 @@ class Aauth {
 		$this->CI->input->set_cookie($cookie);
 
  		if( $this->config_vars['login_with_name'] == TRUE){
-			if( !$identifier OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+
+			if( !$identifier OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_name'));
 				return FALSE;
 			}
 			$db_identifier = 'name';
  		}else{
-			if( !valid_email($identifier) OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+			if( !valid_email($identifier) OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_email'));
 				return FALSE;
@@ -615,7 +616,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 			$valid = FALSE;
 		}
-		if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+		if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
 			$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 			$valid = FALSE;
 		}
@@ -692,7 +693,7 @@ class Aauth {
 		}
 
 		if ($pass != FALSE) {
-			if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+			if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
 				$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 				$valid = FALSE;
 			}
