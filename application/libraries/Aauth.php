@@ -666,7 +666,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 			$valid = FALSE;
 		}
-		if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
+		if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
 			$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 			$valid = FALSE;
 		}
