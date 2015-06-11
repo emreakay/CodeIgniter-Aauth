@@ -678,6 +678,8 @@ class Aauth {
 	 */
 	public function update_user($user_id, $email = FALSE, $pass = FALSE, $name = FALSE) {
 
+		$valid = TRUE;
+
 		$data = array();
 
 		if ($email != FALSE) {
