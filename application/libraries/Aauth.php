@@ -436,6 +436,7 @@ class Aauth {
 	 * Remind password
 	 * Emails user with link to reset password
 	 * @param string $email Email for account to remind
+	 * @return bool Remind fails/succeeds
 	 */
 	public function remind_password($email){
 
@@ -457,7 +458,10 @@ class Aauth {
 			$this->CI->email->subject($this->CI->lang->line('aauth_email_reset_subject'));
 			$this->CI->email->message($this->CI->lang->line('aauth_email_reset_text') . site_url() . $this->config_vars['reset_password_link'] . $row->id . '/' . $ver_code );
 			$this->CI->email->send();
+			
+			return TRUE;
 		}
+		return FALSE;
 	}
 
 	/**
