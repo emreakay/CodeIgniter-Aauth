@@ -682,6 +682,7 @@ class Aauth {
 	public function update_user($user_id, $email = FALSE, $pass = FALSE, $name = FALSE) {
 
 		$data = array();
+		$valid = TRUE;
 
 		if ($email != FALSE) {
 			if ($this->user_exsist_by_email($email)) {
