@@ -68,6 +68,7 @@ $config['aauth']['max_login_attempt'] = 10;
 $config['aauth']['verification'] = false;
 
 $config['aauth']['login_with_name'] = false;
+$config['aauth']['use_cookies'] = false;
 
 // system email.
 $config['aauth']['email'] = 'admin@admin.com';
