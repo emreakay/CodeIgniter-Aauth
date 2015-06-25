@@ -220,17 +220,7 @@ class Aauth {
 		}
 		
 		$user_id = $query->row()->id;
-		
-		$query = null;
-		$query = $this->aauth_db->where($db_identifier, $identifier);
 
-		// Database stores pasword hashed password
-		$query = $this->aauth_db->where('pass', $this->hash_password($pass, $user_id));
-		$query = $this->aauth_db->where('banned', 0);
-
-		$query = $this->aauth_db->get($this->config_vars['users']);
-
-		$row = $query->row();
 		if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
 			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
 			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
@@ -286,9 +276,20 @@ class Aauth {
 				}
 			}
 	 	}
-		
+	 	
+		$query = null;
+		$query = $this->aauth_db->where($db_identifier, $identifier);
+
+		// Database stores pasword hashed password
+		$query = $this->aauth_db->where('pass', $this->hash_password($pass, $user_id));
+		$query = $this->aauth_db->where('banned', 0);
+
+		$query = $this->aauth_db->get($this->config_vars['users']);
+
+		$row = $query->row();
+
 		// if email and pass matches and not banned
-		if ( $query->num_rows() > 0 ) {
+		if ( $query->num_rows() != 0 ) {
 
 			// If email and pass matches
 			// create session
@@ -474,7 +475,7 @@ class Aauth {
 			);
 			$this->CI->input->set_cookie($cookie);
 		}
-
+		
 		return $this->CI->session->sess_destroy();
 	}
 
