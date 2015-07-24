@@ -923,11 +923,9 @@ class Aauth {
 	 * Delete user
 	 * Delete a user from database. WARNING Can't be undone
 	 * @param int $user_id User id to delete
+	 * @return bool Delete fails/succeeds
 	 */
 	public function delete_user($user_id) {
-
-		$this->aauth_db->where('id', $user_id);
-		$this->aauth_db->delete($this->config_vars['users']);
 
 		// delete from perm_to_user
 		$this->aauth_db->where('user_id', $user_id);
@@ -940,6 +938,11 @@ class Aauth {
 		// delete user vars
 		$this->aauth_db->where('user_id', $user_id);
 		$this->aauth_db->delete($this->config_vars['user_variables']);
+
+		// delete user
+		$this->aauth_db->where('id', $user_id);
+		return $this->aauth_db->delete($this->config_vars['users']);
+
 	}
 
 	//tested
