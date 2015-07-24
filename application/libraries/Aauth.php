@@ -1720,11 +1720,12 @@ class Aauth {
 
 		if ($query->num_rows() < 1) {
 			$this->error( $this->CI->lang->line('aauth_error_no_pm') );
+			return FALSE;
 		}
 
 		if ($set_as_read) $this->set_as_read_pm($pm_id);
 
-		return $query->result();
+		return $query->row();
 	}
 
 	//tested
