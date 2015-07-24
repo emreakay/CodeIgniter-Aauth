@@ -1614,7 +1614,7 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['perms']);
 
 		if ($query->num_rows() == 0)
-			return NULL;
+			return FALSE;
 
 		$row = $query->row();
 		return $row->id;
