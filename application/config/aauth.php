@@ -43,7 +43,7 @@ $config['aauth']['user_variables'] = 'aauth_user_variables';
 $config['aauth']['remember'] = ' +3 days';
 
 // pasword maximum char long
-$config['aauth']['max'] = 13;
+$config['aauth']['max'] = 24;
 // pasword minimum char long
 $config['aauth']['min'] = 5;
 
