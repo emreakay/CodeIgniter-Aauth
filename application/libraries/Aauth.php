@@ -142,14 +142,15 @@ class Aauth {
 		$this->CI->input->set_cookie($cookie);
 
  		if( $this->config_vars['login_with_name'] == TRUE){
-			if( !$identifier OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+
+			if( !$identifier OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_name'));
 				return FALSE;
 			}
 			$db_identifier = 'name';
  		}else{
-			if( !valid_email($identifier) OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+			if( !valid_email($identifier) OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_email'));
 				return FALSE;
@@ -615,7 +616,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 			$valid = FALSE;
 		}
-		if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+		if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
 			$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 			$valid = FALSE;
 		}
@@ -677,6 +678,8 @@ class Aauth {
 	 */
 	public function update_user($user_id, $email = FALSE, $pass = FALSE, $name = FALSE) {
 
+		$valid = TRUE;
+
 		$data = array();
 
 		if ($email != FALSE) {
@@ -692,7 +695,7 @@ class Aauth {
 		}
 
 		if ($pass != FALSE) {
-			if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+			if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
 				$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 				$valid = FALSE;
 			}
@@ -1105,16 +1108,19 @@ class Aauth {
 
 		$group_id = $this->get_group_id($group_par);
 		
-	$this->aauth_db->where('id',$group_id);
-	$query = $this->aauth_db->get($this->config_vars['groups']);
-	if ($query->num_rows() == 0){
-		return FALSE;
-	}
+		$this->aauth_db->where('id',$group_id);
+		$query = $this->aauth_db->get($this->config_vars['groups']);
+		if ($query->num_rows() == 0){
+			return FALSE;
+		}
 
 		// bug fixed
 		// now users are deleted from user_to_group table
 		$this->aauth_db->where('group_id', $group_id);
 		$this->aauth_db->delete($this->config_vars['user_to_group']);
+		
+		$this->aauth_db->where('group_id', $group_id);
+		$this->aauth_db->delete($this->config_vars['perm_to_group']);
 
 		$this->aauth_db->where('id', $group_id);
 		return $this->aauth_db->delete($this->config_vars['groups']);
@@ -1334,7 +1340,7 @@ class Aauth {
 
 		// deletes from perm_to_user table
 		$this->aauth_db->where('perm_id', $perm_id);
-		$this->aauth_db->delete($this->config_vars['perm_to_group']);
+		$this->aauth_db->delete($this->config_vars['perm_to_user']);
 
 		// deletes from permission table
 		$this->aauth_db->where('id', $perm_id);
