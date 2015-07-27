@@ -437,6 +437,7 @@ class Aauth {
 	 * Remind password
 	 * Emails user with link to reset password
 	 * @param string $email Email for account to remind
+	 * @return bool Remind fails/succeeds
 	 */
 	public function remind_password($email){
 
@@ -458,7 +459,10 @@ class Aauth {
 			$this->CI->email->subject($this->CI->lang->line('aauth_email_reset_subject'));
 			$this->CI->email->message($this->CI->lang->line('aauth_email_reset_text') . site_url() . $this->config_vars['reset_password_link'] . $row->id . '/' . $ver_code );
 			$this->CI->email->send();
+			
+			return TRUE;
 		}
+		return FALSE;
 	}
 
 	/**
@@ -604,11 +608,11 @@ class Aauth {
 				$valid = FALSE;
 			}
 		}
-		if ($this->user_exsist_by_name($name)) {
+		if ($this->user_exist_by_name($name)) {
 			$this->error($this->CI->lang->line('aauth_error_username_exists'));
 			$valid = FALSE;
 		}
-		if ($this->user_exsist_by_email($email)) {
+		if ($this->user_exist_by_email($email)) {
 			$this->error($this->CI->lang->line('aauth_error_email_exists'));
 			$valid = FALSE;
 		}
@@ -681,9 +685,10 @@ class Aauth {
 		$valid = TRUE;
 
 		$data = array();
+		$valid = TRUE;
 
 		if ($email != FALSE) {
-			if ($this->user_exsist_by_email($email)) {
+			if ($this->user_exist_by_email($email)) {
 				$this->error($this->CI->lang->line('aauth_error_update_email_exists'));
 				$valid = FALSE;
 			}
@@ -703,7 +708,7 @@ class Aauth {
 		}
 
 		if ($name != FALSE) {
-			if ($this->user_exsist_by_name($name)) {
+			if ($this->user_exist_by_name($name)) {
 				$this->error($this->CI->lang->line('aauth_error_update_username_exists'));
 				$valid = FALSE;
 			}
@@ -932,13 +937,13 @@ class Aauth {
 	}
 
 	/**
-	 * user_exsist_by_name
+	 * user_exist_by_name
 	 * Check if user exist by name
 	 * @param $user_id
 	 *
 	 * @return bool
 	 */
-	public function user_exsist_by_name( $name ) {
+	public function user_exist_by_name( $name ) {
 		$query = $this->aauth_db->where('name', $name);
 
 		$query = $this->aauth_db->get($this->config_vars['users']);
@@ -950,13 +955,13 @@ class Aauth {
 	}
 
 	/**
-	 * user_exsist_by_email
-	 * Check if user exsist by user email
+	 * user_exist_by_email
+	 * Check if user exist by user email
 	 * @param $user_email
 	 *
 	 * @return bool
 	 */
-	public function user_exsist_by_email( $user_email ) {
+	public function user_exist_by_email( $user_email ) {
 		$query = $this->aauth_db->where('email', $user_email);
 
 		$query = $this->aauth_db->get($this->config_vars['users']);
