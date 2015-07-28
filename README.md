@@ -25,6 +25,7 @@ Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make ea
 * Login DDoS Protection
 * Updated functions (check documentation for details)
 * Bugs fixes
+* TOTP (Time-based One-time Password)
 
 ### Migration
 ***

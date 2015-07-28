@@ -11,7 +11,7 @@
 
 // if user don't have permisssion to see the page he will be
 // redirected the page spesificed below
-$config['aauth']['no_permission'] = '/';
+$config['aauth']['no_permission'] = FALSE;
 //name of admin group
 $config['aauth']['admin_group'] = 'admin';
 //name of default group, the new user is added in it
@@ -48,7 +48,7 @@ $config['aauth']['max'] = 13;
 $config['aauth']['min'] = 5;
 
 // non alphanumeric characters that are allowed in a name
-$config['aauth']['valid_chars'] = array(' ', '\'');
+$config['aauth']['valid_chars'] = array();
 
 // ddos protection,
 //if it is true, the user will be banned temporary when he exceed the login 'try'
@@ -59,6 +59,9 @@ $config['aauth']['recaptcha_login_attempts'] = 4;
 $config['aauth']['recaptcha_siteKey'] = '';
 $config['aauth']['recaptcha_secret'] = '';
 
+$config['aauth']['totp_active'] = false;
+$config['aauth']['totp_only_on_ip_change'] = false;
+$config['aauth']['totp_reset_over_reset_password'] = false;
 // login attempts time interval
 // default 20 times in one hour
 $config['aauth']['max_login_attempt'] = 10;
@@ -67,6 +70,7 @@ $config['aauth']['max_login_attempt'] = 10;
 $config['aauth']['verification'] = false;
 
 $config['aauth']['login_with_name'] = false;
+$config['aauth']['use_cookies'] = false;
 
 // system email.
 $config['aauth']['email'] = 'admin@admin.com';

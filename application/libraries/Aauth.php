@@ -22,7 +22,6 @@
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
  * @todo separate (on some level) the unvalidated users from the "banned" users
- * @todo add configuration to not use cookies if sessions are enabled.
  */
 class Aauth {
 
@@ -102,6 +101,7 @@ class Aauth {
 		$this->CI->load->helper('email');
 		$this->CI->load->helper('language');
 		$this->CI->load->helper('recaptchalib');
+		$this->CI->load->helper('googleauthenticator_helper');
 		$this->CI->lang->load('aauth');
 
  		// config/aauth.php
@@ -129,17 +129,19 @@ class Aauth {
 	 * @param bool $remember
 	 * @return bool Indicates successful login.
 	 */
-	public function login($identifier, $pass, $remember = FALSE) {
+	public function login($identifier, $pass, $remember = FALSE, $totp_code = NULL) {
 
-		// Remove cookies first
-		$cookie = array(
-			'name'	 => 'user',
-			'value'	 => '',
-			'expire' => time()-3600,
-			'path'	 => '/',
-		);
+		if($this->config_vars['use_cookies'] == TRUE){
+			// Remove cookies first
+			$cookie = array(
+				'name'	 => 'user',
+				'value'	 => '',
+				'expire' => time()-3600,
+				'path'	 => '/',
+			);
+			$this->CI->input->set_cookie($cookie);
+		}
 
-		$this->CI->input->set_cookie($cookie);
 
  		if( $this->config_vars['login_with_name'] == TRUE){
 
@@ -184,13 +186,17 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		$row = $query->row();
 		if($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $row->login_attempts >= $this->config_vars['recaptcha_login_attempts']){
-			$reCAPTCHA_cookie = array(
-				'name'	 => 'reCAPTCHA',
-				'value'	 => 'true',
-				'expire' => time()+7200,
-				'path'	 => '/',
-			);
-			$this->CI->input->set_cookie($reCAPTCHA_cookie);
+			if($this->config_vars['use_cookies'] == TRUE){
+				$reCAPTCHA_cookie = array(
+					'name'	 => 'reCAPTCHA',
+					'value'	 => 'true',
+					'expire' => time()+7200,
+					'path'	 => '/',
+				);
+				$this->CI->input->set_cookie($reCAPTCHA_cookie);
+			}else{
+				$this->CI->session->set_tempdata('reCAPTCHA', 'true', 7200);
+			}
 		}
 
 		// if user is not verified
@@ -215,7 +221,63 @@ class Aauth {
 		}
 		
 		$user_id = $query->row()->id;
-		
+
+		if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
+			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
+
+			if(!$resp->success){
+				$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
+				return FALSE;
+			}
+		}
+	 	
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE){
+			$query = null;
+			$query = $this->aauth_db->where($db_identifier, $identifier);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
+			if ($query->num_rows() > 0 AND !$totp_code) {
+				$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+				return FALSE;
+			}else {
+				if(!empty($totp_secret)){
+					$ga = new PHPGangsta_GoogleAuthenticator();
+					$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+					if (!$checkResult) {
+						$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+						return FALSE;
+					}
+				}
+			}
+	 	}
+	 	
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == TRUE){
+			$query = null;
+			$query = $this->aauth_db->where($db_identifier, $identifier);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
+			$ip_address = $query->row()->ip_address;
+			$current_ip_address = $this->CI->input->ip_address();
+			if ($query->num_rows() > 0 AND !$totp_code) {
+				if($ip_address != $current_ip_address ){
+					$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+					return FALSE;
+				}
+			}else {
+				if(!empty($totp_secret)){
+					if($ip_address != $current_ip_address ){
+						$ga = new PHPGangsta_GoogleAuthenticator();
+						$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+						if (!$checkResult) {
+							$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+							return FALSE;
+						}
+					}
+				}
+			}
+	 	}
+	 	
 		$query = null;
 		$query = $this->aauth_db->where($db_identifier, $identifier);
 
@@ -226,18 +288,9 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['users']);
 
 		$row = $query->row();
-		if($this->CI->input->cookie('reCAPTCHA', TRUE) == 'true'){
-			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
-			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
-			if(!$resp->success){
-				$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
-				return FALSE;
-			}
-		}
-	 
 		// if email and pass matches and not banned
-		if ( $query->num_rows() > 0 ) {
+		if ( $query->num_rows() != 0 ) {
 
 			// If email and pass matches
 			// create session
@@ -258,24 +311,32 @@ class Aauth {
 				$random_string = random_string('alnum', 16);
 				$this->update_remember($row->id, $random_string, $remember_date );
 
-				$cookie = array(
-					'name'	 => 'user',
-					'value'	 => $row->id . "-" . $random_string,
-					'expire' => time() + 99*999*999,
-					'path'	 => '/',
-				);
+				if($this->config_vars['use_cookies'] == TRUE){
+					$cookie = array(
+						'name'	 => 'user',
+						'value'	 => $row->id . "-" . $random_string,
+						'expire' => time() + 99*999*999,
+						'path'	 => '/',
+					);
 
-				$this->CI->input->set_cookie($cookie);
+					$this->CI->input->set_cookie($cookie);
+				}else{
+					$this->CI->session->set_userdata('remember', $row->id . "-" . $random_string);
+				}
 			}
 
 			if($this->config_vars['recaptcha_active']){
-				$reCAPTCHA_cookie = array(
-					'name'	 => 'reCAPTCHA',
-					'value'	 => 'false',
-					'expire' => time()-3600,
-					'path'	 => '/',
-				);
-				$this->CI->input->set_cookie($reCAPTCHA_cookie);
+				if($this->config_vars['use_cookies'] == TRUE){
+					$reCAPTCHA_cookie = array(
+						'name'	 => 'reCAPTCHA',
+						'value'	 => 'false',
+						'expire' => time()-3600,
+						'path'	 => '/',
+					);
+					$this->CI->input->set_cookie($reCAPTCHA_cookie);
+				}else{
+					$this->CI->session->unset_tempdata('reCAPTCHA');
+				}
 			}
 			
 			// update last login
@@ -306,37 +367,67 @@ class Aauth {
 
 		// cookie control
 		else {
-			if( ! $this->CI->input->cookie('user', TRUE) ){
-				return FALSE;
-			} else {
-				$cookie = explode('-', $this->CI->input->cookie('user', TRUE));
-				if(!is_numeric( $cookie[0] ) OR strlen($cookie[1]) < 13 ){return FALSE;}
-				else{
-					$query = $this->aauth_db->where('id', $cookie[0]);
-					$query = $this->aauth_db->where('remember_exp', $cookie[1]);
-					$query = $this->aauth_db->get($this->config_vars['users']);
+			if($this->config_vars['use_cookies'] == TRUE){
+				if( ! $this->CI->input->cookie('user', TRUE) ){
+					return FALSE;
+				} else {
+					$cookie = explode('-', $this->CI->input->cookie('user', TRUE));
+					if(!is_numeric( $cookie[0] ) OR strlen($cookie[1]) < 13 ){return FALSE;}
+					else{
+						$query = $this->aauth_db->where('id', $cookie[0]);
+						$query = $this->aauth_db->where('remember_exp', $cookie[1]);
+						$query = $this->aauth_db->get($this->config_vars['users']);
 
-					$row = $query->row();
+						$row = $query->row();
 
-					if ($query->num_rows() < 1) {
-						$this->update_remember($cookie[0]);
-						return FALSE;
-					}else{
-
-						if(strtotime($row->remember_time) > strtotime("now") ){
-							$this->login_fast($cookie[0]);
-							return TRUE;
-						}
-						// if time is expired
-						else {
+						if ($query->num_rows() < 1) {
+							$this->update_remember($cookie[0]);
 							return FALSE;
+						}else{
+
+							if(strtotime($row->remember_time) > strtotime("now") ){
+								$this->login_fast($cookie[0]);
+								return TRUE;
+							}
+							// if time is expired
+							else {
+								return FALSE;
+							}
+						}
+					}
+				}
+			}else{
+				if(!$this->CI->session->has_userdata('remember')){
+					return FALSE;
+				}else{
+					$session = explode('-', $this->CI->session->userdata('remember'));
+					if(!is_numeric( $session[0] ) OR strlen($session[1]) < 13 ){return FALSE;}
+					else{
+						$query = $this->aauth_db->where('id', $session[0]);
+						$query = $this->aauth_db->where('remember_exp', $session[1]);
+						$query = $this->aauth_db->get($this->config_vars['users']);
+
+						$row = $query->row();
+
+						if ($query->num_rows() < 1) {
+							$this->update_remember($session[0]);
+							return FALSE;
+						}else{
+
+							if(strtotime($row->remember_time) > strtotime("now") ){
+								$this->login_fast($session[0]);
+								return TRUE;
+							}
+							// if time is expired
+							else {
+								return FALSE;
+							}
 						}
 					}
 				}
 
 			}
 		}
-
 		return FALSE;
 	}
 
@@ -376,15 +467,16 @@ class Aauth {
 	 */
 	public function logout() {
 
-		$cookie = array(
-			'name'	 => 'user',
-			'value'	 => '',
-			'expire' => time()-3600,
-			'path'	 => '/',
-		);
-
-		$this->CI->input->set_cookie($cookie);
-
+		if($this->config_vars['use_cookies'] == TRUE){
+			$cookie = array(
+				'name'	 => 'user',
+				'value'	 => '',
+				'expire' => time()-3600,
+				'path'	 => '/',
+			);
+			$this->CI->input->set_cookie($cookie);
+		}
+		
 		return $this->CI->session->sess_destroy();
 	}
 
@@ -487,6 +579,10 @@ class Aauth {
 				'pass' => $this->hash_password($pass, $user_id)
 			);
 
+		 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_reset_over_reset_password'] == TRUE){
+		 		$data['totp_secret'] = NULL;
+		 	}
+		 	
 			$row = $query->row();
 			$email = $row->email;
 
@@ -859,11 +955,9 @@ class Aauth {
 	 * Delete user
 	 * Delete a user from database. WARNING Can't be undone
 	 * @param int $user_id User id to delete
+	 * @return bool Delete fails/succeeds
 	 */
 	public function delete_user($user_id) {
-
-		$this->aauth_db->where('id', $user_id);
-		$this->aauth_db->delete($this->config_vars['users']);
 
 		// delete from perm_to_user
 		$this->aauth_db->where('user_id', $user_id);
@@ -876,6 +970,11 @@ class Aauth {
 		// delete user vars
 		$this->aauth_db->where('user_id', $user_id);
 		$this->aauth_db->delete($this->config_vars['user_variables']);
+
+		// delete user
+		$this->aauth_db->where('id', $user_id);
+		return $this->aauth_db->delete($this->config_vars['users']);
+
 	}
 
 	//tested
@@ -1553,7 +1652,7 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['perms']);
 
 		if ($query->num_rows() == 0)
-			return NULL;
+			return FALSE;
 
 		$row = $query->row();
 		return $row->id;
@@ -1656,11 +1755,12 @@ class Aauth {
 
 		if ($query->num_rows() < 1) {
 			$this->error( $this->CI->lang->line('aauth_error_no_pm') );
+			return FALSE;
 		}
 
 		if ($set_as_read) $this->set_as_read_pm($pm_id);
 
-		return $query->result();
+		return $query->row();
 	}
 
 	//tested
@@ -2138,12 +2238,44 @@ class Aauth {
 
 	public function generate_recaptcha_field(){
 		$content = '';
-		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true'){
-			$content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
-			$siteKey = $this->config_vars['recaptcha_siteKey'];
-			$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active']){
+			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+				$content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
+				$siteKey = $this->config_vars['recaptcha_siteKey'];
+				$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+			}
 		}
 		return $content;
+	}
+
+	public function update_user_totp_secret($user_id = FALSE, $secret) {
+
+		if ($user_id == FALSE)
+			$user_id = $this->CI->session->userdata('id');
+
+		$data['totp_secret'] = $secret;
+
+		$this->aauth_db->where('id', $user_id);
+		return $this->aauth_db->update($this->config_vars['users'], $data);
+	}
+
+	public function generate_unique_totp_secret(){
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		$stop = false;
+		while (!$stop) {
+			$secret = $ga->createSecret();
+			$query = $this->aauth_db->where('totp_secret', $secret);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			if ($query->num_rows() == 0) {
+				return $secret;
+				$stop = true;
+			}
+		}
+	}
+
+	public function generate_totp_qrcode($secret){
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		return $ga->getQRCodeGoogleUrl($this->config_vars['name'], $secret);
 	}
 
 } // end class
