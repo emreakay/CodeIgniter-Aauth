@@ -1472,13 +1472,20 @@ class Aauth {
 		$query = $this->aauth_db->get( $this->config_vars['perm_to_user'] );
 
 		if( $query->num_rows() > 0){
-			return TRUE;
-		} elseif ($this->is_group_allowed($perm_id)) {
-			return TRUE;
+		    return TRUE;
 		} else {
-			return FALSE;
-		}
-
+			if( $user_id===FALSE){
+				return $this->is_group_allowed($perm_id);
+			} else {
+				$g_allowed=FALSE;
+				foreach( $this->get_user_groups($user_id) as $group ){
+					if ( $this->is_group_allowed($perm_id, $group->id) ){
+						$g_allowed=TRUE;
+					}
+				}
+				return $g_allowed;
+			}
+	    }
 	}
 
 	/**
