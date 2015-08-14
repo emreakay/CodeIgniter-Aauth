@@ -397,7 +397,7 @@ class Aauth {
 					}
 				}
 			}else{
-				if(!$this->CI->session->has_userdata('remember')){
+				if(!isset($_SESSION('remember'))){
 					return FALSE;
 				}else{
 					$session = explode('-', $this->CI->session->userdata('remember'));
