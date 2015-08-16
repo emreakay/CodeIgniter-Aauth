@@ -397,7 +397,7 @@ class Aauth {
 					}
 				}
 			}else{
-				if(!$this->CI->session->has_userdata('remember')){
+				if(!isset($_SESSION['remember'])){
 					return FALSE;
 				}else{
 					$session = explode('-', $this->CI->session->userdata('remember'));
@@ -1472,13 +1472,20 @@ class Aauth {
 		$query = $this->aauth_db->get( $this->config_vars['perm_to_user'] );
 
 		if( $query->num_rows() > 0){
-			return TRUE;
-		} elseif ($this->is_group_allowed($perm_id)) {
-			return TRUE;
+		    return TRUE;
 		} else {
-			return FALSE;
-		}
-
+			if( $user_id===FALSE){
+				return $this->is_group_allowed($perm_id);
+			} else {
+				$g_allowed=FALSE;
+				foreach( $this->get_user_groups($user_id) as $group ){
+					if ( $this->is_group_allowed($perm_id, $group->id) ){
+						$g_allowed=TRUE;
+					}
+				}
+				return $g_allowed;
+			}
+	    }
 	}
 
 	/**
@@ -1707,7 +1714,7 @@ class Aauth {
 			'receiver_id' => $receiver_id,
 			'title' => $title,
 			'message' => $message,
-			'date' => date('Y-m-d H:i:s')
+			'date_sent' => date('Y-m-d H:i:s')
 		);
 
 		return $query = $this->aauth_db->insert( $this->config_vars['pms'], $data );
@@ -1789,7 +1796,7 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('receiver_id', $receiver_id);
-		$query = $this->aauth_db->where('read', 0);
+		$query = $this->aauth_db->where('date_read', NULL);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		return $query->num_rows();
@@ -1804,7 +1811,7 @@ class Aauth {
 	public function set_as_read_pm($pm_id){
 
 		$data = array(
-			'read' => 1,
+			'date_read' => date('Y-m-d H:i:s')
 		);
 
 		$this->aauth_db->update( $this->config_vars['pms'], $data, "id = $pm_id");

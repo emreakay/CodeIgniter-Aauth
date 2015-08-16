@@ -75,8 +75,8 @@ CREATE TABLE `aauth_pms` (
   `receiver_id` int(11) unsigned NOT NULL,
   `title` varchar(255) NOT NULL,
   `message` text,
-  `date` datetime DEFAULT NULL,
-  `read` tinyint(1) DEFAULT '0',
+  `date_sent` datetime DEFAULT NULL,
+  `date_read` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `full_index` (`id`,`sender_id`,`receiver_id`,`read`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -126,7 +126,7 @@ CREATE TABLE `aauth_users` (
 -- ----------------------------
 -- Records of aauth_users
 -- ----------------------------
-INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', 'dd5073c93fb477a167fd69072e95455834acd93df8fed41a2c468c45b394bfe3', 'Admin', '0', null, null, null, null, null, null, null, null, '0');
+INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', 'dd5073c93fb477a167fd69072e95455834acd93df8fed41a2c468c45b394bfe3', 'Admin', '0', null, null, null, null, null, null, null, null, null, '0');
 
 -- ----------------------------
 -- Table structure for `aauth_user_to_group`
