@@ -78,7 +78,7 @@ CREATE TABLE `aauth_pms` (
   `date_sent` datetime DEFAULT NULL,
   `date_read` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `full_index` (`id`,`sender_id`,`receiver_id`,`read`)
+  KEY `full_index` (`id`,`sender_id`,`receiver_id`,`date_read`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
