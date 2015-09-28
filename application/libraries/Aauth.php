@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2015 Emre Akay
  *
- * @version 2.0
+ * @version 2.3.3
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
