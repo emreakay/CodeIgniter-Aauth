@@ -38,6 +38,7 @@ $lang['aauth_error_update_username_exists'] = "Username already exists on the sy
 $lang['aauth_error_no_access'] = 'Sorry, you do not have access to the resource you requested.';
 $lang['aauth_error_login_failed_email'] = 'E-mail Address and Password do not match.';
 $lang['aauth_error_login_failed_name'] = 'Username and Password do not match.';
+$lang['aauth_error_login_failed_all'] = 'E-mail, Username or Password do not match.';
 $lang['aauth_error_login_attempts_exceeded'] = 'You have exceeded your login attempts, your account has now been locked.';
 $lang['aauth_error_recaptcha_not_correct'] = 'Sorry, the reCAPTCHA text entered was incorrect.';
 
