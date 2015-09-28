@@ -111,8 +111,8 @@ class Aauth {
 		$this->aauth_db = $this->CI->load->database($this->config_vars['db_profile'], TRUE); 
 		
 		// load error and info messages from flashdata (but don't store back in flashdata)
-		$this->errors = $this->CI->session->flashdata('errors');
-		$this->infos = $this->CI->session->flashdata('infos');
+		$this->errors = $this->CI->session->flashdata('errors') ?: array();
+		$this->infos = $this->CI->session->flashdata('infos') ?: array();
 	}
 
 
@@ -1867,15 +1867,7 @@ class Aauth {
 	 */
 	public function get_errors_array()
 	{
-
-		if (!count($this->errors)==0)
-		{
-			return $this->errors;
-		}
-		else
-		{
-			return array();
-		}
+		return $this->errors;
 	}
 
 	/**
@@ -1962,14 +1954,7 @@ class Aauth {
 	 */
 	public function get_infos_array()
 	{
-		if (!count($this->infos)==0)
-		{
-			return $this->infos;
-		}
-		else
-		{
-			return array();
-		}
+		return $this->infos;
 	}
 
 
