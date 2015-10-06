@@ -221,14 +221,15 @@ class Aauth {
 		}
 		
 		$user_id = $query->row()->id;
+		if($this->config_vars['recaptcha_active']){
+			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+				$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
+				$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
-		if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
-			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
-			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
-
-			if(!$resp->success){
-				$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
-				return FALSE;
+				if(!$resp->success){
+					$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
+					return FALSE;
+				}
 			}
 		}
 	 	
