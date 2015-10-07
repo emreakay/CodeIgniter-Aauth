@@ -1157,9 +1157,10 @@ class Aauth {
 	 * Create group
 	 * Creates a new group
 	 * @param string $group_name New group name
+	 * @param string $definition Description of the group
 	 * @return int|bool Group id or FALSE on fail
 	 */
-	public function create_group($group_name, $definition) {
+	public function create_group($group_name, $definition = '') {
 
 		$query = $this->aauth_db->get_where($this->config_vars['groups'], array('name' => $group_name));
 
