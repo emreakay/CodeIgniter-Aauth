@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2015 Emre Akay
  *
- * @version 2.3.3
+ * @version 2.4.0
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -221,14 +221,15 @@ class Aauth {
 		}
 		
 		$user_id = $query->row()->id;
+		if($this->config_vars['recaptcha_active']){
+			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+				$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
+				$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
-		if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
-			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
-			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
-
-			if(!$resp->success){
-				$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
-				return FALSE;
+				if(!$resp->success){
+					$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
+					return FALSE;
+				}
 			}
 		}
 	 	
@@ -2024,7 +2025,7 @@ class Aauth {
 		 if ($this->get_user_var($key,$user_id) ===FALSE) {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 				'user_id' => $user_id
 			);
@@ -2035,12 +2036,12 @@ class Aauth {
 		else {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 				'user_id' => $user_id
 			);
 
-			$this->aauth_db->where( 'key', $key );
+			$this->aauth_db->where( 'data_key', $key );
 			$this->aauth_db->where( 'user_id', $user_id);
 
 			return $this->aauth_db->update( $this->config_vars['user_variables'], $data);
@@ -2065,7 +2066,7 @@ class Aauth {
 			return FALSE;
 		}
 
-		$this->aauth_db->where('key', $key);
+		$this->aauth_db->where('data_key', $key);
 		$this->aauth_db->where('user_id', $user_id);
 
 		return $this->aauth_db->delete( $this->config_vars['user_variables'] );
@@ -2091,7 +2092,7 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('user_id', $user_id);
-		$query = $this->aauth_db->where('key', $key);
+		$query = $this->aauth_db->where('data_key', $key);
 
 		$query = $this->aauth_db->get( $this->config_vars['user_variables'] );
 
@@ -2123,7 +2124,7 @@ class Aauth {
 		if ( ! $this->get_user($user_id)){
 			return FALSE;
 		}
-		$query = $this->aauth_db->select('key');
+		$query = $this->aauth_db->select('data_key');
 
 		$query = $this->aauth_db->where('user_id', $user_id);
 
@@ -2155,7 +2156,7 @@ class Aauth {
 		if ($this->get_system_var($key) === FALSE) {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 			);
 
@@ -2166,11 +2167,11 @@ class Aauth {
 		else {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 			);
 
-			$this->aauth_db->where( 'key', $key );
+			$this->aauth_db->where( 'data_key', $key );
 			return $this->aauth_db->update( $this->config_vars['system_variables'], $data);
 		}
 
@@ -2184,7 +2185,7 @@ class Aauth {
 	 */
 	public function unset_system_var( $key	) {
 
-		$this->aauth_db->where('key', $key);
+		$this->aauth_db->where('data_key', $key);
 
 		return $this->aauth_db->delete( $this->config_vars['system_variables'] );
 	}
@@ -2198,7 +2199,7 @@ class Aauth {
 	 */
 	public function get_system_var( $key ){
 
-		$query = $this->aauth_db->where('key', $key);
+		$query = $this->aauth_db->where('data_key', $key);
 
 		$query = $this->aauth_db->get( $this->config_vars['system_variables'] );
 
@@ -2219,7 +2220,7 @@ class Aauth {
 	 */
 
 	public function list_system_var_keys(){
-		$query = $this->aauth_db->select('key');
+		$query = $this->aauth_db->select('data_key');
 		$query = $this->aauth_db->get( $this->config_vars['system_variables'] );
 		// if variable not set
 		if ($query->num_rows() < 1) { return FALSE;}
