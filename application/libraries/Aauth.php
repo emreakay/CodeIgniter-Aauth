@@ -789,7 +789,8 @@ class Aauth {
 				$this->error($this->CI->lang->line('aauth_error_update_email_exists'));
 				$valid = FALSE;
 			}
-			if (!valid_email($email)){
+			$valid_email = (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+			if (!$valid_email){
 				$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 				$valid = FALSE;
 			}
