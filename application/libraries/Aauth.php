@@ -713,7 +713,8 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_email_exists'));
 			$valid = FALSE;
 		}
-		if (!valid_email($email)){
+		$valid_email = (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+		if (!$valid_email){
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 			$valid = FALSE;
 		}
@@ -789,7 +790,8 @@ class Aauth {
 				$this->error($this->CI->lang->line('aauth_error_update_email_exists'));
 				$valid = FALSE;
 			}
-			if (!valid_email($email)){
+			$valid_email = (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+			if (!$valid_email){
 				$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 				$valid = FALSE;
 			}
@@ -1157,9 +1159,10 @@ class Aauth {
 	 * Create group
 	 * Creates a new group
 	 * @param string $group_name New group name
+	 * @param string $definition Description of the group
 	 * @return int|bool Group id or FALSE on fail
 	 */
-	public function create_group($group_name, $definition) {
+	public function create_group($group_name, $definition = '') {
 
 		$query = $this->aauth_db->get_where($this->config_vars['groups'], array('name' => $group_name));
 
