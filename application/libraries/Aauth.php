@@ -216,12 +216,7 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		
 		if($query->num_rows() == 0){
-			if( $this->config_vars['login_with_name'] == TRUE){
-				$this->error($this->CI->lang->line('aauth_error_username_invalid'));
-			} else {
-				$this->error($this->CI->lang->line('aauth_error_email_invalid'));
-			}
-			//$this->error($this->CI->lang->line('aauth_error_login_failed'));
+			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
 		}
 		
