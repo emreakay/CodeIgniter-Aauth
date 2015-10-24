@@ -136,7 +136,7 @@ class Aauth {
 			$cookie = array(
 				'name'	 => 'user',
 				'value'	 => '',
-				'expire' => time()-3600,
+				'expire' => -3600,
 				'path'	 => '/',
 			);
 			$this->CI->input->set_cookie($cookie);
@@ -190,7 +190,7 @@ class Aauth {
 				$reCAPTCHA_cookie = array(
 					'name'	 => 'reCAPTCHA',
 					'value'	 => 'true',
-					'expire' => time()+7200,
+					'expire' => 7200,
 					'path'	 => '/',
 				);
 				$this->CI->input->set_cookie($reCAPTCHA_cookie);
@@ -316,7 +316,7 @@ class Aauth {
 					$cookie = array(
 						'name'	 => 'user',
 						'value'	 => $row->id . "-" . $random_string,
-						'expire' => time() + 99*999*999,
+						'expire' => 99*999*999,
 						'path'	 => '/',
 					);
 
@@ -331,7 +331,7 @@ class Aauth {
 					$reCAPTCHA_cookie = array(
 						'name'	 => 'reCAPTCHA',
 						'value'	 => 'false',
-						'expire' => time()-3600,
+						'expire' => -3600,
 						'path'	 => '/',
 					);
 					$this->CI->input->set_cookie($reCAPTCHA_cookie);
@@ -472,7 +472,7 @@ class Aauth {
 			$cookie = array(
 				'name'	 => 'user',
 				'value'	 => '',
-				'expire' => time()-3600,
+				'expire' => -3600,
 				'path'	 => '/',
 			);
 			$this->CI->input->set_cookie($cookie);
