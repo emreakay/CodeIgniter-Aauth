@@ -1469,6 +1469,11 @@ class Aauth {
 			$user_id = $this->CI->session->userdata('id');
 		}
 
+		if($this->is_admin($user_id))
+		{
+			return true;
+		}
+		
 		$query = $this->aauth_db->where('perm_id', $perm_id);
 		$query = $this->aauth_db->where('user_id', $user_id);
 		$query = $this->aauth_db->get( $this->config_vars['perm_to_user'] );
