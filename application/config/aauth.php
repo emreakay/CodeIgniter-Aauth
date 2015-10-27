@@ -115,7 +115,9 @@ $config_aauth["default"] = array(
 
 	'verification'                   => false,
 	'verification_link'              => '/account/verification/',
-	'reset_password_link'            => '/account/reset_password/'
+	'reset_password_link'            => '/account/reset_password/',
+
+	'hash'							 =>	'sha256'
 );
 
 $config['aauth'] = $config_aauth['default'];

@@ -1145,7 +1145,7 @@ class Aauth {
 	function hash_password($pass, $userid) {
 
 		$salt = md5($userid);
-		return hash('sha256', $salt.$pass);
+		return hash($this->config_vars['hash'], $salt.$pass);
 	}
 
 	########################
