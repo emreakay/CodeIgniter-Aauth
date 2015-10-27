@@ -1463,12 +1463,17 @@ class Aauth {
 	 */
 	public function is_allowed($perm_par, $user_id=FALSE){
 
-		$perm_id = $this->get_perm_id($perm_par);
-
 		if( $user_id == FALSE){
 			$user_id = $this->CI->session->userdata('id');
 		}
 
+		if($this->is_admin($user_id))
+		{
+			return true;
+		}
+
+		$perm_id = $this->get_perm_id($perm_par);
+		
 		$query = $this->aauth_db->where('perm_id', $perm_id);
 		$query = $this->aauth_db->where('user_id', $user_id);
 		$query = $this->aauth_db->get( $this->config_vars['perm_to_user'] );
