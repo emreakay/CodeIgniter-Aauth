@@ -68,54 +68,54 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config_aauth = array();
 
 $config_aauth["default"] = array(
-	['no_permission']                  = FALSE,
+	'no_permission'                  => FALSE,
 
-	['admin_group']                    = 'admin',
-	['default_group']                  = 'default',
-	['public_group']                   = 'public',
+	'admin_group'                    => 'admin',
+	'default_group'                  => 'default',
+	'public_group'                   => 'public',
 
-	['db_profile']                     = 'default',
+	'db_profile'                     => 'default',
 
-	['users']                          = 'aauth_users',
-	['groups']                         = 'aauth_groups',
-	['user_to_group']                  = 'aauth_user_to_group',
-	['perms']                          = 'aauth_perms',
-	['perm_to_group']                  = 'aauth_perm_to_group',
-	['perm_to_user']                   = 'aauth_perm_to_user',
-	['pms']                            = 'aauth_pms',
-	['system_variables']               = 'aauth_system_variables',
-	['user_variables']                 = 'aauth_user_variables',
+	'users'                          => 'aauth_users',
+	'groups'                         => 'aauth_groups',
+	'user_to_group'                  => 'aauth_user_to_group',
+	'perms'                          => 'aauth_perms',
+	'perm_to_group'                  => 'aauth_perm_to_group',
+	'perm_to_user'                   => 'aauth_perm_to_user',
+	'pms'                            => 'aauth_pms',
+	'system_variables'               => 'aauth_system_variables',
+	'user_variables'                 => 'aauth_user_variables',
 
-	['remember']                       = ' +3 days',
+	'remember'                       => ' +3 days',
 
-	['max']                            = 13,
-	['min']                            = 5,
+	'max'                            => 13,
+	'min'                            => 5,
 
-	['valid_chars']                    = array(),
+	'valid_chars'                    => array(),
 
-	['ddos_protection']                = true,
+	'ddos_protection'                => true,
 
-	['recaptcha_active']               = false,
-	['recaptcha_login_attempts']       = 4,
-	['recaptcha_siteKey']              = '',
-	['recaptcha_secret']               = '',
+	'recaptcha_active'               => false,
+	'recaptcha_login_attempts'       => 4,
+	'recaptcha_siteKey'              => '',
+	'recaptcha_secret'               => '',
 
-	['totp_active']                    = false,
-	['totp_only_on_ip_change']         = false,
-	['totp_reset_over_reset_password'] = false,
+	'totp_active'                    => false,
+	'totp_only_on_ip_change'         => false,
+	'totp_reset_over_reset_password' => false,
 
-	['max_login_attempt']              = 10,
+	'max_login_attempt'              => 10,
 
-	['login_with_name']                = false,
+	'login_with_name'                => false,
 
-	['use_cookies']                    = true,
+	'use_cookies'                    => true,
 
-	['email']                          = 'admin@admin.com',
-	['name']                           = 'Emre Akay',
+	'email'                          => 'admin@admin.com',
+	'name'                           => 'Emre Akay',
 
-	['verification']                   = false,
-	['verification_link']              = '/account/verification/',
-	['reset_password_link']            = '/account/reset_password/'
+	'verification'                   => false,
+	'verification_link'              => '/account/verification/',
+	'reset_password_link'            => '/account/reset_password/'
 );
 
 $config['aauth'] = $config_aauth['default'];
