@@ -64,6 +64,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['verification_link']              	Link for verification without site_url or base_url
 | 	['reset_password_link']            	Link for reset_password without site_url or base_url
 |
+|	['hash']							Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
+|										Please, run hash_algos() for know your all supported algorithms
+|
 */
 $config_aauth = array();
 
@@ -115,7 +118,9 @@ $config_aauth["default"] = array(
 
 	'verification'                   => false,
 	'verification_link'              => '/account/verification/',
-	'reset_password_link'            => '/account/reset_password/'
+	'reset_password_link'            => '/account/reset_password/',
+
+	'hash'							 =>	'sha256'
 );
 
 $config['aauth'] = $config_aauth['default'];
