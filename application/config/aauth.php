@@ -64,6 +64,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['verification_link']              	Link for verification without site_url or base_url
 | 	['reset_password_link']            	Link for reset_password without site_url or base_url
 |
+|	['google_client_id']				Activate login api and make your own app on https://console.developers.google.com.
+|	['google_secret']					At this step you will define a redirect Uri and allowed servers
+|	['google_redirect_uri']				Complete this vars with google information.
+|
 */
 $config_aauth = array();
 
@@ -118,9 +122,9 @@ $config_aauth["default"] = array(
 	'verification_link'              => '/account/verification/',
 	'reset_password_link'            => '/account/reset_password/',
 
-	'google_client_id'				 =>	'410840289718-b2omuqv8ni1a6e9dlaivlrl3gmpge2fe.apps.googleusercontent.com',
-	'google_secret'					 =>	'H6TfxzA8IAvn3ovRIwfREsU4',
-	'google_redirect_uri'			 =>	'/Testing/google'
+	'google_client_id'				 =>	'',
+	'google_secret'					 =>	'',
+	'google_redirect_uri'			 =>	''
 );
 
 $config['aauth'] = $config_aauth['default'];
