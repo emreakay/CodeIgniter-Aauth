@@ -160,3 +160,13 @@ CREATE TABLE `aauth_user_variables` (
 -- ----------------------------
 -- Records of aauth_user_variables
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for `google_users`
+-- ----------------------------
+DROP TABLE IF EXISTS `aauth_google`;
+CREATE TABLE IF NOT EXISTS `aauth_google` (
+  `google_id` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`google_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

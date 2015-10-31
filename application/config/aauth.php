@@ -85,6 +85,7 @@ $config_aauth["default"] = array(
 	'pms'                            => 'aauth_pms',
 	'system_variables'               => 'aauth_system_variables',
 	'user_variables'                 => 'aauth_user_variables',
+	'google_users'					 =>	'aauth_google',
 
 	'remember'                       => ' +3 days',
 
@@ -115,7 +116,11 @@ $config_aauth["default"] = array(
 
 	'verification'                   => false,
 	'verification_link'              => '/account/verification/',
-	'reset_password_link'            => '/account/reset_password/'
+	'reset_password_link'            => '/account/reset_password/',
+
+	'google_client_id'				 =>	'410840289718-b2omuqv8ni1a6e9dlaivlrl3gmpge2fe.apps.googleusercontent.com',
+	'google_secret'					 =>	'H6TfxzA8IAvn3ovRIwfREsU4',
+	'google_redirect_uri'			 =>	'/Testing/google'
 );
 
 $config['aauth'] = $config_aauth['default'];
