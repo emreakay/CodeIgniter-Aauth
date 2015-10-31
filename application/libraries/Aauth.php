@@ -2229,32 +2229,9 @@ class Aauth {
 
 	}
 
-
-	// public function google_connect()
-	// {
-
-	// 	$user = $service->userinfo->get();
-		
-	// 	$query = $this->aauth_db->select('google_id');
-	// 	$query = $this->aauth_db->where('google_id', $user->id);
-	// 	$query = $this->aauth_db->get( $this->config_vars['aauth_google'] );
-
-	// 	// If user isn't registred
-	// 	if ( $query->num_rows() < 1 ) {
-	// 		$this->create_google_user($user);
-	// 	// Connect user
-	// 	} else {
-	// 		$rslt = $this->aauth_db->select('*')
-	// 			->from($this->config_vars['aauth_google'])
-	// 			->join($this->config_vars['aauth_google'], $this->config_vars['users'] . ".id = " . $this->config_vars['aauth_google'] . ".user_id")
-	// 			->where($this->config_vars['aauth_google'] . ".google_id", $user->id)
-	// 			->unbuffered_row();
-	// 		var_dump($rslt);
-
-	// 		$this->aauth->login_fast(1);
-	// 	}
-	// }
-
+	/**
+	 * Adapt create_user function for google
+	 */
 	public function create_google_user($user)
 	{
 		$valid = TRUE;
