@@ -1,7 +1,7 @@
 # Created by .gitignore support plugin (hsz.mobi)
 .idea/
 
-
+/*
 !./application/config/aauth.php
 !./application/controllers/example.php
 !./application/helpers/googleauthenticator_helper.php
@@ -10,8 +10,8 @@
 !./application/language/french/aauth_lang.php
 !./application/language/spanish/aauth_lang.php
 !./application/libraries/Aauth.php
-!./LICENSE
-!./README.md
-!./sql/Aauth_v2.sql
-!./sql/readme.txt
-!./composer.json
+!/LICENSE
+!/README.md
+!/sql/Aauth_v2.sql
+!/sql/readme.txt
+!/composer.json
