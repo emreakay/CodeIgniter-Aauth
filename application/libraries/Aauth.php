@@ -22,7 +22,7 @@ require_once 'Google/Auth/OAuth2.php';
  *
  * @copyright 2014-2015 Emre Akay
  *
- * @version 2.4.4
+ * @version 2.4.5
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -1154,7 +1154,7 @@ class Aauth {
 	function hash_password($pass, $userid) {
 
 		$salt = md5($userid);
-		return hash('sha256', $salt.$pass);
+		return hash($this->config_vars['hash'], $salt.$pass);
 	}
 
 	########################

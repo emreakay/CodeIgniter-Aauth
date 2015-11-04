@@ -68,6 +68,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	['google_secret']					At this step you will define a redirect Uri and allowed servers
 |	['google_redirect_uri']				Complete this vars with google information.
 |
+|	['hash']							Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
+|										Please, run hash_algos() for know your all supported algorithms
+|
 */
 $config_aauth = array();
 
@@ -121,6 +124,9 @@ $config_aauth["default"] = array(
 	'verification'                   => false,
 	'verification_link'              => '/account/verification/',
 	'reset_password_link'            => '/account/reset_password/',
+
+
+	'hash'							 =>	'sha256',
 
 	'google_client_id'				 =>	'',
 	'google_secret'					 =>	'',
