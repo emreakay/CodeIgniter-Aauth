@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2015 Emre Akay
  *
- * @version 2.0
+ * @version 2.4.5
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -22,7 +22,6 @@
  * https://github.com/emreakay/CodeIgniter-Aauth
  *
  * @todo separate (on some level) the unvalidated users from the "banned" users
- * @todo add configuration to not use cookies if sessions are enabled.
  */
 class Aauth {
 
@@ -102,6 +101,7 @@ class Aauth {
 		$this->CI->load->helper('email');
 		$this->CI->load->helper('language');
 		$this->CI->load->helper('recaptchalib');
+		$this->CI->load->helper('googleauthenticator_helper');
 		$this->CI->lang->load('aauth');
 
  		// config/aauth.php
@@ -111,8 +111,8 @@ class Aauth {
 		$this->aauth_db = $this->CI->load->database($this->config_vars['db_profile'], TRUE); 
 		
 		// load error and info messages from flashdata (but don't store back in flashdata)
-		$this->errors = $this->CI->session->flashdata('errors');
-		$this->infos = $this->CI->session->flashdata('infos');
+		$this->errors = $this->CI->session->flashdata('errors') ?: array();
+		$this->infos = $this->CI->session->flashdata('infos') ?: array();
 	}
 
 
@@ -129,27 +129,30 @@ class Aauth {
 	 * @param bool $remember
 	 * @return bool Indicates successful login.
 	 */
-	public function login($identifier, $pass, $remember = FALSE) {
+	public function login($identifier, $pass, $remember = FALSE, $totp_code = NULL) {
 
-		// Remove cookies first
-		$cookie = array(
-			'name'	 => 'user',
-			'value'	 => '',
-			'expire' => time()-3600,
-			'path'	 => '/',
-		);
+		if($this->config_vars['use_cookies'] == TRUE){
+			// Remove cookies first
+			$cookie = array(
+				'name'	 => 'user',
+				'value'	 => '',
+				'expire' => -3600,
+				'path'	 => '/',
+			);
+			$this->CI->input->set_cookie($cookie);
+		}
 
-		$this->CI->input->set_cookie($cookie);
 
  		if( $this->config_vars['login_with_name'] == TRUE){
-			if( !$identifier OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+
+			if( !$identifier OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_name'));
 				return FALSE;
 			}
 			$db_identifier = 'name';
  		}else{
-			if( !valid_email($identifier) OR strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] )
+			if( !valid_email($identifier) OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_email'));
 				return FALSE;
@@ -183,13 +186,17 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		$row = $query->row();
 		if($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $row->login_attempts >= $this->config_vars['recaptcha_login_attempts']){
-			$reCAPTCHA_cookie = array(
-				'name'	 => 'reCAPTCHA',
-				'value'	 => 'true',
-				'expire' => time()+7200,
-				'path'	 => '/',
-			);
-			$this->CI->input->set_cookie($reCAPTCHA_cookie);
+			if($this->config_vars['use_cookies'] == TRUE){
+				$reCAPTCHA_cookie = array(
+					'name'	 => 'reCAPTCHA',
+					'value'	 => 'true',
+					'expire' => 7200,
+					'path'	 => '/',
+				);
+				$this->CI->input->set_cookie($reCAPTCHA_cookie);
+			}else{
+				$this->CI->session->set_tempdata('reCAPTCHA', 'true', 7200);
+			}
 		}
 
 		// if user is not verified
@@ -209,12 +216,69 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		
 		if($query->num_rows() == 0){
-			$this->error($this->CI->lang->line('aauth_error_login_failed'));
+			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
 		}
 		
 		$user_id = $query->row()->id;
-		
+		if($this->config_vars['recaptcha_active']){
+			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+				$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
+				$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
+
+				if(!$resp->success){
+					$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
+					return FALSE;
+				}
+			}
+		}
+	 	
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE){
+			$query = null;
+			$query = $this->aauth_db->where($db_identifier, $identifier);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
+			if ($query->num_rows() > 0 AND !$totp_code) {
+				$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+				return FALSE;
+			}else {
+				if(!empty($totp_secret)){
+					$ga = new PHPGangsta_GoogleAuthenticator();
+					$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+					if (!$checkResult) {
+						$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+						return FALSE;
+					}
+				}
+			}
+	 	}
+	 	
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == TRUE){
+			$query = null;
+			$query = $this->aauth_db->where($db_identifier, $identifier);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			$totp_secret =  $query->row()->totp_secret;
+			$ip_address = $query->row()->ip_address;
+			$current_ip_address = $this->CI->input->ip_address();
+			if ($query->num_rows() > 0 AND !$totp_code) {
+				if($ip_address != $current_ip_address ){
+					$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+					return FALSE;
+				}
+			}else {
+				if(!empty($totp_secret)){
+					if($ip_address != $current_ip_address ){
+						$ga = new PHPGangsta_GoogleAuthenticator();
+						$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+						if (!$checkResult) {
+							$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+							return FALSE;
+						}
+					}
+				}
+			}
+	 	}
+	 	
 		$query = null;
 		$query = $this->aauth_db->where($db_identifier, $identifier);
 
@@ -225,18 +289,9 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['users']);
 
 		$row = $query->row();
-		if($this->CI->input->cookie('reCAPTCHA', TRUE) == 'true'){
-			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
-			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
-			if(!$resp->success){
-				$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
-				return FALSE;
-			}
-		}
-	 
 		// if email and pass matches and not banned
-		if ( $query->num_rows() > 0 ) {
+		if ( $query->num_rows() != 0 ) {
 
 			// If email and pass matches
 			// create session
@@ -257,24 +312,32 @@ class Aauth {
 				$random_string = random_string('alnum', 16);
 				$this->update_remember($row->id, $random_string, $remember_date );
 
-				$cookie = array(
-					'name'	 => 'user',
-					'value'	 => $row->id . "-" . $random_string,
-					'expire' => time() + 99*999*999,
-					'path'	 => '/',
-				);
+				if($this->config_vars['use_cookies'] == TRUE){
+					$cookie = array(
+						'name'	 => 'user',
+						'value'	 => $row->id . "-" . $random_string,
+						'expire' => 99*999*999,
+						'path'	 => '/',
+					);
 
-				$this->CI->input->set_cookie($cookie);
+					$this->CI->input->set_cookie($cookie);
+				}else{
+					$this->CI->session->set_userdata('remember', $row->id . "-" . $random_string);
+				}
 			}
 
 			if($this->config_vars['recaptcha_active']){
-				$reCAPTCHA_cookie = array(
-					'name'	 => 'reCAPTCHA',
-					'value'	 => 'false',
-					'expire' => time()-3600,
-					'path'	 => '/',
-				);
-				$this->CI->input->set_cookie($reCAPTCHA_cookie);
+				if($this->config_vars['use_cookies'] == TRUE){
+					$reCAPTCHA_cookie = array(
+						'name'	 => 'reCAPTCHA',
+						'value'	 => 'false',
+						'expire' => -3600,
+						'path'	 => '/',
+					);
+					$this->CI->input->set_cookie($reCAPTCHA_cookie);
+				}else{
+					$this->CI->session->unset_tempdata('reCAPTCHA');
+				}
 			}
 			
 			// update last login
@@ -287,7 +350,7 @@ class Aauth {
 		// if not matches
 		else {
 
-			$this->error($this->CI->lang->line('aauth_error_login_failed'));
+			$this->error($this->CI->lang->line('aauth_error_login_failed_all'));
 			return FALSE;
 		}
 	}
@@ -305,37 +368,67 @@ class Aauth {
 
 		// cookie control
 		else {
-			if( ! $this->CI->input->cookie('user', TRUE) ){
-				return FALSE;
-			} else {
-				$cookie = explode('-', $this->CI->input->cookie('user', TRUE));
-				if(!is_numeric( $cookie[0] ) OR strlen($cookie[1]) < 13 ){return FALSE;}
-				else{
-					$query = $this->aauth_db->where('id', $cookie[0]);
-					$query = $this->aauth_db->where('remember_exp', $cookie[1]);
-					$query = $this->aauth_db->get($this->config_vars['users']);
+			if($this->config_vars['use_cookies'] == TRUE){
+				if( ! $this->CI->input->cookie('user', TRUE) ){
+					return FALSE;
+				} else {
+					$cookie = explode('-', $this->CI->input->cookie('user', TRUE));
+					if(!is_numeric( $cookie[0] ) OR strlen($cookie[1]) < 13 ){return FALSE;}
+					else{
+						$query = $this->aauth_db->where('id', $cookie[0]);
+						$query = $this->aauth_db->where('remember_exp', $cookie[1]);
+						$query = $this->aauth_db->get($this->config_vars['users']);
 
-					$row = $query->row();
+						$row = $query->row();
 
-					if ($query->num_rows() < 1) {
-						$this->update_remember($cookie[0]);
-						return FALSE;
-					}else{
-
-						if(strtotime($row->remember_time) > strtotime("now") ){
-							$this->login_fast($cookie[0]);
-							return TRUE;
-						}
-						// if time is expired
-						else {
+						if ($query->num_rows() < 1) {
+							$this->update_remember($cookie[0]);
 							return FALSE;
+						}else{
+
+							if(strtotime($row->remember_time) > strtotime("now") ){
+								$this->login_fast($cookie[0]);
+								return TRUE;
+							}
+							// if time is expired
+							else {
+								return FALSE;
+							}
+						}
+					}
+				}
+			}else{
+				if(!isset($_SESSION['remember'])){
+					return FALSE;
+				}else{
+					$session = explode('-', $this->CI->session->userdata('remember'));
+					if(!is_numeric( $session[0] ) OR strlen($session[1]) < 13 ){return FALSE;}
+					else{
+						$query = $this->aauth_db->where('id', $session[0]);
+						$query = $this->aauth_db->where('remember_exp', $session[1]);
+						$query = $this->aauth_db->get($this->config_vars['users']);
+
+						$row = $query->row();
+
+						if ($query->num_rows() < 1) {
+							$this->update_remember($session[0]);
+							return FALSE;
+						}else{
+
+							if(strtotime($row->remember_time) > strtotime("now") ){
+								$this->login_fast($session[0]);
+								return TRUE;
+							}
+							// if time is expired
+							else {
+								return FALSE;
+							}
 						}
 					}
 				}
 
 			}
 		}
-
 		return FALSE;
 	}
 
@@ -375,15 +468,16 @@ class Aauth {
 	 */
 	public function logout() {
 
-		$cookie = array(
-			'name'	 => 'user',
-			'value'	 => '',
-			'expire' => time()-3600,
-			'path'	 => '/',
-		);
-
-		$this->CI->input->set_cookie($cookie);
-
+		if($this->config_vars['use_cookies'] == TRUE){
+			$cookie = array(
+				'name'	 => 'user',
+				'value'	 => '',
+				'expire' => -3600,
+				'path'	 => '/',
+			);
+			$this->CI->input->set_cookie($cookie);
+		}
+		
 		return $this->CI->session->sess_destroy();
 	}
 
@@ -486,6 +580,10 @@ class Aauth {
 				'pass' => $this->hash_password($pass, $user_id)
 			);
 
+		 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_reset_over_reset_password'] == TRUE){
+		 		$data['totp_secret'] = NULL;
+		 	}
+		 	
 			$row = $query->row();
 			$email = $row->email;
 
@@ -615,11 +713,12 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_email_exists'));
 			$valid = FALSE;
 		}
-		if (!valid_email($email)){
+		$valid_email = (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+		if (!$valid_email){
 			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 			$valid = FALSE;
 		}
-		if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+		if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
 			$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 			$valid = FALSE;
 		}
@@ -689,7 +788,8 @@ class Aauth {
 				$this->error($this->CI->lang->line('aauth_error_update_email_exists'));
 				$valid = FALSE;
 			}
-			if (!valid_email($email)){
+			$valid_email = (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+			if (!$valid_email){
 				$this->error($this->CI->lang->line('aauth_error_email_invalid'));
 				$valid = FALSE;
 			}
@@ -697,7 +797,7 @@ class Aauth {
 		}
 
 		if ($pass != FALSE) {
-			if ( strlen($pass) < 5 OR strlen($pass) > $this->config_vars['max'] ){
+			if ( strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] ){
 				$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 				$valid = FALSE;
 			}
@@ -856,11 +956,9 @@ class Aauth {
 	 * Delete user
 	 * Delete a user from database. WARNING Can't be undone
 	 * @param int $user_id User id to delete
+	 * @return bool Delete fails/succeeds
 	 */
 	public function delete_user($user_id) {
-
-		$this->aauth_db->where('id', $user_id);
-		$this->aauth_db->delete($this->config_vars['users']);
 
 		// delete from perm_to_user
 		$this->aauth_db->where('user_id', $user_id);
@@ -873,6 +971,11 @@ class Aauth {
 		// delete user vars
 		$this->aauth_db->where('user_id', $user_id);
 		$this->aauth_db->delete($this->config_vars['user_variables']);
+
+		// delete user
+		$this->aauth_db->where('id', $user_id);
+		return $this->aauth_db->delete($this->config_vars['users']);
+
 	}
 
 	//tested
@@ -1042,7 +1145,7 @@ class Aauth {
 	function hash_password($pass, $userid) {
 
 		$salt = md5($userid);
-		return hash('sha256', $salt.$pass);
+		return hash($this->config_vars['hash'], $salt.$pass);
 	}
 
 	########################
@@ -1054,9 +1157,10 @@ class Aauth {
 	 * Create group
 	 * Creates a new group
 	 * @param string $group_name New group name
+	 * @param string $definition Description of the group
 	 * @return int|bool Group id or FALSE on fail
 	 */
-	public function create_group($group_name, $definition) {
+	public function create_group($group_name, $definition = '') {
 
 		$query = $this->aauth_db->get_where($this->config_vars['groups'], array('name' => $group_name));
 
@@ -1110,16 +1214,19 @@ class Aauth {
 
 		$group_id = $this->get_group_id($group_par);
 		
-	$this->aauth_db->where('id',$group_id);
-	$query = $this->aauth_db->get($this->config_vars['groups']);
-	if ($query->num_rows() == 0){
-		return FALSE;
-	}
+		$this->aauth_db->where('id',$group_id);
+		$query = $this->aauth_db->get($this->config_vars['groups']);
+		if ($query->num_rows() == 0){
+			return FALSE;
+		}
 
 		// bug fixed
 		// now users are deleted from user_to_group table
 		$this->aauth_db->where('group_id', $group_id);
 		$this->aauth_db->delete($this->config_vars['user_to_group']);
+		
+		$this->aauth_db->where('group_id', $group_id);
+		$this->aauth_db->delete($this->config_vars['perm_to_group']);
 
 		$this->aauth_db->where('id', $group_id);
 		return $this->aauth_db->delete($this->config_vars['groups']);
@@ -1339,7 +1446,7 @@ class Aauth {
 
 		// deletes from perm_to_user table
 		$this->aauth_db->where('perm_id', $perm_id);
-		$this->aauth_db->delete($this->config_vars['perm_to_group']);
+		$this->aauth_db->delete($this->config_vars['perm_to_user']);
 
 		// deletes from permission table
 		$this->aauth_db->where('id', $perm_id);
@@ -1356,24 +1463,36 @@ class Aauth {
 	 */
 	public function is_allowed($perm_par, $user_id=FALSE){
 
-		$perm_id = $this->get_perm_id($perm_par);
-
 		if( $user_id == FALSE){
 			$user_id = $this->CI->session->userdata('id');
 		}
 
+		if($this->is_admin($user_id))
+		{
+			return true;
+		}
+
+		$perm_id = $this->get_perm_id($perm_par);
+		
 		$query = $this->aauth_db->where('perm_id', $perm_id);
 		$query = $this->aauth_db->where('user_id', $user_id);
 		$query = $this->aauth_db->get( $this->config_vars['perm_to_user'] );
 
 		if( $query->num_rows() > 0){
-			return TRUE;
-		} elseif ($this->is_group_allowed($perm_id)) {
-			return TRUE;
+		    return TRUE;
 		} else {
-			return FALSE;
-		}
-
+			if( $user_id===FALSE){
+				return $this->is_group_allowed($perm_id);
+			} else {
+				$g_allowed=FALSE;
+				foreach( $this->get_user_groups($user_id) as $group ){
+					if ( $this->is_group_allowed($perm_id, $group->id) ){
+						$g_allowed=TRUE;
+					}
+				}
+				return $g_allowed;
+			}
+	    }
 	}
 
 	/**
@@ -1547,7 +1666,7 @@ class Aauth {
 		$query = $this->aauth_db->get($this->config_vars['perms']);
 
 		if ($query->num_rows() == 0)
-			return NULL;
+			return FALSE;
 
 		$row = $query->row();
 		return $row->id;
@@ -1602,7 +1721,7 @@ class Aauth {
 			'receiver_id' => $receiver_id,
 			'title' => $title,
 			'message' => $message,
-			'date' => date('Y-m-d H:i:s')
+			'date_sent' => date('Y-m-d H:i:s')
 		);
 
 		return $query = $this->aauth_db->insert( $this->config_vars['pms'], $data );
@@ -1650,11 +1769,12 @@ class Aauth {
 
 		if ($query->num_rows() < 1) {
 			$this->error( $this->CI->lang->line('aauth_error_no_pm') );
+			return FALSE;
 		}
 
 		if ($set_as_read) $this->set_as_read_pm($pm_id);
 
-		return $query->result();
+		return $query->row();
 	}
 
 	//tested
@@ -1683,7 +1803,7 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('receiver_id', $receiver_id);
-		$query = $this->aauth_db->where('read', 0);
+		$query = $this->aauth_db->where('date_read', NULL);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		return $query->num_rows();
@@ -1698,7 +1818,7 @@ class Aauth {
 	public function set_as_read_pm($pm_id){
 
 		$data = array(
-			'read' => 1,
+			'date_read' => date('Y-m-d H:i:s')
 		);
 
 		$this->aauth_db->update( $this->config_vars['pms'], $data, "id = $pm_id");
@@ -1754,15 +1874,7 @@ class Aauth {
 	 */
 	public function get_errors_array()
 	{
-
-		if (!count($this->errors)==0)
-		{
-			return $this->errors;
-		}
-		else
-		{
-			return array();
-		}
+		return $this->errors;
 	}
 
 	/**
@@ -1849,14 +1961,7 @@ class Aauth {
 	 */
 	public function get_infos_array()
 	{
-		if (!count($this->infos)==0)
-		{
-			return $this->infos;
-		}
-		else
-		{
-			return array();
-		}
+		return $this->infos;
 	}
 
 
@@ -1926,7 +2031,7 @@ class Aauth {
 		 if ($this->get_user_var($key,$user_id) ===FALSE) {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 				'user_id' => $user_id
 			);
@@ -1937,12 +2042,12 @@ class Aauth {
 		else {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 				'user_id' => $user_id
 			);
 
-			$this->aauth_db->where( 'key', $key );
+			$this->aauth_db->where( 'data_key', $key );
 			$this->aauth_db->where( 'user_id', $user_id);
 
 			return $this->aauth_db->update( $this->config_vars['user_variables'], $data);
@@ -1967,7 +2072,7 @@ class Aauth {
 			return FALSE;
 		}
 
-		$this->aauth_db->where('key', $key);
+		$this->aauth_db->where('data_key', $key);
 		$this->aauth_db->where('user_id', $user_id);
 
 		return $this->aauth_db->delete( $this->config_vars['user_variables'] );
@@ -1993,7 +2098,7 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('user_id', $user_id);
-		$query = $this->aauth_db->where('key', $key);
+		$query = $this->aauth_db->where('data_key', $key);
 
 		$query = $this->aauth_db->get( $this->config_vars['user_variables'] );
 
@@ -2025,7 +2130,7 @@ class Aauth {
 		if ( ! $this->get_user($user_id)){
 			return FALSE;
 		}
-		$query = $this->aauth_db->select('key');
+		$query = $this->aauth_db->select('data_key');
 
 		$query = $this->aauth_db->where('user_id', $user_id);
 
@@ -2057,7 +2162,7 @@ class Aauth {
 		if ($this->get_system_var($key) === FALSE) {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 			);
 
@@ -2068,11 +2173,11 @@ class Aauth {
 		else {
 
 			$data = array(
-				'key' => $key,
+				'data_key' => $key,
 				'value' => $value,
 			);
 
-			$this->aauth_db->where( 'key', $key );
+			$this->aauth_db->where( 'data_key', $key );
 			return $this->aauth_db->update( $this->config_vars['system_variables'], $data);
 		}
 
@@ -2086,7 +2191,7 @@ class Aauth {
 	 */
 	public function unset_system_var( $key	) {
 
-		$this->aauth_db->where('key', $key);
+		$this->aauth_db->where('data_key', $key);
 
 		return $this->aauth_db->delete( $this->config_vars['system_variables'] );
 	}
@@ -2100,7 +2205,7 @@ class Aauth {
 	 */
 	public function get_system_var( $key ){
 
-		$query = $this->aauth_db->where('key', $key);
+		$query = $this->aauth_db->where('data_key', $key);
 
 		$query = $this->aauth_db->get( $this->config_vars['system_variables'] );
 
@@ -2121,7 +2226,7 @@ class Aauth {
 	 */
 
 	public function list_system_var_keys(){
-		$query = $this->aauth_db->select('key');
+		$query = $this->aauth_db->select('data_key');
 		$query = $this->aauth_db->get( $this->config_vars['system_variables'] );
 		// if variable not set
 		if ($query->num_rows() < 1) { return FALSE;}
@@ -2132,12 +2237,44 @@ class Aauth {
 
 	public function generate_recaptcha_field(){
 		$content = '';
-		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true'){
-			$content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
-			$siteKey = $this->config_vars['recaptcha_siteKey'];
-			$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active']){
+			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+				$content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
+				$siteKey = $this->config_vars['recaptcha_siteKey'];
+				$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+			}
 		}
 		return $content;
+	}
+
+	public function update_user_totp_secret($user_id = FALSE, $secret) {
+
+		if ($user_id == FALSE)
+			$user_id = $this->CI->session->userdata('id');
+
+		$data['totp_secret'] = $secret;
+
+		$this->aauth_db->where('id', $user_id);
+		return $this->aauth_db->update($this->config_vars['users'], $data);
+	}
+
+	public function generate_unique_totp_secret(){
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		$stop = false;
+		while (!$stop) {
+			$secret = $ga->createSecret();
+			$query = $this->aauth_db->where('totp_secret', $secret);
+			$query = $this->aauth_db->get($this->config_vars['users']);
+			if ($query->num_rows() == 0) {
+				return $secret;
+				$stop = true;
+			}
+		}
+	}
+
+	public function generate_totp_qrcode($secret){
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		return $ga->getQRCodeGoogleUrl($this->config_vars['name'], $secret);
 	}
 
 } // end class
