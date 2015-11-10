@@ -1556,7 +1556,7 @@ class Aauth {
 		$perm_id = $this->get_perm_id($perm_par);
 
 		if( ! $perm_id) {
-			return TRUE;
+			return FALSE;
 		}
 
 		$query = $this->aauth_db->where('user_id',$user_id);
@@ -1607,13 +1607,13 @@ class Aauth {
 		$perm_id = $this->get_perm_id($perm_par);
 
 		if( ! $perm_id) {
-			return TRUE;
+			return FALSE;
 		}
 
 		$group_id = $this->get_group_id($group_par);
 
 		if( ! $group_id) {
-			return TRUE;
+			return FALSE;
 		}
 
 		$query = $this->aauth_db->where('group_id',$group_id);
