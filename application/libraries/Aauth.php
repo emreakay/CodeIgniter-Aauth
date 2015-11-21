@@ -1291,7 +1291,6 @@ class Aauth {
 	 */
 	public function remove_member_allgroups($user_id) {
 
-		$group_par = $this->get_group_id($group_par);
 		$this->aauth_db->where('user_id', $user_id);
 		return $this->aauth_db->delete($this->config_vars['user_to_group']);
 	}
