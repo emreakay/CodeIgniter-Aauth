@@ -1921,7 +1921,7 @@ class Aauth {
 	 */
 	public function clear_errors()
 	{
-		$this->errors = [];
+		$this->errors = array();
 		$this->CI->session->set_flashdata('errors', $this->errors);
 	}
 
@@ -2011,7 +2011,7 @@ class Aauth {
 	 */
 	public function clear_infos()
 	{
-		$this->infos = [];
+		$this->infos = array();
 		$this->CI->session->set_flashdata('infos', $this->infos);
 	}
 
