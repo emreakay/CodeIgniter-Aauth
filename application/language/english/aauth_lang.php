@@ -25,8 +25,8 @@ $lang['aauth_error_email_invalid'] = 'Invalid e-mail address';
 $lang['aauth_error_password_invalid'] = 'Invalid password';
 $lang['aauth_error_username_invalid'] = 'Invalid Username';
 $lang['aauth_error_username_required'] = 'Username required';
-$lang['aauth_error_totp_code_required'] = 'TOTP Code required';
-$lang['aauth_error_totp_code_invalid'] = 'Invalid TOTP Code';
+$lang['aauth_error_totp_code_required'] = 'Authentication Code required';
+$lang['aauth_error_totp_code_invalid'] = 'Invalid Authentication Code';
 
 
 // Account update errors

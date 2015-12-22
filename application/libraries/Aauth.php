@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2015 Emre Akay
  *
- * @version 2.4.5
+ * @version 2.4.6
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -1555,6 +1555,10 @@ class Aauth {
 
 		$perm_id = $this->get_perm_id($perm_par);
 
+		if( ! $perm_id) {
+			return FALSE;
+		}
+
 		$query = $this->aauth_db->where('user_id',$user_id);
 		$query = $this->aauth_db->where('perm_id',$perm_id);
 		$query = $this->aauth_db->get($this->config_vars['perm_to_user']);
@@ -1601,7 +1605,16 @@ class Aauth {
 	public function allow_group($group_par, $perm_par) {
 
 		$perm_id = $this->get_perm_id($perm_par);
+
+		if( ! $perm_id) {
+			return FALSE;
+		}
+
 		$group_id = $this->get_group_id($group_par);
+
+		if( ! $group_id) {
+			return FALSE;
+		}
 
 		$query = $this->aauth_db->where('group_id',$group_id);
 		$query = $this->aauth_db->where('perm_id',$perm_id);
@@ -1908,7 +1921,7 @@ class Aauth {
 	 */
 	public function clear_errors()
 	{
-		$this->errors = [];
+		$this->errors = array();
 		$this->CI->session->set_flashdata('errors', $this->errors);
 	}
 
@@ -1998,7 +2011,7 @@ class Aauth {
 	 */
 	public function clear_infos()
 	{
-		$this->infos = [];
+		$this->infos = array();
 		$this->CI->session->set_flashdata('infos', $this->infos);
 	}
 
