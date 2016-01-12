@@ -695,7 +695,7 @@ class Aauth {
 	 * @param string $name User's name
 	 * @return int|bool False if create fails or returns user id if successful
 	 */
-	public function create_user($email, $pass, $name='') {
+	public function create_user($email, $pass, $name = 'default') {
 
 		$valid = TRUE;
 
@@ -705,10 +705,11 @@ class Aauth {
 				$valid = FALSE;
 			}
 		}
-		if ($this->user_exist_by_name($name)) {
+		if ($this->user_exist_by_name($name) && $name != 'default') {
 			$this->error($this->CI->lang->line('aauth_error_username_exists'));
 			$valid = FALSE;
 		}
+
 		if ($this->user_exist_by_email($email)) {
 			$this->error($this->CI->lang->line('aauth_error_email_exists'));
 			$valid = FALSE;
@@ -733,7 +734,7 @@ class Aauth {
 		$data = array(
 			'email' => $email,
 			'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
-			'name' => $name,
+			'name' => ($name === 'default') ? '' : $name ,
 		);
 
 		if ( $this->aauth_db->insert($this->config_vars['users'], $data )){
