@@ -1289,7 +1289,7 @@ class Aauth {
 	 * @param int $user_id User id to remove from all groups
 	 * @return bool Remove success/failure
 	 */
-	public function remove_member_allgroups($user_id) {
+	public function remove_member_from_all($user_id) {
 
 		$this->aauth_db->where('user_id', $user_id);
 		return $this->aauth_db->delete($this->config_vars['user_to_group']);
