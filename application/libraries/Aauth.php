@@ -783,7 +783,12 @@ class Aauth {
 
 		$data = array();
 		$valid = TRUE;
+		$user = $this->get_user($user_id);
 
+		if ($user->email == $email) {
+			$email = FALSE;
+		}
+		
 		if ($email != FALSE) {
 			if ($this->user_exist_by_email($email)) {
 				$this->error($this->CI->lang->line('aauth_error_update_email_exists'));
@@ -805,6 +810,10 @@ class Aauth {
 			$data['pass'] = $this->hash_password($pass, $user_id);
 		}
 
+		if ($user->name == $name) {
+			$name = FALSE;
+		}
+
 		if ($name != FALSE) {
 			if ($this->user_exist_by_name($name)) {
 				$this->error($this->CI->lang->line('aauth_error_update_username_exists'));
@@ -817,10 +826,10 @@ class Aauth {
 			$data['name'] = $name;
 		}
 
-		if (!$valid) {
+		if ( !$valid || empty($data)) {
 			return FALSE; 
 		}
-
+		
 		$this->aauth_db->where('id', $user_id);
 		return $this->aauth_db->update($this->config_vars['users'], $data);
 	}
