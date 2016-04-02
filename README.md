@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/emreakay/CodeIgniter-Aauth.png?label=ready&title=Ready)](https://waffle.io/emreakay/CodeIgniter-Aauth)
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/2417212/8925689/add409ea-34be-11e5-8e50-845da8f5b1b0.png" height="320">
 </p>
