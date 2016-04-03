@@ -76,7 +76,8 @@
 <a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quick Start</h3>
 
 <hr>
-
+<h4>
+<a id="loading-library" class="anchor" href="#loading-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Loading Library</h4>
 <p>Let's get started :)
 First, we will load the Aauth Library into the system</p>
 
@@ -84,6 +85,8 @@ First, we will load the Aauth Library into the system</p>
 
 <p>That was easy!</p>
 
+<h4>
+<a id="create-users" class="anchor" href="#create-users" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create Users</h4>
 <p>Now let's create two new users, <code>Frodo</code> and <code>Legolas</code>.</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>create_user(<span class="pl-s"><span class="pl-pds">'</span>frodo@example.com<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>frodopass<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>Frodo Baggins<span class="pl-pds">'</span></span>);</span>
@@ -91,6 +94,8 @@ First, we will load the Aauth Library into the system</p>
 
 <p>We now we have two users.</p>
 
+<h4>
+<a id="create-groups" class="anchor" href="#create-groups" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create Groups</h4>
 <p>OK, now we can create two groups, <code>hobbits</code> and <code>elves</code>.</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>create_group(<span class="pl-s"><span class="pl-pds">'</span>hobbits<span class="pl-pds">'</span></span>);</span>
@@ -102,11 +107,15 @@ First, we will load the Aauth Library into the system</p>
 
 <p>OK, now we have two groups and three users.</p>
 
+<h4>
+<a id="create-permissions" class="anchor" href="#create-permissions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create Permissions</h4>
 <p>Let's create two permissions <code>walk_unseen</code> and <code>immortality</code> </p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>create_perm(<span class="pl-s"><span class="pl-pds">'</span>walk_unseen<span class="pl-pds">'</span></span>);</span>
 <span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>create_perm(<span class="pl-s"><span class="pl-pds">'</span>immortality<span class="pl-pds">'</span></span>);</span></pre></div>
 
+<h4>
+<a id="grantrevoke-group-permissions" class="anchor" href="#grantrevoke-group-permissions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Grant/Revoke Groups Permissions</h4>
 <p>Ok, now let's give accesses to our groups.  The Hobbits seem to have ability to walk unseen, so we will assign that privilage to them. The Elves have imortality, so we will assign that privilage to them.
 We will assign access with <code>allow_group()</code> function.</p>
 
@@ -120,10 +129,14 @@ We will assign access with <code>allow_group()</code> function.</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>deny(<span class="pl-s"><span class="pl-pds">'</span>hobbits<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>immortality<span class="pl-pds">'</span></span>);</span></pre></div>
 
+<h4>
+<a id="grant-user-permissions" class="anchor" href="#grant-user-permissions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Grant User Permissions</h4>
 <p>Gandalf can also live forever.</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>allow_user(<span class="pl-c1">12</span>,<span class="pl-s"><span class="pl-pds">'</span>immortality<span class="pl-pds">'</span></span>);</span></pre></div>
 
+<h4>
+<a id="permission-check-usersgroups" class="anchor" href="#permission-check-usersgroups" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Permission Check Users/Groups</h4>
 <p>Ok now let's check if Hobbits have <code>immortality</code>.</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">if</span>(<span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>is_group_allowed(<span class="pl-s"><span class="pl-pds">'</span>hobbits<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>immortality<span class="pl-pds">'</span></span>)){</span>
@@ -197,16 +210,17 @@ We will assume we already have a permission set up named <code>travel</code>.</p
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>send_pm(<span class="pl-c1">3</span>,<span class="pl-c1">4</span>,<span class="pl-s"><span class="pl-pds">'</span>New cloaks<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>These new cloaks are fantastic!<span class="pl-pds">'</span></span>)</span></pre></div>
 
 <h4>
-<a id="banning-users" class="anchor" href="#banning-users" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Banning users</h4>
+<a id="banning-users" class="anchor" href="#banning-users" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Banning Users</h4>
 
 <p>Frodo has broke the rules and will now need to be banned from the system.</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">aauth</span><span class="pl-k">-&gt;</span>ban_user(<span class="pl-c1">3</span>);</span></pre></div>
 
+<hr>
 <p>You have reached the end of the Quick Start Guide, but please take a look at the <a href="https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages">detailed Documentation Wiki</a> for additional information.</p>
 
 <p>Don't forget to keep and eye on Aauth, we are constantly improving the system.
-You can also contribute and help me out. :)</p>
+You can also contribute and help us out. :)</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/emreakay/CodeIgniter-Aauth">Codeigniter Aauth</a> is maintained by <a href="https://github.com/emreakay">emreakay</a>.</span>
