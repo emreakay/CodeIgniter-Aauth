@@ -64,6 +64,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['verification_link']              	Link for verification without site_url or base_url
 | 	['reset_password_link']            	Link for reset_password without site_url or base_url
 |
+|	['google_client_id']				Activate login api and make your own app on https://console.developers.google.com.
+|	['google_secret']					At this step you will define a redirect Uri and allowed servers
+|	['google_redirect_uri']				Complete this vars with google information.
+|
 |	['hash']							Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
 |										Please, run hash_algos() for know your all supported algorithms
 |
@@ -88,6 +92,7 @@ $config_aauth["default"] = array(
 	'pms'                            => 'aauth_pms',
 	'system_variables'               => 'aauth_system_variables',
 	'user_variables'                 => 'aauth_user_variables',
+	'google_users'					 =>	'aauth_google',
 
 	'remember'                       => ' +3 days',
 
@@ -120,7 +125,12 @@ $config_aauth["default"] = array(
 	'verification_link'              => '/account/verification/',
 	'reset_password_link'            => '/account/reset_password/',
 
-	'hash'							 =>	'sha256'
+
+	'hash'							 =>	'sha256',
+
+	'google_client_id'				 =>	'',
+	'google_secret'					 =>	'',
+	'google_redirect_uri'			 =>	''
 );
 
 $config['aauth'] = $config_aauth['default'];

@@ -1,6 +1,15 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
+ * Require Composer Autoloader
+ * Sets the include_path to Google Api Client folder
+ * Require Google OAuth2
+ */
+require_once FCPATH."vendor/autoload.php";
+set_include_path(FCPATH."vendor/google/apiclient/src/" . PATH_SEPARATOR . get_include_path());
+require_once 'Google/Auth/OAuth2.php';
+
+/**
  * Aauth is a User Authorization Library for CodeIgniter 2.x, which aims to make 
  * easy some essential jobs such as login, permissions and access operations. 
  * Despite ease of use, it has also very advanced features like private messages, 
@@ -2175,6 +2184,160 @@ class Aauth {
 		if ($query->num_rows() < 1) { return FALSE;}
 		else {
 			return $query->result();
+		}
+	}
+
+	########################
+	# Google Signin [DEV NOT STABLE]
+	########################
+	
+	/**
+	 * Initialize Google client and OAuth.
+	 * If Google Auth step return a valide code,
+	 * authenticate and define access_token before redirecting
+	 * user to the google redirect uri.
+	 * 
+	 * If Access token is already defined,
+	 * set the client Access Token.
+	 * 
+	 * Finaly return Auth url for let user define her link href.
+	 */
+	public function google_connect()
+	{
+
+		// Define requests for Google Api
+		$client = new Google_Client();
+		$client->setAccessType('offline');
+		$client->setApprovalPrompt("force");
+		$client->setClientId( $this->config_vars['google_client_id'] );
+		$client->setClientSecret($this->config_vars['google_secret']);
+		$client->setRedirectUri( site_url() . $this->config_vars['google_redirect_uri']);
+		$client->addScope("email");
+		$client->addScope("profile");
+
+		$service = new Google_Service_Oauth2($client);
+
+		// If we get the Google code
+		if ( $this->CI->input->get('code') ) {
+			$resp = $client->authenticate( $this->CI->input->get('code') );
+			$array = get_object_vars(json_decode($resp));
+			$refreshToken = $array['refreshToken'];
+			$this->CI->session->set_userdata( array('access_token' => $client->getAccessToken(), 'refreshToken' => $refreshToken) );
+			redirect( site_url($this->config_vars['google_redirect_uri']) );
+		}
+
+		// If we are in the redirect Uri
+		if ( $this->CI->session->userdata('access_token') ) {
+			$client->setAccessToken( $this->CI->session->userdata('access_token') );
+		}
+
+		// If we can access to the access Token
+		if ( $client->getAccessToken() )
+		{
+			if ( $client->isAccessTokenExpired() )
+			{
+				$client->refreshToken($this->CI->session->userdata('refreshToken'));
+			}
+
+			// WE HAVE NEW USER OR USER SIGNUP
+			$googleUser = $service->userinfo->get();
+		
+			$query = $this->aauth_db->select('google_id, user_id');
+			$query = $this->aauth_db->where('google_id', $googleUser->id);
+			$query = $this->aauth_db->get( $this->config_vars['google_users'] );
+
+			// If user not exist
+			if ( $query->num_rows() < 1 ) {
+				$this->create_google_user($googleUser);
+			// User exist so connect him
+			} else {
+				$userId = $query->unbuffered_row('object');
+				$query = $this->aauth_db->select('id');
+				$query = $this->aauth_db->where('id',  $userId->user_id);
+				$query = $this->aauth_db->get( $this->config_vars['users'] );
+				$rslt = $query->unbuffered_row('object');
+				$this->login_fast($rslt->id);
+			}
+		} else {
+			return ( $client->createAuthUrl() );
+		}
+
+	}
+
+	/**
+	 * Adapt create_user function for google
+	 */
+	public function create_google_user($user)
+	{
+		$valid = TRUE;
+		$is_verified = TRUE;
+
+		if ( $this->config_vars['login_with_name'] == TRUE ) {
+			if (empty($user->name)){
+				$this->error($this->CI->lang->line('aauth_error_username_required'));
+				$valid = FALSE;
+			}
+		}
+		if ($this->user_exist_by_name($user->name)) {
+			$this->error($this->CI->lang->line('aauth_error_username_exists'));
+			$valid = FALSE;
+		}
+		if ($this->user_exist_by_email($user->email)) {
+			$this->error($this->CI->lang->line('aauth_error_email_exists'));
+			$valid = FALSE;
+		}
+		$valid_email = (bool) filter_var($user->email, FILTER_VALIDATE_EMAIL);
+		if (!$valid_email){
+			$this->error($this->CI->lang->line('aauth_error_email_invalid'));
+			$valid = FALSE;
+		}
+		if ($user->name == ''){
+			$this->error($this->CI->lang->line('aauth_error_username_invalid'));
+			$valid = FALSE;
+		}
+		if (!$valid) {
+			return FALSE; 
+		}
+
+		$data = array(
+			'email' => $user->email,
+			'pass' => $this->hash_password( random_string('alnum', rand(16, 32)), 0), // Password cannot be blank but user_id required for salt, setting bad password for now
+			'name' => $user->name
+		);
+
+		if ( $this->aauth_db->insert($this->config_vars['users'], $data )){
+
+			$user_id = $this->aauth_db->insert_id();
+
+			// set default group
+			$this->add_member($user_id, $this->config_vars['default_group']);
+
+			// if verification activated AND Google verification email is false
+			if($this->config_vars['verification'] && !$user->verified_email){
+				$data = null;
+				$is_verified = FALSE;
+				$data['banned'] = 1;
+
+				$this->aauth_db->where('id', $user_id);
+				$this->aauth_db->update($this->config_vars['users'], $data);
+
+				// sends verifition ( !! e-mail settings must be set)
+				$this->send_verification($user_id);
+			}
+
+			// Set Google user
+			$data = array(
+				'google_id'	=>	$user->id,
+				'user_id'	=>	$user_id
+			);
+
+			if ( $this->aauth_db->insert($this->config_vars['google_users'], $data) ) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+		} else {
+			return FALSE;
 		}
 	}
 
