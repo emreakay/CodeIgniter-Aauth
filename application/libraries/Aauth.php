@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2015 Emre Akay
  *
- * @version 2.4.6
+ * @version 2.4.7
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -1237,6 +1237,12 @@ class Aauth {
 		
 		$this->aauth_db->where('group_id', $group_id);
 		$this->aauth_db->delete($this->config_vars['perm_to_group']);
+		
+		$this->aauth_db->where('group_id', $group_id);
+		$this->aauth_db->delete($this->config_vars['group_to_group']);
+
+		$this->aauth_db->where('subgroup_id', $group_id);
+		$this->aauth_db->delete($this->config_vars['group_to_group']);
 
 		$this->aauth_db->where('id', $group_id);
 		return $this->aauth_db->delete($this->config_vars['groups']);
@@ -1290,6 +1296,60 @@ class Aauth {
 		$this->aauth_db->where('user_id', $user_id);
 		$this->aauth_db->where('group_id', $group_par);
 		return $this->aauth_db->delete($this->config_vars['user_to_group']);
+	}
+	
+	/**
+	 * Add subgroup
+	 * Add a subgroup to a group
+	 * @param int $user_id User id to add to group
+	 * @param int|string $group_par Group id or name to add user to
+	 * @return bool Add success/failure
+	 */
+	public function add_subgroup($group_par, $subgroup_par) {
+
+		$group_id = $this->get_group_id($group_par);
+		$subgroup_id = $this->get_group_id($subgroup_par);
+
+		if( ! $group_id ) {
+			$this->error( $this->CI->lang->line('aauth_error_no_group') );
+			return FALSE;
+		}
+
+		if( ! $subgroup_id ) {
+			$this->error( $this->CI->lang->line('aauth_error_no_subgroup') );
+			return FALSE;
+		}
+
+		$query = $this->aauth_db->where('group_id',$group_id);
+		$query = $this->aauth_db->where('subgroup_id',$subgroup_id);
+		$query = $this->aauth_db->get($this->config_vars['group_to_group']);
+
+		if ($query->num_rows() < 1) {
+			$data = array(
+				'group_id' => $group_id,
+				'subgroup_id' => $subgroup_id,
+			);
+
+			return $this->aauth_db->insert($this->config_vars['group_to_group'], $data);
+		}
+		$this->info($this->CI->lang->line('aauth_info_already_subgroup'));
+		return TRUE;
+	}
+
+	/**
+	 * Remove subgroup
+	 * Remove a subgroup from a group
+	 * @param int|string $group_par Group id or name to remove 
+	 * @param int|string $subgroup_par Sub-Group id or name to remove
+	 * @return bool Remove success/failure
+	 */
+	public function remove_subgroup($group_par, $subgroup_par) {
+
+		$group_par = $this->get_group_id($group_par);
+		$subgroup_par = $this->get_group_id($subgroup_par);
+		$this->aauth_db->where('group_id', $group_par);
+		$this->aauth_db->where('subgroup_id', $subgroup_par);
+		return $this->aauth_db->delete($this->config_vars['group_to_group']);
 	}
 	
 	//tested
@@ -1397,6 +1457,26 @@ class Aauth {
 
 		$row = $query->row();
 		return $row->id;
+	}
+
+	/**
+	 * Get subgroups
+	 * Get subgroups from group name or id ( ! Case sensitive)
+	 * @param int|string $group_par Group id or name to get
+	 * @return object Array of subgroup_id's
+	 */
+	public function get_subgroups ( $group_par ) {
+
+		$group_id = $this->get_group_id($group_par);
+
+		$query = $this->aauth_db->where('group_id', $group_id);
+		$query = $this->aauth_db->select('subgroup_id');
+		$query = $this->aauth_db->get($this->config_vars['group_to_group']);
+
+		if ($query->num_rows() == 0)
+			return FALSE;
+
+		return $query->result();
 	}
 
 	########################
@@ -1531,17 +1611,25 @@ class Aauth {
 		// if group par is given
 		if($group_par != FALSE){
 
+			$subgroup_ids = $this->get_subgroups($group_par);
 			$group_par = $this->get_group_id($group_par);
-
 			$query = $this->aauth_db->where('perm_id', $perm_id);
 			$query = $this->aauth_db->where('group_id', $group_par);
 			$query = $this->aauth_db->get( $this->config_vars['perm_to_group'] );
+			
+			$g_allowed=FALSE;
+			if(is_array($subgroup_ids)){
+				foreach ($subgroup_ids as $g ){
+					if($this->is_group_allowed($perm_id, $g->subgroup_id)){
+						$g_allowed=TRUE;
+					}
+				}
+			}
 
 			if( $query->num_rows() > 0){
-				return TRUE;
-			} else {
-				return FALSE;
+				$g_allowed=TRUE;
 			}
+			return $g_allowed;
 		}
 		// if group par is not given
 		// checks current user's all groups
@@ -1555,9 +1643,8 @@ class Aauth {
 			if (!$this->is_loggedin()){return FALSE;}
 
 			$group_pars = $this->get_user_groups();
-
 			foreach ($group_pars as $g ){
-				if($this->is_group_allowed($perm_id, $g -> id)){
+				if($this->is_group_allowed($perm_id, $g->id)){
 					return TRUE;
 				}
 			}

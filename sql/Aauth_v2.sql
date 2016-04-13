@@ -160,3 +160,18 @@ CREATE TABLE `aauth_user_variables` (
 -- ----------------------------
 -- Records of aauth_user_variables
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for `aauth_perm_to_group`
+-- ----------------------------
+DROP TABLE IF EXISTS `aauth_group_to_group`;
+CREATE TABLE `aauth_group_to_group` (
+  `group_id` int(11) unsigned DEFAULT NULL,
+  `subgroup_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`group_id`,`subgroup_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of aauth_perm_to_group
+-- ----------------------------
+

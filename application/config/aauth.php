@@ -81,6 +81,7 @@ $config_aauth["default"] = array(
 
 	'users'                          => 'aauth_users',
 	'groups'                         => 'aauth_groups',
+	'group_to_group'                 => 'aauth_group_to_group',
 	'user_to_group'                  => 'aauth_user_to_group',
 	'perms'                          => 'aauth_perms',
 	'perm_to_group'                  => 'aauth_perm_to_group',
