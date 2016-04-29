@@ -693,6 +693,7 @@ class Aauth {
 	 * @param string $email User's email address
 	 * @param string $pass User's password
 	 * @param string $name User's name
+	 * @param bool $send_verification Send verification email to user
 	 * @return int|bool False if create fails or returns user id if successful
 	 */
 	public function create_user($email, $pass, $name='', $send_verification = TRUE) {
