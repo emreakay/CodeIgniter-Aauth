@@ -695,7 +695,7 @@ class Aauth {
 	 * @param string $name User's name
 	 * @return int|bool False if create fails or returns user id if successful
 	 */
-	public function create_user($email, $pass, $name='') {
+	public function create_user($email, $pass, $name='', $send_verification = TRUE) {
 
 		$valid = TRUE;
 
@@ -744,15 +744,17 @@ class Aauth {
 			$this->add_member($user_id, $this->config_vars['default_group']);
 
 			// if verification activated
-			if($this->config_vars['verification']){
-				$data = null;
-				$data['banned'] = 1;
-
-				$this->aauth_db->where('id', $user_id);
-				$this->aauth_db->update($this->config_vars['users'], $data);
-
-				// sends verifition ( !! e-mail settings must be set)
-				$this->send_verification($user_id);
+			if($send_verification) {
+				if($this->config_vars['verification']){
+					$data = null;
+					$data['banned'] = 1;
+	
+					$this->aauth_db->where('id', $user_id);
+					$this->aauth_db->update($this->config_vars['users'], $data);
+	
+					// sends verifition ( !! e-mail settings must be set)
+					$this->send_verification($user_id);
+				}
 			}
 
 			// Update to correct salted password
