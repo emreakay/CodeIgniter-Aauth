@@ -745,7 +745,7 @@ class Aauth {
 			$this->add_member($user_id, $this->config_vars['default_group']);
 
 			// if verification activated
-			if($this->config_vars['verification']){
+			if($this->config_vars['verification'] && !$this->is_admin()){
 				$data = null;
 				$data['banned'] = 1;
 
