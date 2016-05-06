@@ -723,7 +723,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 			$valid = FALSE;
 		}
-		if ($name != FALSE && !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
+		if ($name != FALSE && !ctype_alnum(str_replace($this->config_vars['additional_valid_chars'], '', $name))){
 			$this->error($this->CI->lang->line('aauth_error_username_invalid'));
 			$valid = FALSE;
 		}
@@ -819,7 +819,7 @@ class Aauth {
 				$this->error($this->CI->lang->line('aauth_error_update_username_exists'));
 				$valid = FALSE;
 			}
-			if ($name !='' && !ctype_alnum(str_replace($this->config_vars['valid_chars'], '', $name))){
+			if ($name !='' && !ctype_alnum(str_replace($this->config_vars['additional_valid_chars'], '', $name))){
 				$this->error($this->CI->lang->line('aauth_error_username_invalid'));
 				$valid = FALSE;
 			}
