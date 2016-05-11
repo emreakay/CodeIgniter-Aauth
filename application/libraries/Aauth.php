@@ -2236,6 +2236,33 @@ class Aauth {
 	}
 	
    
+    /**
+	 * Get User Variables by user id
+	 * Return array with all user keys & variables
+	 * @param int $user_id ; if not given current user
+	 * @return bool|array , FALSE if var is not set, the value of var if set
+	 */
+	public function get_user_vars( $user_id = FALSE){
+
+		if ( ! $user_id ){
+			$user_id = $this->CI->session->userdata('id');
+		}
+
+		// if specified user is not found
+		if ( ! $this->get_user($user_id)){
+			return FALSE;
+		}
+
+		$query = $this->aauth_db->select('data_key, value');
+
+		$query = $this->aauth_db->where('user_id', $user_id);
+
+		$query = $this->aauth_db->get( $this->config_vars['user_variables'] );
+
+		return $query->result();
+
+	}
+
 	/**
 	 * List User Variable Keys by UserID
 	 * Return array of variable keys or FALSE
