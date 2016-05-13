@@ -46,11 +46,13 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Sorry, the reCAPTCHA text entered 
 $lang['aauth_error_no_user'] = 'User does not exist';
 $lang['aauth_error_account_not_verified'] = 'Your account has not been verified. Please check your e-mail and verify your account.';
 $lang['aauth_error_no_group'] = 'Group does not exist';
+$lang['aauth_error_no_subgroup'] = 'Subgroup does not exist';
 $lang['aauth_error_self_pm'] = 'It is not possible to send a Message to yourself.';
 $lang['aauth_error_no_pm'] = 'Private Message not found';
 
 
 /* Info messages */
 $lang['aauth_info_already_member'] = 'User is already member of group';
+$lang['aauth_info_already_subgroup'] = 'Subgroup is already member of group';
 $lang['aauth_info_group_exists'] = 'Group name already exists';
 $lang['aauth_info_perm_exists'] = 'Permission name already exists';

@@ -86,10 +86,10 @@ $this->aauth->allow_group('elves','immortality');
 $this->aauth->allow_group('hobbits','immortality');
 ``` 
 
-Wait a minute! Hobbits should not have `immortality`. We need to fix this, we can use `deny()` to remove the permission.
+Wait a minute! Hobbits should not have `immortality`. We need to fix this, we can use `deny_group()` to remove the permission.
 
 ```php
-$this->aauth->deny('hobbits','immortality');
+$this->aauth->deny_group('hobbits','immortality');
 ``` 
 
 Gandalf can also live forever.

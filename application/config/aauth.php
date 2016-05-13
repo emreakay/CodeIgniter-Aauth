@@ -38,7 +38,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['max']                            	Maximum char long for Password
 | 	['min']                            	Minimum char long for Password
 |
-| 	['valid_chars']                    	Valid chars for username. Non alphanumeric characters that are allowed by default
+| 	['additional_valid_chars']          Additional valid chars for username. Non alphanumeric characters that are allowed by default
 |
 | 	['ddos_protection']                	If it is true, the user will be banned temporary when he exceed the login 'try'
 |
@@ -81,6 +81,7 @@ $config_aauth["default"] = array(
 
 	'users'                          => 'aauth_users',
 	'groups'                         => 'aauth_groups',
+	'group_to_group'                 => 'aauth_group_to_group',
 	'user_to_group'                  => 'aauth_user_to_group',
 	'perms'                          => 'aauth_perms',
 	'perm_to_group'                  => 'aauth_perm_to_group',
@@ -94,7 +95,7 @@ $config_aauth["default"] = array(
 	'max'                            => 13,
 	'min'                            => 5,
 
-	'valid_chars'                    => array(),
+	'additional_valid_chars'         => array(),
 
 	'ddos_protection'                => true,
 
