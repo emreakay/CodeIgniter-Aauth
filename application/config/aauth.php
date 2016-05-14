@@ -112,7 +112,7 @@ $config_aauth["default"] = array(
 
 	'max_login_attempt'              => 10,
 	'max_login_attempt_per_minutes'  => 5,
-	'update_last_login_attempt'      => false,
+	'update_last_login_attempt'      => true,
 
 	'login_with_name'                => false,
 
