@@ -638,7 +638,7 @@ class Aauth {
 		$data = array();
 		$data['last_login_attempt'] = date("Y-m-d H:i:s");
 
-		if (strtotime($row->last_login_attempt) > strtotime("-".$this->config_vars['max_login_attempt_per_minutes'])) {
+		if (strtotime($row->last_login_attempt) > strtotime("-".$this->config_vars['max_login_attempt_time_period'])) {
 			$data['login_attempts'] = $row->login_attempts + 1;
 		} else {
 			$data['login_attempts'] = 1;

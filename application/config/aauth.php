@@ -52,8 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['totp_reset_over_reset_password'] 	TOTP reset over reset Password
 |
 | 	['max_login_attempt']              	Login attempts time interval (default 10 times in one hour)
-| 	['max_login_attempt_per_minutes']   Max Login attempts per Minute (default 5)
-| 	['update_last_login_attempt']       Update last Login attempt on login  (default false)
+| 	['max_login_attempt_time_period']   Period of time for max login attempts (default "5 minutes")
 |
 | 	['login_with_name']                	Login Identificator, if TRUE username needed to login else email address.
 |
@@ -114,7 +113,7 @@ $config_aauth["default"] = array(
 	'totp_reset_over_reset_password' => false,
 
 	'max_login_attempt'              => 10,
-	'max_login_attempt_per_minutes'  => 5,
+	'max_login_attempt_time_period'  => "5 minutes",
 
 	'login_with_name'                => false,
 
