@@ -540,7 +540,7 @@ class Aauth {
 		if ($query->num_rows() > 0){
 			$row = $query->row();
 
-			$ver_code = random_string('alnum', 16);
+			$ver_code = sha1(strtotime("now"));
 
 			$data['verification_code'] = $ver_code;
 
@@ -550,7 +550,7 @@ class Aauth {
 			$this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
 			$this->CI->email->to($row->email);
 			$this->CI->email->subject($this->CI->lang->line('aauth_email_reset_subject'));
-			$this->CI->email->message($this->CI->lang->line('aauth_email_reset_text') . site_url() . $this->config_vars['reset_password_link'] . $row->id . '/' . $ver_code );
+			$this->CI->email->message($this->CI->lang->line('aauth_email_reset_text') . site_url() . $this->config_vars['reset_password_link'] . $ver_code );
 			$this->CI->email->send();
 			
 			return TRUE;
@@ -561,33 +561,32 @@ class Aauth {
 	/**
 	 * Reset password
 	 * Generate new password and email it to the user
-	 * @param int $user_id User id to reset password for
 	 * @param string $ver_code Verification code for account
 	 * @return bool Password reset fails/succeeds
 	 */
-	public function reset_password($user_id, $ver_code){
+	public function reset_password($ver_code){
 
-		$query = $this->aauth_db->where('id', $user_id);
 		$query = $this->aauth_db->where('verification_code', $ver_code);
 		$query = $this->aauth_db->get( $this->config_vars['users'] );
 
-		$pass = random_string('alnum',8);
+		$pass_length = ($this->config_vars['min']&1 ? $this->config_vars['min']+1 : $this->config_vars['min']);
+		$pass = random_string('alnum', $pass_length);
 
 		if( $query->num_rows() > 0 ){
 
+			$row = $query->row();
 			$data =	 array(
 				'verification_code' => '',
-				'pass' => $this->hash_password($pass, $user_id)
+				'pass' => $this->hash_password($pass, $row->id)
 			);
 
 		 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_reset_over_reset_password'] == TRUE){
 		 		$data['totp_secret'] = NULL;
 		 	}
 		 	
-			$row = $query->row();
 			$email = $row->email;
 
-			$this->aauth_db->where('id', $user_id);
+			$this->aauth_db->where('id', $row->id);
 			$this->aauth_db->update($this->config_vars['users'] , $data);
 
 			$this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
