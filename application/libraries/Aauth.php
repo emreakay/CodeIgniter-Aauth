@@ -281,9 +281,6 @@ class Aauth {
 	 	
 		$query = null;
 		$query = $this->aauth_db->where($db_identifier, $identifier);
-
-		// Database stores pasword hashed password
-		$query = $this->aauth_db->where('pass', $this->hash_password($pass, $user_id));
 		$query = $this->aauth_db->where('banned', 0);
 
 		$query = $this->aauth_db->get($this->config_vars['users']);
@@ -291,7 +288,9 @@ class Aauth {
 		$row = $query->row();
 
 		// if email and pass matches and not banned
-		if ( $query->num_rows() != 0 ) {
+		$password = ($this->config_vars['use_password_hash'] ? $pass : $this->hash_password($pass, $row->id));
+
+		if ( $query->num_rows() != 0 && $this->verify_password($password, $row->pass) ) {
 
 			// If email and pass matches
 			// create session
@@ -762,7 +761,9 @@ class Aauth {
 
 			// Update to correct salted password
 			$data = null;
-			$data['pass'] = $this->hash_password($pass, $user_id);
+			if( !$this->config_vars['use_password_hash']){
+				$data['pass'] = $this->hash_password($pass, $user_id);
+			}
 			$this->aauth_db->where('id', $user_id);
 			$this->aauth_db->update($this->config_vars['users'], $data);
 
@@ -1157,9 +1158,28 @@ class Aauth {
 	 * @return string Hashed password
 	 */
 	function hash_password($pass, $userid) {
+		if($this->config_vars['use_password_hash']){
+			return password_hash($pass, $this->config_vars['password_hash_algo'], $this->config_vars['password_hash_options']);
+		}else{
+			$salt = md5($userid);
+			return hash($this->config_vars['hash'], $salt.$pass);
+		}
+	}
 
-		$salt = md5($userid);
-		return hash($this->config_vars['hash'], $salt.$pass);
+	/**
+	 * Verify password
+	 * Verfies the hashed password
+	 * @param string $password Password
+	 * @param string $hash Hashed Password
+	 * @param string $user_id 
+	 * @return bool False or True
+	 */
+	function verify_password($password, $hash) {
+		if($this->config_vars['use_password_hash']){
+			return password_verify($password, $hash);
+		}else{
+			return ($password == $hash ? TRUE : FALSE);
+		}
 	}
 
 	########################

@@ -68,6 +68,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 |	['hash']							Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
 |										Please, run hash_algos() for know your all supported algorithms
+| 	['use_password_hash']               True to use PHP's own password_hash() function with BCrypt, needs PHP5.5 or higher
+| 	['password_hash_algo']              password_hash algorithm ("PASSWORD_DEFAULT", "PASSWORD_BCRYPT") 
+| 	['password_hash_options']           password_hash options array for details see http://php.net/manual/en/function.password-hash.php
 |
 */
 $config_aauth = array();
@@ -125,7 +128,10 @@ $config_aauth["default"] = array(
 	'verification_link'              => '/account/verification/',
 	'reset_password_link'            => '/account/reset_password/',
 
-	'hash'							 =>	'sha256'
+	'hash'                           => 'sha256',
+	'use_password_hash'              => false,
+	'password_hash_algo'             => 'PASSWORD_DEFAULT',
+	'password_hash_options'          => array()
 );
 
 $config['aauth'] = $config_aauth['default'];
