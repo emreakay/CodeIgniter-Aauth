@@ -1118,14 +1118,16 @@ class Aauth {
 	 */
 	public function get_user_groups($user_id = FALSE){
 
-		if ($user_id==FALSE) { $user_id = $this->CI->session->userdata('id'); }
-
-		$this->aauth_db->select('*');
-		$this->aauth_db->from($this->config_vars['user_to_group']);
-		$this->aauth_db->join($this->config_vars['groups'], "id = group_id");
-		$this->aauth_db->where('user_id', $user_id);
-
-		return $query = $this->aauth_db->get()->result();
+		if( !$user_id) { $user_id = $this->CI->session->userdata('id'); }
+		if( !$user_id){
+			$this->aauth_db->where('name', $this->config_vars['public_group']);
+			$query = $this->aauth_db->get($this->config_vars['groups']);
+		}else if($user_id){
+			$this->aauth_db->join($this->config_vars['groups'], "id = group_id");
+			$this->aauth_db->where('user_id', $user_id);
+			$query = $this->aauth_db->get($this->config_vars['user_to_group']);
+		}
+		return $query->result();
 	}
 
 	//tested
