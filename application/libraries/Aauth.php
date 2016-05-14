@@ -640,15 +640,19 @@ class Aauth {
 
 		$data = array();
 
-		if ( strtotime($row->last_login_attempt) == strtotime(date("Y-m-d H:0:0"))) {
+		if (strtotime($row->last_login_attempt) > strtotime($this->config_vars['max_login_attempt_per_minutes'])) {
 			$data['login_attempts'] = $row->login_attempts + 1;
+
+			if($this->config_vars['update_last_login_attempt']){
+				$data['last_login_attempt'] = date("Y-m-d H:i:s");
+			}
 
 			$query = $this->aauth_db->where('id', $user_id);
 			$this->aauth_db->update($this->config_vars['users'], $data);
 
 		} else {
 
-			$data['last_login_attempt'] = date("Y-m-d H:0:0");
+			$data['last_login_attempt'] = date("Y-m-d H:i:s");
 			$data['login_attempts'] = 1;
 
 			$this->aauth_db->where('id', $user_id);
