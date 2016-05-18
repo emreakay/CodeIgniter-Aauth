@@ -232,8 +232,13 @@ class Aauth {
 				}
 			}
 		}
+
 	 	
-	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE){
+	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE AND $this->config_vars['totp_two_step_login_active'] == FALSE){
+			if($this->config_vars['totp_two_step_login_active'] == TRUE){
+				$this->CI->session->set_userdata('totp_required', true);
+			}
+
 			$query = null;
 			$query = $this->aauth_db->where($db_identifier, $identifier);
 			$query = $this->aauth_db->get($this->config_vars['users']);
@@ -260,10 +265,15 @@ class Aauth {
 			$totp_secret =  $query->row()->totp_secret;
 			$ip_address = $query->row()->ip_address;
 			$current_ip_address = $this->CI->input->ip_address();
+
 			if ($query->num_rows() > 0 AND !$totp_code) {
 				if($ip_address != $current_ip_address ){
-					$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
-					return FALSE;
+					if($this->config_vars['totp_two_step_login_active'] == FALSE){
+						$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+						return FALSE;
+					} else if($this->config_vars['totp_two_step_login_active'] == TRUE){
+						$this->CI->session->set_userdata('totp_required', true);
+					}
 				}
 			}else {
 				if(!empty($totp_secret)){
@@ -440,17 +450,16 @@ class Aauth {
 	 * @param bool $perm_par If not given just control user logged in or not
 	 */
 	public function control( $perm_par = FALSE ){
+		if($this->CI->session->userdata('totp_required')){
+			$this->error($this->CI->lang->line('aauth_error_totp_verification_required'));
+			redirect($this->config_vars['totp_two_step_login_redirect']);			
+		}
 
 		$perm_id = $this->get_perm_id($perm_par);
 		$this->update_activity();
 		if($perm_par == FALSE){
 			if($this->is_loggedin()){
-				if($this->CI->session->userdata('totp_required')){
-					$this->error($this->CI->lang->line('aauth_error_no_access'));
-					redirect($this->config_vars['totp_two_step_login_redirect']);			
-				}else{
-					return TRUE;				
-				}
+				return TRUE;				
 			}else if(!$this->is_loggedin()){
 				$this->error($this->CI->lang->line('aauth_error_no_access'));
 				if($this->config_vars['no_permission'] !== FALSE){
@@ -1592,6 +1601,11 @@ class Aauth {
 	 */
 	public function is_allowed($perm_par, $user_id=FALSE){
 
+		if($this->CI->session->userdata('totp_required')){
+			$this->error($this->CI->lang->line('aauth_error_totp_verification_required'));
+			redirect($this->config_vars['totp_two_step_login_redirect']);			
+		}
+
 		if( $user_id == FALSE){
 			$user_id = $this->CI->session->userdata('id');
 		}
@@ -2359,6 +2373,39 @@ class Aauth {
 	public function generate_totp_qrcode($secret){
 		$ga = new PHPGangsta_GoogleAuthenticator();
 		return $ga->getQRCodeGoogleUrl($this->config_vars['name'], $secret);
+	}
+
+	public function verify_user_totp_code($totp_code, $user_id = FALSE){
+		if ( !$this->is_totp_required()) {
+			return TRUE;
+		}
+		if ($user_id == FALSE) {
+			$user_id = $this->CI->session->userdata('id');
+		}
+		if (empty($totp_code)) {
+			$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
+			return FALSE;
+		}
+		$query = $this->aauth_db->where('id', $user_id);
+		$query = $this->aauth_db->get($this->config_vars['users']);
+		$totp_secret =  $query->row()->totp_secret;
+		$ga = new PHPGangsta_GoogleAuthenticator();
+		$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+		if (!$checkResult) {
+			$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
+			return FALSE;
+		}else{
+			$this->CI->session->unset_userdata('totp_required');
+			return TRUE;
+		}
+	}
+
+	public function is_totp_required(){
+		if ( !$this->CI->session->userdata('totp_required')) {
+			return FALSE;
+		}else if ( $this->CI->session->userdata('totp_required')) {
+			return TRUE;
+		}
 	}
 
 } // end class

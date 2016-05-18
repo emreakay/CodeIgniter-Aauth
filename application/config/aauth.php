@@ -50,6 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['totp_active']                    	The Time-based One-time Password Algorithm
 | 	['totp_only_on_ip_change']         	TOTP only on IP Change
 | 	['totp_reset_over_reset_password'] 	TOTP reset over reset Password
+| 	['totp_two_step_login'] 			enables TOTP two step login 
 |
 | 	['max_login_attempt']              	Login attempts time interval (default 10 times in one hour)
 | 	['max_login_attempt_time_period']   Period of time for max login attempts (default "5 minutes")
@@ -111,6 +112,8 @@ $config_aauth["default"] = array(
 	'totp_active'                    => false,
 	'totp_only_on_ip_change'         => false,
 	'totp_reset_over_reset_password' => false,
+	'totp_two_step_login_active'     => false,
+	'totp_two_step_login_redirect'   => '/account/twofactor_verification/',
 
 	'max_login_attempt'              => 10,
 	'max_login_attempt_time_period'  => "5 minutes",
