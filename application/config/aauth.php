@@ -51,6 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['totp_only_on_ip_change']         	TOTP only on IP Change
 | 	['totp_reset_over_reset_password'] 	TOTP reset over reset Password
 | 	['totp_two_step_login'] 			enables TOTP two step login 
+| 	['totp_two_step_login_redirect']    Redirect path to TOTP Verification page used by control() & is_allowed()
 |
 | 	['max_login_attempt']              	Login attempts time interval (default 10 times in one hour)
 | 	['max_login_attempt_time_period']   Period of time for max login attempts (default "5 minutes")
