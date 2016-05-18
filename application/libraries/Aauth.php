@@ -362,11 +362,9 @@ class Aauth {
 	 */
 	public function is_loggedin() {
 
-		if ( $this->CI->session->userdata('loggedin') )
-		{ return TRUE; }
-
-		// cookie control
-		else {
+		if ( $this->CI->session->userdata('loggedin') ){ 
+			return TRUE; 
+		} else {
 			if($this->config_vars['use_cookies'] == TRUE){
 				if( ! $this->CI->input->cookie('user', TRUE) ){
 					return FALSE;
@@ -445,12 +443,27 @@ class Aauth {
 
 		$perm_id = $this->get_perm_id($perm_par);
 		$this->update_activity();
+		if($perm_par == FALSE){
+			if($this->is_loggedin()){
+				if($this->CI->session->userdata('totp_required')){
+					$this->error($this->CI->lang->line('aauth_error_no_access'));
+					redirect($this->config_vars['totp_two_step_login_redirect']);			
+				}else{
+					return TRUE;				
+				}
+			}else if(!$this->is_loggedin()){
+				$this->error($this->CI->lang->line('aauth_error_no_access'));
+				if($this->config_vars['no_permission'] !== FALSE){
+					redirect($this->config_vars['no_permission']);			
+				}
+			}
 
-		// if user or user's group not allowed
-		if ( ! $this->is_allowed($perm_id) OR ! $this->is_group_allowed($perm_id) ){
+		}else if ( ! $this->is_allowed($perm_id) OR ! $this->is_group_allowed($perm_id) ){
 			if( $this->config_vars['no_permission'] ) {
 				$this->error($this->CI->lang->line('aauth_error_no_access'));
-				redirect($this->config_vars['no_permission']);
+				if($this->config_vars['no_permission'] !== FALSE){
+					redirect($this->config_vars['no_permission']);			
+				}
 			}
 			else {
 				echo $this->CI->lang->line('aauth_error_no_access');
