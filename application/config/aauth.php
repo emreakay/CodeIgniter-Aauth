@@ -30,7 +30,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['perm_to_group']                  	The table which contains permissions for groups
 | 	['perm_to_user']                   	The table which contains permissions for users
 | 	['pms']                            	The table which contains private messages
-| 	['system_variables']               	The table which contains Aauth system variables
 | 	['user_variables']                 	The table which contains users variables
 |
 | 	['remember']                       	Remember time elapsed after connecting and automatic LogOut
@@ -93,7 +92,6 @@ $config_aauth["default"] = array(
 	'perm_to_group'                  => 'aauth_perm_to_group',
 	'perm_to_user'                   => 'aauth_perm_to_user',
 	'pms'                            => 'aauth_pms',
-	'system_variables'               => 'aauth_system_variables',
 	'user_variables'                 => 'aauth_user_variables',
 
 	'remember'                       => ' +3 days',

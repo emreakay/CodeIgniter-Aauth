@@ -86,21 +86,6 @@ CREATE TABLE `aauth_pms` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for `aauth_system_variables`
--- ----------------------------
-DROP TABLE IF EXISTS `aauth_system_variables`;
-CREATE TABLE `aauth_system_variables` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `data_key` varchar(100) NOT NULL,
-  `value` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of aauth_system_variables
--- ----------------------------
-
--- ----------------------------
 -- Table structure for `aauth_users`
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_users`;
