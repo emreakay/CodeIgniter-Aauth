@@ -174,7 +174,7 @@ class Aauth {
 		$row = $query->row();
 
 		// only email found and login attempts exceeded
-		if ($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && ! $this->update_login_attempts($row->email)) {
+		if ($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && ! $this->update_login_attempts()) {
 
 			$this->error($this->CI->lang->line('aauth_error_login_attempts_exceeded'));
 			return FALSE;
@@ -352,7 +352,10 @@ class Aauth {
 			// update last login
 			$this->update_last_login($row->id);
 			$this->update_activity();
-			$this->reset_login_attempts($row->id);
+
+			if($this->config_vars['remove_successful_attempts'] == TRUE){
+				$this->reset_login_attempts();
+			}
 			
 			return TRUE;
 		}
@@ -536,15 +539,18 @@ class Aauth {
 
 	/**
 	 * Reset last login attempts
-	 * Sets a users 'last login attempts' to null
-	 * @param int $user_id User id to reset
+	 * Removes a Login Attempt 
 	 * @return bool Reset fails/succeeds
 	 */
-	public	function reset_login_attempts($user_id) {
-
-		$data['login_attempts'] = null;
-		$this->aauth_db->where('id', $user_id);
-		return $this->aauth_db->update($this->config_vars['users'], $data);
+	public function reset_login_attempts() {
+		$ip_address = $this->CI->input->ip_address();
+		$this->aauth_db->where(
+			array(
+				'ip_address'=>$ip_address,
+				'timestamp >='=>strtotime("-".$this->config_vars['max_login_attempt_time_period'])
+			)
+		);
+		return $this->aauth_db->delete($this->config_vars['login_attempts']);
 	}
 
 	/**
@@ -645,34 +651,38 @@ class Aauth {
 	//tested
 	/**
 	 * Update login attempt and if exceeds return FALSE
-	 * Update user's last login attemp date and number date
-	 * @param string $email User email
 	 * @return bool
 	 */
-	public function update_login_attempts($email) {
+	public function update_login_attempts() {
+		$ip_address = $this->CI->input->ip_address();
+		$query = $this->aauth_db->where(
+			array(
+				'ip_address'=>$ip_address,
+				'timestamp >='=>strtotime("-".$this->config_vars['max_login_attempt_time_period'])
+			)
+		);
+		$query = $this->aauth_db->get( $this->config_vars['login_attempts'] );
 
-		$user_id = $this->get_user_id($email);
-
-		$query = $this->aauth_db->where('id', $user_id);
-		$query = $this->aauth_db->get( $this->config_vars['users'] );
-		$row = $query->row();
-
-		$data = array();
-		$data['last_login_attempt'] = date("Y-m-d H:i:s");
-
-		if (strtotime($row->last_login_attempt) > strtotime("-".$this->config_vars['max_login_attempt_time_period'])) {
-			$data['login_attempts'] = $row->login_attempts + 1;
-		} else {
-			$data['login_attempts'] = 1;
-		}
-
-		$this->aauth_db->where('id', $user_id);
-		$this->aauth_db->update($this->config_vars['users'], $data);
-
-		if ( $data['login_attempts'] > $this->config_vars['max_login_attempt'] ) {
-			return FALSE;
-		} else {
+		if($query->num_rows() == 0){
+			$data = array();
+			$data['ip_address'] = $ip_address;
+			$data['timestamp']= date("Y-m-d H:i:s");
+			$data['login_attempts']= 1;
+			$this->aauth_db->insert($this->config_vars['login_attempts'], $data);
 			return TRUE;
+		}else{
+			$row = $query->row();
+			$data = array();
+			$data['timestamp'] = date("Y-m-d H:i:s");
+			$data['login_attempts'] = $row->login_attempts + 1;
+			$this->aauth_db->where('id', $row->id);
+			$this->aauth_db->update($this->config_vars['login_attempts'], $data);
+
+			if ( $data['login_attempts'] > $this->config_vars['max_login_attempt'] ) {
+				return FALSE;
+			} else {
+				return TRUE;
+			}
 		}
 
 	}

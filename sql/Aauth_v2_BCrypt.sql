@@ -160,3 +160,18 @@ CREATE TABLE `aauth_group_to_group` (
 -- Records of aauth_perm_to_group
 -- ----------------------------
 
+-- ----------------------------
+-- Table structure for `aauth_login_attempts`
+-- ----------------------------
+
+CREATE TABLE IF NOT EXISTS `aauth_login_attempts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip_address` varchar(39) DEFAULT '0',
+  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `login_attempts` tinyint(2) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of aauth_login_attempts
+-- ----------------------------
