@@ -42,8 +42,8 @@ CREATE TABLE `aauth_perms` (
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_perm_to_group`;
 CREATE TABLE `aauth_perm_to_group` (
-  `perm_id` int(11) unsigned DEFAULT NULL,
-  `group_id` int(11) unsigned DEFAULT NULL,
+  `perm_id` int(11) unsigned NOT NULL,
+  `group_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`perm_id`,`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -56,8 +56,8 @@ CREATE TABLE `aauth_perm_to_group` (
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_perm_to_user`;
 CREATE TABLE `aauth_perm_to_user` (
-  `perm_id` int(11) unsigned DEFAULT NULL,
-  `user_id` int(11) unsigned DEFAULT NULL,
+  `perm_id` int(11) unsigned NOT NULL
+  `user_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`perm_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -118,8 +118,8 @@ INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', '$2y$10$h19Lblcr6amO
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_user_to_group`;
 CREATE TABLE `aauth_user_to_group` (
-  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
-  `group_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
+  `group_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`user_id`,`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -147,17 +147,17 @@ CREATE TABLE `aauth_user_variables` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for `aauth_perm_to_group`
+-- Table structure for `aauth_group_to_group`
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_group_to_group`;
 CREATE TABLE `aauth_group_to_group` (
-  `group_id` int(11) unsigned DEFAULT NULL,
-  `subgroup_id` int(11) unsigned DEFAULT NULL,
+  `group_id` int(11) unsigned NOT NULL,
+  `subgroup_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`group_id`,`subgroup_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of aauth_perm_to_group
+-- Records of aauth_group_to_group
 -- ----------------------------
 
 -- ----------------------------
