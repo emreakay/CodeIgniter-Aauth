@@ -30,8 +30,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['perm_to_group']                  	The table which contains permissions for groups
 | 	['perm_to_user']                   	The table which contains permissions for users
 | 	['pms']                            	The table which contains private messages
-| 	['system_variables']               	The table which contains Aauth system variables
 | 	['user_variables']                 	The table which contains users variables
+| 	['login_attempts']                 	The table which contains login attempts
 |
 | 	['remember']                       	Remember time elapsed after connecting and automatic LogOut
 |
@@ -50,8 +50,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['totp_active']                    	The Time-based One-time Password Algorithm
 | 	['totp_only_on_ip_change']         	TOTP only on IP Change
 | 	['totp_reset_over_reset_password'] 	TOTP reset over reset Password
+| 	['totp_two_step_login']             Enables/Disables TOTP two step login 
+| 	['totp_two_step_login_redirect']    Redirect path to TOTP Verification page used by control() & is_allowed()
 |
-| 	['max_login_attempt']              	Login attempts time interval (default 20 times in one hour)
+| 	['max_login_attempt']              	Login attempts time interval (default 10 times in one hour)
+| 	['max_login_attempt_time_period']   Period of time for max login attempts (default "5 minutes")
+| 	['remove_successful_attempts']      Enables/Disables removing login attempt after successful login
 |
 | 	['login_with_name']                	Login Identificator, if TRUE username needed to login else email address.
 |
@@ -64,8 +68,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | 	['verification_link']              	Link for verification without site_url or base_url
 | 	['reset_password_link']            	Link for reset_password without site_url or base_url
 |
-|	['hash']							Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
-|										Please, run hash_algos() for know your all supported algorithms
+|	['hash']                            Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
+|                                       Please, run hash_algos() for know your all supported algorithms
+| 	['use_password_hash']               True to use PHP's own password_hash() function with BCrypt, needs PHP5.5 or higher
+| 	['password_hash_algo']              password_hash algorithm (PASSWORD_DEFAULT, PASSWORD_BCRYPT) for details see http://php.net/manual/de/password.constants.php
+| 	['password_hash_options']           password_hash options array for details see http://php.net/manual/en/function.password-hash.php
 |
 */
 $config_aauth = array();
@@ -87,8 +94,8 @@ $config_aauth["default"] = array(
 	'perm_to_group'                  => 'aauth_perm_to_group',
 	'perm_to_user'                   => 'aauth_perm_to_user',
 	'pms'                            => 'aauth_pms',
-	'system_variables'               => 'aauth_system_variables',
 	'user_variables'                 => 'aauth_user_variables',
+	'login_attempts'                 => 'aauth_login_attempts',
 
 	'remember'                       => ' +3 days',
 
@@ -107,8 +114,12 @@ $config_aauth["default"] = array(
 	'totp_active'                    => false,
 	'totp_only_on_ip_change'         => false,
 	'totp_reset_over_reset_password' => false,
+	'totp_two_step_login_active'     => false,
+	'totp_two_step_login_redirect'   => '/account/twofactor_verification/',
 
 	'max_login_attempt'              => 10,
+	'max_login_attempt_time_period'  => "5 minutes",
+	'remove_successful_attempts'     => true,
 
 	'login_with_name'                => false,
 
@@ -121,7 +132,10 @@ $config_aauth["default"] = array(
 	'verification_link'              => '/account/verification/',
 	'reset_password_link'            => '/account/reset_password/',
 
-	'hash'							 =>	'sha256'
+	'hash'                           => 'sha256',
+	'use_password_hash'              => false,
+	'password_hash_algo'             => PASSWORD_DEFAULT,
+	'password_hash_options'          => array()
 );
 
 $config['aauth'] = $config_aauth['default'];

@@ -92,7 +92,7 @@ DROP TABLE IF EXISTS `aauth_users`;
 CREATE TABLE `aauth_users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(100) COLLATE utf8_general_ci NOT NULL,
-  `pass` varchar(64) COLLATE utf8_general_ci NOT NULL,
+  `pass` varchar(60) COLLATE utf8_general_ci NOT NULL,
   `name` varchar(100) COLLATE utf8_general_ci,
   `banned` tinyint(1) DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE `aauth_users` (
 -- ----------------------------
 -- Records of aauth_users
 -- ----------------------------
-INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', 'dd5073c93fb477a167fd69072e95455834acd93df8fed41a2c468c45b394bfe3', 'Admin', '0', null, null, null, null, null, null, null, null, null, '0');
+INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', '$2y$10$h19Lblcr6amOIUL1TgYW2.VVZOhac/e1kHMgAwCubMTlYXZrL0wS2', 'Admin', '0', null, null, null, null, null, null, null, null, null, '0');
 
 -- ----------------------------
 -- Table structure for `aauth_user_to_group`
