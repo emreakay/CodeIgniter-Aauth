@@ -8,7 +8,7 @@
 // Account verification
 $lang['aauth_email_verification_subject'] = '帳號驗證';
 $lang['aauth_email_verification_code'] = '您的驗證碼：';
-$lang['aauth_email_verification_text'] = " 您可以點擊（或者複製貼上）以下連結\n\n";
+$lang['aauth_email_verification_text'] = "您可以點擊（或者複製貼上）以下連結\n\n";
 
 // Password reset
 $lang['aauth_email_reset_subject'] = '重設密碼';
