@@ -135,7 +135,9 @@ $config_aauth["default"] = array(
 	'hash'                           => 'sha256',
 	'use_password_hash'              => false,
 	'password_hash_algo'             => PASSWORD_DEFAULT,
-	'password_hash_options'          => array()
+	'password_hash_options'          => array(),
+
+	'pm_encryption'                  => false
 );
 
 $config['aauth'] = $config_aauth['default'];

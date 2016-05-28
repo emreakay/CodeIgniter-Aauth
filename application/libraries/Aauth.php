@@ -1108,6 +1108,24 @@ class Aauth {
 	}
 
 	/**
+	 * user_exist_by_id
+	 * Check if user exist by user email
+	 * @param $user_email
+	 *
+	 * @return bool
+	 */
+	public function user_exist_by_id( $user_id ) {
+		$query = $this->aauth_db->where('id', $user_id);
+
+		$query = $this->aauth_db->get($this->config_vars['users']);
+
+		if ($query->num_rows() > 0)
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	/**
 	 * Get user id
 	 * Get user id from email address, if par. not given, return current user's id
 	 * @param string|bool $email Email address for user
@@ -1865,29 +1883,16 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_self_pm'));
 			return FALSE;
 		}
-
-		$query = $this->aauth_db->where('id', $receiver_id);
-		$query = $this->aauth_db->where('banned', 0);
-
-		$query = $this->aauth_db->get( $this->config_vars['users'] );
-
-		// if user not exist or banned
-		if ( $query->num_rows() < 1 ){
+		if (($this->is_banned($receiver_id) || !$this->user_exist_by_id($receiver_id)) || ($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
 			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
 		}
 
-		$query = $this->aauth_db->where('id', $sender_id);
-		$query = $this->aauth_db->where('banned', 0);
-
-		$query = $this->aauth_db->get( $this->config_vars['users'] );
-
-		// if user not exist or banned
-		if ( $query->num_rows() < 1 ){
-			$this->error($this->CI->lang->line('aauth_error_no_user'));
-			return FALSE;
+		if ($this->config_vars['pm_encryption']){
+			$this->CI->load->library('encrypt');
+			$title = $this->CI->encrypt->encode($title);
+			$message = $this->CI->encrypt->encode($message);
 		}
-
 
 		$data = array(
 			'sender_id' => $sender_id,
@@ -1911,8 +1916,6 @@ class Aauth {
 	 * @return object Array of private messages
 	 */
 	public function list_pms($limit=5, $offset=0, $receiver_id = FALSE, $sender_id=FALSE){
-
-		$query='';
 
 		if ( $receiver_id != FALSE){
 			$query = $this->aauth_db->where('receiver_id', $receiver_id);
@@ -1940,6 +1943,10 @@ class Aauth {
 		if(!$user_id){
 			$user_id = $this->CI->session->userdata('id');
 		}
+		if( !is_numeric($user_id)){
+			$this->error( $this->CI->lang->line('aauth_error_no_pm') );
+			return FALSE;
+		}
 
 		$query = $this->aauth_db->where('id', $pm_id);
 		$query = $this->aauth_db->where('receiver_id', $user_id);
@@ -1955,6 +1962,12 @@ class Aauth {
 
 		if ($user_id == $result->receiver_id && $set_as_read){
 			$this->set_as_read_pm($pm_id);
+		}
+
+		if ($this->config_vars['pm_encryption']){
+			$this->CI->load->library('encrypt');
+			$result->title = $this->CI->encrypt->decode($result->title);
+			$result->message = $this->CI->encrypt->decode($result->message);
 		}
 
 		return $result;
