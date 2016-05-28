@@ -1932,12 +1932,18 @@ class Aauth {
 	 * Get Private Message
 	 * Get private message by id
 	 * @param int $pm_id Private message id to be returned
+	 * @param int $user_id User ID of Sender or Receiver
 	 * @param bool $set_as_read Whether or not to mark message as read
 	 * @return object Private message
 	 */
-	public function get_pm($pm_id, $set_as_read = TRUE){
+	public function get_pm($pm_id, $user_id = NULL, $set_as_read = TRUE){
+		if(!$user_id){
+			$user_id = $this->CI->session->userdata('id');
+		}
 
 		$query = $this->aauth_db->where('id', $pm_id);
+		$query = $this->aauth_db->where('receiver_id', $user_id);
+		$query = $this->aauth_db->or_where('sender_id', $user_id);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		if ($query->num_rows() < 1) {
@@ -1945,9 +1951,13 @@ class Aauth {
 			return FALSE;
 		}
 
-		if ($set_as_read) $this->set_as_read_pm($pm_id);
+		$result = $query->row();
 
-		return $query->row();
+		if ($user_id == $result->receiver_id && $set_as_read){
+			$this->set_as_read_pm($pm_id);
+		}
+
+		return $result;
 	}
 
 	//tested
