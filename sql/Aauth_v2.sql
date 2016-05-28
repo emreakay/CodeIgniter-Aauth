@@ -56,7 +56,7 @@ CREATE TABLE `aauth_perm_to_group` (
 -- ----------------------------
 DROP TABLE IF EXISTS `aauth_perm_to_user`;
 CREATE TABLE `aauth_perm_to_user` (
-  `perm_id` int(11) unsigned NOT NULL
+  `perm_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`perm_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
