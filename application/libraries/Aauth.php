@@ -2053,7 +2053,7 @@ class Aauth {
 				return $this->aauth_db->delete( $this->config_vars['pms'], array('id' => $pm_id));			
 			}
 
-			return $this->aauth_db->update( $this->config_vars['pms'], array('pm_deleted_receiver'=>1), array('id' => $pm_id) );
+			return $this->aauth_db->update( $this->config_vars['pms'], array('pm_deleted_receiver'=>1, 'date_read'=>date('Y-m-d H:i:s')), array('id' => $pm_id) );
 		}
 	}
 
@@ -2084,7 +2084,6 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('receiver_id', $receiver_id);
-		$query = $this->aauth_db->where('pm_deleted_receiver', 0);
 		$query = $this->aauth_db->where('date_read', NULL);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
