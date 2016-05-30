@@ -15,7 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 |   ['admin_group']                     Name of admin group
 |   ['default_group']                   Name of default group, the new user is added in it
-|   ['public_group']                    Public group , people who not logged in
+|   ['public_group']                    Name of Public group , people who not logged in
 |
 |   ['db_profile']                      The configuration database profile (definied in config/database.php)
 |
@@ -40,22 +40,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 |   ['additional_valid_chars']          Additional valid chars for username. Non alphanumeric characters that are allowed by default
 |
-|   ['ddos_protection']                 If it is true, the user will be banned temporary when he exceed the login 'try'
+|   ['ddos_protection']                 Enables the DDoS Protection, user will be banned temporary when he exceed the login 'try'
 |
-|   ['recaptcha_active']                Enable reCAPTCHA (for details see www.google.com/recaptcha/admin)
+|   ['recaptcha_active']                Enables reCAPTCHA (for details see www.google.com/recaptcha/admin)
 |   ['recaptcha_login_attempts']        Login Attempts to display reCAPTCHA
 |   ['recaptcha_siteKey']               The reCAPTCHA siteKey
 |   ['recaptcha_secret']                The reCAPTCHA secretKey
 |
-|   ['totp_active']                     The Time-based One-time Password Algorithm
+|   ['totp_active']                     Enables the Time-based One-time Password Algorithm
 |   ['totp_only_on_ip_change']          TOTP only on IP Change
 |   ['totp_reset_over_reset_password']  TOTP reset over reset Password
-|   ['totp_two_step_login']             Enables/Disables TOTP two step login 
+|   ['totp_two_step_login']             Enables TOTP two step login 
 |   ['totp_two_step_login_redirect']    Redirect path to TOTP Verification page used by control() & is_allowed()
 |
 |   ['max_login_attempt']               Login attempts time interval (default 10 times in one hour)
 |   ['max_login_attempt_time_period']   Period of time for max login attempts (default "5 minutes")
-|   ['remove_successful_attempts']      Enables/Disables removing login attempt after successful login
+|   ['remove_successful_attempts']      Enables removing login attempt after successful login
 |
 |   ['login_with_name']                 Login Identificator, if TRUE username needed to login else email address.
 |
@@ -70,13 +70,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 |   ['hash']                            Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
 |                                       Please, run hash_algos() for know your all supported algorithms
-|   ['use_password_hash']               True to use PHP's own password_hash() function with BCrypt, needs PHP5.5 or higher
+|   ['use_password_hash']               Enables to use PHP's own password_hash() function with BCrypt, needs PHP5.5 or higher
 |   ['password_hash_algo']              password_hash algorithm (PASSWORD_DEFAULT, PASSWORD_BCRYPT) 
 |                                       for details see http://php.net/manual/de/password.constants.php
 |   ['password_hash_options']           password_hash options array 
 |                                       for details see http://php.net/manual/en/function.password-hash.php
 |
-|   ['pm_encryption']                   Enables/Disables PM Encryption, needs configured CI Encryption Class.
+|   ['pm_encryption']                   Enables PM Encryption, needs configured CI Encryption Class.
 |                                       for details see: http://www.codeigniter.com/userguide2/libraries/encryption.html
 |   ['pm_cleanup_max_age']              PM Cleanup max age (in relative format), PM's are older than max age get deleted with 'cleanup_pms()'
 |                                       Relative Format (e.g. '2 week', '1 month') 
@@ -146,7 +146,7 @@ $config_aauth["default"] = array(
  'password_hash_options'          => array(),
 
  'pm_encryption'                  => false,
- 'pm_cleanup_max_age'             => "6 months",
+ 'pm_cleanup_max_age'             => "3 months",
 );
 
 $config['aauth'] = $config_aauth['default'];
