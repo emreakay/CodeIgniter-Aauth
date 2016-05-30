@@ -758,6 +758,7 @@ class Aauth {
 			'email' => $email,
 			'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
 			'name' => (!$name) ? '' : $name ,
+			'date_created' => date("Y-m-d H:i:s"),
 		);
 
 		if ( $this->aauth_db->insert($this->config_vars['users'], $data )){

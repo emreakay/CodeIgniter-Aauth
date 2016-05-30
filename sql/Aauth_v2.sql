@@ -97,14 +97,13 @@ CREATE TABLE `aauth_users` (
   `banned` tinyint(1) DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
   `last_activity` datetime DEFAULT NULL,
-  `last_login_attempt` datetime DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
   `forgot_exp` text COLLATE utf8_general_ci,
   `remember_time` datetime DEFAULT NULL,
   `remember_exp` text COLLATE utf8_general_ci,
   `verification_code` text COLLATE utf8_general_ci,
   `totp_secret` varchar(16) COLLATE utf8_general_ci DEFAULT NULL,
   `ip_address` text COLLATE utf8_general_ci,
-  `login_attempts` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
