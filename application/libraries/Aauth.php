@@ -1873,37 +1873,47 @@ class Aauth {
 	 * Send Private Message
 	 * Send a private message to another user
 	 * @param int $sender_id User id of private message sender
-	 * @param int $receiver_id User id of private message receiver
+	 * @param int/array $receiver_ids Array of User ids of private message receiver OR User id as INT of a single receiver
 	 * @param string $title Message title/subject
 	 * @param string $message Message body/content
-	 * @return bool Send successful/failed
+	 * @return array/bool Array with User ID's as key and TRUE or a specific error message OR FALSE if sender doesn't exist
 	 */
-	public function send_pm( $sender_id, $receiver_id, $title, $message ){
-
-		if ( !is_numeric($receiver_id) OR $sender_id == $receiver_id ){
-			$this->error($this->CI->lang->line('aauth_error_self_pm'));
-			return FALSE;
-		}
-		if (($this->is_banned($receiver_id) || !$this->user_exist_by_id($receiver_id)) || ($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
-			$this->error($this->CI->lang->line('aauth_error_no_user'));
-			return FALSE;
-		}
-
+	public function send_pm( $sender_id, $receiver_ids, $title, $message ){
 		if ($this->config_vars['pm_encryption']){
 			$this->CI->load->library('encrypt');
 			$title = $this->CI->encrypt->encode($title);
 			$message = $this->CI->encrypt->encode($message);
 		}
+		if (($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
+			$this->error($this->CI->lang->line('aauth_error_no_user'));
+			return FALSE;
+		}
+		if (is_numeric($receiver_ids)) {
+			$receiver_ids = array($receiver_ids);
+		}
 
-		$data = array(
-			'sender_id' => $sender_id,
-			'receiver_id' => $receiver_id,
-			'title' => $title,
-			'message' => $message,
-			'date_sent' => date('Y-m-d H:i:s')
-		);
+		$return_array = array();
+		foreach ($receiver_ids as $receiver_id) {
+			if ($sender_id == $receiver_id ){
+				$return_array[$receiver_id] = $this->CI->lang->line('aauth_error_self_pm');
+				continue;
+			}
+			if ($this->is_banned($receiver_id) || !$this->user_exist_by_id($receiver_id)){
+				$return_array[$receiver_id] = $this->CI->lang->line('aauth_error_no_user');
+				continue;
+			}
+			
+			$data = array(
+				'sender_id' => $sender_id,
+				'receiver_id' => $receiver_id,
+				'title' => $title,
+				'message' => $message,
+				'date_sent' => date('Y-m-d H:i:s')
+			);
+			$return_array[$receiver_id] = $this->aauth_db->insert( $this->config_vars['pms'], $data );
+		}
 
-		return $query = $this->aauth_db->insert( $this->config_vars['pms'], $data );
+		return $return_array;
 	}
 
 	//tested
