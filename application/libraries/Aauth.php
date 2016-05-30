@@ -1963,14 +1963,14 @@ class Aauth {
 	 * @param int $receiver_id User id of private message receiver
 	 * @return object Array of private messages
 	 */
-	public function list_pms($limit=5, $offset=0, $receiver_id = FALSE, $sender_id=FALSE){
-
-		if ( $receiver_id != FALSE){
+	public function list_pms($limit=5, $offset=0, $receiver_id=NULL, $sender_id=NULL){
+		if (is_numeric($sender_id)){
 			$query = $this->aauth_db->where('receiver_id', $receiver_id);
+			$query = $this->aauth_db->where('pm_deleted_receiver', 0);
 		}
-
-		if( $sender_id != FALSE ){
+		if (is_numeric($sender_id)){
 			$query = $this->aauth_db->where('sender_id', $sender_id);
+			$query = $this->aauth_db->where('pm_deleted_sender', 0);
 		}
 
 		$query = $this->aauth_db->order_by('id','DESC');
@@ -1991,7 +1991,7 @@ class Aauth {
 		if(!$user_id){
 			$user_id = $this->CI->session->userdata('id');
 		}
-		if( !is_numeric($user_id)){
+		if( !is_numeric($user_id) || !is_numeric($pm_id)){
 			$this->error( $this->CI->lang->line('aauth_error_no_pm') );
 			return FALSE;
 		}
@@ -2028,9 +2028,46 @@ class Aauth {
 	 * @param int $pm_id Private message id to be deleted
 	 * @return bool Delete success/failure
 	 */
-	public function delete_pm($pm_id){
-		
-		return $this->aauth_db->delete( $this->config_vars['pms'], array('id' => $pm_id) );
+	public function delete_pm($pm_id, $user_id = NULL){
+		if(!$user_id){
+			$user_id = $this->CI->session->userdata('id');
+		}
+		if( !is_numeric($user_id) || !is_numeric($pm_id)){
+			$this->error( $this->CI->lang->line('aauth_error_no_pm') );
+			return FALSE;
+		}
+
+		$query = $this->aauth_db->where('id', $pm_id);
+		$query = $this->aauth_db->where('receiver_id', $user_id);
+		$query = $this->aauth_db->or_where('sender_id', $user_id);
+		$query = $this->aauth_db->get( $this->config_vars['pms'] );
+		$result = $query->row();
+		if ($user_id == $result->sender_id){
+			if($result->pm_deleted_receiver == 1){
+				return $this->aauth_db->delete( $this->config_vars['pms'], array('id' => $pm_id));			
+			}
+			
+			return $this->aauth_db->update( $this->config_vars['pms'], array('pm_deleted_sender'=>1), array('id' => $pm_id));			
+		}else if ($user_id == $result->result->receiver_id){
+			if($result->pm_deleted_sender == 1){
+				return $this->aauth_db->delete( $this->config_vars['pms'], array('id' => $pm_id));			
+			}
+
+			return $this->aauth_db->update( $this->config_vars['pms'], array('pm_deleted_receiver'=>1), array('id' => $pm_id) );
+		}
+	}
+
+	/**
+	 * Cleanup PMs 
+	 * Removes PMs older than 'pm_cleanup_max_age' (definied in aauth config).
+	 * recommend for a cron job
+	 */
+	public function cleanup_pms(){
+		$pm_cleanup_max_age = $this->config_vars['pm_cleanup_max_age'];
+		$date_sent = date('Y-m-d H:i:s', strtotime("now -".$pm_cleanup_max_age));
+		$this->aauth_db->where('date_sent <', $date_sent);
+
+		return $this->aauth_db->delete($this->config_vars['pms']);			
 	}
 
 	//tested
@@ -2047,6 +2084,7 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('receiver_id', $receiver_id);
+		$query = $this->aauth_db->where('pm_deleted_receiver', 0);
 		$query = $this->aauth_db->where('date_read', NULL);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
