@@ -1873,12 +1873,49 @@ class Aauth {
 	 * Send Private Message
 	 * Send a private message to another user
 	 * @param int $sender_id User id of private message sender
-	 * @param int/array $receiver_ids Array of User ids of private message receiver OR User id as INT of a single receiver
+	 * @param int $receiver_id User id of private message receiver
+	 * @param string $title Message title/subject
+	 * @param string $message Message body/content
+	 * @return bool Send successful/failed
+	 */
+	public function send_pm( $sender_id, $receiver_id, $title, $message ){
+
+		if ( !is_numeric($receiver_id) OR $sender_id == $receiver_id ){
+			$this->error($this->CI->lang->line('aauth_error_self_pm'));
+			return FALSE;
+		}
+		if (($this->is_banned($receiver_id) || !$this->user_exist_by_id($receiver_id)) || ($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
+			$this->error($this->CI->lang->line('aauth_error_no_user'));
+			return FALSE;
+		}
+
+		if ($this->config_vars['pm_encryption']){
+			$this->CI->load->library('encrypt');
+			$title = $this->CI->encrypt->encode($title);
+			$message = $this->CI->encrypt->encode($message);
+		}
+
+		$data = array(
+			'sender_id' => $sender_id,
+			'receiver_id' => $receiver_id,
+			'title' => $title,
+			'message' => $message,
+			'date_sent' => date('Y-m-d H:i:s')
+		);
+
+		return $this->aauth_db->insert( $this->config_vars['pms'], $data );
+	}
+
+	/**
+	 * Send multiple Private Messages
+	 * Send multiple private messages to another users
+	 * @param int $sender_id User id of private message sender
+	 * @param array $receiver_ids Array of User ids of private message receiver 
 	 * @param string $title Message title/subject
 	 * @param string $message Message body/content
 	 * @return array/bool Array with User ID's as key and TRUE or a specific error message OR FALSE if sender doesn't exist
 	 */
-	public function send_pm( $sender_id, $receiver_ids, $title, $message ){
+	public function send_pms( $sender_id, $receiver_ids, $title, $message ){
 		if ($this->config_vars['pm_encryption']){
 			$this->CI->load->library('encrypt');
 			$title = $this->CI->encrypt->encode($title);
