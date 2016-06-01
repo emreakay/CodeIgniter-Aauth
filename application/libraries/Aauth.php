@@ -1992,7 +1992,20 @@ class Aauth {
 
 		$query = $this->aauth_db->order_by('id','DESC');
 		$query = $this->aauth_db->get( $this->config_vars['pms'], $limit, $offset);
-		return $query->result();
+
+		$result = $query->result();
+
+		if ($this->config_vars['pm_encryption']){
+			$this->CI->load->library('encrypt');
+
+			foreach ($result as $k => $r)
+			{
+				$result[$k]->title = $this->CI->encrypt->decode($r->title);
+				$result[$k]->message = $this->CI->encrypt->decode($r->message);
+			}
+		}
+
+		return $result;
 	}
 
 	//tested
@@ -2015,7 +2028,7 @@ class Aauth {
 
 		$query = $this->aauth_db->where('id', $pm_id);
 		$query = $this->aauth_db->where('receiver_id', $user_id);
-		$query = $this->aauth_db->or_where('sender_id', $user_id);
+		//$query = $this->aauth_db->or_where('sender_id', $user_id);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		if ($query->num_rows() < 1) {
