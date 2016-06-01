@@ -2027,8 +2027,10 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('id', $pm_id);
+		$query = $this->aauth_db->group_start();
 		$query = $this->aauth_db->where('receiver_id', $user_id);
-		//$query = $this->aauth_db->or_where('sender_id', $user_id);
+		$query = $this->aauth_db->or_where('sender_id', $user_id);
+		$query = $this->aauth_db->group_end();
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		if ($query->num_rows() < 1) {
@@ -2068,8 +2070,10 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('id', $pm_id);
+		$query = $this->aauth_db->group_start();
 		$query = $this->aauth_db->where('receiver_id', $user_id);
 		$query = $this->aauth_db->or_where('sender_id', $user_id);
+		$query = $this->aauth_db->group_end();
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 		$result = $query->row();
 		if ($user_id == $result->sender_id){
