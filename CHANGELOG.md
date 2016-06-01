@@ -1,5 +1,11 @@
 ## Change Log
 
+### v2.5.0 (2016/06/01)
+ - [7e92c31](https://github.com/emreakay/CodeIgniter-Aauth/commit/7e92c31751810f6ef6581b1d53aa965d3755f6e9) (@REJack)
+    - release prefix changed in library
+    - changed copyright in library
+    - fixed usernames in Quick Start-Section
+    
 ### v2.5.0-alpha.6 (2016/06/01)
  - [7e92c31](https://github.com/emreakay/CodeIgniter-Aauth/commit/7e92c31751810f6ef6581b1d53aa965d3755f6e9) v2.5.0-alpha.5 fixes (@REJack)
     - fixed both SQL files
