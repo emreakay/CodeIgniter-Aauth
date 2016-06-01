@@ -1,5 +1,18 @@
 ## Change Log
 
+### v2.5.0-alpha.6 (2016/06/01)
+ - [7e92c31](https://github.com/emreakay/CodeIgniter-Aauth/commit/7e92c31751810f6ef6581b1d53aa965d3755f6e9) v2.5.0-alpha.5 fixes (@REJack)
+    - fixed both SQL files
+    - fixed `list_pms()`
+    - fixed `delete_pm()`
+    - updated CHANGELOG
+    - added abilty to send `system` PM's for `send_pm()` & `send_pms()`
+    - changed `name` to `username` in aauth_users table
+    - changed `name` to `username` in all user related functions
+    - changed `$name` to `$username` in `create_user()` & `update_user()`
+    - added `user_exist_by_username()`
+    - changed `user_exist_by_name()` to an alias of `user_exist_by_username()`
+
 ### v2.5.0-alpha.5 (2016/05/30)
 - [847a639](https://github.com/emreakay/CodeIgniter-Aauth/commit/847a639d893cff4ae821615ddb48061cedb64def) (@REJack)
     - reverted changed `count_unread_pms()` it counts now only not deleted pm's
