@@ -49,7 +49,7 @@ That was easy!
 Now let's create two new users, `Frodo` and `Legolas`.
 
 ```php
-$this->aauth->create_user('frodo@example.com','frodopass','Frodo Baggins');
+$this->aauth->create_user('frodo@example.com','frodopass','FrodoBaggins');
 $this->aauth->create_user('legolas@example.com','legolaspass','Legolas');
 ```
    
@@ -63,7 +63,7 @@ $this->aauth->create_group('elves');
 
 Now, let's create a user with power, Gandalf (for our example, let's assume he was given the `id` of 12).
 ```php
-$this->aauth->create_user('gandalf@example.com', 'gandalfpass', 'Gandalf the Gray');
+$this->aauth->create_user('gandalf@example.com', 'gandalfpass', 'GandalfTheGray');
 ```  
 
 OK, now we have two groups and three users.
