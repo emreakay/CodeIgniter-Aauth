@@ -95,7 +95,7 @@ CREATE TABLE `aauth_users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(100) COLLATE utf8_general_ci NOT NULL,
   `pass` varchar(60) COLLATE utf8_general_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8_general_ci,
+  `username` varchar(100) COLLATE utf8_general_ci,
   `banned` tinyint(1) DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
   `last_activity` datetime DEFAULT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE `aauth_users` (
 -- ----------------------------
 -- Records of aauth_users
 -- ----------------------------
-INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', '$2y$10$h19Lblcr6amOIUL1TgYW2.VVZOhac/e1kHMgAwCubMTlYXZrL0wS2', 'Admin', '0', null, null, null, null, null, null, null, null, null, '0');
+INSERT INTO `aauth_users` VALUES ('1', 'admin@example.com', '$2y$10$h19Lblcr6amOIUL1TgYW2.VVZOhac/e1kHMgAwCubMTlYXZrL0wS2', 'Admin', '0', null, null, null, null, null, null, null, null, '0');
 
 -- ----------------------------
 -- Table structure for `aauth_user_to_group`
@@ -168,7 +168,7 @@ CREATE TABLE `aauth_group_to_group` (
 CREATE TABLE IF NOT EXISTS `aauth_login_attempts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip_address` varchar(39) DEFAULT '0',
-  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `timestamp` datetime DEFAULT NULL,
   `login_attempts` tinyint(2) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

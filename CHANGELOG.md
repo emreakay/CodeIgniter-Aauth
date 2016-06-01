@@ -1,11 +1,14 @@
 ## Change Log
 
-### upcoming
+### v2.5.0-alpha.5 (2016/05/30)
+- [847a639](https://github.com/emreakay/CodeIgniter-Aauth/commit/847a639d893cff4ae821615ddb48061cedb64def) (@REJack)
+    - reverted changed `count_unread_pms()` it counts now only not deleted pm's
+    - changed `delete_pm()` if a receiver deletes a pm it updates date_read
 - [84b61fd](https://github.com/emreakay/CodeIgniter-Aauth/commit/84b61fd97cef0e7de9560e1675f851f2572c5942) changed some explanation infos in aauth's config (@REJack)
 - [fe89cdb](https://github.com/emreakay/CodeIgniter-Aauth/commit/fe89cdb861d6864dc200db4089561669a3fd4353) (@REJack)
     - fixed explanation info text in aauth config
     - added `pm_cleanup_max_age`-config_var
-    - added 2 files (`pm_deleted_sender` & `pm_deleted_receiver`) in pm table
+    - added 2 fields (`pm_deleted_sender` & `pm_deleted_receiver`) in pm table
     - changed `list_pms()` to catch only not deleted pm's
     - changed `delete_pm()` now it need a user_id to delete a pm (like `get_pm()`)
     - changed `delete_pm()` sender's can now detete pm's from outbox

@@ -150,7 +150,7 @@ class Aauth {
 				$this->error($this->CI->lang->line('aauth_error_login_failed_name'));
 				return FALSE;
 			}
-			$db_identifier = 'name';
+			$db_identifier = 'username';
  		}else{
 			if( !valid_email($identifier) OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
@@ -306,7 +306,7 @@ class Aauth {
 			// create session
 			$data = array(
 				'id' => $row->id,
-				'name' => $row->name,
+				'username' => $row->username,
 				'email' => $row->email,
 				'loggedin' => TRUE
 			);
@@ -526,7 +526,7 @@ class Aauth {
 			// create session
 			$data = array(
 				'id' => $row->id,
-				'name' => $row->name,
+				'username' => $row->username,
 				'email' => $row->email,
 				'loggedin' => TRUE
 			);
@@ -715,20 +715,20 @@ class Aauth {
 	 * Creates a new user
 	 * @param string $email User's email address
 	 * @param string $pass User's password
-	 * @param string $name User's name
+	 * @param string $username User's username
 	 * @return int|bool False if create fails or returns user id if successful
 	 */
-	public function create_user($email, $pass, $name = FALSE) {
+	public function create_user($email, $pass, $username = FALSE) {
 
 		$valid = TRUE;
 
 		if($this->config_vars['login_with_name'] == TRUE){
-			if (empty($name)){
+			if (empty($username)){
 				$this->error($this->CI->lang->line('aauth_error_username_required'));
 				$valid = FALSE;
 			}
 		}
-		if ($this->user_exist_by_name($name) && $name != FALSE) {
+		if ($this->user_exist_by_username($username) && $username != FALSE) {
 			$this->error($this->CI->lang->line('aauth_error_username_exists'));
 			$valid = FALSE;
 		}
@@ -746,7 +746,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_password_invalid'));
 			$valid = FALSE;
 		}
-		if ($name != FALSE && !ctype_alnum(str_replace($this->config_vars['additional_valid_chars'], '', $name))){
+		if ($username != FALSE && !ctype_alnum(str_replace($this->config_vars['additional_valid_chars'], '', $username))){
 			$this->error($this->CI->lang->line('aauth_error_username_invalid'));
 			$valid = FALSE;
 		}
@@ -757,7 +757,7 @@ class Aauth {
 		$data = array(
 			'email' => $email,
 			'pass' => $this->hash_password($pass, 0), // Password cannot be blank but user_id required for salt, setting bad password for now
-			'name' => (!$name) ? '' : $name ,
+			'username' => (!$username) ? '' : $username ,
 			'date_created' => date("Y-m-d H:i:s"),
 		);
 
@@ -805,7 +805,7 @@ class Aauth {
 	 * @param string|bool $name User's name, or FALSE if not to be updated
 	 * @return bool Update fails/succeeds
 	 */
-	public function update_user($user_id, $email = FALSE, $pass = FALSE, $name = FALSE) {
+	public function update_user($user_id, $email = FALSE, $pass = FALSE, $username = FALSE) {
 
 		$data = array();
 		$valid = TRUE;
@@ -836,20 +836,20 @@ class Aauth {
 			$data['pass'] = $this->hash_password($pass, $user_id);
 		}
 
-		if ($user->name == $name) {
-			$name = FALSE;
+		if ($user->username == $username) {
+			$username = FALSE;
 		}
 
-		if ($name != FALSE) {
-			if ($this->user_exist_by_name($name)) {
+		if ($username != FALSE) {
+			if ($this->user_exist_by_username($username)) {
 				$this->error($this->CI->lang->line('aauth_error_update_username_exists'));
 				$valid = FALSE;
 			}
-			if ($name !='' && !ctype_alnum(str_replace($this->config_vars['additional_valid_chars'], '', $name))){
+			if ($username !='' && !ctype_alnum(str_replace($this->config_vars['additional_valid_chars'], '', $username))){
 				$this->error($this->CI->lang->line('aauth_error_username_invalid'));
 				$valid = FALSE;
 			}
-			$data['name'] = $name;
+			$data['username'] = $username;
 		}
 
 		if ( !$valid || empty($data)) {
@@ -1073,14 +1073,14 @@ class Aauth {
 	}
 
 	/**
-	 * user_exist_by_name
-	 * Check if user exist by name
+	 * user_exist_by_username
+	 * Check if user exist by username
 	 * @param $user_id
 	 *
 	 * @return bool
 	 */
-	public function user_exist_by_name( $name ) {
-		$query = $this->aauth_db->where('name', $name);
+	public function user_exist_by_username( $name ) {
+		$query = $this->aauth_db->where('username', $name);
 
 		$query = $this->aauth_db->get($this->config_vars['users']);
 
@@ -1088,6 +1088,17 @@ class Aauth {
 			return TRUE;
 		else
 			return FALSE;
+	}
+
+	/**
+	 * user_exist_by_name !DEPRECATED!
+	 * Check if user exist by name
+	 * @param $user_id
+	 *
+	 * @return bool
+	 */
+	public function user_exist_by_name( $name ) {
+		return $this->user_exist_by_name($name);
 	}
 
 	/**
@@ -1884,9 +1895,12 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_self_pm'));
 			return FALSE;
 		}
-		if (($this->is_banned($receiver_id) || !$this->user_exist_by_id($receiver_id)) || ($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
+		if (($this->is_banned($receiver_id) || !$this->user_exist_by_id($receiver_id)) || ($sender_id && ($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id)))){
 			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
+		}
+		if ( !$sender_id){
+			$sender_id = 0;
 		}
 
 		if ($this->config_vars['pm_encryption']){
@@ -1921,9 +1935,12 @@ class Aauth {
 			$title = $this->CI->encrypt->encode($title);
 			$message = $this->CI->encrypt->encode($message);
 		}
-		if (($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
+		if ($sender_id && ($this->is_banned($sender_id) || !$this->user_exist_by_id($sender_id))){
 			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
+		}
+		if ( !$sender_id){
+			$sender_id = 0;
 		}
 		if (is_numeric($receiver_ids)) {
 			$receiver_ids = array($receiver_ids);
@@ -1964,7 +1981,7 @@ class Aauth {
 	 * @return object Array of private messages
 	 */
 	public function list_pms($limit=5, $offset=0, $receiver_id=NULL, $sender_id=NULL){
-		if (is_numeric($sender_id)){
+		if (is_numeric($receiver_id)){
 			$query = $this->aauth_db->where('receiver_id', $receiver_id);
 			$query = $this->aauth_db->where('pm_deleted_receiver', 0);
 		}
@@ -2048,7 +2065,7 @@ class Aauth {
 			}
 			
 			return $this->aauth_db->update( $this->config_vars['pms'], array('pm_deleted_sender'=>1), array('id' => $pm_id));			
-		}else if ($user_id == $result->result->receiver_id){
+		}else if ($user_id == $result->receiver_id){
 			if($result->pm_deleted_sender == 1){
 				return $this->aauth_db->delete( $this->config_vars['pms'], array('id' => $pm_id));			
 			}
