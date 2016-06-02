@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2016 Emre Akay
  *
- * @version 2.5.0
+ * @version 2.5.2
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -1098,7 +1098,7 @@ class Aauth {
 	 * @return bool
 	 */
 	public function user_exist_by_name( $name ) {
-		return $this->user_exist_by_name($name);
+		return $this->user_exist_by_username($name);
 	}
 
 	/**
@@ -1992,7 +1992,20 @@ class Aauth {
 
 		$query = $this->aauth_db->order_by('id','DESC');
 		$query = $this->aauth_db->get( $this->config_vars['pms'], $limit, $offset);
-		return $query->result();
+
+		$result = $query->result();
+
+		if ($this->config_vars['pm_encryption']){
+			$this->CI->load->library('encrypt');
+
+			foreach ($result as $k => $r)
+			{
+				$result[$k]->title = $this->CI->encrypt->decode($r->title);
+				$result[$k]->message = $this->CI->encrypt->decode($r->message);
+			}
+		}
+
+		return $result;
 	}
 
 	//tested
@@ -2014,8 +2027,10 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('id', $pm_id);
+		$query = $this->aauth_db->group_start();
 		$query = $this->aauth_db->where('receiver_id', $user_id);
 		$query = $this->aauth_db->or_where('sender_id', $user_id);
+		$query = $this->aauth_db->group_end();
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		if ($query->num_rows() < 1) {
@@ -2055,8 +2070,10 @@ class Aauth {
 		}
 
 		$query = $this->aauth_db->where('id', $pm_id);
+		$query = $this->aauth_db->group_start();
 		$query = $this->aauth_db->where('receiver_id', $user_id);
 		$query = $this->aauth_db->or_where('sender_id', $user_id);
+		$query = $this->aauth_db->group_end();
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 		$result = $query->row();
 		if ($user_id == $result->sender_id){
