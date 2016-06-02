@@ -185,7 +185,7 @@ class Aauth {
 		$query = $this->aauth_db->where($db_identifier, $identifier);
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		$row = $query->row();
-		if($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $row->login_attempts >= $this->config_vars['recaptcha_login_attempts']){
+		if($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->update_login_attempts() >= $this->config_vars['recaptcha_login_attempts']){
 			if($this->config_vars['use_cookies'] == TRUE){
 				$reCAPTCHA_cookie = array(
 					'name'	 => 'reCAPTCHA',
