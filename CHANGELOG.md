@@ -1,10 +1,36 @@
 ## Change Log
 
+### v2.5.4 (2016/06/02)
+ - [66622f6](https://github.com/emreakay/CodeIgniter-Aauth/commit/66622f640f2b454c04257b946b1062293993ed3b) DDoS Protections fixes in `login()` (@REJack)
+    - removed user get query from DDoS check in
+    - fixed DDoS protection to update login_attempts if user not exist too
+    - removed user get query from DDoS/reCAPTCHA check
+    - fixed DDoS/reCAPTCHA proection to update login_attempts if user not exist too
+    - added `get_login_attempts()` returns login_attempts as INT (used in `login()`)
+
+### v2.5.3 (2016/06/02)
+ - [116b2c0](https://github.com/emreakay/CodeIgniter-Aauth/commit/116b2c0f09fb49c6a99e76a7e831a85ef5923a20) changed version to 2.5.3 (@REJack) 
+ - [a731c28](https://github.com/emreakay/CodeIgniter-Aauth/commit/a731c28772c5a5a4fb870788d1b6ddbd3a875bf0) fixed reCAPTCHA DDoS check (@REJack) 
+
+### v2.5.2 (2016/06/02)
+ - [35e3a41](https://github.com/emreakay/CodeIgniter-Aauth/commit/35e3a41f29e3035998451436ca1a1b4b9e304a44) changed version to 2.5.2 (@REJack) 
+ - [330028b](https://github.com/emreakay/CodeIgniter-Aauth/commit/330028b5f75aaea4722d8d0390ecbad3bad84698) fixed error with `user_exist_by_name()` (@REJack) 
+
+### v2.5.1 (2016/06/01)
+ - [89e715e](https://github.com/emreakay/CodeIgniter-Aauth/commit/89e715e48e58edee3e5da63bac8b968ec9a0f0e8) changed version tag (@REJack) 
+ - [2e08204](https://github.com/emreakay/CodeIgniter-Aauth/commit/2e08204bce4944e56da9b365f6d297de6d75cab0) fixed `get_pm()` & `delete_pm()` (@REJack) 
+ - [26ea41d](https://github.com/emreakay/CodeIgniter-Aauth/commit/26ea41de30e235f13481d849729bcc526008f667) Merge pull request #148 from paulcanning/master (@REJack) 
+ - [b422027](https://github.com/emreakay/CodeIgniter-Aauth/commit/b42202780dec0ea3ae3eeb1b0a61b629512996c4) (@paulcanning) 
+    - Fixed PM's not being decrypted with `list_pms()` #145
+    - Fixed `get_pm()` method to fetch correct PM #145
+
 ### v2.5.0 (2016/06/01)
- - [7e92c31](https://github.com/emreakay/CodeIgniter-Aauth/commit/7e92c31751810f6ef6581b1d53aa965d3755f6e9) (@REJack)
+ - [a55f9c3](https://github.com/emreakay/CodeIgniter-Aauth/commit/a55f9c35a3bda443d81065631ad7a37eeb9a64bb) last changes in CHANGELOG for v2.5.0 (@REJack) 
+ - [1eee170](https://github.com/emreakay/CodeIgniter-Aauth/commit/1eee170358fdb87c1abeda52041d5c9634f1350c) (@REJack)
     - release prefix changed in library
     - changed copyright in library
     - fixed usernames in Quick Start-Section
+ - [938b5d9](https://github.com/emreakay/CodeIgniter-Aauth/commit/938b5d98141bbbd3d4d3a00a52fb1b8e1eb46823) updated CHANGELOG  (@REJack) 
     
 ### v2.5.0-alpha.6 (2016/06/01)
  - [7e92c31](https://github.com/emreakay/CodeIgniter-Aauth/commit/7e92c31751810f6ef6581b1d53aa965d3755f6e9) v2.5.0-alpha.5 fixes (@REJack)
