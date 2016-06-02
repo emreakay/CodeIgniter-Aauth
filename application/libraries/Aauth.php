@@ -1098,7 +1098,7 @@ class Aauth {
 	 * @return bool
 	 */
 	public function user_exist_by_name( $name ) {
-		return $this->user_exist_by_name($name);
+		return $this->user_exist_by_username($name);
 	}
 
 	/**
