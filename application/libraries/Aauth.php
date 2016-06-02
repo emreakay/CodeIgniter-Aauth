@@ -159,33 +159,12 @@ class Aauth {
 			}
 			$db_identifier = 'email';
  		}
-		/*
-		*
-		* User Verification
-		*
-		* Removed or !ctype_alnum($pass) from the IF statement
-		* It was causing issues with special characters in passwords
-		* and returning FALSE even if the password matches.
-		*/
-
-		$query = null;
-		$query = $this->aauth_db->where($db_identifier, $identifier);
-		$query = $this->aauth_db->get($this->config_vars['users']);
-		$row = $query->row();
-
-		// only email found and login attempts exceeded
-		if ($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && ! $this->update_login_attempts()) {
+		if ($this->config_vars['ddos_protection'] && ! $this->update_login_attempts()) {
 
 			$this->error($this->CI->lang->line('aauth_error_login_attempts_exceeded'));
 			return FALSE;
 		}
-
-		//recaptcha login_attempts check
-		$query = null;
-		$query = $this->aauth_db->where($db_identifier, $identifier);
-		$query = $this->aauth_db->get($this->config_vars['users']);
-		$row = $query->row();
-		if($query->num_rows() > 0 && $this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->update_login_attempts() >= $this->config_vars['recaptcha_login_attempts']){
+		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() >= $this->config_vars['recaptcha_login_attempts']){
 			if($this->config_vars['use_cookies'] == TRUE){
 				$reCAPTCHA_cookie = array(
 					'name'	 => 'reCAPTCHA',
@@ -685,6 +664,28 @@ class Aauth {
 			}
 		}
 
+	}
+
+	/**
+	 * Get login attempt
+	 * @return int
+	 */
+	public function get_login_attempts() {
+		$ip_address = $this->CI->input->ip_address();
+		$query = $this->aauth_db->where(
+			array(
+				'ip_address'=>$ip_address,
+				'timestamp >='=>strtotime("-".$this->config_vars['max_login_attempt_time_period'])
+			)
+		);
+		$query = $this->aauth_db->get( $this->config_vars['login_attempts'] );
+
+		if($query->num_rows() != 0){
+			$row = $query->row();
+			return $row->login_attempts;
+		}
+
+		return 0;
 	}
 
 	/**
