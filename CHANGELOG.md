@@ -1,5 +1,12 @@
 ## Change Log
 
+### v2.5.5 (2016/06/07)
+ - [5701a7a](https://github.com/emreakay/CodeIgniter-Aauth/commit/5701a7a6fc89a0133f6fff9eafe46b19c41f2c03) some little fixes with ddos_protection & reCAPTCHA (@REJack)
+    - fixed timestamp where in `reset_login_attempts()`, `get_login_attempts()` & `update_login_attempts()`
+    - fixed `login()` removed cookie/session-userdata for reCAPTCHA (if reCAPTCHA needed)
+    - fixed `login()` moved `update_login_attempts()` before test email/name & password
+    - fixed `generate_recaptcha_field()` removed cookie/session check
+
 ### v2.5.4 (2016/06/02)
  - [58c9526](https://github.com/emreakay/CodeIgniter-Aauth/commit/58c9526fabeae0902c6e8d9968b72c24d01debf2) updated CHANGELOG.md (@REJack)
  - [66622f6](https://github.com/emreakay/CodeIgniter-Aauth/commit/66622f640f2b454c04257b946b1062293993ed3b) DDoS Protections fixes in `login()` (@REJack)
