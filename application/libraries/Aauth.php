@@ -141,8 +141,11 @@ class Aauth {
 			);
 			$this->CI->input->set_cookie($cookie);
 		}
+		if ($this->config_vars['ddos_protection'] && ! $this->update_login_attempts()) {
 
-
+			$this->error($this->CI->lang->line('aauth_error_login_attempts_exceeded'));
+			return FALSE;
+		}
  		if( $this->config_vars['login_with_name'] == TRUE){
 
 			if( !$identifier OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
@@ -159,24 +162,6 @@ class Aauth {
 			}
 			$db_identifier = 'email';
  		}
-		if ($this->config_vars['ddos_protection'] && ! $this->update_login_attempts()) {
-
-			$this->error($this->CI->lang->line('aauth_error_login_attempts_exceeded'));
-			return FALSE;
-		}
-		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() >= $this->config_vars['recaptcha_login_attempts']){
-			if($this->config_vars['use_cookies'] == TRUE){
-				$reCAPTCHA_cookie = array(
-					'name'	 => 'reCAPTCHA',
-					'value'	 => 'true',
-					'expire' => 7200,
-					'path'	 => '/',
-				);
-				$this->CI->input->set_cookie($reCAPTCHA_cookie);
-			}else{
-				$this->CI->session->set_tempdata('reCAPTCHA', 'true', 7200);
-			}
-		}
 
 		// if user is not verified
 		$query = null;
@@ -201,7 +186,7 @@ class Aauth {
 		
 		$user_id = $query->row()->id;
 		if($this->config_vars['recaptcha_active']){
-			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
+			if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() > $this->config_vars['recaptcha_login_attempts']){
 				$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
 				$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
@@ -311,20 +296,6 @@ class Aauth {
 					$this->CI->input->set_cookie($cookie);
 				}else{
 					$this->CI->session->set_userdata('remember', $row->id . "-" . $random_string);
-				}
-			}
-
-			if($this->config_vars['recaptcha_active']){
-				if($this->config_vars['use_cookies'] == TRUE){
-					$reCAPTCHA_cookie = array(
-						'name'	 => 'reCAPTCHA',
-						'value'	 => 'false',
-						'expire' => -3600,
-						'path'	 => '/',
-					);
-					$this->CI->input->set_cookie($reCAPTCHA_cookie);
-				}else{
-					$this->CI->session->unset_tempdata('reCAPTCHA');
 				}
 			}
 			
@@ -526,7 +497,7 @@ class Aauth {
 		$this->aauth_db->where(
 			array(
 				'ip_address'=>$ip_address,
-				'timestamp >='=>strtotime("-".$this->config_vars['max_login_attempt_time_period'])
+				'timestamp >='=>date("Y-m-d H:i:s", strtotime("-".$this->config_vars['max_login_attempt_time_period']))
 			)
 		);
 		return $this->aauth_db->delete($this->config_vars['login_attempts']);
@@ -637,7 +608,7 @@ class Aauth {
 		$query = $this->aauth_db->where(
 			array(
 				'ip_address'=>$ip_address,
-				'timestamp >='=>strtotime("-".$this->config_vars['max_login_attempt_time_period'])
+				'timestamp >='=>date("Y-m-d H:i:s", strtotime("-".$this->config_vars['max_login_attempt_time_period']))
 			)
 		);
 		$query = $this->aauth_db->get( $this->config_vars['login_attempts'] );
@@ -675,7 +646,7 @@ class Aauth {
 		$query = $this->aauth_db->where(
 			array(
 				'ip_address'=>$ip_address,
-				'timestamp >='=>strtotime("-".$this->config_vars['max_login_attempt_time_period'])
+				'timestamp >='=>date("Y-m-d H:i:s", strtotime("-".$this->config_vars['max_login_attempt_time_period']))
 			)
 		);
 		$query = $this->aauth_db->get( $this->config_vars['login_attempts'] );
@@ -2488,12 +2459,10 @@ class Aauth {
 
 	public function generate_recaptcha_field(){
 		$content = '';
-		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active']){
-			if( ($this->config_vars['use_cookies'] == TRUE && $this->CI->input->cookie('reCAPTCHA', TRUE) == 'true') || ($this->config_vars['use_cookies'] == FALSE && $this->CI->session->tempdata('reCAPTCHA') == 'true') ){
-				$content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
-				$siteKey = $this->config_vars['recaptcha_siteKey'];
-				$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
-			}
+		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() >= $this->config_vars['recaptcha_login_attempts']){
+			$content .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>";
+			$siteKey = $this->config_vars['recaptcha_siteKey'];
+			$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
 		}
 		return $content;
 	}
