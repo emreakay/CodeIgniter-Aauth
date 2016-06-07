@@ -146,6 +146,15 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_login_attempts_exceeded'));
 			return FALSE;
 		}
+		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() > $this->config_vars['recaptcha_login_attempts']){
+			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
+			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
+
+			if( ! $resp->success){
+				$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
+				return FALSE;
+			}
+		}
  		if( $this->config_vars['login_with_name'] == TRUE){
 
 			if( !$identifier OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
@@ -183,22 +192,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
 		}
-		
-		$user_id = $query->row()->id;
-		if($this->config_vars['recaptcha_active']){
-			if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() > $this->config_vars['recaptcha_login_attempts']){
-				$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
-				$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
-
-				if(!$resp->success){
-					$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
-					return FALSE;
-				}
-			}
-		}
-
-	 	
-	 	if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE AND $this->config_vars['totp_two_step_login_active'] == FALSE){
+		if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE AND $this->config_vars['totp_two_step_login_active'] == FALSE){
 			if($this->config_vars['totp_two_step_login_active'] == TRUE){
 				$this->CI->session->set_userdata('totp_required', true);
 			}
