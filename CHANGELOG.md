@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.5.6 (2016/06/14)
+ - [fe117dd](https://github.com/emreakay/CodeIgniter-Aauth/commit/fe117dd30f551b8cafd13f2bb0bf2ff9bce99b51) added abilty to set a config for CI's Email Library (@REJack)
+ 
 ### v2.5.5 (2016/06/07)
  - [a1bf4fb](https://github.com/emreakay/CodeIgniter-Aauth/commit/a1bf4fb66ff195dbb72d38428a0a7916b8bfc5c0) fixed `reCAPTCHA`-validation (moved after `DDoS` check) (@REJack)
  - [91ededf](https://github.com/emreakay/CodeIgniter-Aauth/commit/91ededf5cd9bc47292bf2777170e507af969f0f5) changed version to 2.5.5 (@REJack)
