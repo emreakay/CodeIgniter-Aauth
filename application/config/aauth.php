@@ -63,6 +63,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 |   ['email']                           Sender email address, used for remind_password, send_verification and reset_password
 |   ['name']                            Sender name, used for remind_password, send_verification and reset_password
+|   ['email_config']                    Array of Config for CI's Email Library
 |
 |   ['verification']                    User Verification, if TRUE sends a verification email on account creation.
 |   ['verification_link']               Link for verification without site_url or base_url
@@ -135,6 +136,7 @@ $config_aauth["default"] = array(
 
  'email'                          => 'admin@admin.com',
  'name'                           => 'Emre Akay',
+ 'email_config'                   => false,
 
  'verification'                   => false,
  'verification_link'              => '/account/verification/',
