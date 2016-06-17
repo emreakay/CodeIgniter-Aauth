@@ -1,5 +1,12 @@
 ## Change Log
 
+### v2.5.7 (2016/06/17)
+ - [34d8a89](https://github.com/emreakay/CodeIgniter-Aauth/commit/34d8a896b86e784d7ee1228eb5a74cc908c6d369) v2.5.7 (@REJack)
+    - fixed login remember
+    - removed `use_cookies`-config_var (unused since reCAPTCHA doesnt use cookie/session)
+    - changed `logout()`
+    - changed `is_loggedin()` removed wrong session checks
+
 ### v2.5.6 (2016/06/14)
  - [fe117dd](https://github.com/emreakay/CodeIgniter-Aauth/commit/fe117dd30f551b8cafd13f2bb0bf2ff9bce99b51) added abilty to set a config for CI's Email Library (@REJack)
  
