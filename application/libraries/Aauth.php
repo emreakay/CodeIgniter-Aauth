@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2016 Emre Akay
  *
- * @version 2.5.6
+ * @version 2.5.7
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -131,16 +131,14 @@ class Aauth {
 	 */
 	public function login($identifier, $pass, $remember = FALSE, $totp_code = NULL) {
 
-		if($this->config_vars['use_cookies'] == TRUE){
-			// Remove cookies first
-			$cookie = array(
-				'name'	 => 'user',
-				'value'	 => '',
-				'expire' => -3600,
-				'path'	 => '/',
-			);
-			$this->CI->input->set_cookie($cookie);
-		}
+		// Remove cookies first
+		$cookie = array(
+			'name'	 => 'user',
+			'value'	 => '',
+			'expire' => -3600,
+			'path'	 => '/',
+		);
+		$this->CI->input->set_cookie($cookie);
 		if ($this->config_vars['ddos_protection'] && ! $this->update_login_attempts()) {
 
 			$this->error($this->CI->lang->line('aauth_error_login_attempts_exceeded'));
@@ -271,26 +269,19 @@ class Aauth {
 
 			$this->CI->session->set_userdata($data);
 
-			// if remember selected
 			if ( $remember ){
 				$expire = $this->config_vars['remember'];
 				$today = date("Y-m-d");
 				$remember_date = date("Y-m-d", strtotime($today . $expire) );
 				$random_string = random_string('alnum', 16);
 				$this->update_remember($row->id, $random_string, $remember_date );
-
-				if($this->config_vars['use_cookies'] == TRUE){
-					$cookie = array(
-						'name'	 => 'user',
-						'value'	 => $row->id . "-" . $random_string,
-						'expire' => 99*999*999,
-						'path'	 => '/',
-					);
-
-					$this->CI->input->set_cookie($cookie);
-				}else{
-					$this->CI->session->set_userdata('remember', $row->id . "-" . $random_string);
-				}
+				$cookie = array(
+					'name'	 => 'user',
+					'value'	 => $row->id . "-" . $random_string,
+					'expire' => 99*999*999,
+					'path'	 => '/',
+				);
+				$this->CI->input->set_cookie($cookie);
 			}
 			
 			// update last login
@@ -322,65 +313,33 @@ class Aauth {
 		if ( $this->CI->session->userdata('loggedin') ){ 
 			return TRUE; 
 		} else {
-			if($this->config_vars['use_cookies'] == TRUE){
-				if( ! $this->CI->input->cookie('user', TRUE) ){
-					return FALSE;
-				} else {
-					$cookie = explode('-', $this->CI->input->cookie('user', TRUE));
-					if(!is_numeric( $cookie[0] ) OR strlen($cookie[1]) < 13 ){return FALSE;}
-					else{
-						$query = $this->aauth_db->where('id', $cookie[0]);
-						$query = $this->aauth_db->where('remember_exp', $cookie[1]);
-						$query = $this->aauth_db->get($this->config_vars['users']);
+			if( ! $this->CI->input->cookie('user', TRUE) ){
+				return FALSE;
+			} else {
+				$cookie = explode('-', $this->CI->input->cookie('user', TRUE));
+				if(!is_numeric( $cookie[0] ) OR strlen($cookie[1]) < 13 ){return FALSE;}
+				else{
+					$query = $this->aauth_db->where('id', $cookie[0]);
+					$query = $this->aauth_db->where('remember_exp', $cookie[1]);
+					$query = $this->aauth_db->get($this->config_vars['users']);
 
-						$row = $query->row();
+					$row = $query->row();
 
-						if ($query->num_rows() < 1) {
-							$this->update_remember($cookie[0]);
+					if ($query->num_rows() < 1) {
+						$this->update_remember($cookie[0]);
+						return FALSE;
+					}else{
+
+						if(strtotime($row->remember_time) > strtotime("now") ){
+							$this->login_fast($cookie[0]);
+							return TRUE;
+						}
+						// if time is expired
+						else {
 							return FALSE;
-						}else{
-
-							if(strtotime($row->remember_time) > strtotime("now") ){
-								$this->login_fast($cookie[0]);
-								return TRUE;
-							}
-							// if time is expired
-							else {
-								return FALSE;
-							}
 						}
 					}
 				}
-			}else{
-				if(!isset($_SESSION['remember'])){
-					return FALSE;
-				}else{
-					$session = explode('-', $this->CI->session->userdata('remember'));
-					if(!is_numeric( $session[0] ) OR strlen($session[1]) < 13 ){return FALSE;}
-					else{
-						$query = $this->aauth_db->where('id', $session[0]);
-						$query = $this->aauth_db->where('remember_exp', $session[1]);
-						$query = $this->aauth_db->get($this->config_vars['users']);
-
-						$row = $query->row();
-
-						if ($query->num_rows() < 1) {
-							$this->update_remember($session[0]);
-							return FALSE;
-						}else{
-
-							if(strtotime($row->remember_time) > strtotime("now") ){
-								$this->login_fast($session[0]);
-								return TRUE;
-							}
-							// if time is expired
-							else {
-								return FALSE;
-							}
-						}
-					}
-				}
-
 			}
 		}
 		return FALSE;
@@ -436,15 +395,13 @@ class Aauth {
 	 */
 	public function logout() {
 
-		if($this->config_vars['use_cookies'] == TRUE){
-			$cookie = array(
-				'name'	 => 'user',
-				'value'	 => '',
-				'expire' => -3600,
-				'path'	 => '/',
-			);
-			$this->CI->input->set_cookie($cookie);
-		}
+		$cookie = array(
+			'name'	 => 'user',
+			'value'	 => '',
+			'expire' => -3600,
+			'path'	 => '/',
+		);
+		$this->CI->input->set_cookie($cookie);
 		
 		return $this->CI->session->sess_destroy();
 	}

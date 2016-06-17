@@ -59,8 +59,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 |   ['login_with_name']                 Login Identificator, if TRUE username needed to login else email address.
 |
-|   ['use_cookies']                     FALSE only on CI3
-|
 |   ['email']                           Sender email address, used for remind_password, send_verification and reset_password
 |   ['name']                            Sender name, used for remind_password, send_verification and reset_password
 |   ['email_config']                    Array of Config for CI's Email Library
@@ -131,8 +129,6 @@ $config_aauth["default"] = array(
  'remove_successful_attempts'     => true,
 
  'login_with_name'                => false,
-
- 'use_cookies'                    => true,
 
  'email'                          => 'admin@admin.com',
  'name'                           => 'Emre Akay',
