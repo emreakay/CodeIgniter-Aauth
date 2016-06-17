@@ -32,8 +32,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |   ['remember']                        Remember time (in relative format) elapsed after connecting and automatic LogOut for usage with Cookies
 |                                       Relative Format (e.g. '+ 1 week', '+ 1 month', '+ first day of next month') 
 |                                       for details see http://php.net/manual/de/datetime.formats.relative.php
-|                                       !!IMPORTANT!! If you use Session instead of Cookies, 
-|                                       remember time is definied by 'sess_expiration' in config/config.php
 |
 |   ['max']                             Maximum char long for Password
 |   ['min']                             Minimum char long for Password
