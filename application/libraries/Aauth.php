@@ -712,12 +712,12 @@ class Aauth {
 			}
 
 			// Update to correct salted password
-			$data = null;
 			if( !$this->config_vars['use_password_hash']){
+				$data = null;
 				$data['pass'] = $this->hash_password($pass, $user_id);
+				$this->aauth_db->where('id', $user_id);
+				$this->aauth_db->update($this->config_vars['users'], $data);
 			}
-			$this->aauth_db->where('id', $user_id);
-			$this->aauth_db->update($this->config_vars['users'], $data);
 
 			return $user_id;
 
