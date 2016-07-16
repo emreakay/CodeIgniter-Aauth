@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2016 Emre Akay
  *
- * @version 2.5.7
+ * @version 2.5.8
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -475,7 +475,7 @@ class Aauth {
 			$this->aauth_db->where('email', $email);
 			$this->aauth_db->update($this->config_vars['users'], $data);
 
-			if(is_array($this->config_vars['email_config'])){
+			if(isset($this->config_vars['email_config']) && is_array($this->config_vars['email_config'])){
 				$this->CI->email->initialize($this->config_vars['email_config']);
 			}
 
@@ -521,7 +521,7 @@ class Aauth {
 			$this->aauth_db->where('id', $row->id);
 			$this->aauth_db->update($this->config_vars['users'] , $data);
 
-			if(is_array($this->config_vars['email_config'])){
+			if(isset($this->config_vars['email_config']) && is_array($this->config_vars['email_config'])){
 				$this->CI->email->initialize($this->config_vars['email_config']);
 			}
 
@@ -909,7 +909,7 @@ class Aauth {
 			$this->aauth_db->where('id', $user_id);
 			$this->aauth_db->update($this->config_vars['users'], $data);
 
-			if(is_array($this->config_vars['email_config'])){
+			if(isset($this->config_vars['email_config']) && is_array($this->config_vars['email_config'])){
 				$this->CI->email->initialize($this->config_vars['email_config']);
 			}
 
