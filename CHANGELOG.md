@@ -1,5 +1,10 @@
 ## Change Log
 
+### v2.5.8 (2016/07/16)
+ - [afa1647](https://github.com/emreakay/CodeIgniter-Aauth/commit/afa16478caea58387d78030cf92a17c1ad853f48) fixed email_config error 
+ - [e502904](https://github.com/emreakay/CodeIgniter-Aauth/commit/e5029041ed83223428875633475c60324b621928) fixed sql error on `create_user()` with `use_password_hash`-config_var on __true__
+ - [bd91700](https://github.com/emreakay/CodeIgniter-Aauth/commit/bd91700380d27be84963d620acd3bc3733639b22) updated `config/aauth.php`
+
 ### v2.5.7 (2016/06/17)
  - [34d8a89](https://github.com/emreakay/CodeIgniter-Aauth/commit/34d8a896b86e784d7ee1228eb5a74cc908c6d369) v2.5.7 (@REJack)
     - fixed login remember
