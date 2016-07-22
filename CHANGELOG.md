@@ -1,5 +1,9 @@
 ## Change Log
 
+### v2.5.9 (2016/07/22)
+ - [5cbff6c](https://github.com/emreakay/CodeIgniter-Aauth/commit/5cbff6c4c04897048a6083ae155262ca3dc50061) Merge pull request #163 from paulcanning/2.5-stable (@REJack)
+ - [b409fef](https://github.com/emreakay/CodeIgniter-Aauth/commit/b409fef20c7b90b4698324f260c2dcbd1ec799d1) Fixed count_unread_pms not checking for deleted status. (@paulcanning)
+
 ### v2.5.8 (2016/07/16)
  - [afa1647](https://github.com/emreakay/CodeIgniter-Aauth/commit/afa16478caea58387d78030cf92a17c1ad853f48) fixed email_config error (@REJack)
  - [e502904](https://github.com/emreakay/CodeIgniter-Aauth/commit/e5029041ed83223428875633475c60324b621928) fixed sql error on `create_user()` with `use_password_hash`-config_var on __true__ (@REJack)
