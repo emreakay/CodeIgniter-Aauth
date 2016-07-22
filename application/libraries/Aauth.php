@@ -2119,6 +2119,8 @@ class Aauth {
 
 		$query = $this->aauth_db->where('receiver_id', $receiver_id);
 		$query = $this->aauth_db->where('date_read', NULL);
+		$query = $this->aauth_db->where('pm_deleted_sender', NULL);
+		$query = $this->aauth_db->where('pm_deleted_receiver', NULL);
 		$query = $this->aauth_db->get( $this->config_vars['pms'] );
 
 		return $query->num_rows();
