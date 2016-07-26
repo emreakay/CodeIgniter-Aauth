@@ -1918,11 +1918,11 @@ class Aauth {
 	public function list_pms($limit=5, $offset=0, $receiver_id=NULL, $sender_id=NULL){
 		if (is_numeric($receiver_id)){
 			$query = $this->aauth_db->where('receiver_id', $receiver_id);
-			$query = $this->aauth_db->where('pm_deleted_receiver', 0);
+			$query = $this->aauth_db->where('pm_deleted_receiver', NULL);
 		}
 		if (is_numeric($sender_id)){
 			$query = $this->aauth_db->where('sender_id', $sender_id);
-			$query = $this->aauth_db->where('pm_deleted_sender', 0);
+			$query = $this->aauth_db->where('pm_deleted_sender', NULL);
 		}
 
 		$query = $this->aauth_db->order_by('id','DESC');
