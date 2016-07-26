@@ -1,5 +1,11 @@
 ## Change Log
 
+### v2.5.10 (2016/7/26)
+ - [05e4728](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) updated version tag (@REJack)
+ - [a0391c8](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) Merge pull request #165 from paulcanning/2.5-stable (@REJack)
+ - [e404e0a](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) Fix for list_pms (@paulcanning)
+ - [54cfd3b](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) Fixed PM default type for delete flag (@paulcanning)
+
 ### v2.5.9 (2016/07/22)
  - [5cbff6c](https://github.com/emreakay/CodeIgniter-Aauth/commit/5cbff6c4c04897048a6083ae155262ca3dc50061) Merge pull request #163 from paulcanning/2.5-stable (@REJack)
  - [b409fef](https://github.com/emreakay/CodeIgniter-Aauth/commit/b409fef20c7b90b4698324f260c2dcbd1ec799d1) Fixed count_unread_pms not checking for deleted status. (@paulcanning)
