@@ -5,7 +5,7 @@
 // Account verification
 $lang['aauth_email_verification_subject'] = 'Подтверждение аккаунта';
 $lang['aauth_email_verification_code'] = 'Ваш код подтверждения: ';
-$lang['aauth_email_verification_text'] = " Так же вы можете нажать (или скопировать и ставить в строку адреса браузера) следующюю ссылку\n\n";
+$lang['aauth_email_verification_text'] = " Так же вы можете нажать (или скопировать/вставить в адресную строку браузера) следующую ссылку\n\n";
 
 // Password reset
 $lang['aauth_email_reset_subject'] = 'Сброс пароля';
