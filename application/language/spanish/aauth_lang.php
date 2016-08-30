@@ -51,6 +51,6 @@ $lang['aauth_error_no_pm'] = 'Mensaje privado no encontrado';
 
 
 /* Info messages */
-$lang['aauth_info_already_member'] = 'El usuario ya esta miembro del grupo';
+$lang['aauth_info_already_member'] = 'El usuario ya es miembro del grupo';
 $lang['aauth_info_group_exists'] = 'El nombre del grupo ya existe';
 $lang['aauth_info_perm_exists'] = 'El nombre del permiso ya existe';
