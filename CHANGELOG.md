@@ -1,10 +1,33 @@
 ## Change Log
 
+### v2.5.11 (2016/9/15)
+ - [d557569](https://github.com/emreakay/CodeIgniter-Aauth/commit/d5575693648225a2448006f566cfe9f48084408a) changed version tag (@REJack)
+ - [c6fc965](https://github.com/emreakay/CodeIgniter-Aauth/commit/c6fc9650ff7293cf176567dc4031f6c6ca085aba) `__contruct` cleanup (@REJack)
+    - moved any helper loader & email library loader to the function they use the helper/library.
+ - [1a85504](https://github.com/emreakay/CodeIgniter-Aauth/commit/1a855044a17ca6da3385a1a510366e7e0618f9ff) Merge pull request #175 from perenstrom/master (@REJack)
+    - Swedish translation
+ - [bd54730](https://github.com/emreakay/CodeIgniter-Aauth/commit/bd5473013788c77c0fc6412045dba927f00eb614) Create aauth_lang.php (@perenstrom)
+    - Translated to swedish.
+ - [562e247](https://github.com/emreakay/CodeIgniter-Aauth/commit/562e24711bf0851a3077dce20af316ef599a3954) Merge pull request #169 from siarlex/master (@REJack)
+    - Correction of phrase
+ - [d8b840f](https://github.com/emreakay/CodeIgniter-Aauth/commit/d8b840f480f1aef40ed5fd5c31765d5b1a68330f) Merge pull request #167 from mirivlad/master (@REJack)
+    - Add russian translate
+ - [ea5fb86](https://github.com/emreakay/CodeIgniter-Aauth/commit/ea5fb86d41e3869671c214abd2f8cb36a2578c8b) Merge pull request #172 from pars0097/master (@emreakay)
+    - add persian language
+ - [89cdcdd](https://github.com/emreakay/CodeIgniter-Aauth/commit/89cdcdd60f86c16d8d263f221e12483917d2e44f) Create aauth_lang.php (@pars0097)
+    - add persian :)
+ - [51c5bca](https://github.com/emreakay/CodeIgniter-Aauth/commit/51c5bca9af211f95cb14fef758c8d933301208d2) Delete aauth_lang.php (@pars0097)
+ - [280bebd](https://github.com/emreakay/CodeIgniter-Aauth/commit/280bebd1181eea58c32af0f1de3b5b217d11ed9e) Create aauth_lang.php (@pars0097)
+    - add persian :)
+ - [ef045fc](https://github.com/emreakay/CodeIgniter-Aauth/commit/ef045fcae17d4d51b33e57651a70aebd112721fa) Correction of phrase (@siarlex)
+ - [bc05227](https://github.com/emreakay/CodeIgniter-Aauth/commit/bc05227b3a5f717d6350bc63a76c8d2ea0f74353) Correct some error (@mirivlad)
+ - [a9b9498](https://github.com/emreakay/CodeIgniter-Aauth/commit/a9b94983d29bc8b1b8a817c6379093724dc12d1d) Add russian translate (@mirivlad)
+
 ### v2.5.10 (2016/7/26)
  - [05e4728](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) updated version tag (@REJack)
- - [a0391c8](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) Merge pull request #165 from paulcanning/2.5-stable (@REJack)
- - [e404e0a](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) Fix for list_pms (@paulcanning)
- - [54cfd3b](https://github.com/emreakay/CodeIgniter-Aauth/commit/05e47288c7b5f71b7d23f91fc1b6c028c6d51e2e) Fixed PM default type for delete flag (@paulcanning)
+ - [a0391c8](https://github.com/emreakay/CodeIgniter-Aauth/commit/a0391c871eb398d68df8656916e7b4c095607dd9) Merge pull request #165 from paulcanning/2.5-stable (@REJack)
+ - [e404e0a](https://github.com/emreakay/CodeIgniter-Aauth/commit/e404e0a5c7b0caf3440c0183ca2f0a151cd565f7) Fix for list_pms (@paulcanning)
+ - [54cfd3b](https://github.com/emreakay/CodeIgniter-Aauth/commit/54cfd3b2b13839ff896a3891ec8f5761a1354ab6) Fixed PM default type for delete flag (@paulcanning)
 
 ### v2.5.9 (2016/07/22)
  - [5cbff6c](https://github.com/emreakay/CodeIgniter-Aauth/commit/5cbff6c4c04897048a6083ae155262ca3dc50061) Merge pull request #163 from paulcanning/2.5-stable (@REJack)
