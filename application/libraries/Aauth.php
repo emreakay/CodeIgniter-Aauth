@@ -95,13 +95,6 @@ class Aauth {
 			$this->CI->load->library('driver');
 		}
 		$this->CI->load->library('session');
-		$this->CI->load->library('email');
-		$this->CI->load->helper('url');
-		$this->CI->load->helper('string');
-		$this->CI->load->helper('email');
-		$this->CI->load->helper('language');
-		$this->CI->load->helper('recaptchalib');
-		$this->CI->load->helper('googleauthenticator_helper');
 		$this->CI->lang->load('aauth');
 
  		// config/aauth.php
@@ -145,6 +138,7 @@ class Aauth {
 			return FALSE;
 		}
 		if($this->config_vars['ddos_protection'] && $this->config_vars['recaptcha_active'] && $this->get_login_attempts() > $this->config_vars['recaptcha_login_attempts']){
+			$this->CI->load->helper('recaptchalib');
 			$reCaptcha = new ReCaptcha( $this->config_vars['recaptcha_secret']);
 			$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 
@@ -162,6 +156,7 @@ class Aauth {
 			}
 			$db_identifier = 'username';
  		}else{
+			$this->CI->load->helper('email');
 			if( !valid_email($identifier) OR strlen($pass) < $this->config_vars['min'] OR strlen($pass) > $this->config_vars['max'] )
 			{
 				$this->error($this->CI->lang->line('aauth_error_login_failed_email'));
@@ -204,6 +199,7 @@ class Aauth {
 				return FALSE;
 			}else {
 				if(!empty($totp_secret)){
+					$this->CI->load->helper('googleauthenticator');
 					$ga = new PHPGangsta_GoogleAuthenticator();
 					$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
 					if (!$checkResult) {
@@ -234,6 +230,7 @@ class Aauth {
 			}else {
 				if(!empty($totp_secret)){
 					if($ip_address != $current_ip_address ){
+						$this->CI->load->helper('googleauthenticator');
 						$ga = new PHPGangsta_GoogleAuthenticator();
 						$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
 						if (!$checkResult) {
@@ -270,6 +267,7 @@ class Aauth {
 			$this->CI->session->set_userdata($data);
 
 			if ( $remember ){
+				$this->CI->load->helper('string');
 				$expire = $this->config_vars['remember'];
 				$today = date("Y-m-d");
 				$remember_date = date("Y-m-d", strtotime($today . $expire) );
@@ -356,6 +354,9 @@ class Aauth {
 	 * @param bool $perm_par If not given just control user logged in or not
 	 */
 	public function control( $perm_par = FALSE ){
+		
+		$this->CI->load->helper('url');
+
 		if($this->CI->session->userdata('totp_required')){
 			$this->error($this->CI->lang->line('aauth_error_totp_verification_required'));
 			redirect($this->config_vars['totp_two_step_login_redirect']);			
@@ -475,6 +476,9 @@ class Aauth {
 			$this->aauth_db->where('email', $email);
 			$this->aauth_db->update($this->config_vars['users'], $data);
 
+			$this->CI->load->library('email');
+			$this->CI->load->helper('url');
+
 			if(isset($this->config_vars['email_config']) && is_array($this->config_vars['email_config'])){
 				$this->CI->email->initialize($this->config_vars['email_config']);
 			}
@@ -501,6 +505,7 @@ class Aauth {
 		$query = $this->aauth_db->where('verification_code', $ver_code);
 		$query = $this->aauth_db->get( $this->config_vars['users'] );
 
+		$this->CI->load->helper('string');
 		$pass_length = ($this->config_vars['min']&1 ? $this->config_vars['min']+1 : $this->config_vars['min']);
 		$pass = random_string('alnum', $pass_length);
 
@@ -520,6 +525,8 @@ class Aauth {
 
 			$this->aauth_db->where('id', $row->id);
 			$this->aauth_db->update($this->config_vars['users'] , $data);
+
+			$this->CI->load->library('email');
 
 			if(isset($this->config_vars['email_config']) && is_array($this->config_vars['email_config'])){
 				$this->CI->email->initialize($this->config_vars['email_config']);
@@ -902,6 +909,7 @@ class Aauth {
 		if ($query->num_rows() > 0){
 			$row = $query->row();
 
+			$this->CI->load->helper('string');
 			$ver_code = random_string('alnum', 16);
 
 			$data['verification_code'] = $ver_code;
@@ -909,10 +917,13 @@ class Aauth {
 			$this->aauth_db->where('id', $user_id);
 			$this->aauth_db->update($this->config_vars['users'], $data);
 
+			$this->CI->load->library('email');
+			$this->CI->load->helper('url');
+
 			if(isset($this->config_vars['email_config']) && is_array($this->config_vars['email_config'])){
 				$this->CI->email->initialize($this->config_vars['email_config']);
 			}
-
+	
 			$this->CI->email->from( $this->config_vars['email'], $this->config_vars['name']);
 			$this->CI->email->to($row->email);
 			$this->CI->email->subject($this->CI->lang->line('aauth_email_verification_subject'));
@@ -1575,6 +1586,8 @@ class Aauth {
 	 * @return bool
 	 */
 	public function is_allowed($perm_par, $user_id=FALSE){
+
+		$this->CI->load->helper('url');
 
 		if($this->CI->session->userdata('totp_required')){
 			$this->error($this->CI->lang->line('aauth_error_totp_verification_required'));
@@ -2444,6 +2457,7 @@ class Aauth {
 	}
 
 	public function generate_unique_totp_secret(){
+		$this->CI->load->helper('googleauthenticator');
 		$ga = new PHPGangsta_GoogleAuthenticator();
 		$stop = false;
 		while (!$stop) {
@@ -2458,6 +2472,7 @@ class Aauth {
 	}
 
 	public function generate_totp_qrcode($secret){
+		$this->CI->load->helper('googleauthenticator');
 		$ga = new PHPGangsta_GoogleAuthenticator();
 		return $ga->getQRCodeGoogleUrl($this->config_vars['name'], $secret);
 	}
@@ -2476,6 +2491,7 @@ class Aauth {
 		$query = $this->aauth_db->where('id', $user_id);
 		$query = $this->aauth_db->get($this->config_vars['users']);
 		$totp_secret =  $query->row()->totp_secret;
+		$this->CI->load->helper('googleauthenticator');
 		$ga = new PHPGangsta_GoogleAuthenticator();
 		$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
 		if (!$checkResult) {
