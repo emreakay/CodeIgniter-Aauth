@@ -806,9 +806,10 @@ class Aauth {
 	 * @param string $limit Limit of users to be returned
 	 * @param bool $offset Offset for limited number of users
 	 * @param bool $include_banneds Include banned users
+	 * @param string $sort Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 * @return array Array of users
 	 */
-	public function list_users($group_par = FALSE, $limit = FALSE, $offset = FALSE, $include_banneds = FALSE) {
+	public function list_users($group_par = FALSE, $limit = FALSE, $offset = FALSE, $include_banneds = FALSE, $sort = FALSE) {
 
 		// if group_par is given
 		if ($group_par != FALSE) {
@@ -829,6 +830,11 @@ class Aauth {
 		// banneds
 		if (!$include_banneds) {
 			$this->aauth_db->where('banned != ', 1);
+		}
+
+		// order_by
+		if ($sort) {
+			$this->aauth_db->order_by($sort);
 		}
 
 		// limit
