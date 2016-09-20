@@ -1612,17 +1612,14 @@ class Aauth {
 		if( $query->num_rows() > 0){
 		    return TRUE;
 		} else {
-			if( $user_id===FALSE){
-				return $this->is_group_allowed($perm_id);
-			} else {
-				$g_allowed=FALSE;
-				foreach( $this->get_user_groups($user_id) as $group ){
-					if ( $this->is_group_allowed($perm_id, $group->id) ){
-						$g_allowed=TRUE;
-					}
+			$g_allowed=FALSE;
+			foreach( $this->get_user_groups($user_id) as $group ){
+				if ( $this->is_group_allowed($perm_id, $group->id) ){
+					$g_allowed=TRUE;
+					break;
 				}
-				return $g_allowed;
 			}
+			return $g_allowed;
 	    }
 	}
 
