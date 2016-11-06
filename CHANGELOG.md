@@ -1,5 +1,10 @@
 ## Change Log
 
+### v2.5.12 (2016/9/21)
+ - [ef8bfa0](https://github.com/emreakay/CodeIgniter-Aauth/commit/ef8bfa001442468c89886d3df29e799362a62542) add sort parameter to list_users (#176) (@REJack)
+ - [e9e1503](https://github.com/emreakay/CodeIgniter-Aauth/commit/e9e15035d65796aa722a6a98d1201bef6497c6a8) is_allowed improvement (#166) (@REJack)
+ - [f54cab0](https://github.com/emreakay/CodeIgniter-Aauth/commit/f54cab050aba62d9ebe6593871eb7b2dddb5363b) changed version tag (@REJack)
+
 ### v2.5.11 (2016/9/15)
  - [d557569](https://github.com/emreakay/CodeIgniter-Aauth/commit/d5575693648225a2448006f566cfe9f48084408a) changed version tag (@REJack)
  - [c6fc965](https://github.com/emreakay/CodeIgniter-Aauth/commit/c6fc9650ff7293cf176567dc4031f6c6ca085aba) `__contruct` cleanup (@REJack)
