@@ -1,45 +1,7 @@
-[![Travis-CI](https://img.shields.io/travis/REJack/CodeIgniter-Aauth/v3-dev.svg?style=flat-square)](https://travis-ci.org/REJack/CodeIgniter-Aauth)
-[![Coveralls branch](https://img.shields.io/coveralls/REJack/CodeIgniter-Aauth/v3-dev.svg?style=flat-square)](https://coveralls.io/github/REJack/CodeIgniter-Aauth)
-<p align="center">
-<img src="https://cloud.githubusercontent.com/assets/2417212/8925689/add409ea-34be-11e5-8e50-845da8f5b1b0.png" height="320">
-</p>
+# Quck Start
 
-***
-Aauth is a User Authorization Library for CodeIgniter 2.x and 3.x, which aims to make easy some essential jobs such as login, permissions and access operations. Despite its ease of use, it has also very advanced features like private messages, groupping, access management, and public access.
-
-**This is Quick Start page. You can also take a look at the [detailed Documentation Wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) to learn about other great Features**
-
-### Features 
-***
-* User Management and Operations (login, logout, register, verification via e-mail, forgotten password, user ban, login DDoS protection)
-* Group Operations (creating/deleting groups, membership management)
-* Admin and Public Group support (Public permissions)
-* Permission Management (creating/deleting permissions, allow/deny groups, public permissions, permission checking)
-* Group Permissions
-* User Permissions
-* User and System Variables
-* Login DDoS Protection
-* Private Messages (between users)
-* Error Messages and Validations
-* Langugage and config file support
-* Flexible implementation
-
-### What is new in Version 2
-***
-* User Permissions
-* User and System Variables
-* Login DDoS Protection
-* Updated functions (check documentation for details)
-* Bugs fixes
-* TOTP (Time-based One-time Password)
-
-### Migration
-***
-* If you are currently using Version 1, take a look at the [v1 to v2 migration page.](https://github.com/emreakay/CodeIgniter-Aauth/wiki/1%29-Migration-from-V1).
-
-### Quick Start 
-***
 Let's get started :)
+
 First, we will load the Aauth Library into the system
 ```php
 $this->load->library("Aauth");
@@ -50,7 +12,7 @@ That was easy!
 Now let's create two new users, `Frodo` and `Legolas`.
 
 ```php
-$this->aauth->create_user('frodo@example.com','frodopass','FrodoBaggins');
+$this->aauth->create_user('frodo@example.com','frodopass','Frodo Baggins');
 $this->aauth->create_user('legolas@example.com','legolaspass','Legolas');
 ```
    
@@ -64,7 +26,7 @@ $this->aauth->create_group('elves');
 
 Now, let's create a user with power, Gandalf (for our example, let's assume he was given the `id` of 12).
 ```php
-$this->aauth->create_user('gandalf@example.com', 'gandalfpass', 'GandalfTheGray');
+$this->aauth->create_user('gandalf@example.com', 'gandalfpass', 'Gandalf the Gray');
 ```  
 
 OK, now we have two groups and three users.
@@ -182,9 +144,3 @@ Frodo has broke the rules and will now need to be banned from the system.
 ```php
 $this->aauth->ban_user(3);
 ``` 
-
-You have reached the end of the Quick Start Guide, but please take a look at the [detailed Documentation Wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) for additional information.
-
-
-Don't forget to keep and eye on Aauth, we are constantly improving the system.
-You can also contribute and help me out. :)
