@@ -29,9 +29,6 @@ before_install:
   - rm -f application/tests/controllers/Welcome_test.php
   - cp -R ${CI_HOME}/testing_base/* ${CI_HOME}/CodeIgniter-${CODEIGNITER_VERSION}/application/
   - ls -R ${CI_HOME}/CodeIgniter-${CODEIGNITER_VERSION}/application/tests/models
-  - cd ${CI_HOME}/CodeIgniter-${CODEIGNITER_VERSION}/application/config
-  - rm config.php database.php
-  - mv config.testing.php config.php && mv database.testing.php database.php
   - cd ${CI_HOME}/CodeIgniter-${CODEIGNITER_VERSION}/application/tests
   
 before_script: 
