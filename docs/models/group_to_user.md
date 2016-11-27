@@ -1,4 +1,4 @@
-# User to Group Model
+# Group to User Model
 
 ## Examples
 

@@ -17,7 +17,7 @@ class Group_to_subgroup_model extends CI_Model
 
 	public function create($subgroup_id, $group_id)
 	{
-		if ($this->cii->groups->get_id($group_id) && $this->cii->groups->get_id($subgroup_id) && ! self::exist($subgroup_id, $group_id))
+		if ($this->cii->groups->get_id($group_id) && $this->cii->groups->get_id($subgroup_id) && ! self::exist($subgroup_id, $group_id) && $subgroup_id != $group_id)
 		{
 			$data['group_id'] = $group_id;
 			$data['subgroup_id'] = $subgroup_id;
@@ -34,9 +34,9 @@ class Group_to_subgroup_model extends CI_Model
 		return $this->db->delete($this->config_vars['database']['group_to_subgroup']);
 	}
 
-	public function delete_user($subgroup_id)
+	public function delete_subgroup($subgroup_id)
 	{
-		if ($this->cii->Users->exist_by_(array('id' => $subgroup_id)))
+		if ($this->cii->groups->get_id($subgroup_id))
 		{
 			$this->db->where('subgroup_id', $subgroup_id);
 			return $this->db->delete($this->config_vars['database']['group_to_subgroup']);

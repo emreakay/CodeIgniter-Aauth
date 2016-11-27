@@ -3,11 +3,7 @@
 	colors="true">
 	<testsuites>
 		<testsuite name="CodeIgniter Application Test Suite">
-			<file>./models/Users_test.php</file>
-			<file>./models/Login_attempts_test.php</file>
-			<file>./models/User_variables_test.php</file>
-			<file>./models/Groups_test.php</file>
-			<file>./models/Group_to_user_test.php</file>
+			<directory suffix="test.php">./models</directory>
 			<directory suffix="test.php">./controllers</directory>
 			<directory suffix="test.php">./language</directory>
 			<directory suffix="test.php">./libraries</directory>

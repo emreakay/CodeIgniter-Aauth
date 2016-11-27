@@ -1,4 +1,4 @@
-# User to Group Model
+# Group to Subgroup Model
 
 ## Examples
 
@@ -9,7 +9,7 @@
 
 {% PHPmethodDisplayer "create($subgroup_id, $group_id)" %}
 	Add a Sub-Groub to a Group
-	{% param "$user_id", type="int" %}
+	{% param "$subgroup_id", type="int" %}
 	Sub-Groub's ID
 	{% param "$group_id", type="int" %}
 	Group's ID
@@ -19,7 +19,7 @@
 
 {% PHPmethodDisplayer "delete($subgroup_id, $group_id)" %}
 	Remove a Sub-Groub from a Group
-	{% param "$user_id", type="int" %}
+	{% param "$subgroup_id", type="int" %}
 	Sub-Group's ID
 	{% param "$group_id", type="int" %}
 	Group's ID
@@ -27,7 +27,7 @@
 	Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "delete_user($subgroup_id)" %}
+{% PHPmethodDisplayer "delete_subgroup($subgroup_id)" %}
 	Remove a Sub-Groub from all Groups
 	{% param "$subgroup_id", type="int" %}
 	Sub-Group's ID
