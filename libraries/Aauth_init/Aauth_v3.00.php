@@ -164,6 +164,25 @@ class Aauth_v300
 		$this->CII->aauth_db_forge->add_key(array('group_id','subgroup_id'), TRUE);
 		$this->CII->aauth_db_forge->create_table($this->config_vars['database']['group_to_subgroup'], FALSE, array('ENGINE' => 'InnoDB'));
 
+		// Permissions TABLE
+		$this->CII->aauth_db_forge->add_field(array(
+			'id' => array(
+				'type' => 'INT',
+				'constraint' => 11,
+				'unsigned' => TRUE,
+				'auto_increment' => TRUE,
+			),
+			'name' => array(
+				'type' => 'VARCHAR',
+				'constraint' => '100',
+			),
+			'definition' => array(
+				'type' => 'TEXT',
+			),
+		));
+		$this->CII->aauth_db_forge->add_key('id', TRUE);
+		$this->CII->aauth_db_forge->create_table($this->config_vars['database']['permissions'], FALSE, array('ENGINE' => 'InnoDB'));
+
 	}
 
 }

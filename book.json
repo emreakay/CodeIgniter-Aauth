@@ -1,7 +1,7 @@
 {
   "root": "./docs",
   "gitbook": ">=3.0.0",
-  "plugins": [ "phpclassdisplayer@1.0.3-pre" ],
+  "plugins": [ "phpclassdisplayer@1.0.4" ],
   "pluginsConfig": {
     "phpclassdisplayer": {
       "scope": "->",

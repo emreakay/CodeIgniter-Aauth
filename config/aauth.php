@@ -12,10 +12,9 @@ $config_aauth = array(
 		'groups'							=> 'aauth_groups',
 		'group_to_user'						=> 'aauth_user_to_group',
 		'group_to_subgroup'					=> 'aauth_group_to_group',
-		'perms'								=> 'aauth_perms',
-		'perm_to_group'						=> 'aauth_perm_to_group',
-		'perm_to_user'						=> 'aauth_perm_to_user',
-		'pms'								=> 'aauth_pms',
+		'permissions'						=> 'aauth_perms',
+		'permission_to_group'				=> 'aauth_perm_to_group',
+		'permission_to_user'				=> 'aauth_perm_to_user',
 	),
 
 	'group' => array(
@@ -64,11 +63,6 @@ $config_aauth = array(
 		'login_attempts'					=> 4,
 		'site_key'							=> '',
 		'secret'							=> '',
-	),
-
-	'pm' => array(
-		'encryption'						=> FALSE,
-		'cleanup_max_age'					=> '3 months',
 	),
 
 	'redirect' => array(
