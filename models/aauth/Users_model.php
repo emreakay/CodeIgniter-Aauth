@@ -83,7 +83,7 @@ class Users_model extends CI_Model
 
 	public function ban($uid, $ver_code = NULL)
 	{
-		if ($$this->exist_by_(array('id' => $uid)))
+		if ($this->exist_by_(array('id' => $uid)))
 		{
 			if ($ver_code)
 			{
