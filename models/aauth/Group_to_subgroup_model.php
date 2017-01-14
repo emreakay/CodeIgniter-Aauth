@@ -34,7 +34,7 @@ class Group_to_subgroup_model extends CI_Model
 		return $this->db->delete($this->config_vars['database']['group_to_subgroup']);
 	}
 
-	public function delete_subgroup($subgroup_id)
+	public function delete_by_subgroup($subgroup_id)
 	{
 		if ($this->cii->groups->get_id($subgroup_id))
 		{
@@ -45,7 +45,7 @@ class Group_to_subgroup_model extends CI_Model
 		return FALSE;
 	}
 
-	public function delete_group($group_id)
+	public function delete_by_group($group_id)
 	{
 		if ($this->cii->groups->get_id($group_id))
 		{

@@ -46,7 +46,7 @@ class Users_model extends CI_Model
 	public function delete($uid)
 	{
 		$this->cii->user_variables->delete($uid);
-		$this->cii->group_to_user->delete_user($uid);
+		$this->cii->group_to_user->delete_by_user($uid);
 		return $this->db->delete($this->config_vars['database']['users'], array('id' => $uid));
 	}
 

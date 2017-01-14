@@ -27,7 +27,7 @@
 	Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "delete_subgroup($subgroup_id)" %}
+{% PHPmethodDisplayer "delete_by_subgroup($subgroup_id)" %}
 	Remove a Sub-Groub from all Groups
 	{% param "$subgroup_id", type="int" %}
 	Sub-Group's ID
@@ -35,7 +35,7 @@
 	Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "delete_group($group_id)" %}
+{% PHPmethodDisplayer "delete_by_group($group_id)" %}
 	Remove all Sub-Groubs from a Group
 	{% param "$group_id", type="int" %}
 	Group's ID

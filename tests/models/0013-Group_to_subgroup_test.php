@@ -44,26 +44,26 @@ class Group_to_subgroup_test extends TestCase
 		$this->assertFalse($AF_after_test);
 	}
 
-	public function test_delete_subgroup()
+	public function test_delete_by_subgroup()
 	{
 		$test_maingroup_id = $this->CI->groups->get_id('test_subgroup_1');
 		$test_subgroup_id = $this->CI->groups->get_id('test_subgroup_2');
 		$AT_create = $this->obj->create($test_subgroup_id, $test_maingroup_id);
-		$AT_delete_subgroup = $this->obj->delete_subgroup($test_subgroup_id);
-		$this->assertTrue($AT_delete_subgroup);
+		$AT_delete_by_subgroup = $this->obj->delete_by_subgroup($test_subgroup_id);
+		$this->assertTrue($AT_delete_by_subgroup);
 
-		$AF_wrong_subgroup = $this->obj->delete_subgroup(0);
+		$AF_wrong_subgroup = $this->obj->delete_by_subgroup(0);
 		$this->assertFalse($AF_wrong_subgroup);
 	}
 
-	public function test_delete_group()
+	public function test_delete_by_group()
 	{
 		$test_maingroup_id = $this->CI->groups->get_id('test_subgroup_1');
 		$test_subgroup_id = $this->CI->groups->get_id('test_subgroup_2');
 		$AT_create = $this->obj->create($test_subgroup_id, $test_maingroup_id);
-		$AT_delete_group = $this->obj->delete_group($test_maingroup_id);
-		$this->assertTrue($AT_delete_group);
-		$AF_wrong_group = $this->obj->delete_group(0);
+		$AT_delete_by_group = $this->obj->delete_by_group($test_maingroup_id);
+		$this->assertTrue($AT_delete_by_group);
+		$AF_wrong_group = $this->obj->delete_by_group(0);
 		$this->assertFalse($AF_wrong_group);
 	}
 

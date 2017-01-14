@@ -27,7 +27,7 @@
 	Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "delete_user($user_id)" %}
+{% PHPmethodDisplayer "delete_by_user($user_id)" %}
 	Remove a User from all Groups
 	{% param "$user_id", type="int" %}
 	User's ID
@@ -35,7 +35,7 @@
 	Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "delete_group($group_id)" %}
+{% PHPmethodDisplayer "delete_by_group($group_id)" %}
 	Remove all Users from a Group
 	{% param "$group_id", type="int" %}
 	Group's ID

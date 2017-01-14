@@ -40,12 +40,12 @@ class User_variables_test extends TestCase
 
 		$AE_get_user_vars_1 = $this->obj->get_by_user_id(1);
 		$this->assertEquals(4, count($AE_get_user_vars_1));
-		$AT_delete_user_var = $this->obj->delete(1, 'test_key');
-		$this->assertTrue($AT_delete_user_var);
+		$AT_delete_by_user_var = $this->obj->delete(1, 'test_key');
+		$this->assertTrue($AT_delete_by_user_var);
 		$AE_get_user_vars_2 = $this->obj->get_by_user_id(1);
 		$this->assertEquals(3, count($AE_get_user_vars_2));
-		$AT_delete_user_vars = $this->obj->delete(1);
-		$this->assertTrue($AT_delete_user_vars);
+		$AT_delete_by_user_vars = $this->obj->delete(1);
+		$this->assertTrue($AT_delete_by_user_vars);
 		$AE_get_user_vars_3 = $this->obj->get_by_user_id(1);
 		$this->assertEquals(0, count($AE_get_user_vars_3));
 		$AF_wrong_user_id = $this->obj->get_by_user_id(0);

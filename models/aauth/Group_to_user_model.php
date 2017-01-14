@@ -35,7 +35,7 @@ class Group_to_user_model extends CI_Model
 		return $this->db->delete($this->config_vars['database']['group_to_user']);
 	}
 
-	public function delete_user($user_id)
+	public function delete_by_user($user_id)
 	{
 		if ($this->cii->users->exist_by_(array('id' => $user_id)))
 		{
@@ -46,7 +46,7 @@ class Group_to_user_model extends CI_Model
 		return FALSE;
 	}
 
-	public function delete_group($group_id)
+	public function delete_by_group($group_id)
 	{
 		if ($this->cii->groups->get_id($group_id))
 		{

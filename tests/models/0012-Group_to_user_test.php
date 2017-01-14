@@ -38,15 +38,15 @@ class Group_to_user_test extends TestCase
 		$this->assertFalse($AF_after_test);
 	}
 
-	public function test_delete_user()
+	public function test_delete_by_user()
 	{
-		$AF_wrong_user = $this->obj->delete_user(0);
+		$AF_wrong_user = $this->obj->delete_by_user(0);
 		$this->assertFalse($AF_wrong_user);
 	}
 
-	public function test_delete_group()
+	public function test_delete_by_group()
 	{
-		$AF_wrong_group = $this->obj->delete_group(0);
+		$AF_wrong_group = $this->obj->delete_by_group(0);
 		$this->assertFalse($AF_wrong_group);
 	}
 

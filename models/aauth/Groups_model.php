@@ -54,8 +54,8 @@ class Groups_model extends CI_Model
 		$this->cii->load->model('aauth/Group_to_subgroup_model', 'group_to_subgroup');
 		$this->cii->load->model('aauth/Group_to_user_model', 'group_to_user');
 
-		$this->cii->group_to_user->delete_group($id);
-		$this->cii->group_to_subgroup->delete_group($id);	
+		$this->cii->group_to_user->delete_by_group($id);
+		$this->cii->group_to_subgroup->delete_by_group($id);	
 		//DELETE PERM_TO_GROUP
 		$this->db->where('id', $id);
 		return $this->db->delete($this->config_vars['database']['groups']);
