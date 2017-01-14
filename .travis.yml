@@ -37,4 +37,4 @@ before_script:
 script: 
   - phpunit --coverage-clover ${CI_HOME}/build/logs/clover.xml
   - sed -i 's/\/CodeIgniter-'${CODEIGNITER_VERSION}'\/application\//\//' ${CI_HOME}/build/logs/clover.xml 
-  - cd ${CI_HOME} && travis_retry php ${CI_HOME}/vendor/bin/coveralls -v --coverage_clover=${CI_HOME}/build/logs/clover.xml
+  - cd ${CI_HOME} && travis_retry php ${CI_HOME}/vendor/bin/coveralls -v
