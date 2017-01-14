@@ -13,8 +13,8 @@ $config_aauth = array(
 		'group_to_user'						=> 'aauth_user_to_group',
 		'group_to_subgroup'					=> 'aauth_group_to_group',
 		'permissions'						=> 'aauth_perms',
-		'permission_to_group'				=> 'aauth_perm_to_group',
 		'permission_to_user'				=> 'aauth_perm_to_user',
+		'permission_to_group'				=> 'aauth_perm_to_group',
 	),
 
 	'group' => array(

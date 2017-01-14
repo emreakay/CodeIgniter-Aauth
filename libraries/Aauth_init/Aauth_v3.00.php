@@ -182,6 +182,22 @@ class Aauth_v300
 		$this->CII->aauth_db_forge->add_key('id', TRUE);
 		$this->CII->aauth_db_forge->create_table($this->config_vars['database']['permissions'], FALSE, array('ENGINE' => 'InnoDB'));
 
+		// Permission To User TABLE
+		$this->CII->aauth_db_forge->add_field(array(
+			'permission_id' => array(
+				'type' => 'INT',
+				'constraint' => 11,
+				'unsigned' => TRUE,
+			),
+			'user_id' => array(
+				'type' => 'INT',
+				'constraint' => 11,
+				'unsigned' => TRUE,
+			),
+		));
+		$this->CII->aauth_db_forge->add_key(array('permission_id','user_id'), TRUE);
+		$this->CII->aauth_db_forge->create_table($this->config_vars['database']['permission_to_user'], FALSE, array('ENGINE' => 'InnoDB'));
+
 	}
 
 }
