@@ -16,7 +16,7 @@ class Login_attempts_model extends CI_Model
 
 	public function get()
 	{
-		$query = self::_get();
+		$query = $this->_get();
 
 		if ($query->num_rows() === 1)
 		{
@@ -28,7 +28,7 @@ class Login_attempts_model extends CI_Model
 
 	public function update()
 	{
-		$query = self::_get();
+		$query = $this->_get();
 
 		if ($query->num_rows() === 1)
 		{
@@ -45,7 +45,7 @@ class Login_attempts_model extends CI_Model
 			return TRUE;
 		}
 
-		return self::_create();
+		return $this->_create();
 	}
 
 	public function delete()

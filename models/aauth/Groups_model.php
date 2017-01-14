@@ -16,7 +16,7 @@ class Groups_model extends CI_Model
 
 	public function create($name, $definition = '')
 	{
-		if ($name && ! self::get_id($name))
+		if ($name && ! $this->get_id($name))
 		{
 			$data['name'] = $name;
 			$data['definition'] = $definition;
@@ -29,7 +29,7 @@ class Groups_model extends CI_Model
 
 	public function update($id, $name = NULL, $definition = NULL)
 	{
-		$id = self::get_id($id);
+		$id = $this->get_id($id);
 
 		if ($id)
 		{
@@ -63,7 +63,7 @@ class Groups_model extends CI_Model
 
 	public function get($id)
 	{
-		$query = self::_get(array('id' => $id));
+		$query = $this->_get(array('id' => $id));
 
 		if ($query->num_rows() === 1)
 		{
@@ -77,11 +77,11 @@ class Groups_model extends CI_Model
 	{
 		if (is_numeric($name))
 		{
-			$query = self::_get(array('id' => $name));
+			$query = $this->_get(array('id' => $name));
 		}
 		else if ( ! is_numeric($name))
 		{
-			$query = self::_get(array('name' => $name));
+			$query = $this->_get(array('name' => $name));
 		}
 		if ($query->num_rows() === 1)
 		{
@@ -93,7 +93,7 @@ class Groups_model extends CI_Model
 
 	public function get_all()
 	{
-		$query = self::_get();
+		$query = $this->_get();
 
 		if ($query->num_rows() !== 0)
 		{
