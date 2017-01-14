@@ -35,6 +35,5 @@ before_script:
   - mysql -e 'create database aauth_test;'
 
 script: 
-  - phpunit --coverage-clover ${CI_HOME}/build/logs/clover.xml
-  - sed -i 's/\/CodeIgniter-'${CODEIGNITER_VERSION}'\/application\//\//' ${CI_HOME}/build/logs/clover.xml 
-  - cd ${CI_HOME} && travis_retry php ${CI_HOME}/vendor/bin/coveralls -v --coverage_clover=${CI_HOME}/build/logs/clover.xml --exclude-no-stmt
+  - phpunit --coverage-clover ${CI_HOME}/CodeIgniter-'${CODEIGNITER_VERSION}/application/build/logs/clover.xml
+  - cd ${CI_HOME}/CodeIgniter-'${CODEIGNITER_VERSION}/application/ && travis_retry php ${CI_HOME}/vendor/bin/coveralls -v
