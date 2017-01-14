@@ -10,13 +10,13 @@ class Permissions_to_user_test extends TestCase
 		$this->CI->load->library('aauth');
 		$this->CI->load->model('aauth/Permission_to_user_model', 'permission_to_user', $this->CI->load->database($this->config_vars['database']['_profile']));
 		$this->CI->load->model('aauth/Permissions_model', 'permissions', $this->CI->load->database($this->config_vars['database']['_profile']));
-		$this->obj = $this->CI->group_to_user;
+		$this->obj = $this->CI->permission_to_user;
 	}
 
 	public function test_create()
 	{
-		$this->CI->groups->create('test_permission');
-		$test_permission_id = $this->CI->groups->get_id('test_permission');
+		$this->CI->permissions->create('test_permission');
+		$test_permission_id = $this->CI->permissions->get_id('test_permission');
 		$AT_create = $this->obj->create(1, $test_permission_id);
 		$this->assertTrue($AT_create);
 		$AF_already_member = $this->obj->create(1, $test_permission_id);
@@ -29,7 +29,7 @@ class Permissions_to_user_test extends TestCase
 
 	public function test_delete()
 	{
-		$test_permission_id = $this->CI->groups->get_id('test_permission');
+		$test_permission_id = $this->CI->permissions->get_id('test_permission');
 		$AT_pre_test = $this->obj->exist(1, $test_permission_id);
 		$this->assertTrue($AT_pre_test);
 		$AT_delete = $this->obj->delete(1, $test_permission_id);
