@@ -131,24 +131,23 @@ class Aauth_v300
 		$this->CII->aauth_db_forge->add_key('id', TRUE);
 		$this->CII->aauth_db_forge->create_table($this->config_vars['database']['groups'], FALSE, array('ENGINE' => 'InnoDB'));
 
-
-		// User To Group TABLE
+		// Group To User TABLE
 		$this->CII->aauth_db_forge->add_field(array(
-			'user_id' => array(
-				'type' => 'INT',
-				'constraint' => 11,
-				'unsigned' => TRUE,
-			),
 			'group_id' => array(
 				'type' => 'INT',
 				'constraint' => 11,
 				'unsigned' => TRUE,
 			),
+			'user_id' => array(
+				'type' => 'INT',
+				'constraint' => 11,
+				'unsigned' => TRUE,
+			),
 		));
-		$this->CII->aauth_db_forge->add_key(array('user_id','group_id'), TRUE);
+		$this->CII->aauth_db_forge->add_key(array('group_id','user_id'), TRUE);
 		$this->CII->aauth_db_forge->create_table($this->config_vars['database']['group_to_user'], FALSE, array('ENGINE' => 'InnoDB'));
 
-		// Group To Group TABLE
+		// Group To SubGroup TABLE
 		$this->CII->aauth_db_forge->add_field(array(
 			'group_id' => array(
 				'type' => 'INT',

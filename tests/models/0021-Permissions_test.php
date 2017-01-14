@@ -1,6 +1,6 @@
 <?php
 
-class Groups_test extends TestCase
+class Permissions_test extends TestCase
 {
 	public function setUp()
 	{
@@ -8,32 +8,32 @@ class Groups_test extends TestCase
 		$this->CI->config->load('aauth');
 		$this->config_vars = $this->CI->config->item('aauth');
 		$this->CI->load->library('aauth');
-		$this->CI->load->model('aauth/Groups_model', 'groups', $this->CI->load->database($this->config_vars['database']['_profile']));
-		$this->obj = $this->CI->groups;
+		$this->CI->load->model('aauth/Permissions_model', 'permissions', $this->CI->load->database($this->config_vars['database']['_profile']));
+		$this->obj = $this->CI->permissions;
 	}
 
 	public function test_create()
 	{
-		$AIT_create = $this->obj->create('test_group');
+		$AIT_create = $this->obj->create('test_permission');
 		$this->assertInternalType('int', $AIT_create);
-		$AF_same_group = $this->obj->create('test_group');
-		$this->assertFalse($AF_same_group);
-		$AF_no_group = $this->obj->create('');
-		$this->assertFalse($AF_no_group);
+		$AF_same_permission = $this->obj->create('test_permission');
+		$this->assertFalse($AF_same_permission);
+		$AF_no_permission = $this->obj->create('');
+		$this->assertFalse($AF_no_permission);
 
 	}
 
 	public function test_update()
 	{
-		$AT_update_1 = $this->obj->update(1, 'new_test_group');
+		$AT_update_1 = $this->obj->update(1, 'new_test_permission');
 		$this->assertTrue($AT_update_1);
-		$AE_update_1_confirm = $this->obj->get_id('new_test_group');
+		$AE_update_1_confirm = $this->obj->get_id('new_test_permission');
 		$this->assertEquals('1', $AE_update_1_confirm);
-		$AT_update_2 = $this->obj->update(1, 'test_group', 'testGroup');
+		$AT_update_2 = $this->obj->update(1, 'test_permission', 'testPermission');
 		$this->assertTrue($AT_update_2);
-		$AE_update_2_confirm = $this->obj->get($this->obj->get_id('test_group'));
-		$this->assertEquals('testGroup', $AE_update_2_confirm->definition);
-		$AF_wrong_id = $this->obj->update(0, 'test_group_1', 'test grp 1');
+		$AE_update_2_confirm = $this->obj->get($this->obj->get_id('test_permission'));
+		$this->assertEquals('testPermission', $AE_update_2_confirm->definition);
+		$AF_wrong_id = $this->obj->update(0, 'test_permission_1', 'test perm 1');
 		$this->assertFalse($AF_wrong_id);
 	}
 
@@ -47,7 +47,7 @@ class Groups_test extends TestCase
 
 	public function test_get()
 	{
-		$AF_wrong_name = $this->obj->get($this->obj->get_id('testGrp'));
+		$AF_wrong_name = $this->obj->get($this->obj->get_id('testPerm'));
 		$this->assertFalse($AF_wrong_name);
 	}
 
