@@ -14,12 +14,12 @@ class Permissions_model extends CI_Model
 		$this->config_vars = $this->cii->config->item('aauth');
 	}
 
-	public function create($permission_name, $permission_definition = '')
+	public function create($name, $definition = '')
 	{
-		if ($permission_name && ! self::get_id($permission_name))
+		if ($name && ! $this->get_id($name))
 		{
-			$data['name'] = $permission_name;
-			$data['definition'] = $permission_definition;
+			$data['name'] = $name;
+			$data['definition'] = $definition;
 			$this->db->insert($this->config_vars['database']['permissions'], $data);
 			return $this->db->insert_id();
 		}
@@ -27,39 +27,39 @@ class Permissions_model extends CI_Model
 		return FALSE;
 	}
 
-	public function update($permission_id, $permission_name = NULL, $permission_definition = NULL)
+	public function update($uid, $name = NULL, $definition = NULL)
 	{
-		$permission_id = self::get_id($permission_id);
+		$uid = $this->get_id($uid);
 
-		if ($permission_id)
+		if ($uid)
 		{
-			if ($permission_name)
+			if ($name)
 			{
-				$data['name'] = $permission_name;
+				$data['name'] = $name;
 			}
-			if ($permission_definition)
+			if ($definition)
 			{
-				$data['definition'] = $permission_definition;
+				$data['definition'] = $definition;
 			}
 
-			$this->db->where('id', $permission_id);
+			$this->db->where('id', $uid);
 			return $this->db->update($this->config_vars['database']['permissions'], $data);
 		}
 
 		return FALSE;
 	}
 
-	public function delete($permission_id)
+	public function delete($uid)
 	{
 		//DELETE PERM_TO_USER
 		//DELETE PERM_TO_GROUP
-		$this->db->where('id', $permission_id);
+		$this->db->where('id', $uid);
 		return $this->db->delete($this->config_vars['database']['permissions']);
 	}
 
-	public function get($permission_id)
+	public function get($uid)
 	{
-		$query = self::_get(array('id' => $permission_id));
+		$query = $this->_get(array('id' => $uid));
 
 		if ($query->num_rows() === 1)
 		{
@@ -69,15 +69,15 @@ class Permissions_model extends CI_Model
 		return FALSE;
 	}
 
-	public function get_id($permission_name)
+	public function get_id($name)
 	{
-		if (is_numeric($permission_name))
+		if (is_numeric($name))
 		{
-			$query = self::_get(array('id' => $permission_name));
+			$query = $this->_get(array('id' => $name));
 		}
-		else if ( ! is_numeric($permission_name))
+		else if ( ! is_numeric($name))
 		{
-			$query = self::_get(array('name' => $permission_name));
+			$query = $this->_get(array('name' => $name));
 		}
 		if ($query->num_rows() === 1)
 		{
@@ -89,7 +89,7 @@ class Permissions_model extends CI_Model
 
 	public function get_all()
 	{
-		$query = self::_get();
+		$query = $this->_get();
 
 		if ($query->num_rows() !== 0)
 		{

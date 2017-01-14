@@ -21,7 +21,7 @@ class User_variables_model extends CI_Model
 		{
 			$data['data_value'] = $value;
 
-			if (self::_exist($user_id, $key))
+			if ($this->_exist($user_id, $key))
 			{
 				$this->db->where('data_key', $key);
 				$this->db->where('user_id', $user_id);
@@ -38,9 +38,9 @@ class User_variables_model extends CI_Model
 
 	public function get($user_id, $key)
 	{
-		if ($this->cii->users->exist_by_(array('id' => $user_id)) && self::_exist($user_id, $key))
+		if ($this->cii->users->exist_by_(array('id' => $user_id)) && $this->_exist($user_id, $key))
 		{
-			$query = self::_get($user_id, $key);
+			$query = $this->_get($user_id, $key);
 			return $query->row()->data_value;
 		}
 
@@ -51,7 +51,7 @@ class User_variables_model extends CI_Model
 	{
 		if ($this->cii->users->exist_by_(array('id' => $user_id)))
 		{
-			return self::_get($user_id)->result();
+			return $this->_get($user_id)->result();
 		}
 
 		return FALSE;
@@ -70,7 +70,7 @@ class User_variables_model extends CI_Model
 
 	private function _exist($user_id, $key)
 	{
-		if (self::_get($user_id, $key)->num_rows() === 1)
+		if ($this->_get($user_id, $key)->num_rows() === 1)
 		{
 			return TRUE;
 		}

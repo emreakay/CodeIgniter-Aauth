@@ -18,7 +18,7 @@ class Group_to_user_model extends CI_Model
 
 	public function create($user_id, $group_id)
 	{
-		if ($this->cii->groups->get_id($group_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! self::exist($user_id, $group_id))
+		if ($this->cii->groups->get_id($group_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! $this->exist($user_id, $group_id))
 		{
 			$data['group_id'] = $group_id;
 			$data['user_id'] = $user_id;
