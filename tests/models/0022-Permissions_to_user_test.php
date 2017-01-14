@@ -40,12 +40,20 @@ class Permissions_to_user_test extends TestCase
 
 	public function test_delete_by_user()
 	{
+		$test_permission_id = $this->CI->permissions->get_id('test_permission');
+		$this->obj->create(1, $test_permission_id);
+		$AT_delete_by_user = $this->obj->delete_by_user(1);
+		$this->assertTrue($AT_delete_by_user);
 		$AF_wrong_user = $this->obj->delete_by_user(0);
 		$this->assertFalse($AF_wrong_user);
 	}
 
 	public function test_delete_by_permission()
 	{
+		$test_permission_id = $this->CI->permissions->get_id('test_permission');
+		$this->obj->create(1, $test_permission_id);
+		$AT_delete_by_permission = $this->obj->delete_by_permission(1);
+		$this->assertTrue($AT_delete_by_permission);
 		$AF_wrong_permission = $this->obj->delete_by_permission(0);
 		$this->assertFalse($AF_wrong_permission);
 	}
