@@ -16,7 +16,7 @@ class Permission_to_user_model extends CI_Model {
 		$this->config_vars = $this->cii->config->item('aauth');
 	}
 
-	public function create($user_id, $permission_id)
+	public function create($permission_id, $user_id)
 	{
 		if ($this->cii->permissions->get_id($permission_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! $this->exist($user_id, $permission_id))
 		{
@@ -28,7 +28,7 @@ class Permission_to_user_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function delete($user_id, $permission_id)
+	public function delete($permission_id, $user_id)
 	{
 		$this->db->where('permission_id', $permission_id);
 		$this->db->where('user_id', $user_id);
@@ -57,7 +57,7 @@ class Permission_to_user_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function exist($user_id, $permission_id)
+	public function exist($permission_id, $user_id)
 	{
 		if ($this->cii->permissions->get_id($permission_id) && $this->cii->users->exist_by_(array('id' => $user_id)))
 		{

@@ -16,9 +16,9 @@ class Group_to_user_model extends CI_Model {
 		$this->config_vars = $this->cii->config->item('aauth');
 	}
 
-	public function create($user_id, $group_id)
+	public function create($group_id, $user_id)
 	{
-		if ($this->cii->groups->get_id($group_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! $this->exist($user_id, $group_id))
+		if ($this->cii->groups->get_id($group_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! $this->exist($group_id, $user_id))
 		{
 			$data['group_id'] = $group_id;
 			$data['user_id'] = $user_id;
@@ -28,7 +28,7 @@ class Group_to_user_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function delete($user_id, $group_id)
+	public function delete($group_id, $user_id)
 	{
 		$this->db->where('group_id', $group_id);
 		$this->db->where('user_id', $user_id);
@@ -57,7 +57,7 @@ class Group_to_user_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function exist($user_id, $group_id)
+	public function exist($group_id, $user_id)
 	{
 		if ($this->cii->groups->get_id($group_id) && $this->cii->users->exist_by_(array('id' => $user_id)))
 		{

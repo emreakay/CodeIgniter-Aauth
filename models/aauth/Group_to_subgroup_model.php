@@ -15,7 +15,7 @@ class Group_to_subgroup_model extends CI_Model {
 		$this->config_vars = $this->cii->config->item('aauth');
 	}
 
-	public function create($subgroup_id, $group_id)
+	public function create($group_id, $subgroup_id)
 	{
 		if ($this->cii->groups->get_id($group_id) && $this->cii->groups->get_id($subgroup_id) && ! $this->exist($subgroup_id, $group_id) && $subgroup_id != $group_id)
 		{
@@ -27,7 +27,7 @@ class Group_to_subgroup_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function delete($subgroup_id, $group_id)
+	public function delete($group_id, $subgroup_id)
 	{
 		$this->db->where('group_id', $group_id);
 		$this->db->where('subgroup_id', $subgroup_id);
@@ -56,7 +56,7 @@ class Group_to_subgroup_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function exist($subgroup_id, $group_id)
+	public function exist($group_id, $subgroup_id)
 	{
 		if ($this->cii->groups->get_id($group_id) && $this->cii->groups->get_id($subgroup_id))
 		{

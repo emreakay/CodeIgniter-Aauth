@@ -17,24 +17,24 @@ class Group_to_user_test extends TestCase
 	{
 		$this->CI->groups->create('test_group');
 		$test_group_id = $this->CI->groups->get_id('test_group');
-		$AT_create = $this->obj->create(1, $test_group_id);
+		$AT_create = $this->obj->create($test_group_id, 1);
 		$this->assertTrue($AT_create);
-		$AF_already_member = $this->obj->create(1, $test_group_id);
+		$AF_already_member = $this->obj->create($test_group_id, 1);
 		$this->assertFalse($AF_already_member);
-		$AF_wrong_user = $this->obj->create(0, $test_group_id);
+		$AF_wrong_user = $this->obj->create($test_group_id, 0);
 		$this->assertFalse($AF_wrong_user);
-		$AF_wrong_group = $this->obj->create(1, 0);
+		$AF_wrong_group = $this->obj->create(0, 1);
 		$this->assertFalse($AF_wrong_group);
 	}
 
 	public function test_delete()
 	{
 		$test_group_id = $this->CI->groups->get_id('test_group');
-		$AT_pre_test = $this->obj->exist(1, $test_group_id);
+		$AT_pre_test = $this->obj->exist($test_group_id, 1);
 		$this->assertTrue($AT_pre_test);
-		$AT_delete = $this->obj->delete(1, $test_group_id);
+		$AT_delete = $this->obj->delete($test_group_id, 1);
 		$this->assertTrue($AT_delete);
-		$AF_after_test = $this->obj->exist(1, $test_group_id);
+		$AF_after_test = $this->obj->exist($test_group_id, 1);
 		$this->assertFalse($AF_after_test);
 	}
 
@@ -52,9 +52,9 @@ class Group_to_user_test extends TestCase
 
 	public function test_exist()
 	{
-		$AF_wrong_user = $this->obj->exist(0, 1);
+		$AF_wrong_user = $this->obj->exist(1, 0);
 		$this->assertFalse($AF_wrong_user);
-		$AF_wrong_group = $this->obj->exist(1, 0);
+		$AF_wrong_group = $this->obj->exist(0, 1);
 		$this->assertFalse($AF_wrong_group);
 	}
 
