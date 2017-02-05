@@ -18,7 +18,7 @@ class Permission_to_group_model extends CI_Model {
 
 	public function create($permission_id, $group_id)
 	{
-		if ($this->cii->permissions->get_id($permission_id) && $this->cii->groups->exist_by_(array('id' => $group_id)) && ! $this->exist($permission_id, $group_id))
+		if ($this->cii->permissions->get_id($permission_id) && $this->cii->groups->get_id($group_id) && ! $this->exist($permission_id, $group_id))
 		{
 			$data['permission_id'] = $permission_id;
 			$data['group_id'] = $group_id;
@@ -37,7 +37,7 @@ class Permission_to_group_model extends CI_Model {
 
 	public function delete_by_group($group_id)
 	{
-		if ($this->cii->groups->exist_by_(array('id' => $group_id)))
+		if ($this->cii->groups->get_id($group_id))
 		{
 			$this->db->where('group_id', $group_id);
 			return $this->db->delete($this->config_vars['database']['permission_to_group']);
@@ -59,7 +59,7 @@ class Permission_to_group_model extends CI_Model {
 
 	public function exist($permission_id, $group_id)
 	{
-		if ($this->cii->permissions->get_id($permission_id) && $this->cii->groups->exist_by_(array('id' => $group_id)))
+		if ($this->cii->permissions->get_id($permission_id) && $this->cii->groups->get_id($group_id))
 		{
 			$this->db->where('permission_id', $permission_id);
 			$this->db->where('group_id', $group_id);
