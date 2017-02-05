@@ -1,5 +1,5 @@
-[![Travis-CI](https://img.shields.io/travis/REJack/CodeIgniter-Aauth/v3-dev.svg?style=flat-square)](https://travis-ci.org/REJack/CodeIgniter-Aauth)
-[![Codecov](https://img.shields.io/codecov/c/github/REJack/CodeIgniter-Aauth/v3-dev.svg?style=flat-square)](https://codecov.io/gh/REJack/CodeIgniter-Aauth)
+[![Travis-CI](https://img.shields.io/travis/AkaySoftware/CodeIgniter-Aauth/v3-dev.svg?style=flat-square)](https://travis-ci.org/AkaySoftware/CodeIgniter-Aauth)
+[![Codecov](https://img.shields.io/codecov/c/github/AkaySoftware/CodeIgniter-Aauth/v3-dev.svg?style=flat-square)](https://codecov.io/gh/AkaySoftware/CodeIgniter-Aauth)
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/2417212/8925689/add409ea-34be-11e5-8e50-845da8f5b1b0.png" height="320">
 </p>
