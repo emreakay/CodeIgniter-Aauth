@@ -1,0 +1,34 @@
+<phpunit
+	bootstrap="./Bootstrap.php"
+	colors="true">
+	<testsuites>
+		<testsuite name="CodeIgniter Application Test Suite">
+			<directory suffix="test.php">./models</directory>
+			<directory suffix="test.php">./controllers</directory>
+			<directory suffix="test.php">./language</directory>
+			<directory suffix="test.php">./libraries</directory>
+			<directory suffix="test.php">./views</directory>
+			<exclude>./_ci_phpunit_test/</exclude>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist>
+			<file>../config/aauth.php</file>
+			<file>../config/aauth_init.php</file>
+			<directory suffix=".php">../controllers</directory>
+			<directory suffix=".php">../models/aauth</directory>
+			<directory suffix=".php">../language</directory>
+			<directory suffix=".php">../libraries</directory>
+			<directory suffix=".php">../views</directory>
+			<exclude>
+				<directory suffix=".php">../views</directory>
+				<directory suffix=".php">../controllers</directory>
+				<directory suffix=".php">../language</directory>
+				<!--<directory suffix=".php">../libraries/Aauth_init</directory> -->
+			</exclude>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-html" target="build/coverage"/>
+	</logging>
+</phpunit>
