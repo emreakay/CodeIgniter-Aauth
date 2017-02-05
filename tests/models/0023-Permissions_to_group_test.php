@@ -13,7 +13,7 @@ class Permissions_to_group_test extends TestCase
 		$this->CI->load->model('aauth/Groups_model', 'groups', $this->CI->load->database($this->config_vars['database']['_profile']));
 		$this->obj = $this->CI->permission_to_group;
 		$this->CI->groups->create('test_group');
-		$this->test_group_id = $this->groups->get_id('test_group');
+		$this->test_group_id = $this->CI->groups->get_id('test_group');
 	}
 
 	public function test_create()
