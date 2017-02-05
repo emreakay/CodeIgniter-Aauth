@@ -33,21 +33,21 @@ class Users_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function update($uid, $data = array())
+	public function update($user_id, $data = array())
 	{
-		if ($this->exist_by_(array('id' => $uid)))
+		if ($this->exist_by_(array('id' => $user_id)))
 		{
-			return $this->db->update($this->config_vars['database']['users'], $data, array('id' => $uid));
+			return $this->db->update($this->config_vars['database']['users'], $data, array('id' => $user_id));
 		}
 
 		return FALSE;
 	}
 
-	public function delete($uid)
+	public function delete($user_id)
 	{
-		$this->cii->user_variables->delete($uid);
-		$this->cii->group_to_user->delete_by_user($uid);
-		return $this->db->delete($this->config_vars['database']['users'], array('id' => $uid));
+		$this->cii->user_variables->delete($user_id);
+		$this->cii->group_to_user->delete_by_user($user_id);
+		return $this->db->delete($this->config_vars['database']['users'], array('id' => $user_id));
 	}
 
 	public function get_all($options = array())
@@ -81,45 +81,45 @@ class Users_model extends CI_Model {
 		return $query->result();
 	}
 
-	public function ban($uid, $ver_code = NULL)
+	public function ban($user_id, $ver_code = NULL)
 	{
-		if ($this->exist_by_(array('id' => $uid)))
+		if ($this->exist_by_(array('id' => $user_id)))
 		{
 			if ($ver_code)
 			{
-				$this->cii->user_variables->update($uid, 'verification_code', $ver_code);
+				$this->cii->user_variables->update($user_id, 'verification_code', $ver_code);
 			}
 
 			$data['banned'] = '1';
-			return $this->update($uid, $data);
+			return $this->update($user_id, $data);
 		}
 
 		return FALSE;
 	}
 
-	public function unban($uid, $ver_code = NULL)
+	public function unban($user_id, $ver_code = NULL)
 	{
-		if ($this->exist_by_(array('id' => $uid)) && $this->is_($uid, 'banned'))
+		if ($this->exist_by_(array('id' => $user_id)) && $this->is_($user_id, 'banned'))
 		{
-			if ( ! $this->is_($uid, 'verified'))
+			if ( ! $this->is_($user_id, 'verified'))
 			{
-				if ($this->cii->user_variables->get($uid, 'verification_code') !== $ver_code)
+				if ($this->cii->user_variables->get($user_id, 'verification_code') !== $ver_code)
 				{
 					return FALSE;
 				}
 
-				$this->cii->user_variables->delete($uid, 'verification_code');
+				$this->cii->user_variables->delete($user_id, 'verification_code');
 			}
 
-			return $this->update($uid, array('banned' => '0'));
+			return $this->update($user_id, array('banned' => '0'));
 		}
 
 		return FALSE;
 	}
 
-	public function update_($uid, $type)
+	public function update_($user_id, $type)
 	{
-		if ($this->exist_by_(array('id' => $uid)))
+		if ($this->exist_by_(array('id' => $user_id)))
 		{
 			if ($type === 'activity')
 			{
@@ -131,7 +131,7 @@ class Users_model extends CI_Model {
 				$data['last_ip_address'] = $this->input->ip_address();
 			}
 
-			return $this->update($uid, $data);
+			return $this->update($user_id, $data);
 		}
 
 		return FALSE;
@@ -184,19 +184,19 @@ class Users_model extends CI_Model {
 		return $this->db->get($this->config_vars['database']['users']);
 	}
 
-	public function is_($uid, $type)
+	public function is_($user_id, $type)
 	{
-		if ($this->exist_by_(array('id' => $uid)))
+		if ($this->exist_by_(array('id' => $user_id)))
 		{
 			$data['banned'] = '1';
-			$data['id'] = $uid;
+			$data['id'] = $user_id;
 			$query = $this->get_by_($data);
 
 			if ($type === 'banned' && $query->num_rows() === 1)
 			{
 				return TRUE;
 			}
-			else if ($type === 'verified' && ! $this->cii->user_variables->get($uid, 'verification_code'))
+			else if ($type === 'verified' && ! $this->cii->user_variables->get($user_id, 'verification_code'))
 			{
 				return TRUE;
 			}

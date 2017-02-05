@@ -8,19 +8,19 @@
 {% endPHPclassDisplayer %}
 
 {% PHPmethodDisplayer "get()" %}
-    Retrieves Login Attempt from Database, based on IP Address and Timestamp
+    Retrieves a login attempt from database, based on IP-Address and timestamp.
     {% return %}
-    Value of Login Attempts
+    Value of login attempts
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "update()" %}
-    Updates/Created Login Attempt in Database, based on IP Address and Timestamp
+    Updates/Created a login attempt in database, based on IP-Address and timestamp.
     {% return %}
-    Either `TRUE` if Login Attempt below `max_attempts`, or `FALSE`.
+    Either `TRUE` if login attempt below `max_attempts`, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete()" %}
-    Removes Login Attempt from Database, based on IP Address and Timestamp
+    Removes a login attempt from database, based on IP-Address and timestamp.
     {% return %}
     Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}

@@ -7,30 +7,30 @@
 {% PHPclassDisplayer "Groups_model" %}
 {% endPHPclassDisplayer %}
 
-{% PHPmethodDisplayer "create($group_name [, $group_definition = ''])" %}
-    Creates group in Database
-    {% param "$group_name", type="string" %}
+{% PHPmethodDisplayer "create($name [, $definition = ''])" %}
+    Adds a group to database.
+    {% param "$name", type="string" %}
     Group's name
-    {% param "$group_definition", type="string" %}
+    {% param "$definition", type="string" %}
     Group's definition
     {% return %}
     Either `Group_ID` of created group, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "update($group_id [, $group_name = NULL, $group_definition = NULL])" %}
-    Updates group in Database
+{% PHPmethodDisplayer "update($group_id [, $name = NULL, $definition = NULL])" %}
+    Updates a group in database.
     {% param "$group_id", type="int" %}
     Group's ID
-    {% param "$group_name", type="string" %}
+    {% param "$name", type="string" %}
     Group's name
-    {% param "$group_definition", type="string" %}
+    {% param "$definition", type="string" %}
     Group's definition
     {% return %}
     Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete($group_id)" %}
-    Removes group from Database
+    Removes a group from database.
     {% param "$group_id", type="int" %}
     Group's ID
     {% return %}
@@ -38,23 +38,23 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get($group_id)" %}
-    Retrieves group from Database
+    Retrieves a group from database.
     {% param "$group_id", type="int" %}
     Group's ID
     {% return %}
     Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-{% PHPmethodDisplayer "get_id($group_name)" %}
-    Retrieves group id from Database
-    {% param "$group_name", type="int" %}
+{% PHPmethodDisplayer "get_id($name)" %}
+    Retrieves a group id from database.
+    {% param "$name", type="int" %}
     Group's name
     {% return %}
     Either `Group_ID`, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get_all()" %}
-    Retrieves all group's from Database
+    Retrieves all groups from database.
     {% return %}
     Array of all groups as object.
 {% endPHPmethodDisplayer %}

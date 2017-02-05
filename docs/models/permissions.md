@@ -8,7 +8,7 @@
 {% endPHPclassDisplayer %}
 
 {% PHPmethodDisplayer "create($name [, $definition = ''])" %}
-    Creates permission in Database
+    Creates a permission.
     {% param "$name", type="string" %}
     Permission's name
     {% param "$definition", type="string" %}
@@ -18,7 +18,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "update($permission_id [, $name = NULL, $definition = NULL])" %}
-    Updates permission in Database
+    Updates a permission.
     {% param "$permission_id", type="int" %}
     Permission's ID
     {% param "$name", type="string" %}
@@ -30,7 +30,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete($id)" %}
-    Removes permission from Database
+    Removes a permission.
     {% param "$permission_id", type="int" %}
     Permission's ID
     {% return %}
@@ -38,7 +38,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get($permission_id)" %}
-    Retrieves permission from Database
+    Retrieves a permission.
     {% param "$permission_id", type="int" %}
     Permission's ID
     {% return %}
@@ -46,7 +46,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get_id($name)" %}
-    Retrieves permission_id from Database
+    Retrieves permission_id.
     {% param "$name", type="int" %}
     Permission's name
     {% return %}
@@ -54,7 +54,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get_all()" %}
-    Retrieves all permission's from Database
+    Retrieves all permissions.
     {% return %}
     Array of all permission as object.
 {% endPHPmethodDisplayer %}

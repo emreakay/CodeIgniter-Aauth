@@ -7,8 +7,8 @@
 {% PHPclassDisplayer "Users_model" %}
 {% endPHPclassDisplayer %}
 
-{% PHPmethodDisplayer "create($user_email, $user_pass [, $user_username = '' ])" %}
-    Creates user in Database
+{% PHPmethodDisplayer "create($email, $pass [, $username = '' ])" %}
+    Adds a user to the database.
     {% param "$email", type="string" %}
     User's email address
     {% param "$pass", type="string" %}
@@ -20,7 +20,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "update($user_id, $data)" %}
-    Updates user data in Database
+    Updates data of a user in database.
     {% param "$user_id", type="int" %}
     User's ID
     {% param "$data", type="array" %}
@@ -30,7 +30,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete($user_id)" %}
-    Removes user from Database
+    Removes a user from database.
     {% param "$user_id", type="int" %}
     User's ID
     {% return %}
@@ -38,14 +38,14 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get_all([$options = array()])" %}
-    Retrieves all user's from Database
+    Retrieves all users from database.
     {% hint %}
     Available options:
- - `filters` (_array_) - A associative array with 'column'-name as key and value
- - `include_banneds` (_bool_) - Whether to include banned user's
- - `only_banneds` (_bool_) - Whether to include only banned user's
- - `offset` (_int_) - Number of rows to limit the results to
- - `limit` (_int_) - Number of rows to skip
+     - `filters` (_array_) - A associative array with 'column'-name as key and value
+     - `include_banneds` (_bool_) - Whether to include banned user's
+     - `only_banneds` (_bool_) - Whether to include only banned user's
+     - `offset` (_int_) - Number of rows to limit the results to
+     - `limit` (_int_) - Number of rows to skip
     {% param "$options", type="array" %}
     Array of options.
     {% return %}
@@ -53,7 +53,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "ban($user_id [, $ver_code = NULL])" %}
-    Bans/Unverfies user in Database
+    Bans/Unverfies a user.
     {% param "$user_id", type="int" %}
     User's ID
     {% param "$ver_code", type="string" %}
@@ -63,7 +63,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "unban($user_id [, $ver_code = NULL])" %}
-    Unbans/Verfies user in Database
+    Unbans/Verfies a user.
     {% param "$user_id", type="int" %}
     User's ID
     {% param "$ver_code", type="string" %}
@@ -73,22 +73,21 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "update_($user_id, $type)" %}
-    Unbans/Verfies user in Database
+    Updates last_activity or last_login of a user.
     {% param "$user_id", type="int" %}
     User's ID
     {% param "$type", type="string" %}
     Update Type
     {% hint %}
     Available types:
-- `activity`
-- `last_login`
+     - `activity`
+     - `last_login`
     {% return %}
     Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}
 
-
 {% PHPmethodDisplayer "exist_by_($filters = array())" %}
-    Checks if user exist depending on filters
+    Checks if a user exist in database depending on filters.
     {% param "$filters", type="array" %}
     A associative array with 'column'-name as key and value
     {% return %}
@@ -96,7 +95,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get_($filters, $result_column)" %}
-    Checks if user exist depending on filters
+    Retrieves a user depending on filters with a result column.
     {% param "$filters", type="array" %}
     A associative array with 'column'-name as key and value
     {% param "$result_column", type="string" %}
@@ -106,30 +105,30 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "get_by_($filters [, $options = NULL])" %}
-    Retrieves user from Database
+    Retrieves users from database depending on filters and options.
     {% param "$filters", type="array" %}
     A associative array with column name as key and value
     {% param "$options", type="array" %}
     Array of options.
     {% hint %}
     Available options:
- - `select` (_bool_) - Single column name or Multiple column names comma separeated
- - `offset` (_int_) - Number of rows to limit the results to
- - `limit` (_int_) - Number of rows to skip
+     - `select` (_bool_) - Single column name or Multiple column names comma separeated
+     - `offset` (_int_) - Number of rows to limit the results to
+     - `limit` (_int_) - Number of rows to skip
     {% return %}
     CI's Database `get()`
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "is_($user_id, $type)" %}
-    Checks if user banned or verified
+    Checks if a user is banned or verified.
     {% param "$user_id", type="int" %}
     User's ID
     {% param "$type", type="string" %}
     Is Type
     {% hint %}
     Available types:
-- `banned`
-- `verified`
+     - `banned`
+     - `verified`
     {% return %}
     Either `TRUE` on success, or `FALSE`.
 {% endPHPmethodDisplayer %}

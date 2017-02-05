@@ -18,7 +18,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete($permission_id, $user_id)" %}
-	Removes a specific assigned permission from a specific user.
+	Removes a assigned permission from a user.
 	{% param "$permission_id", type="int" %}
 	Permission's ID
 	{% param "$user_id", type="int" %}
@@ -28,7 +28,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete_by_user($user_id)" %}
-	Removes all assigned permissions from a specific user.
+	Removes all assigned permissions from a user.
 	{% param "$user_id", type="int" %}
 	User's ID
 	{% return %}
@@ -36,7 +36,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete_by_permission($permission_id)" %}
-	Remove a specific permission from any user.
+	Remove a permission from any user.
 	{% param "$permission_id", type="int" %}
 	Permission's ID
 	{% return %}
@@ -44,7 +44,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "exist($permission_id, $user_id)" %}
-	Checks if a specific permission is already assigned to a specific user.
+	Checks if a permission is already assigned to a user.
 	{% param "$permission_id", type="int" %}
 	Permission's ID
 	{% param "$user_id", type="int" %}

@@ -27,11 +27,11 @@ class Groups_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function update($id, $name = NULL, $definition = NULL)
+	public function update($group_id, $name = NULL, $definition = NULL)
 	{
-		$id = $this->get_id($id);
+		$group_id = $this->get_id($group_id);
 
-		if ($id)
+		if ($group_id)
 		{
 			if ($name)
 			{
@@ -42,28 +42,28 @@ class Groups_model extends CI_Model {
 				$data['definition'] = $definition;
 			}
 
-			$this->db->where('id', $id);
+			$this->db->where('id', $group_id);
 			return $this->db->update($this->config_vars['database']['groups'], $data);
 		}
 
 		return FALSE;
 	}
 
-	public function delete($id)
+	public function delete($group_id)
 	{
 		$this->cii->load->model('aauth/Group_to_subgroup_model', 'group_to_subgroup');
 		$this->cii->load->model('aauth/Group_to_user_model', 'group_to_user');
 
-		$this->cii->group_to_user->delete_by_group($id);
-		$this->cii->group_to_subgroup->delete_by_group($id);	
+		$this->cii->group_to_user->delete_by_group($group_id);
+		$this->cii->group_to_subgroup->delete_by_group($group_id);	
 		//DELETE PERM_TO_GROUP
-		$this->db->where('id', $id);
+		$this->db->where('id', $group_id);
 		return $this->db->delete($this->config_vars['database']['groups']);
 	}
 
-	public function get($id)
+	public function get($group_id)
 	{
-		$query = $this->_get(array('id' => $id));
+		$query = $this->_get(array('id' => $group_id));
 
 		if ($query->num_rows() === 1)
 		{

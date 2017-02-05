@@ -18,7 +18,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete($permission_id, $group_id)" %}
-	Removes a specific assigned permission from a specific group.
+	Removes a assigned permission from a group.
 	{% param "$permission_id", type="int" %}
 	Permission's ID
 	{% param "$group_id", type="int" %}
@@ -28,7 +28,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete_by_group($group_id)" %}
-	Removes all assigned permissions from a specific group.
+	Removes all assigned permissions from a group.
 	{% param "$group_id", type="int" %}
 	Group's ID
 	{% return %}
@@ -36,7 +36,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "delete_by_permission($permission_id)" %}
-	Remove a specific permission from any group.
+	Remove a permission from any group.
 	{% param "$permission_id", type="int" %}
 	Permission's ID
 	{% return %}
@@ -44,7 +44,7 @@
 {% endPHPmethodDisplayer %}
 
 {% PHPmethodDisplayer "exist($permission_id, $group_id)" %}
-	Checks if a specific permission is already assigned to a specific group.
+	Checks if a permission is already assigned to a group.
 	{% param "$permission_id", type="int" %}
 	Permission's ID
 	{% param "$group_id", type="int" %}
