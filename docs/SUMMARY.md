@@ -8,4 +8,7 @@
     * [Groups](models/groups.md)
     * [Group to User](models/group_to_user.md)
     * [Group to SubGroup](models/group_to_subgroup.md)
+    * [Permissions](models/permissions.md)
+    * [Permission to User](models/permission_to_user.md)
+    * [Permission to Group](models/permission_to_group.md)
 

@@ -27,11 +27,11 @@ class Permissions_model extends CI_Model {
 		return FALSE;
 	}
 
-	public function update($uid, $name = NULL, $definition = NULL)
+	public function update($permission_id, $name = NULL, $definition = NULL)
 	{
-		$uid = $this->get_id($uid);
+		$permission_id = $this->get_id($permission_id);
 
-		if ($uid)
+		if ($permission_id)
 		{
 			if ($name)
 			{
@@ -42,24 +42,24 @@ class Permissions_model extends CI_Model {
 				$data['definition'] = $definition;
 			}
 
-			$this->db->where('id', $uid);
+			$this->db->where('id', $permission_id);
 			return $this->db->update($this->config_vars['database']['permissions'], $data);
 		}
 
 		return FALSE;
 	}
 
-	public function delete($uid)
+	public function delete($permission_id)
 	{
 		//DELETE PERM_TO_USER
 		//DELETE PERM_TO_GROUP
-		$this->db->where('id', $uid);
+		$this->db->where('id', $permission_id);
 		return $this->db->delete($this->config_vars['database']['permissions']);
 	}
 
-	public function get($uid)
+	public function get($permission_id)
 	{
-		$query = $this->_get(array('id' => $uid));
+		$query = $this->_get(array('id' => $permission_id));
 
 		if ($query->num_rows() === 1)
 		{
