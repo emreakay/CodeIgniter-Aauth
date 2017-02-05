@@ -17,7 +17,7 @@ class Group_to_subgroup_model extends CI_Model {
 
 	public function create($group_id, $subgroup_id)
 	{
-		if ($this->cii->groups->get_id($group_id) && $this->cii->groups->get_id($subgroup_id) && ! $this->exist($subgroup_id, $group_id) && $subgroup_id != $group_id)
+		if ($this->cii->groups->get_id($group_id) && $this->cii->groups->get_id($subgroup_id) && ! $this->exist($group_id, $subgroup_id) && $group_id != $subgroup_id)
 		{
 			$data['group_id'] = $group_id;
 			$data['subgroup_id'] = $subgroup_id;

@@ -18,7 +18,7 @@ class Permission_to_user_model extends CI_Model {
 
 	public function create($permission_id, $user_id)
 	{
-		if ($this->cii->permissions->get_id($permission_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! $this->exist($user_id, $permission_id))
+		if ($this->cii->permissions->get_id($permission_id) && $this->cii->users->exist_by_(array('id' => $user_id)) && ! $this->exist($permission_id, $user_id))
 		{
 			$data['permission_id'] = $permission_id;
 			$data['user_id'] = $user_id;

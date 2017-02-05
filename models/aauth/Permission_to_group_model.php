@@ -18,7 +18,7 @@ class Permission_to_group_model extends CI_Model {
 
 	public function create($permission_id, $group_id)
 	{
-		if ($this->cii->permissions->get_id($permission_id) && $this->cii->groups->exist_by_(array('id' => $group_id)) && ! $this->exist($group_id, $permission_id))
+		if ($this->cii->permissions->get_id($permission_id) && $this->cii->groups->exist_by_(array('id' => $group_id)) && ! $this->exist($permission_id, $group_id))
 		{
 			$data['permission_id'] = $permission_id;
 			$data['group_id'] = $group_id;
