@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Group_to_user_model extends CI_Model
-{
+class Group_to_user_model extends CI_Model {
+	
 	protected $config_vars;
 	protected $cii;
 

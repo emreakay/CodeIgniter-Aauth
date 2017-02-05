@@ -1,7 +1,7 @@
 <?php
 
-class Aauth_v300
-{
+class Aauth_v300 {
+	
 	public function __construct()
 	{
 		$this->CII = &get_instance();

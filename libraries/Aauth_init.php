@@ -1,20 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Aauth_init
-{
+class Aauth_init {
+
 	protected $_enabled = FALSE;
-
 	protected $_path = NULL;
-
 	protected $_version = 0;
-
 	protected $_table = 'aauth_init';
-
 	protected $_auto_latest = FALSE;
-
 	protected $_regex = NULL;
-
 	protected $_error_string = '';
 
 	public function __construct($config = array())

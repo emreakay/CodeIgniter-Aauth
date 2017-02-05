@@ -1,11 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Aauth
-{
+class Aauth {
+
 	public $version = '3.00';
-
 	public $CII;
-
 	public $config_vars;
 
 	public function __construct()

@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Permissions_model extends CI_Model
-{
+class Permissions_model extends CI_Model {
+	
 	protected $config_vars;
 	protected $cii;
 
