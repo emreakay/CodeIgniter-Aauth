@@ -6,7 +6,7 @@
 ***
 Aauth is a User Authorization Library for CodeIgniter 2.x and 3.x, which aims to make easy some essential jobs such as login, permissions and access operations. Despite its ease of use, it has also very advanced features like private messages, groupping, access management, and public access.
 
-**This is Quick Start page. You can also take a look at the [detailed Documentation Wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) to learn about other great Features**
+**This is Quick Start page. You can also take a look at the [detailed Documentation Wiki](https://github.com/AkaySoftware/CodeIgniter-Aauth/wiki) to learn about other great Features**
 
 ### Features 
 ***
@@ -182,7 +182,7 @@ Frodo has broke the rules and will now need to be banned from the system.
 $this->aauth->ban_user(3);
 ``` 
 
-You have reached the end of the Quick Start Guide, but please take a look at the [detailed Documentation Wiki](https://github.com/emreakay/CodeIgniter-Aauth/wiki/_pages) for additional information.
+You have reached the end of the Quick Start Guide, but please take a look at the [detailed Documentation Wiki](https://github.com/akaysoftware/CodeIgniter-Aauth/wiki/_pages) for additional information.
 
 
 Don't forget to keep and eye on Aauth, we are constantly improving the system.
