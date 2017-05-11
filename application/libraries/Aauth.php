@@ -1610,7 +1610,9 @@ class Aauth {
 		}
 
 		$perm_id = $this->get_perm_id($perm_par);
-		
+		if($perm_id===null){
+			return false;
+		}
 		$query = $this->aauth_db->where('perm_id', $perm_id);
 		$query = $this->aauth_db->where('user_id', $user_id);
 		$query = $this->aauth_db->get( $this->config_vars['perm_to_user'] );
@@ -1639,7 +1641,9 @@ class Aauth {
 	public function is_group_allowed($perm_par, $group_par=FALSE){
 
 		$perm_id = $this->get_perm_id($perm_par);
-
+		if($perm_id===null){
+			return false;
+		}
 		// if group par is given
 		if($group_par != FALSE){
 
@@ -1814,7 +1818,7 @@ class Aauth {
 	 */
 	public function get_perm_id($perm_par) {
 
-		if( is_numeric($perm_par) ) { return $perm_par; }
+		if( is_numeric($perm_par) || ($perm_par === null) ) { return $perm_par; }
 
 		$query = $this->aauth_db->where('name', $perm_par);
 		$query = $this->aauth_db->get($this->config_vars['perms']);
