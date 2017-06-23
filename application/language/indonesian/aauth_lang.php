@@ -46,11 +46,13 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Maaf, teks reCAPTCHA yang anda dim
 $lang['aauth_error_no_user'] = 'Pengguna tidak ada';
 $lang['aauth_error_account_not_verified'] = 'Akun anda belum diverifikasi. Silakan cek email anda dan verifikasi akun anda .';
 $lang['aauth_error_no_group'] = 'Grup tidak ada';
+$lang['aauth_error_no_subgroup'] = 'Sub-grup tidak ada';
 $lang['aauth_error_self_pm'] = 'Tidak dapat mengirim pesan kepada diri sendiri.';
 $lang['aauth_error_no_pm'] = 'Pesan Pribadi tidak ditemukan';
 
 
 /* Info messages */
-$lang['aauth_info_already_member'] = 'Pengguna sudah anggota grup';
+$lang['aauth_info_already_member'] = 'Pengguna telah menjadi anggota grup';
+$lang['aauth_info_already_subgroup'] = 'Sub-grup telah menjadi anggota grup';
 $lang['aauth_info_group_exists'] = 'Nama grup sudah ada';
 $lang['aauth_info_perm_exists'] = 'Nama izin sudah ada';
