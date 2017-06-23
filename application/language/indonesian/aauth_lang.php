@@ -52,7 +52,7 @@ $lang['aauth_error_no_pm'] = 'Pesan Pribadi tidak ditemukan';
 
 
 /* Info messages */
-$lang['aauth_info_already_member'] = 'Pengguna telah menjadi anggota grup';
-$lang['aauth_info_already_subgroup'] = 'Sub-grup telah menjadi anggota grup';
+$lang['aauth_info_already_member'] = 'Pengguna sudah menjadi anggota grup';
+$lang['aauth_info_already_subgroup'] = 'Sub-grup sudah menjadi anggota grup';
 $lang['aauth_info_group_exists'] = 'Nama grup sudah ada';
 $lang['aauth_info_perm_exists'] = 'Nama izin sudah ada';
