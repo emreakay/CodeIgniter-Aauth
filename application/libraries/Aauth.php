@@ -1642,6 +1642,10 @@ class Aauth {
 
 		// if group par is given
 		if($group_par != FALSE){
+			
+			// if group is admin group, as admin group has access to all permissions
+			if (strcasecmp($group_par, $this->config_vars['admin_group']) == 0)
+			{return TRUE;}
 
 			$subgroup_ids = $this->get_subgroups($group_par);
 			$group_par = $this->get_group_id($group_par);
