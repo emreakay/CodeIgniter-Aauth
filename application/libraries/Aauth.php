@@ -13,7 +13,7 @@
  *
  * @copyright 2014-2016 Emre Akay
  *
- * @version 2.5.12
+ * @version 2.5.13
  *
  * @license LGPL
  * @license http://opensource.org/licenses/LGPL-3.0 Lesser GNU Public License
@@ -72,11 +72,11 @@ class Aauth {
 	public $flash_infos = array();
 
 	/**
-     * The CodeIgniter object variable
+	 * The CodeIgniter object variable
 	 * @access public
-     * @var object
-     */
-    public $aauth_db;
+	 * @var object
+	 */
+	 public $aauth_db;
 
 	########################
 	# Base Functions
