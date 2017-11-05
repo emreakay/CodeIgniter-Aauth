@@ -1584,6 +1584,31 @@ class Aauth {
 	}
 
 	/**
+	 * List Group Permissions
+	 * List all permissions by Group
+ 	 * @param int $group_par Group id or name to check
+	 * @return object Array of permissions
+	 */
+	public function list_group_perms($group_par) {
+		if(empty($group_par)){
+			return false;
+		}
+		
+		$group_par = $this->get_group_id($group_par);
+
+		$this->aauth_db->select('*');
+		$this->aauth_db->from($this->config_vars['perms']);
+		$this->aauth_db->join($this->config_vars['perm_to_group'], "perm_id = ".$this->config_vars['perms'].".id");
+		$this->aauth_db->where($this->config_vars['perm_to_group'].'.group_id', $group_par);
+
+		$query = $this->aauth_db->get();
+		if ($query->num_rows() == 0)
+			return FALSE;
+
+		return $query->result();
+	}
+	
+	/**
 	 * Is user allowed
 	 * Check if user allowed to do specified action, admin always allowed
 	 * first checks user permissions then check group permissions
