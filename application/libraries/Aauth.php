@@ -1489,6 +1489,23 @@ class Aauth {
 	}
 
 	/**
+	 * Get group
+	 * Get group from group name or id ( ! Case sensitive)
+	 * @param int|string $group_par Group id or name to get
+	 * @return int Group id
+	 */
+	public function get_group ( $group_par ) {
+		if ($group_id = $this->get_group_id($group_par)) {
+			$query = $this->aauth_db->where('id', $group_id);
+			$query = $this->aauth_db->get($this->config_vars['groups']);
+
+			return $query->row();		
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Get subgroups
 	 * Get subgroups from group name or id ( ! Case sensitive)
 	 * @param int|string $group_par Group id or name to get
@@ -1854,6 +1871,23 @@ class Aauth {
 
 		$row = $query->row();
 		return $row->id;
+	}
+
+	/**
+	 * Get permission
+	 * Get permission from permisison name or id
+	 * @param int|string $perm_par Permission id or name to get
+	 * @return int Permission id or NULL if perm does not exist
+	 */
+	public function get_perm($perm_par) {
+		if ($perm_id = $this->get_perm_id($perm_par)) {
+			$query = $this->aauth_db->where('id', $perm_id);
+			$query = $this->aauth_db->get($this->config_vars['perms']);
+
+			return $query->row();		
+		}
+
+		return FALSE;
 	}
 
 	########################
