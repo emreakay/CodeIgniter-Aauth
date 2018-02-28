@@ -1133,6 +1133,27 @@ class Aauth {
 		return $query->result();
 	}
 
+	/**
+	 * Get user permissions
+	 * Get user permissions from user id ( ! Case sensitive)
+	 * @param int|bool $user_id User id to get or FALSE for current user
+	 * @return int Group id
+	 */
+	public function get_user_perms ( $user_id = FALSE ) {
+		if( ! $user_id) { $user_id = $this->CI->session->userdata('id'); }
+
+		if($user_id){
+			$query = $this->aauth_db->select($this->config_vars['perms'].'.*');
+			$query = $this->aauth_db->where('user_id', $user_id);
+			$query = $this->aauth_db->join($this->config_vars['perms'], $this->config_vars['perms'].'.id = '.$this->config_vars['perm_to_user'].'.perm_id');
+			$query = $this->aauth_db->get($this->config_vars['perm_to_user']);
+
+			return $query->result();		
+		}
+
+		return FALSE;
+	}
+
 	//tested
 	/**
 	 * Update activity
@@ -1500,6 +1521,25 @@ class Aauth {
 			$query = $this->aauth_db->get($this->config_vars['groups']);
 
 			return $query->row();		
+		}
+
+		return FALSE;
+	}
+
+	/**
+	 * Get group permissions
+	 * Get group permissions from group name or id ( ! Case sensitive)
+	 * @param int|string $group_par Group id or name to get
+	 * @return int Group id
+	 */
+	public function get_group_perms ( $group_par ) {
+		if ($group_id = $this->get_group_id($group_par)) {
+			$query = $this->aauth_db->select($this->config_vars['perms'].'.*');
+			$query = $this->aauth_db->where('group_id', $group_id);
+			$query = $this->aauth_db->join($this->config_vars['perms'], $this->config_vars['perms'].'.id = '.$this->config_vars['perm_to_group'].'.perm_id');
+			$query = $this->aauth_db->get($this->config_vars['perm_to_group']);
+
+			return $query->result();		
 		}
 
 		return FALSE;
