@@ -185,7 +185,7 @@ class Aauth {
 			$this->error($this->CI->lang->line('aauth_error_no_user'));
 			return FALSE;
 		}
-		if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE AND $this->config_vars['totp_two_step_login_active'] == FALSE){
+		if($this->config_vars['totp_active'] == TRUE AND $this->config_vars['totp_only_on_ip_change'] == FALSE AND $this->config_vars['totp_two_step_login_active'] == TRUE){
 			if($this->config_vars['totp_two_step_login_active'] == TRUE){
 				$this->CI->session->set_userdata('totp_required', true);
 			}
