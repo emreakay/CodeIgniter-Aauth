@@ -44,6 +44,7 @@ $lang['aauth_error_recaptcha_not_correct'] = 'کد کپتچا به درستی و
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'نام کاربری وجود ندارد';
+$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
 $lang['aauth_error_account_not_verified'] = 'حساب کاربری شما تایید نشده است. لطفا ایمیل خود را برای تایید حسا کاربری بررسی کنید.';
 $lang['aauth_error_no_group'] = 'گروه موجود نیست';
 $lang['aauth_error_no_subgroup'] = 'زیرگروه موجود نیست';

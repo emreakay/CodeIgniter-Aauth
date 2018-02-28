@@ -44,6 +44,7 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Извините, текст с re
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'Пользователь не существует';
+$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
 $lang['aauth_error_account_not_verified'] = 'Ваш акккаунт не подтвержден. Проверьте ваш ящик e-mail и подтвердите аккаунт.';
 $lang['aauth_error_no_group'] = 'Группа не существует';
 $lang['aauth_error_no_subgroup'] = 'Подгруппа не существует';

@@ -44,6 +44,7 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Tyvärr, reCAPTCHA-texten var fela
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'Användaren finns inte.';
+$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
 $lang['aauth_error_account_not_verified'] = 'Ditt konto är inte bekräftat. Var vänlig kolla din e-post och bekräfta ditt konto.';
 $lang['aauth_error_no_group'] = 'Gruppen finns inte.';
 $lang['aauth_error_no_subgroup'] = 'Undergruppen finns inte.';

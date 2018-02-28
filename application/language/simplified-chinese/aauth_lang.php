@@ -49,6 +49,7 @@ $lang['aauth_error_recaptcha_not_correct'] = '对不起，reCAPTCHA 验证码输
 
 // Misc. errors
 $lang['aauth_error_no_user'] = '用户不存在';
+$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
 $lang['aauth_error_account_not_verified'] = '您的帐户尚未验证，请检查信箱并验证帐户。 ';
 $lang['aauth_error_no_group'] = '群组不存在';
 $lang['aauth_error_no_subgroup'] = '子群组不存在';

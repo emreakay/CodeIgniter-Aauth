@@ -44,6 +44,7 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Ups, El texto ingresado es incorre
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'El usuario no existe.';
+$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
 $lang['aauth_error_account_not_verified'] = 'Tu cuenta aún no ha sido verificada, por favor revisa tu correo electrónico y verifica tu cuenta.';
 $lang['aauth_error_no_group'] = 'El grupo no existe';
 $lang['aauth_error_no_subgroup'] = 'Subgroup does not exist';

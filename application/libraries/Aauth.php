@@ -541,6 +541,7 @@ class Aauth {
 			return TRUE;
 		}
 
+		$this->error($this->CI->lang->line('aauth_error_vercode_invalid'));
 		return FALSE;
 	}
 

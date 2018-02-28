@@ -44,6 +44,7 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Hupps, der eingegebene reCAPTCHA T
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'Der Benutzer existiert nicht';
+$lang['aauth_error_vercode_invalid'] = 'Ungültiger Überprüfungs-Code';
 $lang['aauth_error_account_not_verified'] = 'Dein Account wurde bisher nicht bestätigt. Bitte prüfe deine E-Mails und bestätige deine Registrierung.';
 $lang['aauth_error_no_group'] = 'Die Gruppe existiert nicht';
 $lang['aauth_error_no_subgroup'] = 'Die Untergruppe existiert nicht';
