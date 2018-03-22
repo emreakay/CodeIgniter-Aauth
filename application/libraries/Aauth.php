@@ -1692,7 +1692,9 @@ class Aauth {
 			return true;
 		}
 
-		$perm_id = $this->get_perm_id($perm_par);
+		if ( ! $perm_id = $this->get_perm_id($perm_par)) {
+			return FALSE;
+		}
 		
 		$query = $this->aauth_db->where('perm_id', $perm_id);
 		$query = $this->aauth_db->where('user_id', $user_id);
