@@ -78,6 +78,20 @@ class Aauth {
 	 */
 	 public $aauth_db;
 
+	/**
+	 * Array to cache permission-ids.
+	 * @access private
+	 * @var array
+	 */
+	 private $cache_perm_id;
+
+	/**
+	 * Array to cache group-ids.
+	 * @access private
+	 * @var array
+	 */
+	 private $cache_group_id;
+
 	########################
 	# Base Functions
 	########################
@@ -106,6 +120,40 @@ class Aauth {
 		// load error and info messages from flashdata (but don't store back in flashdata)
 		$this->errors = $this->CI->session->flashdata('errors') ?: array();
 		$this->infos = $this->CI->session->flashdata('infos') ?: array();
+		
+		// Pre-Cache IDs
+		$this->preCacheIDs();
+		
+	}
+	
+	/**
+	 * preCacheIDs() caches all permission and group IDs for later use.
+	 */
+	private function preCacheIDs() {
+
+		// Initialize Variables
+
+		$this->cache_perm_id		= array();
+		$this->cache_group_id		= array();
+
+		// Permissions
+
+		$query	= $this->aauth_db->get($this->config_vars['perms']);
+
+		foreach ($query->result() as $row) {
+			$key				= str_replace(' ', '', trim(strtolower($row->name)));
+			$this->cache_perm_id[$key]	= $row->id;
+		}
+
+		// Groups
+
+		$query	= $this->aauth_db->get($this->config_vars['groups']);
+
+		foreach ($query->result() as $row) {
+			$key				= str_replace(' ', '', trim(strtolower($row->name)));
+			$this->cache_group_id[$key]	= $row->id;
+		}
+
 	}
 
 
@@ -1498,15 +1546,15 @@ class Aauth {
 	public function get_group_id ( $group_par ) {
 
 		if( is_numeric($group_par) ) { return $group_par; }
+		
+		$key	= str_replace(' ', '', trim(strtolower($group_par)));
+		
+		if (isset($this->cache_group_id[$key])) {
+			return $this->cache_group_id[$key];
+		} else {
+			return false;
+		}
 
-		$query = $this->aauth_db->where('name', $group_par);
-		$query = $this->aauth_db->get($this->config_vars['groups']);
-
-		if ($query->num_rows() == 0)
-			return FALSE;
-
-		$row = $query->row();
-		return $row->id;
 	}
 
 	/**
@@ -1904,15 +1952,15 @@ class Aauth {
 	public function get_perm_id($perm_par) {
 
 		if( is_numeric($perm_par) ) { return $perm_par; }
-
-		$query = $this->aauth_db->where('name', $perm_par);
-		$query = $this->aauth_db->get($this->config_vars['perms']);
-
-		if ($query->num_rows() == 0)
-			return FALSE;
-
-		$row = $query->row();
-		return $row->id;
+		
+		$key	= str_replace(' ', '', trim(strtolower($perm_par)));
+		
+		if (isset($this->cache_perm_id[$key])) {
+			return $this->cache_perm_id[$key];
+		} else {
+			return false;
+		}
+		
 	}
 
 	/**
