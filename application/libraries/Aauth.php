@@ -997,7 +997,7 @@ class Aauth {
 	 */
 	public function delete_user($user_id) {
 
-		$this->db->trans_begin();
+		$this->aauth_db->trans_begin();
 
 		// delete from perm_to_user
 		$this->aauth_db->where('user_id', $user_id);
@@ -1015,11 +1015,11 @@ class Aauth {
 		$this->aauth_db->where('id', $user_id);
 		$this->aauth_db->delete($this->config_vars['users']);
 
-		if ($this->db->trans_status() === false) {
-			$this->db->trans_rollback();
+		if ($this->aauth_db->trans_status() === false) {
+			$this->aauth_db->trans_rollback();
 			return false;
 		} else {
-			$this->db->trans_commit();
+			$this->aauth_db->trans_commit();
 			return true;
 		}
 
@@ -1338,7 +1338,7 @@ class Aauth {
 			return FALSE;
 		}
 
-		$this->db->trans_begin();
+		$this->aauth_db->trans_begin();
 
 		// bug fixed
 		// now users are deleted from user_to_group table
@@ -1357,11 +1357,11 @@ class Aauth {
 		$this->aauth_db->where('id', $group_id);
 		$this->aauth_db->delete($this->config_vars['groups']);
 
-		if ($this->db->trans_status() === false) {
-			$this->db->trans_rollback();
+		if ($this->aauth_db->trans_status() === false) {
+			$this->aauth_db->trans_rollback();
 			return false;
 		} else {
-			$this->db->trans_commit();
+			$this->aauth_db->trans_commit();
 			return true;
 		}
 
@@ -1697,7 +1697,7 @@ class Aauth {
 
 		$perm_id = $this->get_perm_id($perm_par);
 
-		$this->db->trans_begin();
+		$this->aauth_db->trans_begin();
 
 		// deletes from perm_to_gropup table
 		$this->aauth_db->where('perm_id', $perm_id);
@@ -1711,11 +1711,11 @@ class Aauth {
 		$this->aauth_db->where('id', $perm_id);
 		$this->aauth_db->delete($this->config_vars['perms']);
 
-		if ($this->db->trans_status() === false) {
-			$this->db->trans_rollback();
+		if ($this->aauth_db->trans_status() === false) {
+			$this->aauth_db->trans_rollback();
 			return false;
 		} else {
-			$this->db->trans_commit();
+			$this->aauth_db->trans_commit();
 			return true;
 		}
 
