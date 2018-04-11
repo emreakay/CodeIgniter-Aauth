@@ -122,14 +122,14 @@ class Aauth {
 		$this->infos = $this->CI->session->flashdata('infos') ?: array();
 
 		// Pre-Cache IDs
-		$this->preCacheIDs();
+		$this->precache_ids();
 
 	}
 
 	/**
-	 * preCacheIDs() caches all permission and group IDs for later use.
+	 * pre_cache_ids() caches all permission and group IDs for later use.
 	 */
-	private function preCacheIDs() {
+	private function precache_ids() {
 
 		// Initialize Variables
 
