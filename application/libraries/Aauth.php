@@ -129,7 +129,7 @@ class Aauth {
 	/**
 	 * pre_cache_ids() caches all permission and group IDs for later use.
 	 */
-	private function precache_ids() {
+	public function precache_ids() {
 
 		// Initialize Variables
 
