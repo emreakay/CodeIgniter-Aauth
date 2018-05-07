@@ -121,42 +121,40 @@ class Aauth {
 		$this->errors = $this->CI->session->flashdata('errors') ?: array();
 		$this->infos = $this->CI->session->flashdata('infos') ?: array();
 
-		// Pre-Cache IDs
-		$this->precache_ids();
-
-	}
-
-	/**
-	 * pre_cache_ids() caches all permission and group IDs for later use.
-	 */
-	public function precache_ids() {
-
 		// Initialize Variables
 
 		$this->cache_perm_id		= array();
 		$this->cache_group_id		= array();
+		
+		// Pre-Cache IDs
+		$this->precache_perms();
+		$this->precache_groups();
 
-		// Permissions
-
+	}
+	
+	/**
+	 * precache_perms() caches all permission IDs for later use.
+	 */
+	private function precache_perms {
 		$query	= $this->aauth_db->get($this->config_vars['perms']);
 
 		foreach ($query->result() as $row) {
 			$key				= str_replace(' ', '', trim(strtolower($row->name)));
 			$this->cache_perm_id[$key]	= $row->id;
-		}
-
-		// Groups
-
+	}
+	
+	/**
+	 * precache_groups() caches all group IDs for later use.
+	 */
+	private function precache_groups {
 		$query	= $this->aauth_db->get($this->config_vars['groups']);
 
 		foreach ($query->result() as $row) {
 			$key				= str_replace(' ', '', trim(strtolower($row->name)));
 			$this->cache_group_id[$key]	= $row->id;
 		}
-
 	}
-
-
+	
 	########################
 	# Login Functions
 	########################
@@ -1289,6 +1287,7 @@ class Aauth {
 				'definition'=> $definition
 			);
 			$this->aauth_db->insert($this->config_vars['groups'], $data);
+			$this->precache_groups();
 			return $this->aauth_db->insert_id();
 		}
 
@@ -1362,6 +1361,7 @@ class Aauth {
 			return false;
 		} else {
 			$this->aauth_db->trans_commit();
+			$this->precache_groups();
 			return true;
 		}
 
@@ -1657,6 +1657,7 @@ class Aauth {
 				'definition'=> $definition
 			);
 			$this->aauth_db->insert($this->config_vars['perms'], $data);
+			$this->precache_perms();
 			return $this->aauth_db->insert_id();
 		}
 		$this->info($this->CI->lang->line('aauth_info_perm_exists'));
@@ -1716,6 +1717,7 @@ class Aauth {
 			return false;
 		} else {
 			$this->aauth_db->trans_commit();
+			$this->precache_perms();
 			return true;
 		}
 
