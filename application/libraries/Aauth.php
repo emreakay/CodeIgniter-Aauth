@@ -141,6 +141,7 @@ class Aauth {
 		foreach ($query->result() as $row) {
 			$key				= str_replace(' ', '', trim(strtolower($row->name)));
 			$this->cache_perm_id[$key]	= $row->id;
+		}
 	}
 	
 	/**
