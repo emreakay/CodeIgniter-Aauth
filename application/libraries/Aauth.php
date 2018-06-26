@@ -135,7 +135,7 @@ class Aauth {
 	/**
 	 * precache_perms() caches all permission IDs for later use.
 	 */
-	private function precache_perms {
+	private function precache_perms() {
 		$query	= $this->aauth_db->get($this->config_vars['perms']);
 
 		foreach ($query->result() as $row) {
@@ -147,7 +147,7 @@ class Aauth {
 	/**
 	 * precache_groups() caches all group IDs for later use.
 	 */
-	private function precache_groups {
+	private function precache_groups() {
 		$query	= $this->aauth_db->get($this->config_vars['groups']);
 
 		foreach ($query->result() as $row) {
