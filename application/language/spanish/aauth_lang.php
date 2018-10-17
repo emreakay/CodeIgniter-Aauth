@@ -44,16 +44,16 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Ups, El texto ingresado es incorre
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'El usuario no existe.';
-$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
+$lang['aauth_error_vercode_invalid'] = 'Código de verificación invalido';
 $lang['aauth_error_account_not_verified'] = 'Tu cuenta aún no ha sido verificada, por favor revisa tu correo electrónico y verifica tu cuenta.';
 $lang['aauth_error_no_group'] = 'El grupo no existe';
-$lang['aauth_error_no_subgroup'] = 'Subgroup does not exist';
+$lang['aauth_error_no_subgroup'] = 'El subgrupo no existe';
 $lang['aauth_error_self_pm'] = 'No es posible enviarte un mensaje a ti mismo.';
 $lang['aauth_error_no_pm'] = 'Mensaje privado no encontrado';
 
 
 /* Info messages */
 $lang['aauth_info_already_member'] = 'El usuario ya es miembro del grupo';
-$lang['aauth_info_already_subgroup'] = 'Subgroup is already member of group';
+$lang['aauth_info_already_subgroup'] = 'El subgrupo ya es miembro del grupo';
 $lang['aauth_info_group_exists'] = 'El nombre del grupo ya existe';
 $lang['aauth_info_perm_exists'] = 'El nombre del permiso ya existe';
