@@ -1,5 +1,26 @@
 # CHANGES
 
+## LIBRARY
+
+### RENAMED
+- create_user => createUser
+- update_user => updateUser
+- delete_user => deleteUser
+- list_users => listUsers
+- keep_errors => keepErrors
+- get_errors_array => getErrorsArray
+- print_errors => printErrors
+- clear_errors => clearErrors
+- keep_infos => keepInfos
+- get_infos_array => getInfosArray
+- print_infos => printInfos
+- clear_infos => clearInfos
+
+### REMOVED
+- get_login_attempts (replaced with LoginAttemptModel)
+- update_login_attempts (replaced with LoginAttemptModel)
+
+
 ## CONFIG
 
 ### RENAMED
