@@ -44,45 +44,25 @@ class UserModel extends Model
 		}
 	}
 
-	public function findAllExtra(int $limit = 0, int $offset = 0, array $options = null)
+	public function updateLastLogin(int $id)
 	{
 		$builder = $this->builder();
+		$data = array();
+		$data['last_login'] = $this->setDate();
+		$builder->update($data, array('id' => $id));
 
-		if ($this->tempUseSoftDeletes === true)
-		{
-			$builder->where($this->deletedField, 0);
-		}
-
-		if (isset($options['where']))
-		{
-			foreach ($options['where'] as $key => $value)
-			{
-				$builder->where($key, $value);
-			}
-		}
-
-		if (isset($options['order_by']))
-		{
-			foreach ($options['order_by'] as $key => $value)
-			{
-				$builder->orderBy($key, $value);
-			}
-		}
-
-		$row = $builder->limit($limit, $offset)
-				->get();
-
-		$row = $row->getResult($this->tempReturnType);
-
-		$row = $this->trigger('afterFind', ['data' => $row, 'limit' => $limit, 'offset' => $offset]);
-
-		$this->tempReturnType = $this->returnType;
-		$this->tempUseSoftDeletes = $this->useSoftDeletes;
-
-		return $row['data'];
 	}
 
-	public function exists(int $id)
+	public function updateLastActivity(int $id)
+	{
+		$builder = $this->builder();
+		$data = array();
+		$data['last_activity'] = $this->setDate();
+		$builder->update($data, array('id' => $id));
+
+	}
+
+	public function isBanned(int $id)
 	{
 		$builder = $this->builder();
 
@@ -91,8 +71,47 @@ class UserModel extends Model
 			$builder->where($this->deletedField, 0);
 		}
 
-		$builder->like($this->table.'.'.$this->primaryKey, $id);
+		$builder->where($this->primaryKey, $id);
+		$builder->where('banned', 1);
+		return $builder->countAllResults();
+	}
 
+	public function existsById(int $id)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where($this->primaryKey, $id);
+		return $builder->countAllResults();
+	}
+
+	public function existsByEmail(string $email)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where('email', $email);
+		return $builder->countAllResults();
+	}
+
+	public function existsByUsername(string $username)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where('username', $username);
 		return $builder->countAllResults();
 	}
 

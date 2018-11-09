@@ -5,7 +5,6 @@ use Magefly\Aauth\Config\Aauth as AauthConfig;
 
 class LoginAttemptModel extends Model
 {
-	protected $useSoftDeletes = false;
 	protected $useTimestamps  = true;
 	protected $createdField   = 'created_datetime';
 	protected $updatedField   = 'updated_datetime';
@@ -22,7 +21,6 @@ class LoginAttemptModel extends Model
 	public function update($id = null, $data = null)
 	{
 		$request = \Config\Services::request();
-
 		$builder = $this->builder();
 		$ip_address = $request->getIPAddress();
 		$builder->where('ip_address', $ip_address);
@@ -45,7 +43,7 @@ class LoginAttemptModel extends Model
 			$data[$this->updatedField] = $this->setDate();
 			$builder->update($data, array('id' => $row->id));
 
-			if ( $data['count'] > $this->config->loginAttemptLimit)
+			if ($data['count'] > $this->config->loginAttemptLimit)
 			{
 				return false;
 			}
@@ -59,11 +57,11 @@ class LoginAttemptModel extends Model
 	public function get()
 	{
 		$request = \Config\Services::request();
-
 		$builder = $this->builder();
 		$ip_address = $request->getIPAddress();
 		$builder->where('ip_address', $ip_address);
 		$builder->where('updated_datetime >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
+
 		if ($builder->countAllResults() != 0)
 		{
 			$row = $builder->get()->getFirstRow();
@@ -73,5 +71,16 @@ class LoginAttemptModel extends Model
 		{
 			return 0;
 		}
+	}
+
+	public function delete($id = null, $purge = false)
+	{
+		$request = \Config\Services::request();
+		$builder = $this->builder();
+		$ip_address = $request->getIPAddress();
+		$builder->where('ip_address', $ip_address);
+		$builder->where('updated_datetime >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
+
+		return $builder->delete();
 	}
 }
