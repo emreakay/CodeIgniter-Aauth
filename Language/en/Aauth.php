@@ -30,6 +30,7 @@ return [
 	'loginFailedAll'        => 'E-mail, Username or Password do not match.',
 	'loginAttemptsExceeded' => 'You have exceeded your login attempts, your account has now been locked.',
 
+	'invalidUserBanned'     => 'This user is banned, please contact the system administrator.',
 	'invalidEmail'          => 'Invalid e-mail address',
 	'invalidPassword'       => 'Invalid password',
 	'invalidUsername'       => 'Invalid Username',
