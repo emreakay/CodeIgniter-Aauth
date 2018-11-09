@@ -2,7 +2,14 @@
 
 ## LIBRARY
 
+### ADDED
+- $session
+
+
 ### RENAMED
+- $config_vars => $config
+- flash_errors => $flashErrors
+- flash_infos => $flashInfos
 - create_user => createUser
 - update_user => updateUser
 - delete_user => deleteUser
@@ -17,6 +24,8 @@
 - clear_infos => clearInfos
 
 ### REMOVED
+- $CI
+- $aauth_db
 - get_login_attempts (replaced with LoginAttemptModel)
 - update_login_attempts (replaced with LoginAttemptModel)
 
@@ -73,6 +82,9 @@
 
 
 ## LANGUAGE
+
+### ADDED
+- invalidUserBanned
 
 ### CHANGED
 - aauth_email_verification_subject => subjectVerification
