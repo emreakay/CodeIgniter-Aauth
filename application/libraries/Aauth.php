@@ -1071,6 +1071,10 @@ class Aauth {
 	 */
 	public function is_banned($user_id) {
 
+		if ( ! $this->user_exist_by_id($user_id)) {
+			return TRUE;
+		}
+
 		$query = $this->aauth_db->where('id', $user_id);
 		$query = $this->aauth_db->where('banned', 1);
 
