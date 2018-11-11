@@ -1440,6 +1440,22 @@ class Aauth {
 			return FALSE;
 		}
 
+        if ($group_groups = $this->get_subgroups($group_id)) {
+            foreach ($group_groups as $item) {
+                if ($item->subgroup_id == $subgroup_id) {
+                    return false;
+                }
+            }
+        }
+
+        if ($subgroup_groups = $this->get_subgroups($subgroup_id)) {
+            foreach ($subgroup_groups as $item) {
+                if ($item->subgroup_id == $group_id) {
+                    return false;
+                }
+            }
+        }
+
 		$query = $this->aauth_db->where('group_id',$group_id);
 		$query = $this->aauth_db->where('subgroup_id',$subgroup_id);
 		$query = $this->aauth_db->get($this->config_vars['group_to_group']);
