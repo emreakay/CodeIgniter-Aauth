@@ -1,47 +1,91 @@
 <?php
 namespace App\Models\Aauth;
 
-use CodeIgniter\Model;
 use Config\Aauth as AauthConfig;
+use Config\Database;
+use Config\Services;
+use CodeIgniter\Database\BaseBuilder;
+use CodeIgniter\Database\BaseConnection;
+use CodeIgniter\Database\ConnectionInterface;
 
-class LoginAttemptModel extends Model
+class LoginAttemptModel
 {
-	protected $useTimestamps  = true;
-	protected $createdField   = 'created_datetime';
-	protected $updatedField   = 'updated_datetime';
-	protected $protectFields  = false;
 
-	public function __construct()
+	/**
+	 * Database Connection
+	 *
+	 * @var ConnectionInterface
+	 */
+	protected $db;
+
+	/**
+	 * Query Builder object
+	 *
+	 * @var BaseBuilder
+	 */
+	protected $builder;
+
+	/**
+	 * Name of database table
+	 *
+	 * @var string
+	 */
+	protected $table;
+
+	/**
+	 * The Database connection group that
+	 * should be instantiated.
+	 *
+	 * @var string
+	 */
+	protected $DBGroup;
+
+	/**
+	 * Aauth Config object
+	 *
+	 * @var BaseConfig
+	 */
+    protected $config;
+
+	public function __construct(ConnectionInterface &$db = null)
 	{
-		parent::__construct();
 		$this->config = new AauthConfig();
-		$this->table = $this->config->dbTableLoginAttempts;
 		$this->DBGroup = $this->config->dbProfile;
+		$this->table = $this->config->dbTableLoginAttempts;
+
+		if ($db instanceof ConnectionInterface)
+		{
+			$this->db = & $db;
+		}
+		else
+		{
+			$this->db = Database::connect($this->DBGroup);
+		}
+
+		$this->request = Services::request();
 	}
 
 	public function update($id = null, $data = null)
 	{
-		$request = \Config\Services::request();
 		$builder = $this->builder();
-		$ip_address = $request->getIPAddress();
+		$ip_address = $this->request->getIPAddress();
 		$builder->where('ip_address', $ip_address);
-		$builder->where('updated_datetime >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
-
-		if ($builder->countAllResults() == 0)
+		$builder->where('updated_at >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
+		if ( ! $row = $builder->get()->getFirstRow())
 		{
 			$data = [];
 			$data['ip_address'] = $ip_address;
 			$data['count'] = 1;
-			$data[$this->updatedField] = $this->setDate();
+			$data['created_at'] = date('Y-m-d H:i:s');
+			$data['updated_at'] = date('Y-m-d H:i:s');
 			$builder->insert($data);
 			return true;
 		}
 		else
 		{
-			$row = $builder->get()->getFirstRow();
 			$data = array();
 			$data['count'] = $row->count + 1;
-			$data[$this->updatedField] = $this->setDate();
+			$data['updated_at'] = date('Y-m-d H:i:s');
 			$builder->update($data, array('id' => $row->id));
 
 			if ($data['count'] > $this->config->loginAttemptLimit)
@@ -57,11 +101,10 @@ class LoginAttemptModel extends Model
 
 	public function get()
 	{
-		$request = \Config\Services::request();
 		$builder = $this->builder();
-		$ip_address = $request->getIPAddress();
+		$ip_address = $this->request->getIPAddress();
 		$builder->where('ip_address', $ip_address);
-		$builder->where('updated_datetime >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
+		$builder->where('updated_at >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
 
 		if ($builder->countAllResults() != 0)
 		{
@@ -74,14 +117,46 @@ class LoginAttemptModel extends Model
 		}
 	}
 
-	public function delete($id = null, $purge = false)
+	/**
+	 * Deletes login attempt.
+	 *
+	 * @return BaseBuilder
+	 */
+	public function delete()
 	{
-		$request = \Config\Services::request();
 		$builder = $this->builder();
-		$ip_address = $request->getIPAddress();
+		$ip_address = $this->request->getIPAddress();
 		$builder->where('ip_address', $ip_address);
-		$builder->where('updated_datetime >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
+		$builder->where('updated_at >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
 
 		return $builder->delete();
 	}
+
+	/**
+	 * Provides a shared instance of the Query Builder.
+	 *
+	 * @param string $table
+	 *
+	 * @return BaseBuilder
+	 */
+	protected function builder(string $table = null)
+	{
+		if ($this->builder instanceof BaseBuilder)
+		{
+			return $this->builder;
+		}
+
+		$table = empty($table) ? $this->table : $table;
+
+		// Ensure we have a good db connection
+		if ( ! $this->db instanceof BaseConnection)
+		{
+			$this->db = Database::connect($this->DBGroup);
+		}
+
+		$this->builder = $this->db->table($table);
+
+		return $this->builder;
+	}
+
 }
