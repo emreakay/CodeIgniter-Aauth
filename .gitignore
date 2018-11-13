@@ -17,3 +17,4 @@ application/Views/welcome_message.php
 application/Views/form.php
 writable/
 tests/
+.env
