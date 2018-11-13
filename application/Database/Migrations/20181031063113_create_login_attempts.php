@@ -10,24 +10,24 @@ class Migration_create_login_attempts extends Migration
 	{
 		$config = new AauthConfig();
 		$this->forge->addField([
-			'id' => array(
+			'id' => [
 				'type' => 'INT',
 				'constraint' => 11,
 				'unsigned' => TRUE,
 				'auto_increment' => TRUE,
-			),
-			'ip_address' => array(
+			],
+			'ip_address' => [
 				'type' => 'VARCHAR',
 				'constraint' => 39,
 				'default' => 0,
-			),
-			'count' => array(
+			],
+			'count' => [
 				'type' => 'TINYINT',
 				'constraint' => 2,
 				'default' => 0,
-			),
-			'created_datetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
-			'updated_datetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+			],
+			'created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+			'updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 		]);
 		$this->forge->addKey('id', TRUE);
 		$this->forge->createTable($config->dbTableLoginAttempts, TRUE);

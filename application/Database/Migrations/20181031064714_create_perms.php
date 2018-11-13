@@ -10,19 +10,19 @@ class Migration_create_perms extends Migration
 	{
 		$config = new AauthConfig();
 		$this->forge->addField([
-			'id' => array(
+			'id' => [
 				'type' => 'INT',
 				'constraint' => 11,
 				'unsigned' => TRUE,
 				'auto_increment' => TRUE,
-			),
-			'name' => array(
+			],
+			'name' => [
 				'type' => 'VARCHAR',
 				'constraint' => 100,
-			),
-			'definition' => array(
+			],
+			'definition' => [
 				'type' => 'TEXT',
-			),
+			],
 		]);
 		$this->forge->addKey('id', TRUE);
 		$this->forge->createTable($config->dbTablePerms, TRUE);

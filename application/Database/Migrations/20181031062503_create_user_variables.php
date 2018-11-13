@@ -10,34 +10,34 @@ class Migration_create_user_variables extends Migration
 	{
 		$config = new AauthConfig();
 		$this->forge->addField([
-			'id' => array(
+			'id' => [
 				'type' => 'INT',
 				'constraint' => 11,
 				'unsigned' => TRUE,
 				'auto_increment' => TRUE,
-			),
-			'user_id' => array(
+			],
+			'user_id' => [
 				'type' => 'INT',
 				'constraint' => 11,
 				'unsigned' => TRUE,
-			),
-			'data_key' => array(
+			],
+			'data_key' => [
 				'type' => 'VARCHAR',
 				'constraint' => 100,
-			),
-			'data_value' => array(
+			],
+			'data_value' => [
 				'type' => 'TEXT',
-			),
-			'created_datetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
-			'updated_datetime' => array(
+			],
+			'created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+			'updated_at' => [
 				'type' => 'DATETIME',
 				'default' => NULL,
-			),
-			'system' => array(
+			],
+			'system' => [
 				'type' => 'TINYINT',
 				'constraint' => 1,
 				'default' => 0,
-			),
+			],
 		]);
 		$this->forge->addKey('id', TRUE);
 		$this->forge->createTable($config->dbTableUserVariables, TRUE);
