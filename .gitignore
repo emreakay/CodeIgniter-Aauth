@@ -15,3 +15,5 @@ application/Filters/DebugToolbar.php
 application/Views/errors/
 application/Views/welcome_message.php
 application/Views/form.php
+writable/
+tests/
