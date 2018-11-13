@@ -1,7 +1,8 @@
-<?php namespace Magefly\Aauth\Controllers;
+<?php
+namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use Magefly\Aauth\Config\Aauth as AauthConfig;
+use Config\Aauth as AauthConfig;
 
 class Home extends Controller
 {

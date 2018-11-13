@@ -1,4 +1,5 @@
-<?php namespace Magefly\Aauth\Database\Migrations;
+<?php
+namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 

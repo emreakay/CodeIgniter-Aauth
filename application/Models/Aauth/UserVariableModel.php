@@ -1,7 +1,8 @@
-<?php namespace Magefly\Aauth\Models;
+<?php
+namespace App\Models\Aauth;
 
-use \CodeIgniter\Model;
-use Magefly\Aauth\Config\Aauth as AauthConfig;
+use CodeIgniter\Model;
+use Config\Aauth as AauthConfig;
 
 class UserVariableModel extends Model
 {

@@ -1,17 +1,17 @@
-<?php namespace Magefly\Aauth\Controllers;
+<?php
+namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use Magefly\Aauth\Config\Aauth as AauthConfig;
 
 class Migrate extends Controller
 {
 	public function index()
 	{
-		$config = new AauthConfig();
+		$config = new \Config\Aauth();
 		$migrate = \Config\Services::migrations();
 		try
 		{
-		  	$migrate->latest('Magefly\Aauth', $config->dbProfile);
+		  	$migrate->latest('App', $config->dbProfile);
 		}
 		catch (\Exception $e)
 		{

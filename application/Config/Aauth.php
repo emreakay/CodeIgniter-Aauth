@@ -1,4 +1,5 @@
-<?php namespace Magefly\Aauth\Config;
+<?php
+namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 

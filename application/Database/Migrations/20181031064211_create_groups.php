@@ -1,7 +1,8 @@
-<?php namespace Magefly\Aauth\Database\Migrations;
+<?php
+namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
-use Magefly\Aauth\Config\Aauth as AauthConfig;
+use Config\Aauth as AauthConfig;
 
 class Migration_create_groups extends Migration
 {

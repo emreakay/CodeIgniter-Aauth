@@ -1,5 +1,4 @@
-<?php namespace Magefly\Aauth\Libraries;
-
+<?php
 /**
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
@@ -8,27 +7,34 @@
  *
  * @package    Aauth
  * @author     Magefly Team
+ * @author     Jacob Tomlinson
+ * @author     Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author     Raphael Jackstadt <info@rejack.de>
+ *
+ * @copyright  2014-2017 Emre Akay
  * @copyright  2018 Magefly
- * @copyright  2014-2018 British Columbia Institute of Technology (https://bcit.ca/)
  * @license    https://opensource.org/licenses/MIT	MIT License
  * @link       https://github.com/magefly/CodeIgniter-Aauth
  * @version    3.0.0-pre
- *
- * @todo separate (on some level) the unvalidated users from the "banned" users
  */
+
+namespace App\Libraries;
+use \App\Models\Aauth\UserModel as UserModel;
+use \App\Models\Aauth\LoginAttemptModel as LoginAttemptModel;
+use \App\Models\Aauth\UserVariableModel as UserVariableModel;
 class Aauth
 {
 	/**
 	 * Variable for loading the config array into
 	 *
-	 * @var object
+     * @var \Config\Aauth
 	 */
 	private $config;
 
 	/**
 	 * Variable for loading the session service into
 	 *
-	 * @var object
+	 * @var \CodeIgniter\Session\Session
 	 */
 	private $session;
 
@@ -85,7 +91,7 @@ class Aauth
 	 */
 	function __construct()
 	{
-		$this->config = new \Magefly\Aauth\Config\Aauth();
+		$this->config = new \Config\Aauth();
 		$this->session = \Config\Services::session();
 	}
 
@@ -102,12 +108,12 @@ class Aauth
 	 */
 	public function createUser($email, $password, $username = null)
 	{
-		$userModel = new \Magefly\Aauth\Models\UserModel();
+		$userModel = new UserModel();
 
 		$data['email'] = $email;
 		$data['password'] = $password;
 
-		if ($username)
+		if ( ! is_null($username))
 		{
 			$data['username'] = $username;
 		}
@@ -135,7 +141,7 @@ class Aauth
 	 */
 	public function updateUser($userId, $email = null, $password = null, $username = null)
 	{
-		$userModel = new \Magefly\Aauth\Models\UserModel();
+		$userModel = new UserModel();
 		$data = [];
 
 		if ( ! $userModel->existsById($userId))
@@ -143,24 +149,24 @@ class Aauth
 			$this->error(lang('Aauth.notFoundUser'));
 			return false;
 		}
-		else if ( ! $email && ! $password && ! $username)
+		else if ( ! is_null($email) && ! is_null($password) && ! is_null($username))
 		{
 			return false;
 		}
 
 		$data['id'] = $userId;
 
-		if ($email)
+		if ( ! is_null($email))
 		{
 			$data['email'] = $email;
 		}
 
-		if ($password)
+		if ( ! is_null($password))
 		{
 			$data['password'] = $password;
 		}
 
-		if ($username)
+		if ( ! is_null($username))
 		{
 			$data['username'] = $username;
 		}
@@ -180,7 +186,7 @@ class Aauth
 	 */
 	public function deleteUser(int $userId)
 	{
-		$userModel = new \Magefly\Aauth\Models\UserModel();
+		$userModel = new UserModel();
 		$data = [];
 
 		if ( ! $userModel->existsById($userId))
@@ -208,20 +214,20 @@ class Aauth
 	 *
 	 * @return array Array of users
 	 */
-	public function listUsers(int $limit = 0, int $offset = 0, bool $includeBanneds = null, array $orderBy = null)
+	public function listUsers($limit = 0, $offset = 0, $includeBanneds = null, $orderBy = null)
 	{
-		$userModel = new \Magefly\Aauth\Models\UserModel();
+		$userModel = new UserModel();
 		$options = [];
 		$user = $userModel->limit($limit, $offset);
 
 		// bool $group_par = null,
 
-		if ( ! $includeBanneds)
+		if (is_null($includeBanneds))
 		{
 			$user->where('banned', 0);
 		}
 
-		if ($orderBy)
+		if ( ! is_null($orderBy))
 		{
 			$user->orderBy($orderBy[0], $orderBy[1]);
 		}
@@ -248,9 +254,9 @@ class Aauth
 	 */
 	public function login(string $identifier, string $password, bool $remember = null, bool $totpCode = null)
 	{
-		$userModel = new \Magefly\Aauth\Models\UserModel();
-		$loginAttemptModel = new \Magefly\Aauth\Models\LoginAttemptModel();
-		$userVariableModel = new \Magefly\Aauth\Models\UserVariableModel();
+		$userModel = new UserModel();
+		$loginAttemptModel = new LoginAttemptModel();
+		$userVariableModel = new UserVariableModel();
 		helper('cookie');
 		delete_cookie('user');
 
