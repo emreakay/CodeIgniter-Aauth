@@ -1,8 +1,34 @@
 <?php
+/**
+ * CodeIgniter-Aauth
+ *
+ * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
+ * easy some essential jobs such as login, permissions and access operations.
+ * Despite ease of use, it has also very advanced features like groupping,
+ * access management, public access etc..
+ *
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT   MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
+ */
+
 namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 
+/**
+ * Aauth Config
+ *
+ * @package CodeIgniter-Aauth
+ *
+ * phpcs:disable Squiz.Commenting.VariableComment
+ */
 class Aauth extends BaseConfig
 {
 	/*
@@ -12,29 +38,28 @@ class Aauth extends BaseConfig
 	|
 	| 'linkNoPermission'
 	|
-	| 	If user don't have permisssion to see the page he will be redirected
-	| 	the page specified.
-	| 	(default: false)
+	|	If user don't have permisssion to see the page he will be redirected
+	|	the page specified.
+	|	(default: false)
 	|
 	| 'linkResetPassword'
 	|
-	| 	Link for reset_password without site_url or base_url
-	| 	(default: '/account/reset_password')
+	|	Link for reset_password without site_url or base_url
+	|	(default: '/account/reset_password')
 	|
 	| 'linkVerification'
 	|
-	| 	Link for verification without site_url or base_url
-	| 	(default: '/account/verification')
+	|	Link for verification without site_url or base_url
+	|	(default: '/account/verification')
 	| 'linkVerification'
 	|
-	| 	Redirect path to TOTP Verification page
-	| 	(default: '/account/twofactor_verification')
-	|
+	|	Redirect path to TOTP Verification page
+	|	(default: '/account/twofactor_verification')
 	*/
-	public $linkNoPermission = false;
+	public $linkNoPermission  = false;
 	public $linkResetPassword = '/account/reset_password';
-	public $linkVerification = '/account/verification';
-	public $linkTotp = '/account/twofactor_verification';
+	public $linkVerification  = '/account/verification';
+	public $linkTotp          = '/account/twofactor_verification';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -43,18 +68,17 @@ class Aauth extends BaseConfig
 	|
 	| 'userVerification'
 	|
-	| 	User Verification, if TRUE sends a verification email on account creation
-	| 	(default: false)
+	|	User Verification, if TRUE sends a verification email on account creation
+	|	(default: false)
 	|
 	| 'userAdditionalChars'
 	|
-	| 	Additional valid chars for username. Non alphanumeric characters that are
-	| 	allowed by default
-	| 	(default: array())
-	|
+	|	Additional valid chars for username. Non alphanumeric characters that are
+	|	allowed by default
+	|	(default: [])
 	*/
-	public $userVerification = false;
-	public $userAdditionalChars = array();
+	public $userVerification    = false;
+	public $userAdditionalChars = [];
 
 	/*
 	|--------------------------------------------------------------------------
@@ -63,31 +87,30 @@ class Aauth extends BaseConfig
 	|
 	| 'passwordMin'
 	|
-	|	Password min char length
-	|	(default: 8)
+	|    Password min char length
+	|    (default: 8)
 	|
 	| 'passwordMax'
 	|
-	| 	Password max char length
-	|	(default: 32)
+	|	Password max char length
+	|    (default: 32)
 	|
 	| 'passwordHashAlgo'
 	|
-	| 	password_hash algorithm (PASSWORD_DEFAULT, PASSWORD_BCRYPT)
-	|	for details see http://php.net/manual/de/password.constants.php
-	|	(default: PASSWORD_DEFAULT)
+	|	password_hash algorithm (PASSWORD_DEFAULT, PASSWORD_BCRYPT)
+	|    for details see http://php.net/manual/de/password.constants.php
+	|    (default: PASSWORD_DEFAULT)
 	|
 	| 'passwordHashOptions'
 	|
-	| 	password_hash options array
-	|	for details see http://php.net/manual/en/function.password-hash.php
-	|	(default: array())
-	|
+	|	password_hash options array
+	|    for details see http://php.net/manual/en/function.password-hash.php
+	|    (default: [])
 	*/
-	public $passwordMin = 8;
-	public $passwordMax = 32;
-	public $passwordHashAlgo = PASSWORD_DEFAULT;
-	public $passwordHashOptions = array();
+	public $passwordMin         = 8;
+	public $passwordMax         = 32;
+	public $passwordHashAlgo    = PASSWORD_DEFAULT;
+	public $passwordHashOptions = [];
 
 	/*
 	|--------------------------------------------------------------------------
@@ -96,43 +119,42 @@ class Aauth extends BaseConfig
 	|
 	| 'loginUseUsername'
 	|
-	| 	Login Identificator, if TRUE username needed to login else email address
-	| 	(default: false)
+	|	Login Identificator, if TRUE username needed to login else email address
+	|	(default: false)
 	|
 	| 'loginRemember'
 	|
-	| 	Remember time (in relative format) elapsed after connecting and automatic
-	| 	logout for usage with cookies.
-    | 	Relative format (e.g. '+ 1 week', '+ 1 month') for details see
-    | 	http://php.net/manual/de/datetime.formats.relative.php
-    | 	(default: '+14 days')
+	|	Remember time (in relative format) elapsed after connecting and automatic
+	|	logout for usage with cookies.
+	|	Relative format (e.g. '+ 1 week', '+ 1 month') for details see
+	|	http://php.net/manual/de/datetime.formats.relative.php
+	|	(default: '+14 days')
 	|
 	| 'loginProtection'
 	|
-	| 	Enables the DDoS Protection, user will be banned temporary when he exceed the login 'try'
-	| 	(default: true)
+	|	Enables the DDoS Protection, user will be banned temporary when he exceed the login 'try'
+	|	(default: true)
 	|
 	| 'loginAttemptLimit'
 	|
-	| 	Login attempts limit
-	| 	(default: 10)
+	|	Login attempts limit
+	|	(default: 10)
 	|
 	| 'loginAttemptLimitTimePeriod'
 	|
-	| 	Period of time for max login attempts
-	| 	(default: '5 minutes')
+	|	Period of time for max login attempts
+	|	(default: '5 minutes')
 	|
 	| 'loginAttemptRemoveSuccessful'
 	|
-	| 	Enables removing login attempt after successful login
-	| 	(default: true)
-	|
+	|	Enables removing login attempt after successful login
+	|	(default: true)
 	*/
-	public $loginRemember = '+14 days';
-	public $loginUseUsername = false;
-	public $loginProtection = true;
-	public $loginAttemptLimit = 10;
-	public $loginAttemptLimitTimePeriod = '5 minutes';
+	public $loginRemember                = '+14 days';
+	public $loginUseUsername             = false;
+	public $loginProtection              = true;
+	public $loginAttemptLimit            = 10;
+	public $loginAttemptLimitTimePeriod  = '5 minutes';
 	public $loginAttemptRemoveSuccessful = true;
 
 	/*
@@ -142,25 +164,24 @@ class Aauth extends BaseConfig
 	|
 	| 'emailFrom'
 	|
-	| 	Sender email address, used for remind_password, send_verification and
-	| 	reset_password
-	| 	(default: 'admin@example.com')
+	|	Sender email address, used for remind_password, send_verification and
+	|	reset_password
+	|	(default: 'admin@example.com')
 	|
 	| 'emailFromName'
 	|
-	| 	Sender name, used for remind_password, send_verification and
-	| 	reset_password
-	| 	(default: 'Aauth v3')
+	|	Sender name, used for remind_password, send_verification and
+	|	reset_password
+	|	(default: 'Aauth v3')
 	|
 	| 'emailConfig'
 	|
-	| 	Array of Config for CI's Email Library
-	| 	(default: false)
-	|
+	|	Array of Config for CI's Email Library
+	|	(default: [])
 	*/
-	public $emailFrom = 'admin@example.com';
+	public $emailFrom     = 'sys@xpresspaper.eu';
 	public $emailFromName = 'Aauth v3';
-	public $emailConfig = false;
+	public $emailConfig   = [];
 
 	/*
 	|--------------------------------------------------------------------------
@@ -169,29 +190,28 @@ class Aauth extends BaseConfig
 	|
 	| 'totpEnabled'
 	|
-	| 	Enables the Time-based One-time Password Algorithm
-	| 	(default: false)
+	|	Enables the Time-based One-time Password Algorithm
+	|	(default: false)
 	|
 	| 'totpOnIpChange'
 	|
-	| 	TOTP only on IP Change
-	| 	(default: false)
+	|	TOTP only on IP Change
+	|	(default: false)
 	|
 	| 'totpResetPassword'
 	|
-	| 	Reset TOTP secret on reset_password()
-	| 	(default: false)
+	|	Reset TOTP secret on reset_password()
+	|	(default: false)
 	|
 	| 'totpLogin'
 	|
-	| 	TOTP required if uses has TOTP secret on login()
-	| 	(default: false)
-	|
+	|	TOTP required if uses has TOTP secret on login()
+	|	(default: false)
 	*/
-	public $totpEnabled = false;
-	public $totpOnIpChange = false;
+	public $totpEnabled       = false;
+	public $totpOnIpChange    = false;
 	public $totpResetPassword = false;
-	public $totpLogin = false;
+	public $totpLogin         = false;
 
 	/*
 	|--------------------------------------------------------------------------
@@ -200,29 +220,28 @@ class Aauth extends BaseConfig
 	|
 	| 'recaptchaEnabled'
 	|
-	| 	Enables reCAPTCHA (for details see www.google.com/recaptcha/admin)
-	| 	(default: 'admin@example.com')
+	|	Enables reCAPTCHA (for details see www.google.com/recaptcha/admin)
+	|	(default: 'admin@example.com')
 	|
 	| 'recaptchaLoginAttempts'
 	|
-	| 	Login Attempts to display reCAPTCHA
-	| 	(default: '')
+	|	Login Attempts to display reCAPTCHA
+	|	(default: '')
 	|
 	| 'recaptchaSiteKey'
 	|
-	| 	The reCAPTCHA siteKey
-	| 	(default: '')
+	|	The reCAPTCHA siteKey
+	|	(default: '')
 	|
 	| 'recaptchaSecret'
 	|
-	| 	The reCAPTCHA secretKey
-	| 	(default: '')
-	|
+	|	The reCAPTCHA secretKey
+	|	(default: '')
 	*/
-	public $recaptchaEnabled = false;
+	public $recaptchaEnabled       = false;
 	public $recaptchaLoginAttempts = 6;
-	public $recaptchaSiteKey = '';
-	public $recaptchaSecret = '';
+	public $recaptchaSiteKey       = '';
+	public $recaptchaSecret        = '';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -231,23 +250,22 @@ class Aauth extends BaseConfig
 	|
 	| 'adminGroup'
 	|
-	|	Name of admin group
-	|	(default: 'admin')
+	|    Name of admin group
+	|    (default: 'admin')
 	|
 	| 'defaultGroup'
 	|
-	|	Name of default group, the new user is added in it
-	|	(default: 'default')
+	|    Name of default group, the new user is added in it
+	|    (default: 'default')
 	|
 	| 'publicGroup'
 	|
-	|	Name of Public group , people who not logged in
-	|	(default: 'public')
-	|
+	|    Name of Public group , people who not logged in
+	|    (default: 'public')
 	*/
-	public $adminGroup = 'admin';
+	public $adminGroup   = 'admin';
 	public $defaultGroup = 'default';
-	public $publicGroup = 'public';
+	public $publicGroup  = 'public';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -256,59 +274,58 @@ class Aauth extends BaseConfig
 	|
 	| 'dbProfile'
 	|
-	|	The configuration database profile (definied in Config/Database.php)
-	|	(default: 'default')
+	|    The configuration database profile (definied in Config/Database.php)
+	|    (default: 'default')
 	|
 	| 'dbTableUsers'
 	|
-	|	The table which containss users
-	|	(default: 'aauth_users')
+	|    The table which containss users
+	|    (default: 'aauth_users')
 	|
 	| 'dbTableUserVariables'
 	|
-	|	The table which contains users variables
-	|	(default: 'aauth_user_variables')
+	|    The table which contains users variables
+	|    (default: 'aauth_user_variables')
 	|
 	| 'dbTableLoginAttempts'
 	|
-	|	The table which contains login attempts
-	|	(default: 'aauth_login_attempts')
+	|    The table which contains login attempts
+	|    (default: 'aauth_login_attempts')
 	|
 	| 'dbTableLoginTokens'
 	|
-	|	The table which contains login tokens
-	|	(default: 'aauth_login_tokens')
+	|    The table which contains login tokens
+	|    (default: 'aauth_login_tokens')
 	|
 	| 'dbTableGroups'
 	|
-	|	The table which contains groups
-	|	(default: 'aauth_groups')
+	|    The table which contains groups
+	|    (default: 'aauth_groups')
 	|
 	| 'dbTableGroupToUser'
 	|
-	|	The table which contains join of users and groups
-	|	(default: 'aauth_group_to_user')
+	|    The table which contains join of users and groups
+	|    (default: 'aauth_group_to_user')
 	|
 	| 'dbTableGroupToGroup'
 	|
-	|	The table which contains join of subgroups and groups
-	|	(default: 'aauth_group_to_group')
+	|    The table which contains join of subgroups and groups
+	|    (default: 'aauth_group_to_group')
 	|
 	| 'dbTablePerms'
 	|
-	|	The table which contains permissions
-	|	(default: 'aauth_perms')
+	|    The table which contains permissions
+	|    (default: 'aauth_perms')
 	|
 	| 'dbTablePermToUser'
 	|
-	|	The table which contains permissions for users
-	|	(default: 'aauth_perm_to_user')
+	|    The table which contains permissions for users
+	|    (default: 'aauth_perm_to_user')
 	|
 	| 'dbTablePermToGroup'
 	|
-	|	The table which contains permissions for groups
-	|	(default: 'aauth_perm_to_group')
-	|
+	|    The table which contains permissions for groups
+	|    (default: 'aauth_perm_to_group')
 	*/
 	public $dbProfile            = 'default';
 	public $dbTableUsers         = 'aauth_users';
@@ -321,5 +338,4 @@ class Aauth extends BaseConfig
 	public $dbTablePerms         = 'aauth_perms';
 	public $dbTablePermToUser    = 'aauth_perm_to_user';
 	public $dbTablePermToGroup   = 'aauth_perm_to_group';
-
 }
