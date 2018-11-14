@@ -3,7 +3,6 @@ namespace App\Models\Aauth;
 
 use Config\Aauth as AauthConfig;
 use Config\Database;
-use Config\Services;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\ConnectionInterface;
@@ -74,19 +73,24 @@ class LoginTokenModel
 	 *
 	 * @return array|null
 	 */
-	public function getTokens($user_id)
+	public function getAllByUserId($userId)
 	{
 		$builder = $this->builder();
+		$builder->select('id, user_id, random_hash, selector_hash, expires_at');
+		$builder->where('user_id', $userId);
 
-		$builder->where('is_expired', 0);
+		$row = $builder->get()->getResult('array');
 
-		$row = $builder->get();
-
-		$row = $row->getResult('array');
-
-		return $row['data'];
+		return $row;
 	}
 
+	/**
+	 * Updates Login Token
+	 *
+	 * @param array $data array with data
+	 *
+	 * @return BaseBuilder
+	 */
 	public function insert($data)
 	{
 		$builder = $this->builder();
@@ -98,14 +102,31 @@ class LoginTokenModel
 	}
 
 	/**
-	 * Deletes login attempt.
+	 * Updates Login Token by tokenId
 	 *
 	 * @return BaseBuilder
 	 */
-	public function delete($tokenId)
+	public function update($tokenId)
 	{
 		$builder = $this->builder();
 		$builder->where('id', $tokenId);
+
+		$data['expires_at'] = date('Y-m-d H:i:s', strtotime($this->config->loginRemember));
+		$data['updated_at'] = date('Y-m-d H:i:s');
+
+		return $builder->set($data)->update();
+	}
+
+	/**
+	 * Deletes expired Login Tokens by userId.
+	 *
+	 * @return BaseBuilder
+	 */
+	public function delete($userId)
+	{
+		$builder = $this->builder();
+		$builder->where('user_id', $userId);
+		$builder->where('expires_at <', date('Y-m-d H:i:s'));
 
 		return $builder->delete();
 	}
