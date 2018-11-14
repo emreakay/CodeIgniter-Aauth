@@ -1,55 +1,70 @@
 <?php
+/**
+ * CodeIgniter-Aauth
+ *
+ * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
+ * easy some essential jobs such as login, permissions and access operations.
+ * Despite ease of use, it has also very advanced features like groupping,
+ * access management, public access etc..
+ *
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT	MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
+ */
 
 /**
  * Aauth language strings.
  *
- * @package      Aauth
- * @author       REJack <info@rejack.de>
- * @copyright    2018 Magefly (https://github.com/magefly/)
- * @license      https://opensource.org/licenses/MIT	MIT License
- * @link         https://github.com/magefly/CodeIgniter-Aauth
- * @since        Version 3.0.0
- * @filesource
+ * @package CodeIgniter-Aauth
  *
  * @codeCoverageIgnore
  */
 return [
-	'subjectVerification'   => 'Account Verification',
-	'subjectReset'          => 'Reset Password',
-	'subjectResetSuccess'   => 'Successful Pasword Reset',
+   'subjectVerification'    => 'Account Verification',
+   'subjectReset'           => 'Reset Password',
+   'subjectResetSuccess'    => 'Successful Pasword Reset',
 
-	'textVerification'      => "Your verification code is: {0}. You can also click on (or copy and paste) the following link\n\n {1}",
-	'textReset'             => "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n {0}",
-	'textResetSuccess'      => 'Your password has successfully been reset. Your new password is: {0}',
+   'textVerification'       => "Your verification code is: {code}. You can also click on (or copy and paste) the following link\n\n {link}",
+   'textReset'              => "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n {link}",
+   'textResetSuccess'       => 'Your password has successfully been reset. Your new password is: {password}',
 
-	'noAccess'              => 'Sorry, you do not have access to the resource you requested.',
-	'notVerified'           => 'Your account has not been verified. Please check your e-mail and verify your account.',
+   'infoCreateSuccess'      => 'Your account has successfully been created. You can now login.',
+   'infoCreateVerification' => 'Your account has successfully been created. A email has been sent to your email address with verification details..',
 
-	'loginFailedEmail'      => 'E-mail Address and Password do not match.',
-	'loginFailedName'       => 'Username and Password do not match.',
-	'loginFailedAll'        => 'E-mail, Username or Password do not match.',
-	'loginAttemptsExceeded' => 'You have exceeded your login attempts, your account has now been locked.',
+   'noAccess'               => 'Sorry, you do not have access to the resource you requested.',
+   'notVerified'            => 'Your account has not been verified. Please check your email and verify your account.',
 
-	'invalidUserBanned'     => 'This user is banned, please contact the system administrator.',
-	'invalidEmail'          => 'Invalid e-mail address',
-	'invalidPassword'       => 'Invalid password',
-	'invalidUsername'       => 'Invalid Username',
-	'invalidTOTPCode'       => 'Invalid Authentication Code',
-	'invalidRecaptcha'      => 'Sorry, the reCAPTCHA text entered was incorrect.',
-	'invalidVercode'        => 'Invalid Verification Code',
+   'loginFailedEmail'       => 'Email Address and Password do not match.',
+   'loginFailedName'        => 'Username and Password do not match.',
+   'loginFailedAll'         => 'Email, Username or Password do not match.',
+   'loginAttemptsExceeded'  => 'You have exceeded your login attempts, your account has now been locked.',
 
-	'requiredUsername'      => 'Username required',
-	'requiredTOTPCode'      => 'Authentication Code required',
+   'invalidUserBanned'      => 'This user is banned, please contact the system administrator.',
+   'invalidEmail'           => 'Invalid Email address',
+   'invalidPassword'        => 'Invalid Password',
+   'invalidUsername'        => 'Invalid Username',
+   'invalidTOTPCode'        => 'Invalid Authentication Code',
+   'invalidRecaptcha'       => 'Sorry, the reCAPTCHA text entered was incorrect.',
+   'invalidVercode'         => 'Invalid Verification Code',
 
-	'existsAlreadyEmail'    => 'Email address already exists on the system. Please enter a different email address.',
-	'existsAlreadyUsername' => "Username already exists on the system. Please enter a different username.",
-	'existsAlreadyGroup'    => 'Group name already exists',
-	'existsAlreadyPerm'     => 'Permission name already exists',
+   'requiredUsername'       => 'Username required',
+   'requiredTOTPCode'       => 'Authentication Code required',
 
-	'notFoundUser'          => 'User does not exist',
-	'notFoundGroup'         => 'Group does not exist',
-	'notFoundSubgroup'      => 'Subgroup does not exist',
+   'existsAlreadyEmail'     => 'Email address already exists on the system. Please enter a different email address.',
+   'existsAlreadyUsername'  => 'Username already exists on the system. Please enter a different username.',
+   'existsAlreadyGroup'     => 'Group name already exists',
+   'existsAlreadyPerm'      => 'Permission name already exists',
 
-	'alreadyMemberGroup'    => 'User is already member of group',
-	'alreadyMemberSubgroup' => 'Subgroup is already member of group',
+   'notFoundUser'           => 'User does not exist',
+   'notFoundGroup'          => 'Group does not exist',
+   'notFoundSubgroup'       => 'Subgroup does not exist',
+
+   'alreadyMemberGroup'     => 'User is already member of group',
+   'alreadyMemberSubgroup'  => 'Subgroup is already member of group',
 ];
