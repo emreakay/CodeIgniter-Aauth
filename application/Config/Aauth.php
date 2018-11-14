@@ -274,6 +274,11 @@ class Aauth extends BaseConfig
 	|	The table which contains login attempts
 	|	(default: 'aauth_login_attempts')
 	|
+	| 'dbTableLoginTokens'
+	|
+	|	The table which contains login tokens
+	|	(default: 'aauth_login_tokens')
+	|
 	| 'dbTableGroups'
 	|
 	|	The table which contains groups
@@ -309,6 +314,7 @@ class Aauth extends BaseConfig
 	public $dbTableUsers         = 'aauth_users';
 	public $dbTableUserVariables = 'aauth_user_variables';
 	public $dbTableLoginAttempts = 'aauth_login_attempts';
+	public $dbTableLoginTokens   = 'aauth_login_tokens';
 	public $dbTableGroups        = 'aauth_groups';
 	public $dbTableGroupToUser   = 'aauth_group_to_user';
 	public $dbTableGroupToGroup  = 'aauth_group_to_group';
