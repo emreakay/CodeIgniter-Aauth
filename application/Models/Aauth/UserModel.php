@@ -50,6 +50,7 @@ class UserModel extends Model
 		$builder = $this->builder();
 		$data = array();
 		$data['last_login'] = $this->setDate();
+		$data['last_activity'] = $this->setDate();
 		$builder->update($data, array('id' => $id));
 
 	}
