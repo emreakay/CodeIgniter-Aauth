@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 use CodeIgniter\Database\Migration;
 use Config\Aauth as AauthConfig;
 
-class Migration_create_user_variables extends Migration
+class Migration_create_login_tokens extends Migration
 {
 	public function up()
 	{
@@ -19,25 +19,22 @@ class Migration_create_user_variables extends Migration
 			'user_id' => [
 				'type' => 'INT',
 				'constraint' => 11,
-				'unsigned' => TRUE,
+				'default' => 0,
 			],
-			'data_key' => [
+			'random_hash' => [
 				'type' => 'VARCHAR',
-				'constraint' => 100,
+				'constraint' => 255,
 			],
-			'data_value' => [
-				'type' => 'TEXT',
+			'selector_hash' => [
+				'type' => 'VARCHAR',
+				'constraint' => 255,
 			],
 			'created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 			'updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
-			'system' => [
-				'type' => 'TINYINT',
-				'constraint' => 1,
-				'default' => 0,
-			],
+			'expires_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 		]);
 		$this->forge->addKey('id', TRUE);
-		$this->forge->createTable($config->dbTableUserVariables, TRUE);
+		$this->forge->createTable($config->dbTableLoginTokens, TRUE);
 	}
 
 	//--------------------------------------------------------------------
@@ -45,6 +42,6 @@ class Migration_create_user_variables extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
-		$this->forge->dropTable($config->dbTableUserVariables, true);
+		$this->forge->dropTable($config->dbTableLoginTokens, true);
 	}
 }
