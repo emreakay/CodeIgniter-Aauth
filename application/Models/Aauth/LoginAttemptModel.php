@@ -1,4 +1,23 @@
 <?php
+/**
+ * CodeIgniter-Aauth
+ *
+ * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
+ * easy some essential jobs such as login, permissions and access operations.
+ * Despite ease of use, it has also very advanced features like groupping,
+ * access management, public access etc..
+ *
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT	MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
+ */
+
 namespace App\Models\Aauth;
 
 use Config\Aauth as AauthConfig;
@@ -8,6 +27,11 @@ use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\ConnectionInterface;
 
+/**
+ * Login Attempt caseModel
+ *
+ * @package CodeIgniter-Aauth
+ */
 class LoginAttemptModel
 {
 
@@ -45,13 +69,20 @@ class LoginAttemptModel
 	 *
 	 * @var BaseConfig
 	 */
-    protected $config;
+	protected $config;
 
+	/**
+	 * Constructor
+	 *
+	 * @param ConnectionInterface $db Database connection
+	 *
+	 * @return void
+	 */
 	public function __construct(ConnectionInterface &$db = null)
 	{
-		$this->config = new AauthConfig();
+		$this->config  = new AauthConfig();
 		$this->DBGroup = $this->config->dbProfile;
-		$this->table = $this->config->dbTableLoginAttempts;
+		$this->table   = $this->config->dbTableLoginAttempts;
 
 		if ($db instanceof ConnectionInterface)
 		{
@@ -65,77 +96,10 @@ class LoginAttemptModel
 		$this->request = Services::request();
 	}
 
-	public function update($id = null, $data = null)
-	{
-		$builder = $this->builder();
-		$ip_address = $this->request->getIPAddress();
-		$builder->where('ip_address', $ip_address);
-		$builder->where('updated_at >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
-		if ( ! $row = $builder->get()->getFirstRow())
-		{
-			$data = [];
-			$data['ip_address'] = $ip_address;
-			$data['count'] = 1;
-			$data['created_at'] = date('Y-m-d H:i:s');
-			$data['updated_at'] = date('Y-m-d H:i:s');
-			$builder->insert($data);
-			return true;
-		}
-		else
-		{
-			$data = array();
-			$data['count'] = $row->count + 1;
-			$data['updated_at'] = date('Y-m-d H:i:s');
-			$builder->update($data, array('id' => $row->id));
-
-			if ($data['count'] > $this->config->loginAttemptLimit)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-	}
-
-	public function get()
-	{
-		$builder = $this->builder();
-		$ip_address = $this->request->getIPAddress();
-		$builder->where('ip_address', $ip_address);
-		$builder->where('updated_at >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
-
-		if ($builder->countAllResults() != 0)
-		{
-			$row = $builder->get()->getFirstRow();
-			return $row->count;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	/**
-	 * Deletes login attempt.
-	 *
-	 * @return BaseBuilder
-	 */
-	public function delete()
-	{
-		$builder = $this->builder();
-		$ip_address = $this->request->getIPAddress();
-		$builder->where('ip_address', $ip_address);
-		$builder->where('updated_at >=', date("Y-m-d H:i:s", strtotime("-".$this->config->loginAttemptLimitTimePeriod)));
-
-		return $builder->delete();
-	}
-
 	/**
 	 * Provides a shared instance of the Query Builder.
 	 *
-	 * @param string $table
+	 * @param string $table Table name
 	 *
 	 * @return BaseBuilder
 	 */
@@ -149,7 +113,7 @@ class LoginAttemptModel
 		$table = empty($table) ? $this->table : $table;
 
 		// Ensure we have a good db connection
-		if ( ! $this->db instanceof BaseConnection)
+		if (! $this->db instanceof BaseConnection)
 		{
 			$this->db = Database::connect($this->DBGroup);
 		}
@@ -159,4 +123,87 @@ class LoginAttemptModel
 		return $this->builder;
 	}
 
+	/**
+	 * Update Login Attempt
+	 *
+	 * @param integer $id   Login attempt id
+	 * @param array   $data Data array
+	 *
+	 * @return BaseBuilder
+	 */
+	public function update(int $id = null, array $data = null)
+	{
+		$builder   = $this->builder();
+		$ipAddress = $this->request->getIPAddress();
+		$builder->where('ip_address', $ipAddress);
+		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+		if (! $row = $builder->get()->getFirstRow())
+		{
+			$data['ip_address'] = $ipAddress;
+			$data['count']      = 1;
+			$data['created_at'] = date('Y-m-d H:i:s');
+			$data['updated_at'] = date('Y-m-d H:i:s');
+			$builder->insert($data);
+
+			return true;
+		}
+		else
+		{
+			$data['count']      = $row->count + 1;
+			$data['updated_at'] = date('Y-m-d H:i:s');
+			$builder->update($data, ['id' => $row->id]);
+
+			if ($data['count'] > $this->config->loginAttemptLimit)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Get Login Attempt
+	 *
+	 * Get login attempt based on time and ip address
+	 *
+	 * @return integer
+	 */
+	public function get()
+	{
+		$builder   = $this->builder();
+		$ipAddress = $this->request->getIPAddress();
+		$builder->where('ip_address', $ipAddress);
+		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+		if ($builder->countAllResults() !== 0)
+		{
+			$row = $builder->get()->getFirstRow();
+			return $row->count;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	/**
+	 * Delete login attempt.
+	 *
+	 * Delete login attempt based on time and ip address
+	 *
+	 * @return BaseBuilder
+	 */
+	public function delete()
+	{
+		$builder   = $this->builder();
+		$ipAddress = $this->request->getIPAddress();
+		$builder->where('ip_address', $ipAddress);
+		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+		return $builder->delete();
+	}
 }

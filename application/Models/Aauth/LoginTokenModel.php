@@ -1,4 +1,23 @@
 <?php
+/**
+ * CodeIgniter-Aauth
+ *
+ * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
+ * easy some essential jobs such as login, permissions and access operations.
+ * Despite ease of use, it has also very advanced features like groupping,
+ * access management, public access etc..
+ *
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT	MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
+ */
+
 namespace App\Models\Aauth;
 
 use Config\Aauth as AauthConfig;
@@ -7,6 +26,11 @@ use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\ConnectionInterface;
 
+/**
+ * Login Token Model
+ *
+ * @package CodeIgniter-Aauth
+ */
 class LoginTokenModel
 {
 
@@ -46,6 +70,11 @@ class LoginTokenModel
 	 */
     protected $config;
 
+	/**
+	 * Constructor
+	 *
+	 * @param ConnectionInterface $db
+	 */
 	public function __construct(ConnectionInterface &$db = null)
 	{
 		$this->config = new AauthConfig();
@@ -68,7 +97,7 @@ class LoginTokenModel
 	 * Works with the current Query Builder instance to return
 	 * all results, while optionally limiting them.
 	 *
-	 * @param intger $user_id
+	 * @param integer $user_id
 	 * @param boolean $expired
 	 *
 	 * @return array|null
