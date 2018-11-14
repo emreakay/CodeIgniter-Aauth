@@ -1,34 +1,41 @@
 <?php
 /**
+ * CodeIgniter-Aauth
+ *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
  * Despite ease of use, it has also very advanced features like groupping,
  * access management, public access etc..
  *
- * @package    Aauth
- * @author     Magefly Team
- * @author     Jacob Tomlinson
- * @author     Tim Swagger (Renowne, LLC) <tim@renowne.com>
- * @author     Raphael Jackstadt <info@rejack.de>
- *
- * @copyright  2014-2017 Emre Akay
- * @copyright  2018 Magefly
- * @license    https://opensource.org/licenses/MIT	MIT License
- * @link       https://github.com/magefly/CodeIgniter-Aauth
- * @version    3.0.0-pre
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT	MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
  */
 
 namespace App\Libraries;
+
 use \App\Models\Aauth\UserModel as UserModel;
 use \App\Models\Aauth\LoginAttemptModel as LoginAttemptModel;
 use \App\Models\Aauth\LoginTokenModel as LoginTokenModel;
 use \App\Models\Aauth\UserVariableModel as UserVariableModel;
+
+/**
+ * Aauth Library
+ *
+ * @package CodeIgniter-Aauth
+ */
 class Aauth
 {
 	/**
 	 * Variable for loading the config array into
 	 *
-     * @var \Config\Aauth
+	 * @var \Config\Aauth
 	 */
 	private $config;
 
@@ -90,9 +97,9 @@ class Aauth
 	 *
 	 * Prepares config & session variable.
 	 */
-	function __construct()
+	public function __construct()
 	{
-		$this->config = new \Config\Aauth();
+		$this->config  = new \Config\Aauth();
 		$this->session = \Config\Services::session();
 	}
 
@@ -101,31 +108,79 @@ class Aauth
 	 *
 	 * Creates a new user
 	 *
-	 * @param string $email User's email address
-	 * @param string $password User's password
-	 * @param string $username User's username
+	 * @param string         $email    User's email address
+	 * @param string         $password User's password
+	 * @param string|boolean $username User's username
 	 *
-	 * @return int|bool False if create fails or returns user id if successful
+	 * @return integer|boolean
 	 */
-	public function createUser($email, $password, $username = null)
+	public function createUser(string $email, string $password, string $username = null)
 	{
 		$userModel = new UserModel();
 
-		$data['email'] = $email;
+		$data['email']    = $email;
 		$data['password'] = $password;
 
-		if ( ! is_null($username))
+		if (! is_null($username))
 		{
 			$data['username'] = $username;
 		}
 
-		if ($userId = $userModel->insert($data))
+		if (! $userId = $userModel->insert($data))
 		{
+			$this->error($userModel->errors());
+
+			return false;
+		}
+
+		if ($this->config->userVerification)
+		{
+			$this->sendVerification($userId, $email);
+			$this->info(lang('Aauth.infoCreateVerification'));
+
 			return $userId;
 		}
 
-		$this->error($userModel->errors());
-		return false;
+		$this->info(lang('Aauth.infoCreateSuccess'));
+
+		return $userId;
+	}
+
+	/**
+	 * Send verification email
+	 *
+	 * Sends a verification email based on user id
+	 *
+	 * @param integer $userId User id to send verification email to
+	 * @param string  $email  Email to send verification email to
+	 *
+	 * @todo return boolean success indicator
+	 *
+	 * @return boolean
+	 */
+	public function sendVerification(int $userId, string $email)
+	{
+		helper('text');
+		$userModel         = new UserModel();
+		$userVariableModel = new UserVariableModel();
+		$emailService      = \Config\Services::email();
+		$verificationCode  = random_string('alnum', 16);
+
+		$userModel->skipValidation()->protect(false)->update($userId, ['banned' => 1]);
+		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
+
+		$messageData['code'] = $verificationCode;
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+
+		$message = view('Aauth/Verification', $messageData);
+
+		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->setTo($email);
+		$emailService->setSubject(lang('Aauth.subjectVerification'));
+		$emailService->setMessage($message);
+
+		return $emailService->send();
 	}
 
 	/**
@@ -133,41 +188,40 @@ class Aauth
 	 *
 	 * Updates existing user details
 	 *
-	 * @param int $user_id User id to update
-	 * @param string|bool $email User's email address, or FALSE if not to be updated
-	 * @param string|bool $password User's password, or FALSE if not to be updated
-	 * @param string|bool $name User's name, or FALSE if not to be updated
+	 * @param integer        $userId   User id to update
+	 * @param string|boolean $email    User's email address, or FALSE if not to be updated
+	 * @param string|boolean $password User's password, or FALSE if not to be updated
+	 * @param string|boolean $username User's name, or FALSE if not to be updated
 	 *
-	 * @return bool Update fails/succeeds
+	 * @return boolean
 	 */
-	public function updateUser($userId, $email = null, $password = null, $username = null)
+	public function updateUser(int $userId, $email = null, string $password = null, string $username = null)
 	{
 		$userModel = new UserModel();
-		$data = [];
 
-		if ( ! $userModel->existsById($userId))
+		if (! $userModel->existsById($userId))
 		{
 			$this->error(lang('Aauth.notFoundUser'));
 			return false;
 		}
-		else if ( ! is_null($email) && ! is_null($password) && ! is_null($username))
+		else if (! is_null($email) && ! is_null($password) && ! is_null($username))
 		{
 			return false;
 		}
 
 		$data['id'] = $userId;
 
-		if ( ! is_null($email))
+		if (! is_null($email))
 		{
 			$data['email'] = $email;
 		}
 
-		if ( ! is_null($password))
+		if (! is_null($password))
 		{
 			$data['password'] = $password;
 		}
 
-		if ( ! is_null($username))
+		if (! is_null($username))
 		{
 			$data['username'] = $username;
 		}
@@ -178,22 +232,22 @@ class Aauth
 		}
 
 		$this->error($userModel->errors());
+
 		return false;
 	}
 
 	/**
 	 * Delete user
 	 *
-	 * @param intger $userId User id to delete
+	 * @param integer $userId User id to delete
 	 *
-	 * @return boolen Indicates successful delete
+	 * @return boolen
 	 */
 	public function deleteUser(int $userId)
 	{
 		$userModel = new UserModel();
-		$data = [];
 
-		if ( ! $userModel->existsById($userId))
+		if (! $userModel->existsById($userId))
 		{
 			$this->error(lang('Aauth.notFoundUser'));
 			return false;
@@ -209,29 +263,27 @@ class Aauth
 	 *
 	 * Return users as an object array
 	 *
-	 * @todo bool|int $group_par Specify group id to list group or FALSE for all users
+	 * @param integer $limit          Limit of users to be returned
+	 * @param integer $offset         Offset for limited number of users
+	 * @param boolean $includeBanneds Include banned users
+	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
-	 * @param string $limit Limit of users to be returned
-	 * @param bool $offset Offset for limited number of users
-	 * @param bool $include_banneds Include banned users
-	 * @param string $sort Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 * @todo bool|integer $group_par Specify group id to list group or FALSE for all users
 	 *
 	 * @return array Array of users
 	 */
-	public function listUsers($limit = 0, $offset = 0, $includeBanneds = null, $orderBy = null)
+	public function listUsers(int $limit = 0, int $offset = 0, bool $includeBanneds = null, string $orderBy = null)
 	{
 		$userModel = new UserModel();
-		$options = [];
-		$user = $userModel->limit($limit, $offset);
-
-		// bool $group_par = null,
+		$user      = $userModel->limit($limit, $offset);
+		// eanbool $group_par = null,
 
 		if (is_null($includeBanneds))
 		{
 			$user->where('banned', 0);
 		}
 
-		if ( ! is_null($orderBy))
+		if (! is_null($orderBy))
 		{
 			$user->orderBy($orderBy[0], $orderBy[1]);
 		}
@@ -239,29 +291,29 @@ class Aauth
 		return $user->findAll();
 	}
 
-
 	/**
 	 * Login user
 	 *
-	 * Check provided details against the database. Add items to error array on fail, create session if success
+	 * Check provided details against the database. Add items to error array on fail
+	 *
+	 * @param string  $identifier Identifier
+	 * @param string  $password   Password
+	 * @param boolean $remember   Whether to remember login
+	 * @param string  $totpCode   TOTP Code
 	 *
 	 * @todo add TOTP
 	 * @todo add reCAPTCHA
 	 *
-	 * @param string $email
-	 * @param string $pass
-	 * @param bool $remember
-	 * @param bool $totpCode
-	 *
-	 * @return bool Indicates successful login.
+	 * @return boolean
 	 */
-	public function login(string $identifier, string $password, bool $remember = null, bool $totpCode = null)
+	public function login(string $identifier, string $password, bool $remember = null, string $totpCode = null)
 	{
-		$userModel = new UserModel();
-		$loginAttemptModel = new LoginAttemptModel();
-		$userVariableModel = new UserVariableModel();
 		helper('cookie');
 		delete_cookie('user');
+
+		$userModel         = new UserModel();
+		$loginAttemptModel = new LoginAttemptModel();
+		$userVariableModel = new UserVariableModel();
 
 		if ($this->config->loginProtection && ! $loginAttemptModel->update())
 		{
@@ -269,19 +321,19 @@ class Aauth
 			return false;
 		}
 
-		// if($this->config->ddos_protection && $this->config->recaptcha_active && $loginAttempts->get() > $this->config->recaptcha_login_attempts){
+		// if ($this->config->ddos_protection && $this->config->recaptcha_active && $loginAttempts->get() > $this->config->recaptcha_login_attempts){
 		// 	$this->CI->load->helper('recaptchalib');
 		// 	$reCaptcha = new ReCaptcha( $this->config->recaptcha_secret);
-		// 	$resp = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
+		// 	$resp      = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
 		// 	if( ! $resp->success){
-		// 		$this->error($this->CI->lang->line('aauth_error_recaptcha_not_correct'));
+		// 		$this->error(lang('Aauth.aauth_error_recaptcha_not_correct'));
 		// 		return false;
 		// 	}
 		// }
 
 		if ($this->config->loginUseUsername)
 		{
-			if ( ! $identifier OR strlen($password) < $this->config->passwordMin OR strlen($password) > $this->config->passwordMax)
+			if (! $identifier || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
 				$this->error(lang('Aauth.loginFailedName'));
 				return false;
@@ -297,21 +349,20 @@ class Aauth
 		{
 			$validation = \Config\Services::validation();
 
-			if ( ! $validation->check($identifier, 'valid_email') OR strlen($password) < $this->config->passwordMin OR strlen($password) > $this->config->passwordMax)
+			if (! $validation->check($identifier, 'valid_email') || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
 				$this->error(lang('Aauth.loginFailedEmail'));
 				return false;
 			}
 
-			if ( ! $user = $userModel->where('email', $identifier)->first())
+			if (! $user = $userModel->where('email', $identifier)->first())
 			{
 				$this->error(lang('Aauth.notFoundUser'));
 				return false;
 			}
 		}
 
-
-		if ($user['banned'] && ! empty($userVariableModel->get($user['id'], 'verification_code', true)))
+		if ($user['banned'] && ! empty($userVariableModel->find($user['id'], 'verification_code', true)))
 		{
 			$this->error(lang('Aauth.notVerified'));
 			return false;
@@ -322,90 +373,86 @@ class Aauth
 			return false;
 		}
 
-		if ($this->config->totpEnabled && ! $this->config->totpOnIpChange && $this->config->totpLogin)
-		{
-			if ($this->config->totpLogin == true)
-			{
-				$this->session->set('totp_required', true);
-			}
+		// if ($this->config->totpEnabled && ! $this->config->totpOnIpChange && $this->config->totpLogin)
+		// {
+		// 	if ($this->config->totpLogin == true)
+		// 	{
+		// 		$this->session->set('totp_required', true);
+		// 	}
 
-			$totp_secret =  $userVariableModel->get($user['id'], 'totp_secret', true);
-			if ( ! empty($totp_secret) && ! $totp_code) {
-				$this->error(lang('Aauth.requiredTOTPCode'));
-				return false;
-			} else {
-				if( ! empty($totp_secret)){
-					$this->CI->load->helper('googleauthenticator');
-					$ga = new PHPGangsta_GoogleAuthenticator();
-					$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
-					if ( ! $checkResult) {
-						$this->error(lang('Aauth.invalidTOTPCode'));
-						return false;
-					}
-				}
-			}
-		}
-		else if ($this->config->totpEnabled && $this->config->totpOnIpChange)
-		{
-			$query = null;
-			$query = $this->aauth_db->where($db_identifier, $identifier);
-			$query = $this->aauth_db->get($this->config->users);
-			$totp_secret =  $query->row()->totp_secret;
-			$ip_address = $query->row()->ip_address;
-			$current_ip_address = $this->CI->input->ip_address();
-			if ($query->num_rows() > 0 AND !$totp_code) {
-				if($ip_address != $current_ip_address ){
-					if($this->config->totpLogin == false){
-						$this->error($this->CI->lang->line('aauth_error_totp_code_required'));
-						return false;
-					} else if($this->config->totpLogin == true){
-						$this->session->set('totp_required', true);
-					}
-				}
-			}else {
-				if(!empty($totp_secret)){
-					if($ip_address != $current_ip_address ){
-						$this->CI->load->helper('googleauthenticator');
-						$ga = new PHPGangsta_GoogleAuthenticator();
-						$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
-						if (!$checkResult) {
-							$this->error($this->CI->lang->line('aauth_error_totp_code_invalid'));
-							return false;
-						}
-					}
-				}
-			}
-		}
+		// 	$totp_secret =  $userVariableModel->find($user['id'], 'totp_secret', true);
+		// 	if ( ! empty($totp_secret) && ! $totp_code) {
+		// 		$this->error(lang('Aauth.requiredTOTPCode'));
+		// 		return false;
+		// 	} else {
+		// 		if( ! empty($totp_secret)){
+		// 			$this->CI->load->helper('googleauthenticator');
+		// 			$ga = new PHPGangsta_GoogleAuthenticator();
+		// 			$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+		// 			if ( ! $checkResult) {
+		// 				$this->error(lang('Aauth.invalidTOTPCode'));
+		// 				return false;
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// else if ($this->config->totpEnabled && $this->config->totpOnIpChange)
+		// {
+		// 	$query = null;
+		// 	$query = $this->aauth_db->where($db_identifier, $identifier);
+		// 	$query = $this->aauth_db->get($this->config->users);
+		// 	$totp_secret =  $query->row()->totp_secret;
+		// 	$ip_address = $query->row()->ip_address;
+		// 	$current_ip_address = $this->CI->input->ip_address();
+		// 	if ($query->num_rows() > 0 AND !$totp_code) {
+		// 		if($ip_address != $current_ip_address ){
+		// 			if($this->config->totpLogin == false){
+		// 				$this->error(lang('Aauth.aauth_error_totp_code_required'));
+		// 				return false;
+		// 			} else if($this->config->totpLogin == true){
+		// 				$this->session->set('totp_required', true);
+		// 			}
+		// 		}
+		// 	}else {
+		// 		if(!empty($totp_secret)){
+		// 			if($ip_address != $current_ip_address ){
+		// 				$this->CI->load->helper('googleauthenticator');
+		// 				$ga = new PHPGangsta_GoogleAuthenticator();
+		// 				$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
+		// 				if (!$checkResult) {
+		// 					$this->error(lang('Aauth.aauth_error_totp_code_invalid'));
+		// 					return false;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-		if ( ! $user['banned'] && password_verify($password, $user['password']))
+		if (! $user['banned'] && password_verify($password, $user['password']))
 		{
-			$data = [
-				'id' => $user['id'],
-				'username' => $user['username'],
-				'email' => $user['email'],
-				'loggedIn' => true
-			];
+			$data['id']       = $user['id'];
+			$data['username'] = $user['username'];
+			$data['email']    = $user['email'];
+			$data['loggedIn'] = true;
 			$this->session->set($data);
 
 			if ($remember)
 			{
-				$loginTokenModel = new LoginTokenModel();
 				helper('text');
-				$expire = $this->config->loginRemember;
-				$userId = base64_encode($user['id']);
-				$randomString = random_string('alnum', 32);
-				$selectorString = random_string('alnum', 16);
-				$cookieData = [
-					'name'	 => 'remember',
-					'value'	 => $userId.';'.$randomString.';'.$selectorString,
-					'expire' => YEAR,
-				];
-				$tokenData = [
-					'user_id' => $user['id'],
-					'random_hash' => password_hash($randomString, PASSWORD_DEFAULT),
-					'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
-					'expires_at' => date("Y-m-d H:i:s", strtotime($expire)),
-				];
+				$loginTokenModel = new LoginTokenModel();
+				$expire          = $this->config->loginRemember;
+				$userId          = base64_encode($user['id']);
+				$randomString    = random_string('alnum', 32);
+				$selectorString  = random_string('alnum', 16);
+
+				$cookieData['name']   = 'remember';
+				$cookieData['value']  = $userId . ';' . $randomString . ';' . $selectorString;
+				$cookieData['expire'] = YEAR;
+
+				$tokenData['user_id']       = $user['id'];
+				$tokenData['random_hash']   = password_hash($randomString, PASSWORD_DEFAULT);
+				$tokenData['selector_hash'] = password_hash($selectorString, PASSWORD_DEFAULT);
+				$tokenData['expires_at']    = date('Y-m-d H:i:s', strtotime($expire));
 
 				$loginTokenModel->insert($tokenData);
 				set_cookie($cookieData);
@@ -432,11 +479,11 @@ class Aauth
 	 *
 	 * Login with just a user id
 	 *
-	 * @param int $userId User id to log in
+	 * @param integer $userId User id
 	 *
-	 * @return bool TRUE if login successful.
+	 * @return boolean
 	 */
-	private function loginFast($userId)
+	private function loginFast(int $userId)
 	{
 		$userModel = new UserModel();
 		$userModel->select('id, email, username');
@@ -446,9 +493,9 @@ class Aauth
 		if ($user = $userModel->get()->getFirstRow())
 		{
 			$this->session->set([
-				'id' => $user->id,
+				'id'       => $user->id,
 				'username' => $user->username,
-				'email' => $user->email,
+				'email'    => $user->email,
 				'loggedIn' => true,
 			]);
 
@@ -460,8 +507,10 @@ class Aauth
 
 	/**
 	 * Check user login
+	 *
 	 * Checks if user logged in, also checks remember.
-	 * @return bool
+	 *
+	 * @return boolean
 	 */
 	public function isLoggedIn()
 	{
@@ -473,23 +522,23 @@ class Aauth
 		}
 		else if ($cookie = get_cookie('remember'))
 		{
-			$cookie = explode(';', $cookie);
+			$cookie    = explode(';', $cookie);
 			$cookie[0] = base64_decode($cookie[0]);
 
-			if ( ! is_numeric($cookie[0]) OR strlen($cookie[1]) != 32 OR strlen($cookie[2]) != 16)
+			if (! is_numeric($cookie[0]) || strlen($cookie[1]) !== 32 || strlen($cookie[2]) !== 16)
 			{
 				return false;
 			}
 			else
 			{
 				$loginTokenModel = new LoginTokenModel();
-				$loginTokens = $loginTokenModel->getAllByUserId($cookie[0]);
+				$loginTokens     = $loginTokenModel->getAllByUserId($cookie[0]);
 
 				foreach ($loginTokens as $loginToken)
 				{
 					if (password_verify($cookie[1], $loginToken['random_hash']) && password_verify($cookie[2], $loginToken['selector_hash']))
 					{
-						if (strtotime($loginToken['expires_at']) > strtotime("now"))
+						if (strtotime($loginToken['expires_at']) > strtotime('now'))
 						{
 							$loginTokenModel->update($loginToken['id']);
 
@@ -513,16 +562,33 @@ class Aauth
 	 *
 	 * Add message to error array and set flash data
 	 *
-	 * @param string $message Message to add to array
-	 * @param bool $flashdata if TRUE add $message to CI flashdata (deflault: FALSE)
+	 * @param string|array $message   Message to add to array
+	 * @param boolean      $flashdata Whether to add $message to session flashdata
+	 *
+	 * @return void
 	 */
-	public function error($message = '', $flashdata = null)
+	public function error($message, bool $flashdata = null)
 	{
-		$this->errors[] = $message;
+		if (is_array($message))
+		{
+			$this->errors = array_merge($this->errors, $message);
+		}
+		else
+		{
+			$this->errors[] = $message;
+		}
 
 		if ($flashdata)
 		{
-			$this->flashErrors[] = $message;
+			if (is_array($message))
+			{
+				$this->flashErrors = array_merge($this->flashErrors, $message);
+			}
+			else
+			{
+				$this->flashErrors[] = $message;
+			}
+
 			$this->session->set('errors', $this->flashErrors);
 			$this->session->setFlashdata('errors');
 		}
@@ -536,14 +602,16 @@ class Aauth
 	 * to revive all errors and not let them expire as intended.
 	 * Benefitial when using Ajax Requests
 	 *
-	 * @see http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+	 * @param boolean $includeNonFlash Wheter to store basic errors as flashdata
 	 *
-	 * @param bool $include_non_flash TRUE if it should stow basic errors as flashdata (default = FALSE)
+	 * @return void
 	 */
-	public function keepErrors($includeNonFlash = null)
+	public function keepErrors(bool $includeNonFlash = null)
 	{
 		if ($includeNonFlash)
+		{
 			$this->flashErrors = array_merge($this->flashErrors, $this->errors);
+		}
 
 		$this->flashErrors = array_merge($this->flashErrors, (array)$this->session->getFlashdata('errors'));
 		$this->session->set('errors', $this->flashErrors);
@@ -555,7 +623,7 @@ class Aauth
 	 *
 	 * Return array of errors
 	 *
-	 * @return array Array of messages, empty array if no errors
+	 * @return array
 	 */
 	public function getErrorsArray()
 	{
@@ -563,30 +631,23 @@ class Aauth
 	}
 
 	/**
-	 * Print Errors
+	 * Printeger Errors
 	 *
 	 * Prints string of errors separated by delimiter
 	 *
-	 * @param string $divider Separator for errors
+	 * @param string  $divider Separator for error
+	 * @param boolean $return  Whether to return instead of echoing
+	 *
+	 * @return void|string
 	 */
-	public function printErrors($divider = '<br />', $return = null)
+	public function printErrors(string $divider = '<br />', bool $return = null)
 	{
-		$msg = '';
-		$msg_num = count($this->errors);
-		$i = 1;
-
-		foreach ($this->errors as $e)
-		{
-			$msg .= $e;
-
-			if ($i != $msg_num)
-				$msg .= $divider;
-
-			$i++;
-		}
+		$msg = implode($divider, $this->errors);
 
 		if ($return)
+		{
 			return $msg;
+		}
 
 		echo $msg;
 	}
@@ -595,6 +656,8 @@ class Aauth
 	 * Clear Errors
 	 *
 	 * Removes errors from error list and clears all associated flashdata
+	 *
+	 * @return void
 	 */
 	public function clearErrors()
 	{
@@ -607,16 +670,33 @@ class Aauth
 	 *
 	 * Add message to info array and set flash data
 	 *
-	 * @param string $message Message to add to infos array
-	 * @param boolean $flashdata if TRUE add $message to CI flashdata (deflault: FALSE)
+	 * @param string  $message   Message to add to infos array
+	 * @param boolean $flashdata Whether add $message to CI flashdata (deflault: FALSE)
+	 *
+	 * @return void
 	 */
-	public function info($message = '', $flashdata = null)
+	public function info(string $message, bool $flashdata = null)
 	{
-		$this->infos[] = $message;
+		if (is_array($message))
+		{
+			$this->infos = array_merge($this->infos, $message);
+		}
+		else
+		{
+			$this->infos[] = $message;
+		}
 
 		if ($flashdata)
 		{
-			$this->flashInfos[] = $message;
+			if (is_array($message))
+			{
+				$this->flashInfos = array_merge($this->flashInfos, $message);
+			}
+			else
+			{
+				$this->flashInfos[] = $message;
+			}
+
 			$this->session->set('infos', $this->flashInfos);
 			$this->session->setFlashdata('infos');
 		}
@@ -630,14 +710,16 @@ class Aauth
 	 * to revive all infos and not let them expire as intended.
 	 * Benefitial by using Ajax Requests
 	 *
-	 * @see http://ellislab.com/codeigniter/user-guide/libraries/sessions.html
+	 * @param boolean $includeNonFlash Wheter to store basic errors as flashdata
 	 *
-	 * @param boolean $include_non_flash TRUE if it should stow basic infos as flashdata (default = FALSE)
+	 * @return void
 	 */
-	public function keepInfos($includeNonFlash = null)
+	public function keepInfos(bool $includeNonFlash = null)
 	{
 		if ($includeNonFlash)
+		{
 			$this->flashInfos = array_merge($this->flashInfos, $this->infos);
+		}
 
 		$this->flashInfos = array_merge($this->flashInfos, (array)$this->session->getFlashdata('infos'));
 		$this->session->set('infos', $this->flashInfos);
@@ -657,29 +739,23 @@ class Aauth
 	}
 
 	/**
-	 * Print Info
+	 * Printeger Info
 	 *
-	 * Print string of info separated by delimiter
+	 * Printeger string of info separated by delimiter
 	 *
-	 * @param string $divider Separator for info
+	 * @param string  $divider Separator for info
+	 * @param boolean $return  Whether to return instead of echoing
 	 *
+	 * @return string|void
 	 */
-	public function printInfos($divider = '<br />', $return = null)
+	public function printInfos(string $divider = '<br />', bool $return = null)
 	{
-		$msg = '';
-		$msg_num = count($this->infos);
-		$i = 1;
-
-		foreach ($this->infos as $e)
-		{
-			$msg .= $e;
-			if ($i != $msg_num)
-				$msg .= $divider;
-			$i++;
-		}
+		$msg = implode($divider, $this->infos);
 
 		if ($return)
+		{
 			return $msg;
+		}
 
 		echo $msg;
 	}
@@ -688,6 +764,8 @@ class Aauth
 	 * Clear Info List
 	 *
 	 * Removes info messages from info list and clears all associated flashdata
+	 *
+	 * @return void
 	 */
 	public function clearInfos()
 	{
