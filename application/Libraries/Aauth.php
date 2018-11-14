@@ -21,6 +21,7 @@
 namespace App\Libraries;
 use \App\Models\Aauth\UserModel as UserModel;
 use \App\Models\Aauth\LoginAttemptModel as LoginAttemptModel;
+use \App\Models\Aauth\LoginTokenModel as LoginTokenModel;
 use \App\Models\Aauth\UserVariableModel as UserVariableModel;
 class Aauth
 {
@@ -243,7 +244,6 @@ class Aauth
 	 *
 	 * @todo add TOTP
 	 * @todo add reCAPTCHA
-	 * @todo add Remeber Cookie aka LoginToken (new DB)
 	 *
 	 * @param string $email
 	 * @param string $pass
@@ -382,24 +382,31 @@ class Aauth
 				'email' => $user['email'],
 				'loggedin' => true
 			];
-
 			$this->session->set($data);
 
-			// if ( $remember ){
-			// 	helper('text');
-			// 	$this->CI->load->helper('string');
-			// 	$expire = $this->config->loginRemember;
-			// 	$remember_date = date("Y-m-d", strtotime($expire) );
-			// 	$random_string = random_string('alnum', 16);
-			// 	$this->updateRemember($row->id, $random_string, $remember_date );
-			// 	$cookie = array(
-			// 		'name'	 => 'user',
-			// 		'value'	 => $row->id . "-" . $random_string,
-			// 		'expire' => 99*999*999,
-			// 		'path'	 => '/',
-			// 	);
-			// 	$this->CI->input->set_cookie($cookie);
-			// }
+			if ($remember)
+			{
+				$loginTokenModel = new LoginTokenModel();
+				helper('text');
+				$expire = $this->config->loginRemember;
+				$userId = base64_encode($user['id']);
+				$randomString = random_string('alnum', 32);
+				$selectorString = random_string('alnum', 16);
+				$cookieData = [
+					'name'	 => 'remember',
+					'value'	 => $userId.';'.$randomString.';'.$selectorString,
+					'expire' => (strtotime($expire)-strtotime("now")),
+				];
+				$tokenData = [
+					'user_id' => $user['id'],
+					'random_hash' => password_hash($randomString, PASSWORD_DEFAULT),
+					'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+					'expires_at' => date("Y-m-d", strtotime($expire)),
+				];
+
+				$loginTokenModel->insert($tokenData);
+				set_cookie($cookieData);
+			}
 
 			$userModel->updateLastLogin($user['id']);
 			$userModel->updateLastActivity($user['id']);
