@@ -184,6 +184,9 @@ class Aauth
 	/**
 	 * Delete user
 	 *
+	 * @param intger $userId User id to delete
+	 *
+	 * @return boolen Indicates successful delete
 	 */
 	public function deleteUser(int $userId)
 	{
@@ -380,7 +383,7 @@ class Aauth
 				'id' => $user['id'],
 				'username' => $user['username'],
 				'email' => $user['email'],
-				'loggedin' => true
+				'loggedIn' => true
 			];
 			$this->session->set($data);
 
@@ -395,13 +398,13 @@ class Aauth
 				$cookieData = [
 					'name'	 => 'remember',
 					'value'	 => $userId.';'.$randomString.';'.$selectorString,
-					'expire' => (strtotime($expire)-strtotime("now")),
+					'expire' => YEAR,
 				];
 				$tokenData = [
 					'user_id' => $user['id'],
 					'random_hash' => password_hash($randomString, PASSWORD_DEFAULT),
 					'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
-					'expires_at' => date("Y-m-d", strtotime($expire)),
+					'expires_at' => date("Y-m-d H:i:s", strtotime($expire)),
 				];
 
 				$loginTokenModel->insert($tokenData);
@@ -409,7 +412,6 @@ class Aauth
 			}
 
 			$userModel->updateLastLogin($user['id']);
-			$userModel->updateLastActivity($user['id']);
 
 			if ($this->config->loginAttemptRemoveSuccessful)
 			{
@@ -425,6 +427,86 @@ class Aauth
 		}
 	}
 
+	/**
+	 * Fast login
+	 *
+	 * Login with just a user id
+	 *
+	 * @param int $userId User id to log in
+	 *
+	 * @return bool TRUE if login successful.
+	 */
+	private function loginFast($userId)
+	{
+		$userModel = new UserModel();
+		$userModel->select('id, email, username');
+		$userModel->where('id', $userId);
+		$userModel->where('banned', 0);
+
+		if ($user = $userModel->get()->getFirstRow())
+		{
+			$this->session->set([
+				'id' => $user->id,
+				'username' => $user->username,
+				'email' => $user->email,
+				'loggedIn' => true,
+			]);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check user login
+	 * Checks if user logged in, also checks remember.
+	 * @return bool
+	 */
+	public function isLoggedIn()
+	{
+		helper('cookie');
+
+		if (session('loggedIn'))
+		{
+			return true;
+		}
+		else if ($cookie = get_cookie('remember'))
+		{
+			$cookie = explode(';', $cookie);
+			$cookie[0] = base64_decode($cookie[0]);
+
+			if ( ! is_numeric($cookie[0]) OR strlen($cookie[1]) != 32 OR strlen($cookie[2]) != 16)
+			{
+				return false;
+			}
+			else
+			{
+				$loginTokenModel = new LoginTokenModel();
+				$loginTokens = $loginTokenModel->getAllByUserId($cookie[0]);
+
+				foreach ($loginTokens as $loginToken)
+				{
+					if (password_verify($cookie[1], $loginToken['random_hash']) && password_verify($cookie[2], $loginToken['selector_hash']))
+					{
+						if (strtotime($loginToken['expires_at']) > strtotime("now"))
+						{
+							$loginTokenModel->update($loginToken['id']);
+
+							return $this->loginFast($loginToken['user_id']);
+						}
+						else
+						{
+							$loginTokenModel->delete($cookie[0]);
+							delete_cookie('remember');
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 
 	/**
 	 * Error
