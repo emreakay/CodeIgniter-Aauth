@@ -8,8 +8,8 @@ class UserModel extends Model
 {
 	protected $useSoftDeletes = true;
 	protected $useTimestamps  = true;
-	protected $createdField   = 'created_datetime';
-	protected $updatedField   = 'updated_datetime';
+	protected $createdField   = 'created_at';
+	protected $updatedField   = 'updated_at';
 	protected $allowedFields  = ['email', 'username', 'password'];
 	protected $beforeInsert   = ['hashPassword'];
 	protected $beforeUpdate   = ['hashPassword'];
