@@ -1,69 +1,104 @@
 <?php
+/**
+ * CodeIgniter-Aauth
+ *
+ * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
+ * easy some essential jobs such as login, permissions and access operations.
+ * Despite ease of use, it has also very advanced features like groupping,
+ * access management, public access etc..
+ *
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT   MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
+ */
+
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 use Config\Aauth as AauthConfig;
 
+/**
+ * Create users table
+ *
+ * @package CodeIgniter-Aauth
+ *
+ * @codeCoverageIgnore
+ */
 class Migration_create_users_table extends Migration
 {
-
+	/**
+	 * Create Table
+	 *
+	 * @return void
+	 */
 	public function up()
 	{
 		$config = new AauthConfig();
 
 		$this->forge->addField([
 			'id' => [
-				'type' => 'INT',
-				'constraint' => 11,
-				'unsigned' => TRUE,
-				'auto_increment' => TRUE,
+				'type'           => 'INT',
+				'constraint'     => 11,
+				'unsigned'       => true,
+				'auto_increment' => true,
 			],
 			'email' => [
-				'type' => 'VARCHAR',
+				'type'       => 'VARCHAR',
 				'constraint' => 254,
 			],
 			'username' => [
-				'type' => 'VARCHAR',
+				'type'       => 'VARCHAR',
 				'constraint' => 150,
-				'null' => TRUE,
+				'null'       => true,
 			],
 			'password' => [
-				'type' => 'VARCHAR',
+				'type'       => 'VARCHAR',
 				'constraint' => 60,
 			],
 			'banned' => [
-				'type' => 'TINYINT',
+				'type'       => 'TINYINT',
 				'constraint' => 1,
-				'null' => TRUE,
-				'default' => 0,
+				'null'       => true,
+				'default'    => 0,
 			],
 			'created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 			'updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 			'last_activity' => [
-				'type' => 'DATETIME',
-				'default' => NULL,
+				'type'    => 'DATETIME',
+				'default' => null,
 			],
 			'last_ip_address' => [
-				'type' => 'VARCHAR',
+				'type'       => 'VARCHAR',
 				'constraint' => 39,
-				'default' => '',
+				'default'    => '',
 			],
 			'last_login' => [
-				'type' => 'DATETIME',
-				'default' => NULL,
+				'type'    => 'DATETIME',
+				'default' => null,
 			],
 			'deleted' => [
-				'type' => 'TINYINT',
+				'type'       => 'TINYINT',
 				'constraint' => 1,
-				'default' => 0,
+				'default'    => 0,
 			],
 		]);
-		$this->forge->addKey('id', TRUE);
-		$this->forge->createTable($config->dbTableUsers, TRUE);
+		$this->forge->addKey('id', true);
+		$this->forge->createTable($config->dbTableUsers, true);
 	}
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Drops Table
+	 *
+	 * @return void
+	 */
 	public function down()
 	{
 		$config = new AauthConfig();

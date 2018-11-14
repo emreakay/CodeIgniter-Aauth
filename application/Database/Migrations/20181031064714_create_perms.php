@@ -1,35 +1,71 @@
 <?php
+/**
+ * CodeIgniter-Aauth
+ *
+ * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
+ * easy some essential jobs such as login, permissions and access operations.
+ * Despite ease of use, it has also very advanced features like groupping,
+ * access management, public access etc..
+ *
+ * @package   CodeIgniter-Aauth
+ * @author    Magefly Team
+ * @author    Jacob Tomlinson
+ * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
+ * @author    Raphael Jackstadt <info@rejack.de>
+ * @copyright 2014-2017 Emre Akay
+ * @copyright 2018 Magefly
+ * @license   https://opensource.org/licenses/MIT	MIT License
+ * @link      https://github.com/magefly/CodeIgniter-Aauth
+ */
+
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 use Config\Aauth as AauthConfig;
 
+/**
+ * Create perms table
+ *
+ * @package CodeIgniter-Aauth
+ *
+ * @codeCoverageIgnore
+ */
 class Migration_create_perms extends Migration
 {
+	/**
+	 * Create Table
+	 *
+	 * @return void
+	 */
 	public function up()
 	{
 		$config = new AauthConfig();
 		$this->forge->addField([
-			'id' => [
-				'type' => 'INT',
-				'constraint' => 11,
-				'unsigned' => TRUE,
-				'auto_increment' => TRUE,
+			'id'         => [
+				'type'           => 'INT',
+				'constraint'     => 11,
+				'unsigned'       => true,
+				'auto_increment' => true,
 			],
-			'name' => [
-				'type' => 'VARCHAR',
+			'name'       => [
+				'type'       => 'VARCHAR',
 				'constraint' => 100,
 			],
 			'definition' => [
 				'type' => 'TEXT',
 			],
 		]);
-		$this->forge->addKey('id', TRUE);
-		$this->forge->createTable($config->dbTablePerms, TRUE);
+		$this->forge->addKey('id', true);
+		$this->forge->createTable($config->dbTablePerms, true);
 	}
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Drops Table
+	 *
+	 * @return void
+	 */
 	public function down()
 	{
 		$config = new AauthConfig();
