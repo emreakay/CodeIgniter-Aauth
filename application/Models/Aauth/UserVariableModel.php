@@ -8,8 +8,8 @@ class UserVariableModel extends Model
 {
 	protected $useSoftDeletes = false;
 	protected $useTimestamps  = true;
-	protected $createdField   = 'created_datetime';
-	protected $updatedField   = 'updated_datetime';
+	protected $createdField   = 'created_at';
+	protected $updatedField   = 'updated_at';
 	protected $protectFields  = false;
 
 	public function __construct()
