@@ -37,21 +37,21 @@ class Aauth
 	 *
 	 * @var \Config\Aauth
 	 */
-	private $config;
+	protected $config;
 
 	/**
 	 * Variable for loading the session service into
 	 *
 	 * @var \CodeIgniter\Session\Session
 	 */
-	private $session;
+	protected $session;
 
 	/**
 	 * Array to store error messages
 	 *
 	 * @var array
 	 */
-	private $errors = [];
+	protected $errors = [];
 
 	/**
 	 * Local temporary storage for current flash errors
@@ -60,14 +60,14 @@ class Aauth
 	 *
 	 * @var array
 	 */
-	private $flashErrors = [];
+	protected $flashErrors = [];
 
 	/**
 	 * Array to store info messages
 	 *
 	 * @var array
 	 */
-	private $infos = [];
+	protected $infos = [];
 
 	/**
 	 * Local temporary storage for current flash infos
@@ -76,21 +76,21 @@ class Aauth
 	 *
 	 * @var array
 	 */
-	private $flashInfos = [];
+	protected $flashInfos = [];
 
 	/**
 	 * Array to cache permission-ids.
 	 *
 	 * @var array
 	 */
-	private $cachePermId = [];
+	protected $cachePermIds = [];
 
 	/**
 	 * Array to cache group-ids.
 	 *
 	 * @var array
 	 */
-	private $cacheGroupId = [];
+	protected $cacheGroupIds = [];
 
 	/**
 	 * Constructor
@@ -102,6 +102,12 @@ class Aauth
 		$this->config  = new \Config\Aauth();
 		$this->session = \Config\Services::session();
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| User Functions
+	|--------------------------------------------------------------------------
+	*/
 
 	/**
 	 * Create user
@@ -144,43 +150,6 @@ class Aauth
 		$this->info(lang('Aauth.infoCreateSuccess'));
 
 		return $userId;
-	}
-
-	/**
-	 * Send verification email
-	 *
-	 * Sends a verification email based on user id
-	 *
-	 * @param integer $userId User id to send verification email to
-	 * @param string  $email  Email to send verification email to
-	 *
-	 * @todo return boolean success indicator
-	 *
-	 * @return boolean
-	 */
-	public function sendVerification(int $userId, string $email)
-	{
-		helper('text');
-		$userModel         = new UserModel();
-		$userVariableModel = new UserVariableModel();
-		$emailService      = \Config\Services::email();
-		$verificationCode  = random_string('alnum', 16);
-
-		$userModel->skipValidation()->protect(false)->update($userId, ['banned' => 1]);
-		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
-
-		$messageData['code'] = $verificationCode;
-		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
-
-		$message = view('Aauth/Verification', $messageData);
-
-		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-		$emailService->setTo($email);
-		$emailService->setSubject(lang('Aauth.subjectVerification'));
-		$emailService->setMessage($message);
-
-		return $emailService->send();
 	}
 
 	/**
@@ -259,6 +228,39 @@ class Aauth
 	}
 
 	/**
+	 * Send verification email
+	 *
+	 * Sends a verification email based on user id
+	 *
+	 * @param integer $userId User id to send verification email to
+	 * @param string  $email  Email to send verification email to
+	 *
+	 * @todo return boolean success indicator
+	 *
+	 * @return boolean
+	 */
+	public function sendVerification(int $userId, string $email)
+	{
+		helper('text');
+		$userVariableModel = new UserVariableModel();
+		$emailService      = \Config\Services::email();
+		$verificationCode  = random_string('alnum', 16);
+
+		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
+
+		$messageData['code'] = $verificationCode;
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+
+		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->setTo($email);
+		$emailService->setSubject(lang('Aauth.subjectVerification'));
+		$emailService->setMessage(view('Aauth/Verification', $messageData));
+
+		return $emailService->send();
+	}
+
+	/**
 	 * List users
 	 *
 	 * Return users as an object array
@@ -292,6 +294,39 @@ class Aauth
 	}
 
 	/**
+	 * Get user
+	 *
+	 * Get user information
+	 *
+	 * @param integer|boolean $userId User id to get or FALSE for current user
+	 *
+	 * @return object|boolean User information or false if user not found
+	 */
+	public function getUser($userId = null)
+	{
+		$userModel = new UserModel();
+
+		if ($userId)
+		{
+			$userId = $this->session->id;
+		}
+
+		if ($user = $userModel->find($userId))
+		{
+			return $user;
+		}
+
+		$this->error(lang('Aauth.notFoundUser'));
+		return false;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Login Functions
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
 	 * Login user
 	 *
 	 * Check provided details against the database. Add items to error array on fail
@@ -309,13 +344,13 @@ class Aauth
 	public function login(string $identifier, string $password, bool $remember = null, string $totpCode = null)
 	{
 		helper('cookie');
-		delete_cookie('user');
+		delete_cookie('remember');
 
 		$userModel         = new UserModel();
 		$loginAttemptModel = new LoginAttemptModel();
 		$userVariableModel = new UserVariableModel();
 
-		if ($this->config->loginProtection && ! $loginAttemptModel->update())
+		if ($this->config->loginProtection && ! $loginAttemptModel->save())
 		{
 			$this->error(lang('Aauth.loginAttemptsExceeded'));
 			return false;
@@ -362,7 +397,7 @@ class Aauth
 			}
 		}
 
-		if ($user['banned'] && ! empty($userVariableModel->find($user['id'], 'verification_code', true)))
+		if (! empty($userVariableModel->find($user['id'], 'verification_code', true)))
 		{
 			$this->error(lang('Aauth.notVerified'));
 			return false;
@@ -475,6 +510,20 @@ class Aauth
 	}
 
 	/**
+	 * Logout
+	 *
+	 * Deletes session and cookie
+	 *
+	 * @return void
+	 */
+	public function logout()
+	{
+		helper('cookie');
+		delete_cookie('remember');
+		$this->session->stop();
+	}
+
+	/**
 	 * Fast login
 	 *
 	 * Login with just a user id
@@ -483,7 +532,7 @@ class Aauth
 	 *
 	 * @return boolean
 	 */
-	private function loginFast(int $userId)
+	protected function loginFast(int $userId)
 	{
 		$userModel = new UserModel();
 		$userModel->select('id, email, username');
@@ -504,6 +553,12 @@ class Aauth
 
 		return false;
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Access Functions
+	|--------------------------------------------------------------------------
+	*/
 
 	/**
 	 * Check user login
@@ -532,7 +587,7 @@ class Aauth
 			else
 			{
 				$loginTokenModel = new LoginTokenModel();
-				$loginTokens     = $loginTokenModel->getAllByUserId($cookie[0]);
+				$loginTokens     = $loginTokenModel->findAllByUserId($cookie[0]);
 
 				foreach ($loginTokens as $loginToken)
 				{
@@ -556,6 +611,12 @@ class Aauth
 
 		return false;
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Error Functions
+	|--------------------------------------------------------------------------
+	*/
 
 	/**
 	 * Error
@@ -664,6 +725,12 @@ class Aauth
 		$this->errors = [];
 		$this->session->remove('errors');
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Info Functions
+	|--------------------------------------------------------------------------
+	*/
 
 	/**
 	 * Info
