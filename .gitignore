@@ -1,5 +1,12 @@
+###CI4###
+
+.env
+
 system/
 public/
+!public/assets/
+writable/
+tests/
 
 application/index.html
 application/.htaccess
@@ -15,6 +22,20 @@ application/Filters/DebugToolbar.php
 application/Views/errors/
 application/Views/welcome_message.php
 application/Views/form.php
-writable/
-tests/
-.env
+
+
+###OSX###
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+
+###Windows###
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
