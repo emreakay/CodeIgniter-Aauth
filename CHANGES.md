@@ -73,7 +73,7 @@
   - user_variables => dbTableUserVariables
   - login_attempts => dbTableLoginAttempts
   - groups => dbTableGroups
-  - user_to_group => dbTableGroupToUser
+  - user_to_group => dbTableGroupToUser (default changed to `aauth_group_to_user`)
   - group_to_group => dbTableGroupToGroup
   - perms => dbTablePerms
   - perm_to_user => dbTablePermToUser
@@ -133,6 +133,7 @@
 ### PMS
   - completly removed
 
+
 ## LANGUAGE
 
 ### ADDED
@@ -177,3 +178,50 @@
   - aauth_email_verification_code (merged with textVerification)
   - aauth_error_email_exists
   - aauth_error_username_exists
+
+
+
+## VIEWS
+
+### TEMPLATES
+  - Footer
+    - Layout with Sidebar closing
+    - Used JS Libs
+      - jquery
+      - jquery-easing
+      - bootstrap 4.1.3
+      - sb-admin
+      - customer load over $jsFiles
+  - FooterBlank
+    - Layout without Sidebar
+    - Used JS Libs
+      - jquery
+      - jquery-easing
+      - bootstrap 4.1.3
+      - sb-admin
+      - customer load over $jsFiles
+  - Header
+    - Layout with Sidebar start
+    - Used CSS Libs
+      - bootstrap 4.1.3
+      - fontawesome-free
+      - sb-admin
+      - customer load over $cssFiles
+  - HeaderBlank
+    - Layout without Sidebar
+    - Used CSS Libs
+      - bootstrap 4.1.3
+      - sb-admin
+      - customer load over $cssFiles
+
+
+### AAUTH
+  - Verification
+  - ResetPassword
+  - RemindPassword
+
+
+### ACCOUNT
+  - login
+  - register
+  - logout
