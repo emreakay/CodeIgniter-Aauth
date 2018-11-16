@@ -9,9 +9,6 @@
  *
  * @package   CodeIgniter-Aauth
  * @author    Magefly Team
- * @author    Jacob Tomlinson
- * @author    Tim Swagger (Renowne, LLC) <tim@renowne.com>
- * @author    Raphael Jackstadt <info@rejack.de>
  * @copyright 2014-2017 Emre Akay
  * @copyright 2018 Magefly
  * @license   https://opensource.org/licenses/MIT   MIT License
