@@ -97,6 +97,88 @@ class LoginAttemptModel
 	}
 
 	/**
+	 * Get Login Attempt
+	 *
+	 * Get login attempt based on time and ip address
+	 *
+	 * @return integer
+	 */
+	public function find()
+	{
+		$builder = $this->builder();
+		$builder->where('ip_address', $this->request->getIPAddress());
+		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+		if ($builder->countAllResults() !== 0)
+		{
+			return $builder->get()->getFirstRow()->count;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	/**
+	 * Save Login Attempt
+	 *
+	 * Inserts or Updates Login Attempt
+	 *
+	 * @return boolean
+	 */
+	public function save()
+	{
+		$ipAddress = $this->request->getIPAddress();
+		$builder   = $this->builder();
+		$builder->where('ip_address', $ipAddress);
+		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+		if (! $row = $builder->get()->getFirstRow())
+		{
+			$data['ip_address'] = $ipAddress;
+			$data['count']      = 1;
+			$data['created_at'] = date('Y-m-d H:i:s');
+			$data['updated_at'] = date('Y-m-d H:i:s');
+
+			$builder->insert($data);
+
+			return true;
+		}
+		else
+		{
+			$data['count']      = $row->count + 1;
+			$data['updated_at'] = date('Y-m-d H:i:s');
+
+			$builder->update($data, ['id' => $row->id]);
+
+			if ($data['count'] > $this->config->loginAttemptLimit)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Delete login attempt.
+	 *
+	 * Delete login attempt based on time and ip address
+	 *
+	 * @return BaseBuilder
+	 */
+	public function delete()
+	{
+		$builder = $this->builder();
+		$builder->where('ip_address', $this->request->getIPAddress());
+		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+		return $builder->delete();
+	}
+
+	/**
 	 * Provides a shared instance of the Query Builder.
 	 *
 	 * @param string $table Table name
@@ -123,87 +205,4 @@ class LoginAttemptModel
 		return $this->builder;
 	}
 
-	/**
-	 * Update Login Attempt
-	 *
-	 * @param integer $id   Login attempt id
-	 * @param array   $data Data array
-	 *
-	 * @return BaseBuilder
-	 */
-	public function update(int $id = null, array $data = null)
-	{
-		$builder   = $this->builder();
-		$ipAddress = $this->request->getIPAddress();
-		$builder->where('ip_address', $ipAddress);
-		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
-
-		if (! $row = $builder->get()->getFirstRow())
-		{
-			$data['ip_address'] = $ipAddress;
-			$data['count']      = 1;
-			$data['created_at'] = date('Y-m-d H:i:s');
-			$data['updated_at'] = date('Y-m-d H:i:s');
-			$builder->insert($data);
-
-			return true;
-		}
-		else
-		{
-			$data['count']      = $row->count + 1;
-			$data['updated_at'] = date('Y-m-d H:i:s');
-			$builder->update($data, ['id' => $row->id]);
-
-			if ($data['count'] > $this->config->loginAttemptLimit)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-	}
-
-	/**
-	 * Get Login Attempt
-	 *
-	 * Get login attempt based on time and ip address
-	 *
-	 * @return integer
-	 */
-	public function get()
-	{
-		$builder   = $this->builder();
-		$ipAddress = $this->request->getIPAddress();
-		$builder->where('ip_address', $ipAddress);
-		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
-
-		if ($builder->countAllResults() !== 0)
-		{
-			$row = $builder->get()->getFirstRow();
-			return $row->count;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	/**
-	 * Delete login attempt.
-	 *
-	 * Delete login attempt based on time and ip address
-	 *
-	 * @return BaseBuilder
-	 */
-	public function delete()
-	{
-		$builder   = $this->builder();
-		$ipAddress = $this->request->getIPAddress();
-		$builder->where('ip_address', $ipAddress);
-		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
-
-		return $builder->delete();
-	}
 }

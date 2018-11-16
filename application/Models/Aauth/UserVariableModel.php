@@ -92,32 +92,6 @@ class UserVariableModel
 	}
 
 	/**
-	 * Provides a shared instance of the Query Builder.
-	 *
-	 * @param string $table Table name
-	 *
-	 * @return BaseBuilder
-	 */
-	protected function builder(string $table = null)
-	{
-		if ($this->builder instanceof BaseBuilder)
-		{
-			return $this->builder;
-		}
-
-		$table = empty($table) ? $this->table : $table;
-
-		if (! $this->db instanceof BaseConnection)
-		{
-			$this->db = Database::connect($this->DBGroup);
-		}
-
-		$this->builder = $this->db->table($table);
-
-		return $this->builder;
-	}
-
-	/**
 	 * Find user varialbe
 	 *
 	 * Find User Variable by userId, dataKey & optional system
@@ -131,7 +105,6 @@ class UserVariableModel
 	public function find(int $userId, string $dataKey, bool $system = null)
 	{
 		$builder = $this->builder();
-
 		$builder->select('data_value');
 		$builder->where('user_id', $userId);
 		$builder->where('data_key', $dataKey);
@@ -204,14 +177,14 @@ class UserVariableModel
 	 */
 	public function insert(int $userId, string $dataKey, string $dataValue, bool $system = null)
 	{
+		$builder = $this->builder();
+
 		$data['user_id']    = $userId;
 		$data['data_key']   = $dataKey;
 		$data['data_value'] = $dataValue;
 		$data['system']     = ($system ? 1 : 0);
 		$data['created_at'] = date('Y-m-d H:i:s');
 		$data['updated_at'] = date('Y-m-d H:i:s');
-
-		$builder = $this->builder();
 
 		return $builder->insert($data);
 	}
@@ -239,4 +212,48 @@ class UserVariableModel
 		return $builder->set($data)->update();
 	}
 
+	/**
+	 * Delete User Variable
+	 *
+	 * @param integer $userId  User id
+	 * @param string  $dataKey Key of variable
+	 * @param boolean $system  Whether system variable
+	 *
+	 * @return BaseBuilder
+	 */
+	public function delete(int $userId, string $dataKey, bool $system)
+	{
+		$builder = $this->builder();
+		$builder->where('user_id', $userId);
+		$builder->where('data_key', $dataKey);
+		$builder->where('system', ($system ? 1 : 0));
+
+		return $builder->delete();
+	}
+
+	/**
+	 * Provides a shared instance of the Query Builder.
+	 *
+	 * @param string $table Table name
+	 *
+	 * @return BaseBuilder
+	 */
+	protected function builder(string $table = null)
+	{
+		if ($this->builder instanceof BaseBuilder)
+		{
+			return $this->builder;
+		}
+
+		$table = empty($table) ? $this->table : $table;
+
+		if (! $this->db instanceof BaseConnection)
+		{
+			$this->db = Database::connect($this->DBGroup);
+		}
+
+		$this->builder = $this->db->table($table);
+
+		return $this->builder;
+	}
 }

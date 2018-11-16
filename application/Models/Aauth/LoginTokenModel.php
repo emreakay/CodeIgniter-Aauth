@@ -68,18 +68,18 @@ class LoginTokenModel
 	 *
 	 * @var BaseConfig
 	 */
-    protected $config;
+	protected $config;
 
 	/**
 	 * Constructor
 	 *
-	 * @param ConnectionInterface $db
+	 * @param ConnectionInterface $db Database object
 	 */
 	public function __construct(ConnectionInterface &$db = null)
 	{
-		$this->config = new AauthConfig();
+		$this->config  = new AauthConfig();
 		$this->DBGroup = $this->config->dbProfile;
-		$this->table = $this->config->dbTableLoginTokens;
+		$this->table   = $this->config->dbTableLoginTokens;
 
 		if ($db instanceof ConnectionInterface)
 		{
@@ -94,33 +94,29 @@ class LoginTokenModel
 	}
 
 	/**
-	 * Works with the current Query Builder instance to return
-	 * all results, while optionally limiting them.
+	 * Get all Login Tokens by User ID
 	 *
-	 * @param integer $user_id
-	 * @param boolean $expired
+	 * @param integer $userId User id
 	 *
 	 * @return array|null
 	 */
-	public function getAllByUserId($userId)
+	public function findAllByUserId(int $userId)
 	{
 		$builder = $this->builder();
 		$builder->select('id, user_id, random_hash, selector_hash, expires_at');
 		$builder->where('user_id', $userId);
 
-		$row = $builder->get()->getResult('array');
-
-		return $row;
+		return $builder->get()->getResult('array');
 	}
 
 	/**
 	 * Updates Login Token
 	 *
-	 * @param array $data array with data
+	 * @param array $data Array with data
 	 *
 	 * @return BaseBuilder
 	 */
-	public function insert($data)
+	public function insert(array $data)
 	{
 		$builder = $this->builder();
 
@@ -133,9 +129,11 @@ class LoginTokenModel
 	/**
 	 * Updates Login Token by tokenId
 	 *
+	 * @param integer $tokenId Login Token id
+	 *
 	 * @return BaseBuilder
 	 */
-	public function update($tokenId)
+	public function update(int $tokenId)
 	{
 		$builder = $this->builder();
 		$builder->where('id', $tokenId);
@@ -149,9 +147,11 @@ class LoginTokenModel
 	/**
 	 * Deletes expired Login Tokens by userId.
 	 *
+	 * @param integer $userId User id
+	 *
 	 * @return BaseBuilder
 	 */
-	public function delete($userId)
+	public function deleteExpired(int $userId)
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
@@ -163,7 +163,7 @@ class LoginTokenModel
 	/**
 	 * Provides a shared instance of the Query Builder.
 	 *
-	 * @param string $table
+	 * @param string $table Table Name
 	 *
 	 * @return BaseBuilder
 	 */
@@ -177,7 +177,7 @@ class LoginTokenModel
 		$table = empty($table) ? $this->table : $table;
 
 		// Ensure we have a good db connection
-		if ( ! $this->db instanceof BaseConnection)
+		if (! $this->db instanceof BaseConnection)
 		{
 			$this->db = Database::connect($this->DBGroup);
 		}
