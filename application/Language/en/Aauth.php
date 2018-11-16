@@ -55,6 +55,8 @@ return [
 
    'requiredUsername'       => 'Username required',
    'requiredTOTPCode'       => 'Authentication Code required',
+   'requiredGroupName'      => 'Group name required',
+   'requiredPermName'       => 'Group name required',
 
    'existsAlreadyEmail'     => 'Email address already exists on the system. Please enter a different email address.',
    'existsAlreadyUsername'  => 'Username already exists on the system. Please enter a different username.',
