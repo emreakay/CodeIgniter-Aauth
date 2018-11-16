@@ -100,11 +100,9 @@ class Aauth
 		$this->session = \Config\Services::session();
 	}
 
-	/*
-	|--------------------------------------------------------------------------
-	| User Functions
-	|--------------------------------------------------------------------------
-	*/
+	//--------------------------------------------------------------------
+	// User Functions
+	//--------------------------------------------------------------------
 
 	/**
 	 * Create user
@@ -168,6 +166,7 @@ class Aauth
 		if (! $userModel->existsById($userId))
 		{
 			$this->error(lang('Aauth.notFoundUser'));
+
 			return false;
 		}
 		else if (! is_null($email) && ! is_null($password) && ! is_null($username))
@@ -216,45 +215,13 @@ class Aauth
 		if (! $userModel->existsById($userId))
 		{
 			$this->error(lang('Aauth.notFoundUser'));
+
 			return false;
 		}
 		else if ($userModel->delete($userId))
 		{
 			return true;
 		}
-	}
-
-	/**
-	 * Send verification email
-	 *
-	 * Sends a verification email based on user id
-	 *
-	 * @param integer $userId User id to send verification email to
-	 * @param string  $email  Email to send verification email to
-	 *
-	 * @todo return boolean success indicator
-	 *
-	 * @return boolean
-	 */
-	public function sendVerification(int $userId, string $email)
-	{
-		helper('text');
-		$userVariableModel = new UserVariableModel();
-		$emailService      = \Config\Services::email();
-		$verificationCode  = random_string('alnum', 16);
-
-		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
-
-		$messageData['code'] = $verificationCode;
-		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
-
-		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-		$emailService->setTo($email);
-		$emailService->setSubject(lang('Aauth.subjectVerification'));
-		$emailService->setMessage(view('Aauth/Verification', $messageData));
-
-		return $emailService->send();
 	}
 
 	/**
@@ -266,8 +233,6 @@ class Aauth
 	 * @param integer $offset         Offset for limited number of users
 	 * @param boolean $includeBanneds Include banned users
 	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
-	 *
-	 * @todo bool|integer $group_par Specify group id to list group or FALSE for all users
 	 *
 	 * @return array Array of users
 	 */
@@ -291,6 +256,70 @@ class Aauth
 	}
 
 	/**
+	 * Send verification email
+	 *
+	 * Sends a verification email based on user id
+	 *
+	 * @param integer $userId User id to send verification email to
+	 * @param string  $email  Email to send verification email to
+	 *
+	 * @return boolean
+	 */
+	protected function sendVerification(int $userId, string $email)
+	{
+		helper('text');
+		$userVariableModel = new UserVariableModel();
+		$emailService      = \Config\Services::email();
+		$verificationCode  = random_string('alnum', 16);
+
+		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
+
+		$messageData['code'] = $verificationCode;
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+
+		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->setTo($email);
+		$emailService->setSubject(lang('Aauth.subjectVerification'));
+		$emailService->setMessage(view('Aauth/Verification', $messageData));
+
+		return $emailService->send();
+	}
+
+	/**
+	 * Verify user
+	 *
+	 * Activates user account based on verification code
+	 *
+	 * @param integer $userId           User id to activate
+	 * @param string  $verificationCode Code to validate against
+	 *
+	 * @return boolean Activation fails/succeeds
+	 */
+	public function verifyUser(int $userId, string $verificationCode)
+	{
+		$userVariableModel = new UserVariableModel();
+
+		if ($verificationCodeStored = $userVariableModel->find($userId, 'verification_code', true))
+		{
+			if ($verificationCode === $verificationCodeStored)
+			{
+				$userVariableModel->delete($userId, 'verification_code', true);
+
+				return true;
+			}
+			else
+			{
+				$this->error(lang('Aauth.invalidVercode'));
+
+				return false;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get user
 	 *
 	 * Get user information
@@ -299,29 +328,68 @@ class Aauth
 	 *
 	 * @return object|boolean User information or false if user not found
 	 */
-	public function getUser($userId = null)
+	public function getUser($userId = null, bool $withVariables = false, bool $inclSystem = false)
 	{
-		$userModel = new UserModel();
+		$userModel         = new UserModel();
+		$userVariableModel = new UserVariableModel();
 
-		if ($userId)
+		if (! $userId)
 		{
 			$userId = $this->session->id;
 		}
 
 		if ($user = $userModel->find($userId))
 		{
+			if ($withVariables)
+			{
+				$variables = $userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
+				$variables = $variables->findAll($userId, $inclSystem);
+
+				$user['variables'] = $variables;
+			}
+
 			return $user;
+		}
+
+		$this->error(lang('Aauth.notFoundUser'));
+
+		return false;
+	}
+
+	/**
+	 * Get user id
+	 *
+	 * Get user id from email address, if par. not given, return current user's id
+	 *
+	 * @param string|boolean $email Email address for user
+	 *
+	 * @return object|boolean User information or false if user not found
+	 */
+	public function getUserId($email = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $email)
+		{
+			$where = ['id' => $this->session->id];
+		}
+		else
+		{
+			$where = ['email' => $email];
+		}
+
+		if ($user = $userModel->where($where)->first())
+		{
+			return $user->id;
 		}
 
 		$this->error(lang('Aauth.notFoundUser'));
 		return false;
 	}
 
-	/*
-	|--------------------------------------------------------------------------
-	| Login Functions
-	|--------------------------------------------------------------------------
-	*/
+	//--------------------------------------------------------------------------
+	// Login Functions
+	//--------------------------------------------------------------------------
 
 	/**
 	 * Login user
@@ -332,9 +400,6 @@ class Aauth
 	 * @param string  $password   Password
 	 * @param boolean $remember   Whether to remember login
 	 * @param string  $totpCode   TOTP Code
-	 *
-	 * @todo add TOTP
-	 * @todo add reCAPTCHA
 	 *
 	 * @return boolean
 	 */
@@ -502,6 +567,7 @@ class Aauth
 		else
 		{
 			$this->error(lang('Aauth.loginFailedAll'));
+
 			return false;
 		}
 	}
@@ -551,11 +617,9 @@ class Aauth
 		return false;
 	}
 
-	/*
-	|--------------------------------------------------------------------------
-	| Access Functions
-	|--------------------------------------------------------------------------
-	*/
+	//--------------------------------------------------------------------------
+	// Access Functions
+	//--------------------------------------------------------------------------
 
 	/**
 	 * Check user login
@@ -609,11 +673,9 @@ class Aauth
 		return false;
 	}
 
-	/*
-	|--------------------------------------------------------------------------
-	| Error Functions
-	|--------------------------------------------------------------------------
-	*/
+	//--------------------------------------------------------------------------
+	// Error Functions
+	//--------------------------------------------------------------------------
 
 	/**
 	 * Error
@@ -723,11 +785,9 @@ class Aauth
 		$this->session->remove('errors');
 	}
 
-	/*
-	|--------------------------------------------------------------------------
-	| Info Functions
-	|--------------------------------------------------------------------------
-	*/
+	//--------------------------------------------------------------------------
+	// Info Functions
+	//--------------------------------------------------------------------------
 
 	/**
 	 * Info
