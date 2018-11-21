@@ -30,7 +30,7 @@
 
 ### REMOVED
   - $CI
-  - $aauth_db
+  - $aauth_db (moved into Models)
   - get_login_attempts (replaced with LoginAttemptModel)
   - update_login_attempts (replaced with LoginAttemptModel)
 
@@ -80,10 +80,10 @@
   - perm_to_group => dbTablePermToGroup
 
 ### REMOVED
-  - hash
-  - use_password_hash
-  - pm_encryption
-  - pm_cleanup_max_age
+  - hash (old hash method removed)
+  - use_password_hash (old hash method removed)
+  - pm_encryption (pm function removed)
+  - pm_cleanup_max_age (pm function removed)
 
 
 ## DATABASE
@@ -94,11 +94,11 @@
   - renamed `date_created` to  `created_at`
   - added `updated_at` 'DATETIME'
   - added `deleted` 'TINYINT(1)'
-  - removed `forgot_exp`
-  - removed `remember_time`
-  - removed `remember_exp`
-  - removed `verification_code`
-  - removed `totp_secret`
+  - removed `forgot_exp` (unused)
+  - removed `remember_time` (moved to Login Token)
+  - removed `remember_exp` (moved to Login Token)
+  - removed `verification_code` (moved to User System Variable)
+  - removed `totp_secret` (moved to User System Variable)
 
 ### USER VARIABLES
   - renamed `value` to `data_value`
@@ -178,7 +178,6 @@
   - aauth_email_verification_code (merged with textVerification)
   - aauth_error_email_exists
   - aauth_error_username_exists
-
 
 
 ## VIEWS
