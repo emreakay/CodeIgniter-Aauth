@@ -2,11 +2,12 @@
 
 .env
 
-system/
 public/
 !public/assets/
-writable/
+system/
 tests/
+vendor/
+writable/
 
 application/index.html
 application/.htaccess
