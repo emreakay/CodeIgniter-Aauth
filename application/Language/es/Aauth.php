@@ -18,8 +18,6 @@
 /**
  * Aauth language strings.
  *
- * Language English
- *
  * @package CodeIgniter-Aauth
  *
  * @codeCoverageIgnore
