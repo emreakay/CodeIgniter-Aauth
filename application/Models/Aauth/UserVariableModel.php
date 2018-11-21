@@ -61,6 +61,22 @@ class UserVariableModel
 	protected $DBGroup;
 
 	/**
+	 * The format that the results should be returned as.
+	 * Will be overridden if the as* methods are used.
+	 *
+	 * @var string
+	 */
+	protected $returnType = 'array';
+
+	/**
+	 * Used by asArray and asObject to provide
+	 * temporary overrides of model default.
+	 *
+	 * @var string
+	 */
+	protected $tempReturnType;
+
+	/**
 	 * Aauth Config object
 	 *
 	 * @var BaseConfig
@@ -74,9 +90,10 @@ class UserVariableModel
 	 */
 	public function __construct(ConnectionInterface &$db = null)
 	{
-		$this->config  = new AauthConfig();
-		$this->DBGroup = $this->config->dbProfile;
-		$this->table   = $this->config->dbTableUserVariables;
+		$this->config         = new AauthConfig();
+		$this->DBGroup        = $this->config->dbProfile;
+		$this->table          = $this->config->dbTableUserVariables;
+		$this->tempReturnType = $this->returnType;
 
 		if ($db instanceof ConnectionInterface)
 		{
@@ -108,7 +125,7 @@ class UserVariableModel
 
 		$builder->where('system', ($system ? 1 : 0));
 
-		if ($row = $builder->get()->getFirstRow('array'))
+		if ($row = $builder->get()->getFirstRow($this->tempReturnType))
 		{
 			return $row['data_value'];
 		}
@@ -130,7 +147,9 @@ class UserVariableModel
 		$builder->where('user_id', $userId);
 		$builder->where('system', ($system ? 1 : 0));
 
-		return $builder->get()->getResult();
+		$this->tempReturnType = $this->returnType;
+
+		return $builder->get()->getResult($this->tempReturnType);
 	}
 
 	/**
@@ -218,7 +237,7 @@ class UserVariableModel
 	 *
 	 * @return BaseBuilder
 	 */
-	public function delete(int $userId, string $dataKey, bool $system)
+	public function delete(int $userId, string $dataKey, bool $system = null)
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
@@ -226,6 +245,57 @@ class UserVariableModel
 		$builder->where('system', ($system ? 1 : 0));
 
 		return $builder->delete();
+	}
+
+	//--------------------------------------------------------------------
+	// Utility
+	//--------------------------------------------------------------------
+
+	/**
+	 * Sets the return type of the results to be as an associative array.
+	 *
+	 * @return Model
+	 */
+	public function asArray()
+	{
+		$this->tempReturnType = 'array';
+
+		return $this;
+	}
+
+	/**
+	 * Sets the return type to be of the specified type of object.
+	 * Defaults to a simple object, but can be any class that has
+	 * class vars with the same name as the table columns, or at least
+	 * allows them to be created.
+	 *
+	 * @param string $class Class
+	 *
+	 * @return Model
+	 */
+	public function asObject(string $class = 'object')
+	{
+		$this->tempReturnType = $class;
+
+		return $this;
+	}
+
+	/**
+	 * Returns the first row of the result set. Will take any previous
+	 * Query Builder calls into account when determing the result set.
+	 *
+	 * @return array|object|null
+	 */
+	public function first()
+	{
+		$builder = $this->builder();
+
+		$row = $builder->limit(1, 0)->get();
+		$row = $row->getFirstRow($this->tempReturnType);
+
+		$this->tempReturnType = $this->returnType;
+
+		return $row;
 	}
 
 	/**
@@ -252,5 +322,42 @@ class UserVariableModel
 		$this->builder = $this->db->table($table);
 
 		return $this->builder;
+	}
+
+	/**
+	 * Provides direct access to method in the builder (if available)
+	 * and the database connection.
+	 *
+	 * @param string $name   Name
+	 * @param array  $params Params
+	 *
+	 * @return Model|null
+	 */
+	public function __call(string $name, array $params)
+	{
+		$result = null;
+
+		if (method_exists($this->db, $name))
+		{
+			$result = $this->db->$name(...$params);
+		}
+		elseif (method_exists($builder = $this->builder(), $name))
+		{
+			$result = $builder->$name(...$params);
+		}
+
+		// Don't return the builder object unless specifically requested
+		//, since that will interrupt the usability flow
+		// and break intermingling of model and builder methods.
+		if ($name !== 'builder' && empty($result))
+		{
+			return $result;
+		}
+		if ($name !== 'builder' && ! $result instanceof BaseBuilder)
+		{
+			return $result;
+		}
+
+		return $this;
 	}
 }

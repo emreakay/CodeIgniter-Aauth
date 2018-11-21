@@ -122,7 +122,7 @@ class UserModel extends Model
 	 *
 	 * @param integer $userId User id
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function updateLastLogin(int $userId)
 	{
@@ -130,7 +130,8 @@ class UserModel extends Model
 
 		$data['last_login']    = $this->setDate();
 		$data['last_activity'] = $this->setDate();
-		$builder->update($data, [$this->primaryKey => $userId]);
+
+		return $builder->update($data, [$this->primaryKey => $userId]);
 	}
 
 	/**
@@ -138,14 +139,32 @@ class UserModel extends Model
 	 *
 	 * @param integer $userId User id
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function updateLastActivity(int $userId)
 	{
 		$builder = $this->builder();
 
 		$data['last_activity'] = $this->setDate();
-		$builder->update($data, [$this->primaryKey => $userId]);
+
+		return $builder->update($data, [$this->primaryKey => $userId]);
+	}
+
+	/**
+	 * Update Banned by User ID
+	 *
+	 * @param integer $userId User id
+	 * @param boolean $banned Whether true to ban
+	 *
+	 * @return boolean
+	 */
+	public function updateBanned(int $userId, bool $banned = false)
+	{
+		$builder = $this->builder();
+
+		$data['banned'] = ($banned ? 1 : 0);
+
+		return $builder->update($data, [$this->primaryKey => $userId]);
 	}
 
 	/**
@@ -166,7 +185,7 @@ class UserModel extends Model
 
 		$builder->select('banned');
 		$builder->where($this->primaryKey, $userId);
-		// $builder->where('banned', 1);
+		$builder->where('banned', 1);
 
 		if ($user = $builder->get()->getFirstRow())
 		{

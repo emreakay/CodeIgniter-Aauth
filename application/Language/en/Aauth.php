@@ -48,7 +48,7 @@ return [
    'invalidUsername'        => 'Invalid Username',
    'invalidTOTPCode'        => 'Invalid Authentication Code',
    'invalidRecaptcha'       => 'Sorry, the reCAPTCHA text entered was incorrect.',
-   'invalidVercode'         => 'Invalid Verification Code',
+   'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'Username required',
    'requiredTOTPCode'       => 'Authentication Code required',

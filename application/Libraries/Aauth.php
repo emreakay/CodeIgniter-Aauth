@@ -218,10 +218,8 @@ class Aauth
 
 			return false;
 		}
-		else if ($userModel->delete($userId))
-		{
-			return true;
-		}
+
+		return $userModel->delete($userId);
 	}
 
 	/**
@@ -310,7 +308,7 @@ class Aauth
 			}
 			else
 			{
-				$this->error(lang('Aauth.invalidVercode'));
+				$this->error(lang('Aauth.invalidVerficationCode'));
 
 				return false;
 			}
@@ -324,7 +322,9 @@ class Aauth
 	 *
 	 * Get user information
 	 *
-	 * @param integer|boolean $userId User id to get or FALSE for current user
+	 * @param integer|boolean $userId        User id to get or FALSE for current user
+	 * @param boolean         $withVariables Whether to get user variables
+	 * @param boolean         $inclSystem    Whether to get system user variables
 	 *
 	 * @return object|boolean User information or false if user not found
 	 */
@@ -383,7 +383,148 @@ class Aauth
 			return $user->id;
 		}
 
-		$this->error(lang('Aauth.notFoundUser'));
+		return false;
+	}
+
+	/**
+	 * Ban User
+	 *
+	 * @param integer $userId User id
+	 *
+	 * @return boolean
+	 */
+	public function banUser(int $userId)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = $this->session->id;
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		return $userModel->updateBanned($userId, 1);
+	}
+
+	/**
+	 * Unban User
+	 *
+	 * @param integer $userId User id
+	 *
+	 * @return boolean
+	 */
+	public function unbanUser(int $userId)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = $this->session->id;
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		return $userModel->updateBanned($userId, 0);
+	}
+
+	/**
+	 * Remind password
+	 *
+	 * Emails user with link to reset password
+	 *
+	 * @param string $email Email for account to remind
+	 *
+	 * @return boolean Remind fails/succeeds
+	 */
+	public function remindPassword(string $email)
+	{
+		$userModel = new UserModel();
+		if ($user = $userModel->where('email', $email)->first())
+		{
+			$userVariableModel = new UserVariableModel();
+			$emailService      = \Config\Services::email();
+			$resetCode         = sha1(strtotime('now'));
+
+			$userVariableModel->save($user->id, 'verification_code', $resetCode, true);
+
+			$messageData['code'] = $resetCode;
+			$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $user->id . '/' . $resetCode);
+
+			$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+			$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+			$emailService->setTo($user->email);
+			$emailService->setSubject(lang('Aauth.subjectReset'));
+			$emailService->setMessage(view('Aauth/Reset', $messageData));
+
+			return $emailService->send();
+		}
+
+		return false;
+	}
+	/**
+	 * Reset password
+	 *
+	 * Generate new password and email it to the user
+	 *
+	 * @param string $resetCode Verification code for account
+	 *
+	 * @return boolean Password reset fails/succeeds
+	 */
+	public function resetPassword(string $resetCode)
+	{
+		$userVariableModel = new UserVariableModel();
+		$variable          = [
+			'data_key'   => 'verification_code',
+			'data_value' => $resetCode,
+			'system'     => 1,
+		];
+
+		if ($userVariable = $userVariableModel->where($variable)->first())
+		{
+			helper('text');
+			$userModel = new UserModel();
+			$password  = random_string('alnum', $this->config->passwordMin);
+
+			if ($user = $userModel->find($userVariable['user_id']))
+			{
+				$emailService = \Config\Services::email();
+
+				$data['id']       = $user['id'];
+				$data['password'] = $password;
+
+				$userModel->update($user['id'], $data);
+				$userVariableModel->delete($user['id'], 'verification_code', true);
+
+				if ($this->config->totpEnabled && $this->config->totpResetPassword)
+				{
+					$userVariableModel->delete($user['id'], 'totp_secret', true);
+				}
+
+				$messageData['password'] = $password;
+
+				$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+				$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+				$emailService->setTo($user['email']);
+				$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
+				$emailService->setMessage(view('Aauth/ResetSuccess', $messageData));
+
+				return true;
+			}
+		}
+
+		$this->error(lang('Aauth.invalidVerficationCode'));
+
 		return false;
 	}
 
@@ -415,6 +556,7 @@ class Aauth
 		if ($this->config->loginProtection && ! $loginAttemptModel->save())
 		{
 			$this->error(lang('Aauth.loginAttemptsExceeded'));
+
 			return false;
 		}
 
@@ -433,12 +575,14 @@ class Aauth
 			if (! $identifier || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
 				$this->error(lang('Aauth.loginFailedName'));
+
 				return false;
 			}
 
 			if ($user = $userModel->where('username', $identifier)->first())
 			{
 				$this->error(lang('Aauth.notFoundUser'));
+
 				return false;
 			}
 		}
@@ -449,12 +593,14 @@ class Aauth
 			if (! $validation->check($identifier, 'valid_email') || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
 				$this->error(lang('Aauth.loginFailedEmail'));
+
 				return false;
 			}
 
 			if (! $user = $userModel->where('email', $identifier)->first())
 			{
 				$this->error(lang('Aauth.notFoundUser'));
+
 				return false;
 			}
 		}
