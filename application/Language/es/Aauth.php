@@ -18,52 +18,54 @@
 /**
  * Aauth language strings.
  *
+ * Language Spanish
+ *
  * @package CodeIgniter-Aauth
  *
  * @codeCoverageIgnore
  */
 return [
-   'subjectVerification'    => 'Account Verification',
-   'subjectReset'           => 'Reset Password',
-   'subjectResetSuccess'    => 'Successful Pasword Reset',
+   'subjectVerification'    => 'Verificación de Cuenta',
+   'subjectReset'           => 'Reiniciar contraseña',
+   'subjectResetSuccess'    => 'Constraseña reiniciada exitosamente',
 
-   'textVerification'       => "Your verification code is: {code}. You can also click on (or copy and paste) the following link\n\n {link}",
-   'textReset'              => "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n {link}",
-   'textResetSuccess'       => 'Your password has successfully been reset. Your new password is: {password}',
+   'textVerification'       => "Tu código de verificación es: {code}. También puedes hacer click (o copia y pega en tu navegador) en el siguiente link.\n\n {link}",
+   'textReset'              => "Para reiniciar la contraseña click (o copia y pega en tu navegador) el siguiente link:\n\n {link}",
+   'textResetSuccess'       => 'Tu contraseña ha sido correctamente reiniciada. Tu nueva contraseña es: {password}',
 
    'infoCreateSuccess'      => 'Your account has successfully been created. You can now login.',
    'infoCreateVerification' => 'Your account has successfully been created. A email has been sent to your email address with verification details..',
 
-   'noAccess'               => 'Sorry, you do not have access to the resource you requested.',
-   'notVerified'            => 'Your account has not been verified. Please check your email and verify your account.',
+   'noAccess'               => 'Ups, lo siento, no tienes permiso para ver el recurso solicitado.',
+   'notVerified'            => 'Tu cuenta aún no ha sido verificada, por favor revisa tu correo electrónico y verifica tu cuenta.',
 
-   'loginFailedEmail'       => 'Email Address and Password do not match.',
-   'loginFailedName'        => 'Username and Password do not match.',
-   'loginFailedAll'         => 'Email, Username or Password do not match.',
-   'loginAttemptsExceeded'  => 'You have exceeded your login attempts, your account has now been locked.',
+   'loginFailedEmail'       => 'El Correo electrónico y contraseña no coinciden.',
+   'loginFailedName'        => 'El Nombre de usuario y contraseña no coinciden.',
+   'loginFailedAll'         => 'El Correo electrónico, nombre de usuario y contraseña no coinciden.',
+   'loginAttemptsExceeded'  => 'Has excedido el número de intentos de inicio de sesión, tu cuenta ha sido bloqueada.',
 
    'invalidUserBanned'      => 'This user is banned, please contact the system administrator.',
-   'invalidEmail'           => 'Invalid Email address',
-   'invalidPassword'        => 'Invalid Password',
-   'invalidUsername'        => 'Invalid Username',
-   'invalidTOTPCode'        => 'Invalid Authentication Code',
-   'invalidRecaptcha'       => 'Sorry, the reCAPTCHA text entered was incorrect.',
-   'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidEmail'           => 'Correo electrónico inválido',
+   'invalidPassword'        => 'Contraseña invalida',
+   'invalidUsername'        => 'Nombre de usuario invalido',
+   'invalidTOTPCode'        => 'Código TOTP obligatorio',
+   'invalidRecaptcha'       => 'Ups, El texto ingresado es incorrecto.',
+   'invalidVerficationCode' => 'Código de verificación invalido',
 
-   'requiredUsername'       => 'Username required',
-   'requiredTOTPCode'       => 'Authentication Code required',
+   'requiredUsername'       => 'Nombre de usuario obligatorio',
+   'requiredTOTPCode'       => 'El código TOTP es obligatorio',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 
-   'existsAlreadyEmail'     => 'Email address already exists on the system. Please enter a different email address.',
-   'existsAlreadyUsername'  => 'Username already exists on the system. Please enter a different username.',
-   'existsAlreadyGroup'     => 'Group name already exists',
-   'existsAlreadyPerm'      => 'Permission name already exists',
+   'existsAlreadyEmail'     => 'El correo electrónico ya existe. Si olvidaste tu contraseña, puedes hacer click en el siguiente link.',
+   'existsAlreadyUsername'  => 'Ya existe una cuenta con ese nombre de usuario. Por favor ingrese un nombre de usuario diferente, o si olvidaste tu contraseña puedes hacer click en el siguiente link.',
+   'existsAlreadyGroup'     => 'El nombre del grupo ya existe',
+   'existsAlreadyPerm'      => 'El nombre del permiso ya existe',
 
-   'notFoundUser'           => 'User does not exist',
-   'notFoundGroup'          => 'Group does not exist',
-   'notFoundSubgroup'       => 'Subgroup does not exist',
+   'notFoundUser'           => 'El usuario no existe.',
+   'notFoundGroup'          => 'El grupo no existe',
+   'notFoundSubgroup'       => 'El subgrupo no existe',
 
-   'alreadyMemberGroup'     => 'User is already member of group',
-   'alreadyMemberSubgroup'  => 'Subgroup is already member of group',
+   'alreadyMemberGroup'     => 'El usuario ya es miembro del grupo',
+   'alreadyMemberSubgroup'  => 'El subgrupo ya es miembro del grupo',
 ];

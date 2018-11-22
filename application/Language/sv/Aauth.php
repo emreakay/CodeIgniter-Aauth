@@ -18,52 +18,54 @@
 /**
  * Aauth language strings.
  *
+ * Language Swedish
+ *
  * @package CodeIgniter-Aauth
  *
  * @codeCoverageIgnore
  */
 return [
-   'subjectVerification'    => 'Account Verification',
-   'subjectReset'           => 'Reset Password',
-   'subjectResetSuccess'    => 'Successful Pasword Reset',
+   'subjectVerification'    => 'Bekräfta konto',
+   'subjectReset'           => 'Återställ lösenord',
+   'subjectResetSuccess'    => 'Lösenordsåterställning skickad',
 
-   'textVerification'       => "Your verification code is: {code}. You can also click on (or copy and paste) the following link\n\n {link}",
-   'textReset'              => "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n {link}",
-   'textResetSuccess'       => 'Your password has successfully been reset. Your new password is: {password}',
+   'textVerification'       => "Din bekräftelsekod är: {code}. Du kan även trycka på (eller kopiera och klistra in) följande länk\n\n {link}",
+   'textReset'              => "För att återställa ditt lösenord, tryck på (eller kopiera och klistra in i din webbläsares adressfält) länken nedan:\n\n {link}",
+   'textResetSuccess'       => 'Ditt lösenord har blivit återställt. Ditt nya lösenord är: {password}',
 
    'infoCreateSuccess'      => 'Your account has successfully been created. You can now login.',
    'infoCreateVerification' => 'Your account has successfully been created. A email has been sent to your email address with verification details..',
 
-   'noAccess'               => 'Sorry, you do not have access to the resource you requested.',
-   'notVerified'            => 'Your account has not been verified. Please check your email and verify your account.',
+   'noAccess'               => 'Du har tyvärr inte rättighet att visa den här resursen.',
+   'notVerified'            => 'Ditt konto är inte bekräftat. Var vänlig kolla din e-post och bekräfta ditt konto.',
 
-   'loginFailedEmail'       => 'Email Address and Password do not match.',
-   'loginFailedName'        => 'Username and Password do not match.',
-   'loginFailedAll'         => 'Email, Username or Password do not match.',
-   'loginAttemptsExceeded'  => 'You have exceeded your login attempts, your account has now been locked.',
+   'loginFailedEmail'       => 'E-postadressen och lösenordet stämmer inte överens.',
+   'loginFailedName'        => 'Användarnamnet och lösenordet stämmer inte överens.',
+   'loginFailedAll'         => 'E-postadress, användarnamn och lösenord stämmer inte överens.',
+   'loginAttemptsExceeded'  => 'Du har förbrukat dina försök att logga in, ditt konto har blivit låst.',
 
    'invalidUserBanned'      => 'This user is banned, please contact the system administrator.',
-   'invalidEmail'           => 'Invalid Email address',
-   'invalidPassword'        => 'Invalid Password',
-   'invalidUsername'        => 'Invalid Username',
-   'invalidTOTPCode'        => 'Invalid Authentication Code',
-   'invalidRecaptcha'       => 'Sorry, the reCAPTCHA text entered was incorrect.',
+   'invalidEmail'           => 'Ogiltig e-postadress',
+   'invalidPassword'        => 'Ogiltigt lösenord',
+   'invalidUsername'        => 'Ogiltigt användarnamn',
+   'invalidTOTPCode'        => 'Ogiltig bekräftelsekod',
+   'invalidRecaptcha'       => 'Tyvärr, reCAPTCHA-texten var felaktig.',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
-   'requiredUsername'       => 'Username required',
-   'requiredTOTPCode'       => 'Authentication Code required',
+   'requiredUsername'       => 'Användarnamn obligatoriskt',
+   'requiredTOTPCode'       => 'Bekräftelsekod behövs',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 
-   'existsAlreadyEmail'     => 'Email address already exists on the system. Please enter a different email address.',
-   'existsAlreadyUsername'  => 'Username already exists on the system. Please enter a different username.',
-   'existsAlreadyGroup'     => 'Group name already exists',
-   'existsAlreadyPerm'      => 'Permission name already exists',
+   'existsAlreadyEmail'     => 'E-postadressen finns redan i systemet. Om du glömt ditt lösenord kan du trycka på länken nedan.',
+   'existsAlreadyUsername'  => 'Det finns redan ett konto i systemet med det användarnamnet. Var vänlig ange ett annat användarnamn. Om du lömt ditt lösenord var vänlig tryck på länken nedan.',
+   'existsAlreadyGroup'     => 'Gruppnamnet finns redan.',
+   'existsAlreadyPerm'      => 'Rättighetsnamnet finns redan.',
 
-   'notFoundUser'           => 'User does not exist',
-   'notFoundGroup'          => 'Group does not exist',
-   'notFoundSubgroup'       => 'Subgroup does not exist',
+   'notFoundUser'           => 'Användaren finns inte',
+   'notFoundGroup'          => 'Gruppen finns inte',
+   'notFoundSubgroup'       => 'Undergruppen finns inte',
 
-   'alreadyMemberGroup'     => 'User is already member of group',
-   'alreadyMemberSubgroup'  => 'Subgroup is already member of group',
+   'alreadyMemberGroup'     => 'Användaren är redan med i gruppen.',
+   'alreadyMemberSubgroup'  => 'Undergruppen är redan med i gruppen.',
 ];

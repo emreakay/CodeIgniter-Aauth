@@ -18,52 +18,56 @@
 /**
  * Aauth language strings.
  *
+ * Language Chinese Simplified
+ *
+ * @author Terry Lin (https://github.com/terrylinooo)
+ *
  * @package CodeIgniter-Aauth
  *
  * @codeCoverageIgnore
  */
 return [
-   'subjectVerification'    => 'Account Verification',
-   'subjectReset'           => 'Reset Password',
-   'subjectResetSuccess'    => 'Successful Pasword Reset',
+   'subjectVerification'    => '帐户验证',
+   'subjectReset'           => '重设密码',
+   'subjectResetSuccess'    => '密码重设成功',
 
-   'textVerification'       => "Your verification code is: {code}. You can also click on (or copy and paste) the following link\n\n {link}",
-   'textReset'              => "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n {link}",
-   'textResetSuccess'       => 'Your password has successfully been reset. Your new password is: {password}',
+   'textVerification'       => "您的验证码：{code}. 您可以点击（或者复制贴上）以下链接\n\n {link}",
+   'textReset'              => "欲重设你的密码请点击（或者复制贴上到浏览器网址列）下方链接：\n\n {link}",
+   'textResetSuccess'       => '您的密码已寄出成功。您的新密码是：{password}',
 
    'infoCreateSuccess'      => 'Your account has successfully been created. You can now login.',
    'infoCreateVerification' => 'Your account has successfully been created. A email has been sent to your email address with verification details..',
 
-   'noAccess'               => 'Sorry, you do not have access to the resource you requested.',
-   'notVerified'            => 'Your account has not been verified. Please check your email and verify your account.',
+   'noAccess'               => '对不起，您无法存取您需要的资源。',
+   'notVerified'            => '您的帐户尚未验证，请检查信箱并验证帐户。',
 
-   'loginFailedEmail'       => 'Email Address and Password do not match.',
-   'loginFailedName'        => 'Username and Password do not match.',
-   'loginFailedAll'         => 'Email, Username or Password do not match.',
-   'loginAttemptsExceeded'  => 'You have exceeded your login attempts, your account has now been locked.',
+   'loginFailedEmail'       => '电邮地址和密码不符',
+   'loginFailedName'        => '用户名和密码不符',
+   'loginFailedAll'         => '电邮地址、用户名和或密码不符',
+   'loginAttemptsExceeded'  => '您已达到登入尝试限制数，您的帐户已被锁住。',
 
    'invalidUserBanned'      => 'This user is banned, please contact the system administrator.',
-   'invalidEmail'           => 'Invalid Email address',
-   'invalidPassword'        => 'Invalid Password',
-   'invalidUsername'        => 'Invalid Username',
-   'invalidTOTPCode'        => 'Invalid Authentication Code',
-   'invalidRecaptcha'       => 'Sorry, the reCAPTCHA text entered was incorrect.',
+   'invalidEmail'           => '无效的电子邮件地址',
+   'invalidPassword'        => '无效的密码',
+   'invalidUsername'        => '无效的用户名',
+   'invalidTOTPCode'        => '无效的证认码',
+   'invalidRecaptcha'       => '对不起，reCAPTCHA 验证码输入错误。',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'Username required',
-   'requiredTOTPCode'       => 'Authentication Code required',
+   'requiredTOTPCode'       => '需要证认码',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 
-   'existsAlreadyEmail'     => 'Email address already exists on the system. Please enter a different email address.',
-   'existsAlreadyUsername'  => 'Username already exists on the system. Please enter a different username.',
-   'existsAlreadyGroup'     => 'Group name already exists',
-   'existsAlreadyPerm'      => 'Permission name already exists',
+   'existsAlreadyEmail'     => '电邮地址已存在系统中。如果您忘了密码，可以按下方链接。',
+   'existsAlreadyUsername'  => '此用户名的帐户已存在系统中，请输入不同的用户名。如果是忘了密码，请按下方链接。',
+   'existsAlreadyGroup'     => '群组名称已存在',
+   'existsAlreadyPerm'      => '权限名称已存在',
 
-   'notFoundUser'           => 'User does not exist',
-   'notFoundGroup'          => 'Group does not exist',
-   'notFoundSubgroup'       => 'Subgroup does not exist',
+   'notFoundUser'           => '用户不存在',
+   'notFoundGroup'          => '群组不存在',
+   'notFoundSubgroup'       => '子群组不存在',
 
-   'alreadyMemberGroup'     => 'User is already member of group',
-   'alreadyMemberSubgroup'  => 'Subgroup is already member of group',
+   'alreadyMemberGroup'     => '用户已是群组成员',
+   'alreadyMemberSubgroup'  => '子群组已是群组成员',
 ];
