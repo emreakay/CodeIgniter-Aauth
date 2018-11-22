@@ -2,8 +2,11 @@
 
 .env
 
-public/
-!public/assets/
+public/.htaccess
+public/favicon.ico
+public/index.php
+public/robots.txt
+
 system/
 tests/
 vendor/
