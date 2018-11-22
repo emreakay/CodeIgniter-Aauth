@@ -18,6 +18,8 @@
 /**
  * Aauth language strings.
  *
+ * Language Indonesian
+ *
  * @package CodeIgniter-Aauth
  *
  * @codeCoverageIgnore
