@@ -27,6 +27,8 @@ use CodeIgniter\Database\ConnectionInterface;
  * User Variable Model.
  *
  * @package CodeIgniter-Aauth
+ *
+ * @since 3.0.0
  */
 class UserVariableModel
 {

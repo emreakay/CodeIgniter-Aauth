@@ -24,6 +24,8 @@ use Config\Aauth as AauthConfig;
  * User Model
  *
  * @package CodeIgniter-Aauth
+ *
+ * @since 3.0.0
  */
 class UserModel extends Model
 {
