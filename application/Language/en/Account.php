@@ -45,6 +45,11 @@ return [
    'registerLabelSubmit'                => 'Create Account',
    'registerRequired'                   => 'Required',
 
+   'verificationHeader'                 => 'Account Verification',
+   'verificationText'                   => 'You are only one step away to verify your new account.',
+   'verificationLabelVerificationCode'  => 'Verification Code',
+   'verificationLabelSubmit'            => 'Verify account',
+
    'remindPasswordHeader'               => 'Remind Password',
    'remindPasswordText'                 => 'Forgot your password? <br />You can reset your password here.',
    'remindPasswordLabelEmail'           => 'Email address',

@@ -303,16 +303,13 @@ class Aauth
 			if ($verificationCode === $verificationCodeStored)
 			{
 				$userVariableModel->delete($userId, 'verification_code', true);
+				$this->info(lang('Aauth.infoVerification'));
 
 				return true;
 			}
-			else
-			{
-				$this->error(lang('Aauth.invalidVerficationCode'));
-
-				return false;
-			}
 		}
+
+		$this->error(lang('Aauth.invalidVerficationCode'));
 
 		return false;
 	}

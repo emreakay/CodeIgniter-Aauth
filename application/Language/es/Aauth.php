@@ -37,6 +37,7 @@ return [
    'infoCreateVerification' => 'Your account has successfully been created. A email has been sent to your email address with verification details..',
    'infoRemindSuccess'      => 'A email has been sent to your email address with reset instructions.',
    'infoResetSuccess'       => 'A email has been sent to your email address with your new password has been sent.',
+   'infoVerification'       => 'Your account has been verified successfully, you can now login.',
 
    'noAccess'               => 'Ups, lo siento, no tienes permiso para ver el recurso solicitado.',
    'notVerified'            => 'Tu cuenta aún no ha sido verificada, por favor revisa tu correo electrónico y verifica tu cuenta.',
