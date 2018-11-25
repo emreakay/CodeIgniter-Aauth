@@ -20,7 +20,7 @@ namespace App\Controllers\Admin;
 use CodeIgniter\Controller;
 
 /**
- * Aauth Admin/Migrate Controller.
+ * Aauth Admin/Migrate Controller
  *
  * @package CodeIgniter-Aauth
  */
@@ -35,13 +35,18 @@ class Migrate extends Controller
 	{
 		$config  = new \Config\Aauth();
 		$migrate = \Config\Services::migrations();
+
 		try
 		{
-			$migrate->latest('App', $config->dbProfile);
+			$migrated = $migrate->latest('App', $config->dbProfile);
 		}
 		catch (\Exception $e)
 		{
 			// Do something with the error here...
 		}
+
+		echo view('Templates/Header');
+		echo view('Admin/Migrate', ['migrated' => $migrated]);
+		echo view('Templates/Footer');
 	}
 }
