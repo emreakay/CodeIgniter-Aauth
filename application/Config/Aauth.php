@@ -42,21 +42,21 @@ class Aauth extends BaseConfig
 	| 'linkResetPassword'
 	|
 	|	Link for reset_password without site_url or base_url
-	|	(default: '/account/reset_password')
+	|	(default: '/account/reset_password/index')
 	|
 	| 'linkVerification'
 	|
 	|	Link for verification without site_url or base_url
-	|	(default: '/account/verification')
+	|	(default: '/account/verification/index')
 	| 'linkVerification'
 	|
 	|	Redirect path to TOTP Verification page
-	|	(default: '/account/twofactor_verification')
+	|	(default: '/account/twofactor_verification/index')
 	*/
 	public $linkNoPermission  = false;
-	public $linkResetPassword = '/account/reset_password';
-	public $linkVerification  = '/account/verification';
-	public $linkTotp          = '/account/twofactor_verification';
+	public $linkResetPassword = '/account/reset_password/index';
+	public $linkVerification  = '/account/verification/index';
+	public $linkTotp          = '/account/twofactor_verification/index';
 
 	/*
 	|--------------------------------------------------------------------------

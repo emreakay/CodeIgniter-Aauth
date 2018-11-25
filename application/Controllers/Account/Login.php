@@ -43,11 +43,11 @@ class Login extends Controller
 	/**
 	 * Index
 	 *
-	 * @return redirect
+	 * @return void
 	 */
 	public function index()
 	{
-		if ($input = $this->request->getVar())
+		if ($input = $this->request->getPost())
 		{
 			$identifier = ($this->config->loginUseUsername ? $input['username'] : $input['email']);
 
@@ -57,7 +57,7 @@ class Login extends Controller
 			}
 			else
 			{
-				return redirect()->to('/account');
+				redirect()->to('/account');
 			}
 		}
 

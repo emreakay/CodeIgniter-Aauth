@@ -273,7 +273,7 @@ class Aauth
 		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
 
 		$messageData['code'] = $verificationCode;
-		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $verificationCode);
 
 		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
 		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
@@ -455,20 +455,32 @@ class Aauth
 			$userVariableModel = new UserVariableModel();
 			$emailService      = \Config\Services::email();
 			$resetCode         = sha1(strtotime('now'));
-
-			$userVariableModel->save($user->id, 'verification_code', $resetCode, true);
+			$userVariableModel->save($user['id'], 'verification_code', $resetCode, true);
 
 			$messageData['code'] = $resetCode;
-			$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $user->id . '/' . $resetCode);
+			$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
 
 			$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
 			$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-			$emailService->setTo($user->email);
+			$emailService->setTo($user['email']);
 			$emailService->setSubject(lang('Aauth.subjectReset'));
-			$emailService->setMessage(view('Aauth/Reset', $messageData));
+			$emailService->setMessage(view('Aauth/RemindPassword', $messageData));
 
-			return $emailService->send();
+			if ($email = $emailService->send())
+			{
+				$this->info(lang('Aauth.infoRemindSuccess'));
+
+				return $email;
+			}
+			else
+			{
+				$this->error(explode('<br />', $emailService->printDebugger([])));
+
+				return false;
+			}
 		}
+
+		$this->error(lang('Aauth.notFoundUser'));
 
 		return false;
 	}
@@ -517,9 +529,20 @@ class Aauth
 				$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
 				$emailService->setTo($user['email']);
 				$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
-				$emailService->setMessage(view('Aauth/ResetSuccess', $messageData));
+				$emailService->setMessage(view('Aauth/ResetPassword', $messageData));
 
-				return true;
+				if ($email = $emailService->send())
+				{
+					$this->info(lang('Aauth.infoResetSuccess'));
+
+					return $email;
+				}
+				else
+				{
+					$this->error(explode('<br />', $emailService->printDebugger([])));
+
+					return false;
+				}
 			}
 		}
 
@@ -697,8 +720,8 @@ class Aauth
 				$tokenData['selector_hash'] = password_hash($selectorString, PASSWORD_DEFAULT);
 				$tokenData['expires_at']    = date('Y-m-d H:i:s', strtotime($expire));
 
-				$loginTokenModel->insert($tokenData);
 				set_cookie($cookieData);
+				$loginTokenModel->insert($tokenData);
 			}
 
 			$userModel->updateLastLogin($user['id']);

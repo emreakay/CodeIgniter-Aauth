@@ -34,7 +34,9 @@ return [
    'textResetSuccess'       => 'Du hast dein Passwort erfolgreich zurückgesetzt. Dein neues Passwort lautet: {password}',
 
    'infoCreateSuccess'      => 'Dein Benutzerkonto wurde erfolgreich erstellt. Du kannst dich jetzt einloggen.',
-   'infoCreateVerification' => 'Dein Benutzerkonto wurde erfolgreich erstellt. Eine E-Mail mit Informationen zur Bestätigung wurde versendet. ',
+   'infoCreateVerification' => 'Dein Benutzerkonto wurde erfolgreich erstellt. Eine E-Mail mit Informationen zur Bestätigung wurde an deine E-Mail-Adresse versendet. ',
+   'infoRemindSuccess'      => 'Eine E-Mail mit Informationen zum zurückzusetzen wurde an deine E-Mail-Adresse versendet.',
+   'infoResetSuccess'       => 'Eine E-Mail mit deinem neuem Passwort wurde an deine E-Mail-Adresse versendet.',
 
    'noAccess'               => 'Entschuldige, aber du hast kein Zugriffsrecht auf die angeforderte Seite.',
    'notVerified'            => 'Dein Account wurde bisher nicht bestätigt. Bitte prüfe deine E-Mails und bestätige deine Registrierung.',

@@ -19,6 +19,7 @@ namespace App\Models\Aauth;
 
 use Config\Aauth as AauthConfig;
 use Config\Database;
+use Config\Services;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\ConnectionInterface;

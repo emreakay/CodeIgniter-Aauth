@@ -24,11 +24,11 @@ use App\Models\Aauth\UserVariableModel as UserVariableModel;
 use Config\Services;
 
 /**
- * Aauth Accont/Register Controller
+ * Aauth Accont/Reset_password Controller
  *
  * @package CodeIgniter-Aauth
  */
-class Register extends Controller
+class Reset_password extends Controller
 {
 	/**
 	 * Constructor
@@ -44,13 +44,15 @@ class Register extends Controller
 	/**
 	 * Index
 	 *
+	 * @param string $verificationCode Verification Code
+	 *
 	 * @return void
 	 */
-	public function index()
+	public function index(string $verificationCode = '')
 	{
 		if ($input = $this->request->getPost())
 		{
-			if (! $this->aauth->createUser($input['email'], $input['password'], $input['username']))
+			if (! $this->aauth->resetPassword($input['verification_code']))
 			{
 				$data['errors'] = $this->aauth->printErrors('<br />', true);
 			}
@@ -60,13 +62,13 @@ class Register extends Controller
 			}
 		}
 
-		$data['useUsername'] = $this->config->loginUseUsername;
-		$data['cssFiles']    = [
+		$data['verificationCode'] = $verificationCode;
+		$data['cssFiles']         = [
 			'/assets/css/login.css'
 		];
 
 		echo view('Templates/HeaderBlank', $data);
-		echo view('Account/Register', $data);
+		echo view('Account/ResetPassword', $data);
 		echo view('Templates/FooterBlank', $data);
 	}
 }

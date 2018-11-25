@@ -24,11 +24,11 @@ use App\Models\Aauth\UserVariableModel as UserVariableModel;
 use Config\Services;
 
 /**
- * Aauth Accont/Register Controller
+ * Aauth Accont/Remind_password Controller
  *
  * @package CodeIgniter-Aauth
  */
-class Register extends Controller
+class Remind_password extends Controller
 {
 	/**
 	 * Constructor
@@ -50,7 +50,7 @@ class Register extends Controller
 	{
 		if ($input = $this->request->getPost())
 		{
-			if (! $this->aauth->createUser($input['email'], $input['password'], $input['username']))
+			if (! $this->aauth->remindPassword($input['email']))
 			{
 				$data['errors'] = $this->aauth->printErrors('<br />', true);
 			}
@@ -60,13 +60,12 @@ class Register extends Controller
 			}
 		}
 
-		$data['useUsername'] = $this->config->loginUseUsername;
-		$data['cssFiles']    = [
+		$data['cssFiles'] = [
 			'/assets/css/login.css'
 		];
 
 		echo view('Templates/HeaderBlank', $data);
-		echo view('Account/Register', $data);
+		echo view('Account/RemindPassword', $data);
 		echo view('Templates/FooterBlank', $data);
 	}
 }
