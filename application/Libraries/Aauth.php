@@ -729,7 +729,7 @@ class Aauth
 	{
 		helper('cookie');
 		delete_cookie('remember');
-		$this->session->stop();
+		$this->session->destroy();
 	}
 
 	/**
