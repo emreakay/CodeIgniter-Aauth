@@ -13,7 +13,7 @@
     <? if (isset($cssFiles)): ?>
     <? foreach ($cssFiles as $cssFile): ?>
     <link href="<?= $cssFile; ?>" rel="stylesheet">
-	<? endforeach; ?>
-	<? endif; ?>
+		<? endforeach; ?>
+		<? endif; ?>
   </head>
-  <body id="page-top">
+  <body>

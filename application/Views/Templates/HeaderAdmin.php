@@ -19,11 +19,9 @@
 	<body id="page-top">
 		<nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 			<a class="navbar-brand mr-1" href="index.html">Aauth</a>
-			<ul class="navbar-nav ml-4">
-				<li class="nav-item">
-					<a href="<?= site_url() ?>">Home</a>
-				</li>
-			</ul>
+			<button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+				<i class="fas fa-bars"></i>
+			</button>
 			<ul class="navbar-nav ml-auto">
 				<? if (is_loggedin()): ?>
 					<li class="nav-item dropdown no-arrow">
@@ -33,10 +31,22 @@
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
 							<!-- <a class="dropdown-item" href="#">Settings</a> -->
 							<!-- <div class="dropdown-divider"></div> -->
-							<a class="dropdown-item" href="<?= site_url('account/logout') ?>">Logout</a>
+							<a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
 						</div>
 					</li>
 				<?php endif; ?>
 			</ul>
 		</nav>
-		<div class="m-5">
+
+		<div id="wrapper">
+			<ul class="sidebar navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link" href="index.html">
+						<i class="fas fa-fw fa-tachometer-alt"></i>
+						<span>Dashboard</span>
+					</a>
+				</li>
+			</ul>
+
+			<div id="content-wrapper">
+				<div class="container-fluid">

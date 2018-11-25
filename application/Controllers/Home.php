@@ -34,6 +34,7 @@ class Home extends Controller
 	 */
 	public function index()
 	{
+		helper('aauth');
 		echo view('Templates/Header');
 		echo view('Home');
 		echo view('Templates/Footer');

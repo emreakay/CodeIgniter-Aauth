@@ -20,24 +20,28 @@ namespace App\Controllers\Account;
 use CodeIgniter\Controller;
 use Config\Aauth as AauthConfig;
 use App\Libraries\Aauth;
-use Config\Services;
+use App\Models\Aauth\UserModel;
 
 /**
- * Aauth Accont/Logout Controller
+ * Aauth Accont/Home Controller
  *
  * @package CodeIgniter-Aauth
  */
-class Logout extends Controller
+class Home extends Controller
 {
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		$this->config  = new AauthConfig();
-		$this->aauth   = new Aauth();
-		$this->request = Services::request();
-		helper('form');
+		$this->config = new AauthConfig();
+		$this->user   = new UserModel();
+		$this->aauth  = new Aauth();
+
+		if (! $this->aauth->isLoggedIn())
+		{
+			redirect()->to('/');
+		}
 	}
 
 	/**
@@ -47,7 +51,12 @@ class Logout extends Controller
 	 */
 	public function index()
 	{
-		$this->aauth->logout();
-		redirect()->to('/');
+		// print_r($this->aauth->session);
+		// print_r($this->aauth->login("admin@example.com", "password123456"));
+		// print_r($this->aauth->deleteUser(4));
+		// print_r($this->aauth->updateUser(1, "admin@example.com", "password", 'Admines'));
+		// print_r($this->aauth->createUser("admin@example.coma", 'asdasasdasdsd'));
+
+		echo $this->aauth->printErrors('<br />', true);
 	}
 }

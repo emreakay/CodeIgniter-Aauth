@@ -15,39 +15,23 @@
  * @link      https://github.com/magefly/CodeIgniter-Aauth
  */
 
-namespace App\Controllers\Account;
-
-use CodeIgniter\Controller;
-use Config\Aauth as AauthConfig;
 use App\Libraries\Aauth;
-use Config\Services;
 
 /**
- * Aauth Accont/Logout Controller
+ * Aauth Helper
  *
  * @package CodeIgniter-Aauth
  */
-class Logout extends Controller
+if (! function_exists('is_loggedin'))
 {
 	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		$this->config  = new AauthConfig();
-		$this->aauth   = new Aauth();
-		$this->request = Services::request();
-		helper('form');
-	}
-
-	/**
-	 * Index
+	 * Is logged in
 	 *
-	 * @return void
+	 * @return boolean
 	 */
-	public function index()
+	function is_loggedin()
 	{
-		$this->aauth->logout();
-		redirect()->to('/');
+		$aauth = new Aauth();
+		return $aauth->isLoggedIn();
 	}
 }

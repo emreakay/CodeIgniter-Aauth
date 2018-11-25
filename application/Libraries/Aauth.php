@@ -751,7 +751,7 @@ class Aauth
 	public function logout()
 	{
 		helper('cookie');
-		delete_cookie('remember');
+		set_cookie('remember', '', -3600);
 		$this->session->destroy();
 	}
 

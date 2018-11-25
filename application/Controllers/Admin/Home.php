@@ -15,31 +15,18 @@
  * @link      https://github.com/magefly/CodeIgniter-Aauth
  */
 
-namespace App\Controllers\Account;
+namespace App\Controllers\Admin;
 
 use CodeIgniter\Controller;
 use Config\Aauth as AauthConfig;
-use App\Libraries\Aauth;
-use Config\Services;
 
 /**
- * Aauth Accont/Logout Controller
+ * Aauth Admin/Home Controller
  *
  * @package CodeIgniter-Aauth
  */
-class Logout extends Controller
+class Home extends Controller
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		$this->config  = new AauthConfig();
-		$this->aauth   = new Aauth();
-		$this->request = Services::request();
-		helper('form');
-	}
-
 	/**
 	 * Index
 	 *
@@ -47,7 +34,9 @@ class Logout extends Controller
 	 */
 	public function index()
 	{
-		$this->aauth->logout();
-		redirect()->to('/');
+		helper('aauth');
+		echo view('Templates/HeaderAdmin');
+		echo view('Admin/Home');
+		echo view('Templates/FooterAdmin');
 	}
 }
