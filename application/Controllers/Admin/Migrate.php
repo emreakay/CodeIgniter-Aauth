@@ -33,6 +33,7 @@ class Migrate extends Controller
 	 */
 	public function index()
 	{
+		helper('aauth');
 		$config  = new \Config\Aauth();
 		$migrate = \Config\Services::migrations();
 

@@ -268,12 +268,12 @@ class Aauth
 		helper('text');
 		$userVariableModel = new UserVariableModel();
 		$emailService      = \Config\Services::email();
-		$verificationCode  = random_string('alnum', 16);
+		$verificationCode  = sha1(strtotime('now'));
 
 		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
 
 		$messageData['code'] = $verificationCode;
-		$messageData['link'] = site_url($this->config->linkVerification . '/' . $verificationCode);
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
 
 		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
 		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
@@ -289,24 +289,25 @@ class Aauth
 	 *
 	 * Activates user account based on verification code
 	 *
-	 * @param integer $userId           User id to activate
-	 * @param string  $verificationCode Code to validate against
+	 * @param string $verificationCode Code to validate against
 	 *
 	 * @return boolean Activation fails/succeeds
 	 */
-	public function verifyUser(int $userId, string $verificationCode)
+	public function verifyUser(string $verificationCode)
 	{
 		$userVariableModel = new UserVariableModel();
+		$userVariable      = [
+			'data_key'   => 'verification_code',
+			'data_value' => $verificationCode,
+			'system'     => 1,
+		];
 
-		if ($verificationCodeStored = $userVariableModel->find($userId, 'verification_code', true))
+		if ($verificationCodeStored = $userVariableModel->where($userVariable)->first())
 		{
-			if ($verificationCode === $verificationCodeStored)
-			{
-				$userVariableModel->delete($userId, 'verification_code', true);
-				$this->info(lang('Aauth.infoVerification'));
+			$userVariableModel->delete($verificationCodeStored['user_id'], 'verification_code', true);
+			$this->info(lang('Aauth.infoVerification'));
 
-				return true;
-			}
+			return true;
 		}
 
 		$this->error(lang('Aauth.invalidVerficationCode'));
