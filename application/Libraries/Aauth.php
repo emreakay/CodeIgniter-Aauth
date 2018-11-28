@@ -169,7 +169,7 @@ class Aauth
 
 			return false;
 		}
-		else if (! is_null($email) && ! is_null($password) && ! is_null($username))
+		else if (is_null($email) && is_null($password) && is_null($username))
 		{
 			return false;
 		}
@@ -193,6 +193,8 @@ class Aauth
 
 		if ($userModel->update($userId, $data))
 		{
+			$this->info(lang('Aauth.infoUpdateSuccess'));
+
 			return true;
 		}
 
@@ -378,7 +380,7 @@ class Aauth
 
 		if ($user = $userModel->where($where)->first())
 		{
-			return $user->id;
+			return $user['id'];
 		}
 
 		return false;

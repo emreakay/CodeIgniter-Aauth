@@ -35,6 +35,7 @@ return [
 
    'infoCreateSuccess'      => 'Dein Benutzerkonto wurde erfolgreich erstellt, du kannst dich jetzt einloggen.',
    'infoCreateVerification' => 'Dein Benutzerkonto wurde erfolgreich erstellt. Eine E-Mail mit Informationen zur Bestätigung wurde an deine E-Mail-Adresse versendet. ',
+   'infoUpdateSuccess'      => 'Dein Benutzerkonto wurde erfolgreich geändert.',
    'infoRemindSuccess'      => 'Eine E-Mail mit Informationen zum zurückzusetzen wurde an deine E-Mail-Adresse versendet.',
    'infoResetSuccess'       => 'Eine E-Mail mit deinem neuem Passwort wurde an deine E-Mail-Adresse versendet.',
    'infoVerification'       => 'Dein Benutzerkonto wurde erfolgreich bestätigt, du kannst dich jetzt einloggen.',

@@ -18,7 +18,6 @@
 namespace App\Controllers\Account;
 
 use CodeIgniter\Controller;
-use Config\Aauth as AauthConfig;
 use App\Libraries\Aauth;
 use Config\Services;
 
@@ -34,7 +33,6 @@ class Verification extends Controller
 	 */
 	public function __construct()
 	{
-		$this->config  = new AauthConfig();
 		$this->aauth   = new Aauth();
 		$this->request = Services::request();
 		helper('form');

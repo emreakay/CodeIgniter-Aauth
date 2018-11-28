@@ -18,7 +18,6 @@
 namespace App\Controllers\Account;
 
 use CodeIgniter\Controller;
-use Config\Aauth as AauthConfig;
 use App\Libraries\Aauth;
 use App\Models\Aauth\UserModel;
 
@@ -34,9 +33,8 @@ class Home extends Controller
 	 */
 	public function __construct()
 	{
-		$this->config = new AauthConfig();
-		$this->user   = new UserModel();
-		$this->aauth  = new Aauth();
+		$this->aauth = new Aauth();
+		helper('aauth');
 
 		if (! $this->aauth->isLoggedIn())
 		{
@@ -51,12 +49,10 @@ class Home extends Controller
 	 */
 	public function index()
 	{
-		// print_r($this->aauth->session);
-		// print_r($this->aauth->login("admin@example.com", "password123456"));
-		// print_r($this->aauth->deleteUser(4));
-		// print_r($this->aauth->updateUser(1, "admin@example.com", "password", 'Admines'));
-		// print_r($this->aauth->createUser("admin@example.coma", 'asdasasdasdsd'));
+		$data['user'] = $this->aauth->getUser();
 
-		echo $this->aauth->printErrors('<br />', true);
+		echo view('Templates/Header');
+		echo view('Account/Home', $data);
+		echo view('Templates/Footer');
 	}
 }

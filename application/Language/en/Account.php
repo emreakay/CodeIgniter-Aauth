@@ -25,6 +25,16 @@
  * @codeCoverageIgnore
  */
 return [
+   'homeText'                           => 'Account Details',
+   'homeLabelUsername'                  => 'Username',
+   'homeLabelEmail'                     => 'Email address',
+
+   'editHeader'                         => 'Edit Profile',
+   'editLabelUsername'                  => 'Username',
+   'editLabelEmail'                     => 'Email address',
+   'editLabelPassword'                  => 'Password',
+   'editLabelSubmit'                    => 'Save changes',
+
    'linkBackToLogin'                    => 'Back to Login',
    'linkLogin'                          => 'Login',
    'linkRegister'                       => 'Register new Account',

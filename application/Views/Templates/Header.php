@@ -18,7 +18,7 @@
 	</head>
 	<body id="page-top">
 		<nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-			<a class="navbar-brand mr-1" href="index.html">Aauth</a>
+			<a class="navbar-brand mr-1" href="<?= site_url() ?>">Aauth</a>
 			<ul class="navbar-nav ml-4">
 				<li class="nav-item">
 					<a href="<?= site_url() ?>">Home</a>
@@ -31,8 +31,8 @@
 							<i class="fas fa-user-circle fa-fw"></i>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-							<!-- <a class="dropdown-item" href="#">Settings</a> -->
-							<!-- <div class="dropdown-divider"></div> -->
+							<a class="dropdown-item" href="<?= site_url('account/edit') ?>">Edit Profile</a>
+							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="<?= site_url('account/logout') ?>">Logout</a>
 						</div>
 					</li>

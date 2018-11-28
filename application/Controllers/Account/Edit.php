@@ -23,11 +23,11 @@ use App\Libraries\Aauth;
 use Config\Services;
 
 /**
- * Aauth Accont/Register Controller
+ * Aauth Accont/Edit Controller
  *
  * @package CodeIgniter-Aauth
  */
-class Register extends Controller
+class Edit extends Controller
 {
 	/**
 	 * Constructor
@@ -38,6 +38,7 @@ class Register extends Controller
 		$this->aauth   = new Aauth();
 		$this->request = Services::request();
 		helper('form');
+		helper('aauth');
 	}
 
 	/**
@@ -47,9 +48,28 @@ class Register extends Controller
 	 */
 	public function index()
 	{
+		$userId = $this->aauth->getUserId();
+
 		if ($input = $this->request->getPost())
 		{
-			if (! $this->aauth->createUser($input['email'], $input['password'], $input['username']))
+			$email = $password = $username = null;
+
+			if (! empty($input['email']))
+			{
+				$email = $input['email'];
+			}
+
+			if (! empty($input['password']))
+			{
+				$password = $input['password'];
+			}
+
+			if (! empty($input['username']))
+			{
+				$username = $input['username'];
+			}
+
+			if (! $this->aauth->updateUser($userId, $email, $password, $username))
 			{
 				$data['errors'] = $this->aauth->printErrors('<br />', true);
 			}
@@ -60,12 +80,9 @@ class Register extends Controller
 		}
 
 		$data['useUsername'] = $this->config->loginUseUsername;
-		$data['cssFiles']    = [
-			'/assets/css/login.css'
-		];
 
-		echo view('Templates/HeaderBlank', $data);
-		echo view('Account/Register', $data);
-		echo view('Templates/FooterBlank', $data);
+		echo view('Templates/Header', $data);
+		echo view('Account/Edit', $data);
+		echo view('Templates/Footer', $data);
 	}
 }

@@ -18,9 +18,7 @@
 namespace App\Controllers\Account;
 
 use CodeIgniter\Controller;
-use Config\Aauth as AauthConfig;
 use App\Libraries\Aauth;
-use App\Models\Aauth\UserVariableModel as UserVariableModel;
 use Config\Services;
 
 /**
@@ -35,7 +33,6 @@ class Remind_password extends Controller
 	 */
 	public function __construct()
 	{
-		$this->config  = new AauthConfig();
 		$this->aauth   = new Aauth();
 		$this->request = Services::request();
 		helper('form');
