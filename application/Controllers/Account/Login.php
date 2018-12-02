@@ -57,7 +57,7 @@ class Login extends Controller
 			}
 			else
 			{
-				redirect()->to('/account');
+				$this->response->redirect('/account');
 			}
 		}
 

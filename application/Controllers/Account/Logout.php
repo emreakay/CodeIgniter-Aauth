@@ -44,6 +44,6 @@ class Logout extends Controller
 	public function index()
 	{
 		$this->aauth->logout();
-		redirect()->to('/');
+		$this->response->redirect('/');
 	}
 }
