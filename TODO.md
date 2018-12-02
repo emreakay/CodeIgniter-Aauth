@@ -8,6 +8,7 @@
 ### Login Tokens
   - Config for Cookie Name
   - Single Login (Only one Token per User)
+  - Remove Token on Update User Password?
 
 ### DDOS
   - Cookie usage?
@@ -17,12 +18,12 @@
   - Single Login mode (allow only one session per user) (#187)
   - Config for unified error message (Email or Password wrong vs Email wrong ...)
   - TOTP
+  - hCAPTCHA
   - reCAPTCHA
   - oAuth2
     - Facebook
     - Github
     - Twitter
-    - ...
 
 ### listUsers
   - remove * from select on list_users (#184)
