@@ -6,7 +6,7 @@ before_script:
   - mkdir aauth_temp
   - shopt -s extglob dotglob
   - mv !(aauth_temp) aauth_temp
-  - curl https://github.com/codeigniter4/CodeIgniter4/archive/v4.0.0-alpha.3.zip | unzip
+  - curl https://github.com/codeigniter4/CodeIgniter4/archive/v4.0.0-alpha.3.zip && unzip CodeIgniter4-4.0.0-alpha.3.zip 
   - mv aauth_temp/* CodeIgniter4-4.0.0-alpha.3
   - cd CodeIgniter4-4.0.0-alpha.3
   - composer install
