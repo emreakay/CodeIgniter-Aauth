@@ -29,7 +29,7 @@ test:
   artifacts:
     name: "coverage"
     paths:
-    - CodeIgniter4-4.0.0-alpha.3/build/coverage
+    - CodeIgniter4-4.0.0-alpha.3/build/coverage/
 
   script:
   - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
