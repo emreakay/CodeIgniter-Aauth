@@ -28,7 +28,7 @@ variables:
 test:
   artifacts:
     paths:
-    - build/logs/clover.xml
+    - CodeIgniter4-4.0.0-alpha.3/build/logs/clover.xml
 
   script:
   - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
