@@ -47,7 +47,7 @@ class Migrate extends Controller
 		}
 
 		echo view('Templates/Header');
-		echo view('Admin/Migrate', ['migrated' => $migrated]);
+		echo view('Admin/Migrate');
 		echo view('Templates/Footer');
 	}
 }

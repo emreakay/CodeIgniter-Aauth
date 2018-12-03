@@ -27,7 +27,7 @@ use Config\Aauth as AauthConfig;
  *
  * @codeCoverageIgnore
  */
-class Migration_create_default_admin extends Migration
+class Migration_create_default_users extends Migration
 {
 	/**
 	 * Create Table
@@ -38,12 +38,19 @@ class Migration_create_default_admin extends Migration
 	{
 		$config = new AauthConfig();
 		$data   = [
-			'username' => 'admin',
-			'email'    => 'admin@example.com',
-			'password' => password_hash('password123456', $config->passwordHashAlgo, $config->passwordHashOptions),
+			[
+				'username' => 'admin',
+				'email'    => 'admin@example.com',
+				'password' => password_hash('password123456', $config->passwordHashAlgo, $config->passwordHashOptions),
+			],
+			[
+				'username' => 'user',
+				'email'    => 'user@example.com',
+				'password' => password_hash('password123456', $config->passwordHashAlgo, $config->passwordHashOptions),
+			],
 		];
 
-		$this->db->table($config->dbTableUsers)->insert($data);
+		$this->db->table($config->dbTableUsers)->insertBatch($data);
 
 		$data = [
 			[
@@ -53,6 +60,10 @@ class Migration_create_default_admin extends Migration
 			[
 				'group_id' => 2,
 				'user_id'  => 1,
+			],
+			[
+				'group_id' => 2,
+				'user_id'  => 2,
 			],
 		];
 
