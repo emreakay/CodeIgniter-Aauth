@@ -8,7 +8,7 @@ before_script:
   - mv !(aauth_temp) aauth_temp
   - curl https://codeload.github.com/codeigniter4/CodeIgniter4/zip/v4.0.0-alpha.3 --output CI4.zip
   - unzip CI4.zip
-  - mv -r aauth_temp/* CodeIgniter4-4.0.0-alpha.3
+  - cp -r aauth_temp/* CodeIgniter4-4.0.0-alpha.3
   - cd CodeIgniter4-4.0.0-alpha.3
   - composer install
 
