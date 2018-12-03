@@ -27,7 +27,7 @@ variables:
 # If Xdebug was installed you can generate a coverage report and see code coverage metrics.
 test:
   after_script: 
-  - cd CodeIgniter4-4.0.0-alpha.3/build/
+  - cp -R CodeIgniter4-4.0.0-alpha.3/build/coverage coverage
   artifacts:
     name: "coverage"
     paths:
