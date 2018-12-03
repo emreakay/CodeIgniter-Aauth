@@ -14,27 +14,19 @@
             <directory>./tests</directory>
             <exclude>./tests/system</exclude>
         </testsuite>
-        <testsuite name="system">
-            <directory>./tests/system</directory>
-            <exclude>./tests/system/Database</exclude>
-        </testsuite>
         <testsuite name="database">
-            <directory>./tests/system/Database</directory>
+            <directory>./tests/database</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./system</directory>
+            <directory suffix=".php">./application</directory>
             <exclude>
-                <directory>./system/Debug/Toolbar/Views</directory>
-                <directory>./system/Pager/Views</directory>
-                <directory>./system/ThirdParty</directory>
-                <directory>./system/Validation/Views</directory>
-                <file>./system/bootstrap.php</file>
-                <file>./system/Commands/Sessions/Views/migration.tpl.php</file>
-                <file>./system/ComposerScripts.php</file>
-                <file>./system/Config/Routes.php</file>
+                <directory>./application/Config</directory>
+                <directory>./application/Filters</directory>
+                <directory>./application/Language</directory>
+                <directory>./application/Views</directory>
             </exclude>
         </whitelist>
     </filter>
@@ -42,4 +34,8 @@
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
     </logging>
+
+    <php>
+        <env name="app.baseURL" value="http://example.com"/>
+    </php>
 </phpunit>

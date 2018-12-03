@@ -1,0 +1,28 @@
+# This file is a template, and might need editing before it works on your project.
+# Select image from https://hub.docker.com/_/php/
+image: rejack/php7-testing-phpunit-ci4:7.2
+
+before_script:
+  - mkdir aauth_temp
+  - mv !(aauth_temp) aauth_temp
+  - curl https://github.com/codeigniter4/CodeIgniter4/archive/v4.0.0-alpha.3.tar.gz | tar xvz
+  - mv aauth_temp/* CodeIgniter4-4.0.0-alpha.3
+  - cd CodeIgniter4-4.0.0-alpha.3
+  - composer install
+
+# Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
+# See http://docs.gitlab.com/ce/ci/services/README.html for examples.
+services:
+  - mysql:5.7
+
+# Set any variables we need
+variables:
+  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
+  MYSQL_DATABASE: mysql_database
+  MYSQL_ROOT_PASSWORD: root
+
+# Run our tests
+# If Xdebug was installed you can generate a coverage report and see code coverage metrics.
+test:
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
