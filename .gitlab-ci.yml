@@ -10,7 +10,7 @@ before_script:
   - unzip CI4.zip
   - cp -r aauth_temp/* CodeIgniter4-4.0.0-alpha.3
   - cd CodeIgniter4-4.0.0-alpha.3
-  - echo "create database `aauth_v3_ci4_testing`" | mysql -u root -p root
+  - echo "create database `aauth_v3_ci4_testing`" | mysql -u root -proot -h 127.0.0.1 
   - composer install
 
 # Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
