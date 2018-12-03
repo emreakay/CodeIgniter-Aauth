@@ -23,6 +23,7 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./application</directory>
             <exclude>
+                <directory>./application/Controllers</directory>
                 <directory>./application/Config</directory>
                 <directory>./application/Filters</directory>
                 <directory>./application/Language</directory>
