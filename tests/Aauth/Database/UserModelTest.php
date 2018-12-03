@@ -1,15 +1,13 @@
 <?php namespace Tests\Aauth\Database;
 
-use Config\Services;
 use CodeIgniter\Test\CIDatabaseTestCase;
-use CodeIgniter\Database;
 use \App\Models\Aauth\UserModel as UserModel;
 
 class UserModelTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = APPPATH . 'Database/Migrations';
+	protected $basePath = TESTPATH . '../application' . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -17,7 +15,7 @@ class UserModelTest extends CIDatabaseTestCase
 	{
 	    parent::setUp();
 
-		$this->model = new UserModel();
+		$this->model = new UserModel($this->db);
 	}
 
 	//--------------------------------------------------------------------

@@ -1,7 +1,5 @@
 ###CI4###
 
-.env
-
 public/.htaccess
 public/favicon.ico
 public/index.php
