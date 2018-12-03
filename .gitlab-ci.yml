@@ -17,10 +17,6 @@ before_script:
 services:
   - mysql:5.7
 
-artifacts:
-  paths:
-    - build/logs/clover.xml
-
 # Set any variables we need
 variables:
   # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
@@ -30,5 +26,9 @@ variables:
 # Run our tests
 # If Xdebug was installed you can generate a coverage report and see code coverage metrics.
 test:
+  artifacts:
+    paths:
+    - build/logs/clover.xml
+
   script:
   - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never

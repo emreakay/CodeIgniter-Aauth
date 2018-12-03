@@ -8,7 +8,10 @@ public/index.php
 public/robots.txt
 
 system/
-tests/
+tests/_support
+tests/system
+tests/.htaccess
+tests/README.md
 vendor/
 writable/
 
