@@ -5,6 +5,7 @@ public/favicon.ico
 public/index.php
 public/robots.txt
 
+build/
 system/
 tests/_support
 tests/system
@@ -27,7 +28,6 @@ application/Filters/DebugToolbar.php
 application/Views/errors/
 application/Views/welcome_message.php
 application/Views/form.php
-
 
 ###OSX###
 
