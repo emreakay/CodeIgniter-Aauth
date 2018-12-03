@@ -10,12 +10,12 @@
         stopOnIncomplete="false"
         stopOnSkipped="false">
     <testsuites>
-        <testsuite name="app">
-            <directory>./tests</directory>
+        <testsuite name="aauth">
+            <directory>./tests/Aauth</directory>
             <exclude>./tests/system</exclude>
         </testsuite>
         <testsuite name="database">
-            <directory>./tests/database</directory>
+            <directory>./tests/Aauth/Database</directory>
         </testsuite>
     </testsuites>
 

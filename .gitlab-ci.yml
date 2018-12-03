@@ -20,7 +20,7 @@ services:
 # Set any variables we need
 variables:
   # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
-  MYSQL_DATABASE: mysql_database
+  MYSQL_DATABASE: aauth_v3_ci4_testing
   MYSQL_ROOT_PASSWORD: root
 
 # Run our tests
