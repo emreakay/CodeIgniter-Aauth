@@ -31,6 +31,8 @@ test:
   - cp -R CodeIgniter4-${CODEIGNITER_VERSION}/build/coverage coverage
 
   artifacts:
+    when: always
+    expire_in: 2 weeks
     name: "coverage"
     paths:
     - coverage/
