@@ -191,7 +191,7 @@ class UserModel extends Model
 
 		if ($user = $builder->get()->getFirstRow())
 		{
-			return $user['banned'];
+			return true;
 		}
 
 		return false;
@@ -246,15 +246,20 @@ class UserModel extends Model
 	 */
 	public function existsByUsername(string $username)
 	{
+		if (empty($username))
+		{
+			return FALSE;
+		}
+
 		$builder = $this->builder();
 
-		if ($this->tempUseSoftDeletes === true)
+		if ($this->tempUseSoftDeletes === TRUE)
 		{
 			$builder->where($this->deletedField, 0);
 		}
 
 		$builder->where('username', $username);
-		return ($builder->countAllResults() ? true : false);
+		return ($builder->countAllResults() ? TRUE : FALSE);
 	}
 
 	/**
