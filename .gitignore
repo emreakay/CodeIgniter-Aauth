@@ -29,6 +29,9 @@ application/Views/errors/
 application/Views/welcome_message.php
 application/Views/form.php
 
+composer.lock
+spark
+
 ###OSX###
 
 .DS_Store
