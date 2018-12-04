@@ -59,10 +59,9 @@ class AauthTest extends \CIUnitTestCase
 	{
         $session = $this->getInstance();
 
-	    // $this->library = new Aauth(NULL, $session);
+	    $this->library = new Aauth(NULL, $session);
 
-	    // var_dump(session());
-		// $this->assertFalse($this->library->isLoggedIn());
+		$this->assertFalse($this->library->isLoggedIn());
 	}
 
 	public function testTest()
