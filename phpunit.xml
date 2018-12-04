@@ -27,6 +27,7 @@
                 <directory>./application/Config</directory>
                 <directory>./application/Database</directory>
                 <directory>./application/Filters</directory>
+                <directory>./application/Helpers</directory>
                 <directory>./application/Language</directory>
                 <directory>./application/Views</directory>
             </exclude>

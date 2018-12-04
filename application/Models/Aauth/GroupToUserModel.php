@@ -88,8 +88,6 @@ class GroupToUserModel
 		{
 			$this->db = Database::connect($this->DBGroup);
 		}
-
-		$this->request = Services::request();
 	}
 
 	/**
@@ -221,12 +219,6 @@ class GroupToUserModel
 		}
 
 		$table = empty($table) ? $this->table : $table;
-
-		// Ensure we have a good db connection
-		if (! $this->db instanceof BaseConnection)
-		{
-			$this->db = Database::connect($this->DBGroup);
-		}
 
 		$this->builder = $this->db->table($table);
 

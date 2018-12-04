@@ -78,7 +78,7 @@ class PermToGroupModel
 	{
 		$this->config  = new AauthConfig();
 		$this->DBGroup = $this->config->dbProfile;
-		$this->table   = $this->config->dbTablePermToUser;
+		$this->table   = $this->config->dbTablePermToGroup;
 
 		if ($db instanceof ConnectionInterface)
 		{
@@ -88,8 +88,6 @@ class PermToGroupModel
 		{
 			$this->db = Database::connect($this->DBGroup);
 		}
-
-		$this->request = Services::request();
 	}
 
 	/**
@@ -221,12 +219,6 @@ class PermToGroupModel
 		}
 
 		$table = empty($table) ? $this->table : $table;
-
-		// Ensure we have a good db connection
-		if (! $this->db instanceof BaseConnection)
-		{
-			$this->db = Database::connect($this->DBGroup);
-		}
 
 		$this->builder = $this->db->table($table);
 

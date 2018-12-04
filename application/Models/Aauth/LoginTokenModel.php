@@ -19,7 +19,6 @@ namespace App\Models\Aauth;
 
 use Config\Aauth as AauthConfig;
 use Config\Database;
-use Config\Services;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\ConnectionInterface;
@@ -89,8 +88,6 @@ class LoginTokenModel
 		{
 			$this->db = Database::connect($this->DBGroup);
 		}
-
-		$this->request = Services::request();
 	}
 
 	/**
@@ -121,6 +118,7 @@ class LoginTokenModel
 		$builder = $this->builder();
 
 		$data['created_at'] = date('Y-m-d H:i:s');
+		$data['expires_at'] = date('Y-m-d H:i:s', strtotime($this->config->loginRemember));
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
 		return $builder->insert($data);
@@ -175,12 +173,6 @@ class LoginTokenModel
 		}
 
 		$table = empty($table) ? $this->table : $table;
-
-		// Ensure we have a good db connection
-		if (! $this->db instanceof BaseConnection)
-		{
-			$this->db = Database::connect($this->DBGroup);
-		}
 
 		$this->builder = $this->db->table($table);
 

@@ -94,10 +94,19 @@ class Aauth
 	 *
 	 * Prepares config & session variable.
 	 */
-	public function __construct()
+	public function __construct($config = NULL, $session = NULL)
 	{
-		$this->config  = new \Config\Aauth();
-		$this->session = \Config\Services::session();
+		if (is_null($config))
+		{
+			$config  = new \Config\Aauth();
+		}
+		$this->config = $config;
+
+		if (is_null($session))
+		{
+			$session = \Config\Services::session();
+		}
+		$this->session = $session;
 	}
 
 	//--------------------------------------------------------------------
