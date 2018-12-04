@@ -17,10 +17,10 @@
 
 namespace App\Libraries;
 
-use \App\Models\Aauth\UserModel as UserModel;
-use \App\Models\Aauth\LoginAttemptModel as LoginAttemptModel;
-use \App\Models\Aauth\LoginTokenModel as LoginTokenModel;
-use \App\Models\Aauth\UserVariableModel as UserVariableModel;
+use \App\Models\Aauth\UserModel;
+use \App\Models\Aauth\LoginAttemptModel;
+use \App\Models\Aauth\LoginTokenModel;
+use \App\Models\Aauth\UserVariableModel;
 
 /**
  * Aauth Library

@@ -260,7 +260,7 @@ class UserVariableModel
 	 */
 	public function asArray()
 	{
-		$this->tempReturnType = 'array';
+		$this->tempReturnType = $this->returnType = 'array';
 
 		return $this;
 	}
@@ -277,7 +277,7 @@ class UserVariableModel
 	 */
 	public function asObject(string $class = 'object')
 	{
-		$this->tempReturnType = $class;
+		$this->tempReturnType = $this->returnType = $class;
 
 		return $this;
 	}
@@ -315,11 +315,6 @@ class UserVariableModel
 		}
 
 		$table = empty($table) ? $this->table : $table;
-
-		if (! $this->db instanceof BaseConnection)
-		{
-			$this->db = Database::connect($this->DBGroup);
-		}
 
 		$this->builder = $this->db->table($table);
 
