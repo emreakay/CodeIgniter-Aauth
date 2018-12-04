@@ -1,13 +1,10 @@
 <?php namespace Tests\Aauth\Database;
 
 use CodeIgniter\Test\CIDatabaseTestCase;
-use CodeIgniter\Test\ReflectionHelper;
 use App\Models\Aauth\UserModel as UserModel;
 
 class UserModelTest extends CIDatabaseTestCase
 {
-	use ReflectionHelper;
-
 	protected $refresh = true;
 
 	protected $basePath = TESTPATH . '../application' . 'Database/Migrations';
@@ -32,14 +29,14 @@ class UserModelTest extends CIDatabaseTestCase
 	public function testUpdateLastLogin()
 	{
 		$this->model->updateLastLogin(1);
-		$user = $this->model->find(1);
+		$user = $this->model->asArray()->find(1);
 		$this->assertTrue((strtotime("-5 seconds") < strtotime($user['last_login']) && strtotime("+5 seconds") > strtotime($user['last_login'])) && strtotime("-5 seconds") < strtotime($user['last_activity']) && strtotime("+5 seconds") > strtotime($user['last_activity']));
 	}
 
 	public function testUpdateLastActivity()
 	{
 		$this->model->updateLastActivity(1);
-		$user = $this->model->find(1);
+		$user = $this->model->asArray()->find(1);
 		$this->assertTrue(strtotime("-5 seconds") < strtotime($user['last_activity']) && strtotime("+5 seconds") > strtotime($user['last_activity']));
 	}
 
@@ -85,11 +82,29 @@ class UserModelTest extends CIDatabaseTestCase
 		$this->assertFalse($this->model->existsByUsername(""));
 	}
 
-	public function testHashPassword()
+	public function testHashPasswordFilled()
 	{
-		$userOld = $this->model->find(1);
+		$userOld = $this->model->asArray()->find(1);
 		$this->model->update(1, ['id' => 1, 'password' => 'password123456']);
-		$userNew = $this->model->find(1);
+		$userNew = $this->model->asArray()->find(1);
 		$this->assertTrue($userOld['password'] != $userNew['password'] && $userNew['password'] != 'password123456');
+	}
+
+	public function testHashPasswordNotSet()
+	{
+		$userOld = $this->model->asArray()->find(1);
+		$this->model->update(1, ['id' => 1, 'username' => 'admin']);
+		$userNew = $this->model->asArray()->find(1);
+		$this->assertEquals($userOld['password'], $userNew['password']);
+	}
+
+	public function testLoginUseUsernameDummy()
+	{
+		$config = new \Config\Aauth();
+		$config->loginUseUsername = TRUE;
+
+		$this->model = new UserModel($this->db, null, $config);
+		$newUser = $this->model->insert(['email' => 'test@test.local', 'password' => 'password123456']);
+		$this->assertFalse($newUser);
 	}
 }

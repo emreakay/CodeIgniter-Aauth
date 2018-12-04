@@ -85,10 +85,11 @@ class UserModel extends Model
 	/**
 	 * Constructor
 	 */
-	public function __construct()
+	public function __construct($db = NULL, $validation = NULL, $config = NULL)
 	{
 		parent::__construct();
-		$this->config  = new AauthConfig();
+
+		$this->config  = (object) array_merge((array) new AauthConfig(), (array) $config);
 		$this->table   = $this->config->dbTableUsers;
 		$this->DBGroup = $this->config->dbProfile;
 
