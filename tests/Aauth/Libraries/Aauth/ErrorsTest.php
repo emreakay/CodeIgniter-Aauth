@@ -1,4 +1,4 @@
-<?php namespace Tests\Aauth\Libraries;
+<?php namespace Tests\Aauth\Libraries\Aauth;
 
 use Config\Logger;
 use Config\Services;
@@ -11,7 +11,7 @@ use App\Libraries\Aauth;
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-class AauthTest extends \CIUnitTestCase
+class ErrorsTest extends \CIUnitTestCase
 {
     public function setUp()
     {
@@ -52,4 +52,22 @@ class AauthTest extends \CIUnitTestCase
     }
 
 	//--------------------------------------------------------------------
+
+	public function testErrors()
+	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$this->assertCount(0, $this->library->getErrorsArray());
+		$this->library->error('test message 1');
+		$this->assertCount(1, $this->library->getErrorsArray());
+	}
+
+	public function testErrorsFlash()
+	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$this->assertCount(0, $this->library->errors);
+		$this->library->error('test message 1', true);
+		$this->assertCount(1, $this->session->errors);
+	}
 }

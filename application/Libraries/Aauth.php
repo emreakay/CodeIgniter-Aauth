@@ -94,7 +94,7 @@ class Aauth
 	 *
 	 * Prepares config & session variable.
 	 */
-	public function __construct($config = NULL, $session = NULL)
+	public function __construct($config = null, $session = null)
 	{
 		if (is_null($config))
 		{
