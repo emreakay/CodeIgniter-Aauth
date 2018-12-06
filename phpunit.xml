@@ -21,16 +21,9 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./application</directory>
-            <exclude>
-                <directory>./application/Controllers</directory>
-                <directory>./application/Config</directory>
-                <directory>./application/Database</directory>
-                <directory>./application/Filters</directory>
-                <directory>./application/Helpers</directory>
-                <directory>./application/Language</directory>
-                <directory>./application/Views</directory>
-            </exclude>
+            <directory suffix=".php">./application/Libraries</directory>
+            <directory suffix=".php">./application/Models</directory>
+            <file>./application/Config/Aauth.php</file>
         </whitelist>
     </filter>
 

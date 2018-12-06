@@ -52,4 +52,13 @@ class AauthTest extends \CIUnitTestCase
     }
 
 	//--------------------------------------------------------------------
+
+	public function testIsLoggedIn()
+	{
+        $session = $this->getInstance();
+
+	    $this->library = new Aauth(NULL, $session);
+
+		$this->assertFalse($this->library->isLoggedIn());
+	}
 }
