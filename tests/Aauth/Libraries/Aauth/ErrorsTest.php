@@ -55,8 +55,15 @@ class ErrorsTest extends \CIUnitTestCase
 
 	public function testErrors()
 	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
+	    $this->library = new Aauth(NULL, TRUE);
+		$this->assertCount(0, $this->library->getErrorsArray());
+		$this->library->error('test message 1');
+		$this->assertCount(1, $this->library->getErrorsArray());
+	}
+
+	public function testgetErrorsArray()
+	{
+	    $this->library = new Aauth(NULL, TRUE);
 		$this->assertCount(0, $this->library->getErrorsArray());
 		$this->library->error('test message 1');
 		$this->assertCount(1, $this->library->getErrorsArray());
@@ -66,7 +73,7 @@ class ErrorsTest extends \CIUnitTestCase
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
-		$this->assertFalse($session->get('errors'));
+		$this->assertNull($session->get('errors'));
 		$this->library->error('test message 1', true);
 		$this->assertCount(1, $session->get('errors'));
 	}
