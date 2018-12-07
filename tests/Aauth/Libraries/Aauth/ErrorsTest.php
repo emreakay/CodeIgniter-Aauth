@@ -69,13 +69,21 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1','test message 2'], $this->library->getErrorsArray());
 	}
 
-	public function testPrintErrors()
+	public function testPrintErrorsReturn()
 	{
 	    $this->library = new Aauth(NULL, TRUE);
 		$this->library->error('test message 1');
 		$this->assertEquals('test message 1', $this->library->printErrors('<br />', true));
 		$this->library->error('test message 2');
 		$this->assertEquals('test message 1<br />test message 2', $this->library->printErrors('<br />', true));
+	}
+
+	public function testPrintErrorsEcho()
+	{
+	    $this->library = new Aauth(NULL, TRUE);
+		$this->library->error('test message 1');
+ 		$this->library->printErrors('<br />');
+ 		$this->expectOutputString('test message 1');
 	}
 
 	public function testClearErrors()
@@ -86,18 +94,6 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1'], $session->get('errors'));
 		$this->library->clearErrors();
 		$this->assertNull($session->get('errors'));
-	}
-
-	public function testKeepErrorsInclude()
-	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
-		$this->library->error('test message 1 nonFlash');
-		$this->assertNull($session->get('errors'));
-		$this->library->error('test message 1 Flash', true);
-		$this->assertEquals(['test message 1 Flash'], $session->get('errors'));
-		$this->library->keepErrors(true);
-		$this->assertEquals(['test message 1 Flash', 'test message 1 nonFlash'], $session->get('errors'));
 	}
 
 	public function testErrorsFlash()
