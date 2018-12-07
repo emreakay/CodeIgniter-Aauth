@@ -100,13 +100,15 @@ class Aauth
 		{
 			$config  = new \Config\Aauth();
 		}
-		$this->config = $config;
 
 		if (is_null($session))
 		{
 			$session = \Config\Services::session();
 		}
+
+		$this->config  = $config;
 		$this->session = $session;
+		$this->session->start();
 	}
 
 	//--------------------------------------------------------------------
