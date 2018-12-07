@@ -66,8 +66,8 @@ class ErrorsTest extends \CIUnitTestCase
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
-		$this->assertCount(0, $this->session->get('errors'));
+		$this->assertCount(0, $session->get('errors'));
 		$this->library->error('test message 1', true);
-		$this->assertCount(1, $this->session->get('errors'));
+		$this->assertCount(1, $session->get('errors'));
 	}
 }
