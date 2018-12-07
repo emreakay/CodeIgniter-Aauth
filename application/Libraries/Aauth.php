@@ -250,6 +250,8 @@ class Aauth
 	{
 		$userModel = new UserModel();
 		$user      = $userModel->limit($limit, $offset);
+
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
 		// eanbool $group_par = null,
 
 		if (is_null($includeBanneds))
@@ -343,6 +345,8 @@ class Aauth
 		$userModel         = new UserModel();
 		$userVariableModel = new UserVariableModel();
 
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
+
 		if (! $userId)
 		{
 			$userId = $this->session->id;
@@ -394,6 +398,32 @@ class Aauth
 		}
 
 		return false;
+	}
+
+	/**
+	 * Is banned
+	 *
+	 * @param integer $userId User id
+	 *
+	 * @return boolean
+	 */
+	public function isBanned(int $userId)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = $this->session->id;
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		return $userModel->isBanned($userId);
 	}
 
 	/**
