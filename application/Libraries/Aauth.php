@@ -971,12 +971,12 @@ class Aauth
 	 *
 	 * Add message to info array and set flash data
 	 *
-	 * @param string  $message   Message to add to infos array
-	 * @param boolean $flashdata Whether add $message to CI flashdata (deflault: FALSE)
+	 * @param string|array  $message   Message to add to infos array
+	 * @param boolean       $flashdata Whether add $message to CI flashdata (deflault: FALSE)
 	 *
 	 * @return void
 	 */
-	public function info(string $message, bool $flashdata = null)
+	public function info($message, bool $flashdata = null)
 	{
 		if (is_array($message))
 		{
