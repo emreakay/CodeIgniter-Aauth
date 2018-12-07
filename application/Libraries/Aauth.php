@@ -888,8 +888,7 @@ class Aauth
 				$this->flashErrors[] = $message;
 			}
 
-			$this->session->set('errors', $this->flashErrors);
-			$this->session->setFlashdata('errors');
+			$this->session->setFlashdata('errors', $this->flashErrors);
 		}
 	}
 
@@ -913,8 +912,7 @@ class Aauth
 		}
 
 		$this->flashErrors = array_merge($this->flashErrors, (array)$this->session->getFlashdata('errors'));
-		$this->session->set('errors', $this->flashErrors);
-		$this->session->setFlashdata('errors');
+		$this->session->setFlashdata('errors', $this->flashErrors);
 	}
 
 	/**
@@ -1000,8 +998,7 @@ class Aauth
 				$this->flashInfos[] = $message;
 			}
 
-			$this->session->set('infos', $this->flashInfos);
-			$this->session->setFlashdata('infos');
+			$this->session->setFlashdata('infos', $this->flashInfos);
 		}
 	}
 
@@ -1025,8 +1022,7 @@ class Aauth
 		}
 
 		$this->flashInfos = array_merge($this->flashInfos, (array)$this->session->getFlashdata('infos'));
-		$this->session->set('infos', $this->flashInfos);
-		$this->session->setFlashdata('infos');
+		$this->session->setFlashdata('infos', $this->flashInfos);
 	}
 
 	/**
