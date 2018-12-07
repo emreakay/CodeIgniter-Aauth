@@ -76,6 +76,6 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertNull($session->get('errors'));
 		$this->library->error('test message 1', true);
 		print_r($session->get('errors'));
-		$this->assertCount(1, $session->get('errors'));
+		$this->assertEquals(['test message 1'], $session->get('errors'));
 	}
 }

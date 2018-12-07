@@ -108,7 +108,6 @@ class Aauth
 
 		$this->config  = $config;
 		$this->session = $session;
-		$this->session->start();
 	}
 
 	//--------------------------------------------------------------------
