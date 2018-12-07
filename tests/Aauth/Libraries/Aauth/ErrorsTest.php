@@ -17,6 +17,7 @@ class ErrorsTest extends \CIUnitTestCase
     {
         parent::setUp();
 
+	    $this->library = new Aauth(null, true);
         $_COOKIE = [];
         $_SESSION = [];
     }
@@ -55,7 +56,6 @@ class ErrorsTest extends \CIUnitTestCase
 
 	public function testErrors()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->assertCount(0, $this->library->getErrorsArray());
 		$this->library->error('test message 1');
 		$this->assertEquals(['test message 1'], $this->library->getErrorsArray());
@@ -63,7 +63,6 @@ class ErrorsTest extends \CIUnitTestCase
 
 	public function testErrorsArray()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->assertCount(0, $this->library->getErrorsArray());
 		$this->library->error(['test message 1','test message 2']);
 		$this->assertEquals(['test message 1','test message 2'], $this->library->getErrorsArray());
@@ -71,7 +70,6 @@ class ErrorsTest extends \CIUnitTestCase
 
 	public function testPrintErrorsReturn()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->library->error('test message 1');
 		$this->assertEquals('test message 1', $this->library->printErrors('<br />', true));
 		$this->library->error('test message 2');
@@ -80,7 +78,6 @@ class ErrorsTest extends \CIUnitTestCase
 
 	public function testPrintErrorsEcho()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->library->error('test message 1');
  		$this->library->printErrors('<br />');
  		$this->expectOutputString('test message 1');

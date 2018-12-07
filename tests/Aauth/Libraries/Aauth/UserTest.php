@@ -1,5 +1,10 @@
 <?php namespace Tests\Aauth\Libraries\Aauth;
 
+use Config\Logger;
+use Config\Services;
+use Tests\Support\Log\TestLogger;
+use Tests\Support\Session\MockSession;
+use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 
@@ -19,6 +24,9 @@ class UserTest extends CIDatabaseTestCase
     {
         parent::setUp();
 
+	    $this->library = new Aauth(null, true);
+        $_COOKIE = [];
+        $_SESSION = [];
     }
 
     public function tearDown()
@@ -26,11 +34,35 @@ class UserTest extends CIDatabaseTestCase
 
     }
 
+    protected function getInstance($options=[])
+    {
+        $defaults = [
+			'sessionDriver' => 'CodeIgniter\Session\Handlers\FileHandler',
+			'sessionCookieName' => 'ci_session',
+			'sessionExpiration' => 7200,
+			'sessionSavePath' => 'null',
+			'sessionMatchIP' => false,
+			'sessionTimeToUpdate' => 300,
+			'sessionRegenerateDestroy' => false,
+			'cookieDomain' => '',
+			'cookiePrefix' => '',
+			'cookiePath' => '/',
+			'cookieSecure' => false,
+        ];
+
+        $config = (object)$defaults;
+
+        $session = new MockSession(new FileHandler($config, Services::request()->getIPAddress()), $config);
+        $session->setLogger(new TestLogger(new Logger()));
+        $session->start();
+
+        return $session;
+    }
+
 	//--------------------------------------------------------------------
 
 	public function testUpdateUser()
 	{
-	    $this->library = new Aauth(null, true);
 	    $userPre = $this->library->getUser(2);
     	$this->library->updateUser(2, 'user1@example.com', 'password987654', 'user1');
     	$user = $this->library->getUser(2);
@@ -39,11 +71,12 @@ class UserTest extends CIDatabaseTestCase
     	$this->library->updateUser(2, null, null, 'user1');
     	$userAfter = $this->library->getUser(2);
     	$this->assertEquals($user['username'], $userAfter['username']);
+    	$this->assertFalse($this->library->updateUser(2, 'asasdfasd'));
+    	$this->assertFalse($this->library->updateUser(2));
 	}
 
 	public function testDeleteUser()
 	{
-	    $this->library = new Aauth(null, true);
 	    $users = $this->library->listUsers();
 		$this->assertCount(2, $users);
 		$this->library->deleteUser(2);
@@ -54,39 +87,51 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testListUsers()
 	{
-	    $this->library = new Aauth(null, true);
 	    $users = $this->library->listUsers();
 		$this->assertCount(2, $users);
+		$this->assertEquals('admin', $users[0]['username']);
+		$this->assertEquals('user', $users[1]['username']);
+	    $usersOrderBy = $this->library->listUsers(0, 0, null, 'id DESC');
+		$this->assertEquals('user', $usersOrderBy[0]['username']);
+		$this->assertEquals('admin', $usersOrderBy[1]['username']);
 	}
 
 	public function testGetUser()
 	{
-	    $this->library = new Aauth(null, true);
 	    $user = $this->library->getUser(1);
 		$this->assertEquals('1', $user['id']);
 		$this->assertEquals('admin', $user['username']);
 		$this->assertEquals('admin@example.com', $user['email']);
-	}
+		$this->assertFalse($this->library->getUser(99));
 
-	public function testGetUserUserVars()
-	{
-	    $this->library = new Aauth(null, true);
-	    $user = $this->library->getUser(1, true);
-		$this->assertInternalType('array', $user['variables']);
+	    $userVar = $this->library->getUser(1, true);
+		$this->assertInternalType('array', $userVar['variables']);
+
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$session->set('user', [
+			'id'       => 1,
+		]);
+	    $userIdNone = $this->library->getUser();
+		$this->assertEquals('admin', $userIdNone['username']);
 	}
 
 	public function testGetUserId()
 	{
-	    $this->library = new Aauth(null, true);
 	    $userIdEmail = $this->library->getUserId('admin@example.com');
 		$this->assertEquals('1', $userIdEmail);
-	    // $userIdNone = $this->library->getUserId();
-		// $this->assertEquals('1', $userIdNone);
+
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$session->set('user', [
+			'id'       => 1,
+		]);
+	    $userIdNone = $this->library->getUserId();
+		$this->assertEquals('1', $userIdNone);
 	}
 
 	public function testBanUser()
 	{
-	    $this->library = new Aauth(null, true);
 		$this->assertFalse($this->library->isBanned(1));
 	    $this->library->banUser(1);
 		$this->assertTrue($this->library->isBanned(1));
@@ -94,7 +139,6 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testUnbanUser()
 	{
-	    $this->library = new Aauth(null, true);
 	    $this->library->banUser(1);
 		$this->assertTrue($this->library->isBanned(1));
 	    $this->library->unbanUser(1);

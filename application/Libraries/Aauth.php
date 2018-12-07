@@ -261,7 +261,7 @@ class Aauth
 
 		if (! is_null($orderBy))
 		{
-			$user->orderBy($orderBy[0], $orderBy[1]);
+			$user->orderBy($orderBy);
 		}
 
 		return $user->findAll();
@@ -349,7 +349,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->id;
+			$userId = $this->session->user['id'];
 		}
 
 		if ($user = $userModel->find($userId))
@@ -385,7 +385,7 @@ class Aauth
 
 		if (! $email)
 		{
-			$where = ['id' => $this->session->id];
+			$where = ['id' => $this->session->user['id']];
 		}
 		else
 		{
@@ -413,7 +413,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->id;
+			$userId = $this->session->user['id'];
 		}
 
 		if (! $userModel->existsById($userId))
@@ -439,7 +439,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->id;
+			$userId = $this->session->user['id'];
 		}
 
 		if (! $userModel->existsById($userId))
@@ -465,7 +465,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->id;
+			$userId = $this->session->user['id'];
 		}
 
 		if (! $userModel->existsById($userId))
@@ -740,7 +740,7 @@ class Aauth
 			$data['username'] = $user['username'];
 			$data['email']    = $user['email'];
 			$data['loggedIn'] = true;
-			$this->session->set($data);
+			$this->session->set('user', $data);
 
 			if ($remember)
 			{
@@ -813,7 +813,7 @@ class Aauth
 
 		if ($user = $userModel->get()->getFirstRow())
 		{
-			$this->session->set([
+			$this->session->set('user', [
 				'id'       => $user->id,
 				'username' => $user->username,
 				'email'    => $user->email,
