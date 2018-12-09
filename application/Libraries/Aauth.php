@@ -643,7 +643,7 @@ class Aauth
 				return false;
 			}
 
-			if ($user = $userModel->where('username', $identifier)->first())
+			if (! $user = $userModel->where('username', $identifier)->first())
 			{
 				$this->error(lang('Aauth.notFoundUser'));
 
