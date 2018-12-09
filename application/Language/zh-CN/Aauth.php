@@ -46,7 +46,7 @@ return [
    'notVerified'            => '您的帐户尚未验证，请检查信箱并验证帐户。',
 
    'loginFailedEmail'       => '电邮地址和密码不符',
-   'loginFailedName'        => '用户名和密码不符',
+   'loginFailedUsername'        => '用户名和密码不符',
    'loginFailedAll'         => '电邮地址、用户名和或密码不符',
    'loginAttemptsExceeded'  => '您已达到登入尝试限制数，您的帐户已被锁住。',
 

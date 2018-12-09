@@ -44,7 +44,7 @@ return [
    'notVerified'            => 'Tu cuenta aún no ha sido verificada, por favor revisa tu correo electrónico y verifica tu cuenta.',
 
    'loginFailedEmail'       => 'El Correo electrónico y contraseña no coinciden.',
-   'loginFailedName'        => 'El Nombre de usuario y contraseña no coinciden.',
+   'loginFailedUsername'        => 'El Nombre de usuario y contraseña no coinciden.',
    'loginFailedAll'         => 'El Correo electrónico, nombre de usuario y contraseña no coinciden.',
    'loginAttemptsExceeded'  => 'Has excedido el número de intentos de inicio de sesión, tu cuenta ha sido bloqueada.',
 

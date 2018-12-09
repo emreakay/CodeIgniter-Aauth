@@ -151,7 +151,7 @@
   - aauth_error_no_access => notVerified
   - aauth_error_account_not_verified => notVerified
   - aauth_error_login_failed_email => loginFailedEmail
-  - aauth_error_login_failed_name => loginFailedName
+  - aauth_error_login_failed_name => loginFailedUsername
   - aauth_error_login_failed_all => loginFailedAll
   - aauth_error_login_attempts_exceeded => loginAttemptsExceeded
   - aauth_error_email_invalid => invalidEmail

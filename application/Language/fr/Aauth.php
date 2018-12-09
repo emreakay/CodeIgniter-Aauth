@@ -44,7 +44,7 @@ return [
    'notVerified'            => 'Votre compte n\'a pas été confirmé. Merci de vérifier vos email et de confirmer votre compte.',
 
    'loginFailedEmail'       => 'L\'adresse email et le mot de passe ne correspondent pas.',
-   'loginFailedName'        => 'Le nom d\'utilisateur et le mot de passe ne correspondent pas.',
+   'loginFailedUsername'        => 'Le nom d\'utilisateur et le mot de passe ne correspondent pas.',
    'loginFailedAll'         => 'L\'adresse email, le nom d\'utilisateur ou le mot de passe ne correspondent pas.',
    'loginAttemptsExceeded'  => 'Vous avez dépassé le nombre de tentatives de connexion autorisées, votre compte a été bloqué.',
 

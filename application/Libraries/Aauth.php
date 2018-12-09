@@ -637,7 +637,7 @@ class Aauth
 		{
 			if (! $identifier || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
-				$this->error(lang('Aauth.loginFailedName'));
+				$this->error(lang('Aauth.loginFailedUsername'));
 
 				return false;
 			}

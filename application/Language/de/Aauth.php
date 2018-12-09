@@ -44,7 +44,7 @@ return [
    'notVerified'            => 'Dein Account wurde bisher nicht bestätigt. Bitte prüfe deine E-Mails und bestätige deine Registrierung.',
 
    'loginFailedEmail'       => 'E-Mail-Adresse oder Passwort falsch.',
-   'loginFailedName'        => 'Benutzername oder Passwort falsch.',
+   'loginFailedUsername'        => 'Benutzername oder Passwort falsch.',
    'loginFailedAll'         => 'E-Mail-Adresse, Benutzername oder Passwort falsch.',
    'loginAttemptsExceeded'  => 'Du hast die maximale Anzahl Login versuche erreicht, dein Account wurde gesperrt.',
 

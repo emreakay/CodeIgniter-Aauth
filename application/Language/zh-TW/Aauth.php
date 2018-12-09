@@ -46,7 +46,7 @@ return [
    'notVerified'            => '您的帳號尚未驗證，請檢查信箱並驗證帳號。',
 
    'loginFailedEmail'       => '電郵地址和密碼不符',
-   'loginFailedName'        => '用戶名和密碼不符',
+   'loginFailedUsername'        => '用戶名和密碼不符',
    'loginFailedAll'         => '電郵地址、用戶名和或密碼不符',
    'loginAttemptsExceeded'  => '您已達到登入嘗試限制數，您的帳號已被鎖住。',
 

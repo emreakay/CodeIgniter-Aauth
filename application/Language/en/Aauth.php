@@ -44,7 +44,7 @@ return [
    'notVerified'            => 'Your account has not been verified. Please check your email and verify your account.',
 
    'loginFailedEmail'       => 'Email Address and Password do not match.',
-   'loginFailedName'        => 'Username and Password do not match.',
+   'loginFailedUsername'        => 'Username and Password do not match.',
    'loginFailedAll'         => 'Email, Username or Password do not match.',
    'loginAttemptsExceeded'  => 'You have exceeded your login attempts, your account has now been locked.',
 
