@@ -165,7 +165,6 @@ class LoginTest extends CIDatabaseTestCase
 	    $this->library->login('admina@example.com', 'password123456');
 	    $this->library->login('admina@example.com', 'password123456');
 	    $this->library->login('admina@example.com', 'password123456');
-	    $this->library->login('admina@example.com', 'password123456');
 	    $this->assertFalse($this->library->login('admina@example.com', 'password123456'));
 	    $this->assertEquals(lang('Aauth.loginAttemptsExceeded'), $this->library->getErrorsArray()[0]);
     }

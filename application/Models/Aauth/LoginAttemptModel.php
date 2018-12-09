@@ -150,7 +150,7 @@ class LoginAttemptModel
 
 			$builder->update($data, ['id' => $row->id]);
 
-			if ($data['count'] > $this->config->loginAttemptLimit)
+			if ($data['count'] >= $this->config->loginAttemptLimit)
 			{
 				return false;
 			}
