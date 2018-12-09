@@ -90,6 +90,7 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->library->error('test message 1', true);
 		$this->assertEquals(['test message 1'], $session->getFlashdata('errors'));
 		$this->library->clearErrors();
+		$this->assertEquals([], $this->library->getErrorsArray());
 		$this->assertNull($session->getFlashdata('errors'));
 	}
 
@@ -112,7 +113,20 @@ class ErrorsTest extends \CIUnitTestCase
         $session->start();
 		$this->library->keepErrors();
         $session->start();
-		$this->assertEquals(['test message 1'], $this->library->getErrorsArray());
+		$this->assertEquals(['test message 1'], $session->getFlashdata('errors'));
+	}
+
+	public function testErrorsFlashKeepMerge()
+	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$this->assertNull($session->getFlashdata('errors'));
+		$this->library->error('test message 1 Flash', true);
+        $session->start();
+		$this->library->error('test message 1 NonFlash');
+		$this->library->keepErrors(true);
+        $session->start();
+		$this->assertEquals(['test message 1 Flash', 'test message 1 NonFlash'], $session->getFlashdata('errors'));
 	}
 
 	public function testErrorsFlashArray()

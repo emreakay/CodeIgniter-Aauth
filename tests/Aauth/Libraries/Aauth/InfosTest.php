@@ -17,6 +17,7 @@ class InfosTest extends \CIUnitTestCase
     {
         parent::setUp();
 
+	    $this->library = new Aauth(null, true);
         $_COOKIE = [];
         $_SESSION = [];
     }
@@ -55,7 +56,6 @@ class InfosTest extends \CIUnitTestCase
 
 	public function testInfos()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->assertCount(0, $this->library->getInfosArray());
 		$this->library->info('test message 1');
 		$this->assertEquals(['test message 1'], $this->library->getInfosArray());
@@ -63,7 +63,6 @@ class InfosTest extends \CIUnitTestCase
 
 	public function testInfosArray()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->assertCount(0, $this->library->getInfosArray());
 		$this->library->info(['test message 1','test message 2']);
 		$this->assertEquals(['test message 1','test message 2'], $this->library->getInfosArray());
@@ -71,7 +70,6 @@ class InfosTest extends \CIUnitTestCase
 
 	public function testPrintInfosReturn()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->library->info('test message 1');
 		$this->assertEquals('test message 1', $this->library->printInfos('<br />', true));
 		$this->library->info('test message 2');
@@ -80,7 +78,6 @@ class InfosTest extends \CIUnitTestCase
 
 	public function testPrintInfosEcho()
 	{
-	    $this->library = new Aauth(NULL, TRUE);
 		$this->library->info('test message 1');
  		$this->library->printInfos('<br />');
  		$this->expectOutputString('test message 1');
@@ -93,6 +90,7 @@ class InfosTest extends \CIUnitTestCase
 		$this->library->info('test message 1', true);
 		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
 		$this->library->clearInfos();
+		$this->assertEquals([], $this->library->getInfosArray());
 		$this->assertNull($session->getFlashdata('infos'));
 	}
 
@@ -102,7 +100,33 @@ class InfosTest extends \CIUnitTestCase
 	    $this->library = new Aauth(NULL, $session);
 		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info('test message 1', true);
+        $session->start();
 		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
+	}
+
+	public function testInfosFlashKeep()
+	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$this->assertNull($session->getFlashdata('infos'));
+		$this->library->info('test message 1', true);
+        $session->start();
+		$this->library->keepInfos();
+        $session->start();
+		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
+	}
+
+	public function testInfosFlashKeepMerge()
+	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$this->assertNull($session->getFlashdata('infos'));
+		$this->library->info('test message 1 Flash', true);
+        $session->start();
+		$this->library->info('test message 1 NonFlash');
+		$this->library->keepInfos(true);
+        $session->start();
+		$this->assertEquals(['test message 1 Flash', 'test message 1 NonFlash'], $session->getFlashdata('infos'));
 	}
 
 	public function testInfosFlashArray()
@@ -111,6 +135,7 @@ class InfosTest extends \CIUnitTestCase
 	    $this->library = new Aauth(NULL, $session);
 		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info(['test message 1','test message 2'], true);
+        $session->start();
 		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('infos'));
 	}
 }
