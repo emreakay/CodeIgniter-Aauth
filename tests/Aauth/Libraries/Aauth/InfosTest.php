@@ -91,26 +91,26 @@ class InfosTest extends \CIUnitTestCase
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
 		$this->library->info('test message 1', true);
-		$this->assertEquals(['test message 1'], $session->get('infos'));
+		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
 		$this->library->clearInfos();
-		$this->assertNull($session->get('infos'));
+		$this->assertNull($session->getFlashdata('infos'));
 	}
 
 	public function testInfosFlash()
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
-		$this->assertNull($session->get('infos'));
+		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info('test message 1', true);
-		$this->assertEquals(['test message 1'], $session->get('infos'));
+		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
 	}
 
 	public function testInfosFlashArray()
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
-		$this->assertNull($session->get('infos'));
+		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info(['test message 1','test message 2'], true);
-		$this->assertEquals(['test message 1','test message 2'], $session->get('infos'));
+		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('infos'));
 	}
 }
