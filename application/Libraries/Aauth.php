@@ -840,8 +840,7 @@ class Aauth
 	public function isLoggedIn()
 	{
 		helper('cookie');
-
-		if (session('loggedIn'))
+		if (isset(session('user')['loggedIn']))
 		{
 			return true;
 		}
