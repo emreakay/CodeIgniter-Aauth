@@ -73,6 +73,7 @@ class UserTest extends CIDatabaseTestCase
     	$this->assertEquals($user['username'], $userAfter['username']);
     	$this->assertFalse($this->library->updateUser(2, 'asasdfasd'));
     	$this->assertFalse($this->library->updateUser(2));
+    	$this->assertFalse($this->library->updateUser(99));
 	}
 
 	public function testDeleteUser()
@@ -128,6 +129,7 @@ class UserTest extends CIDatabaseTestCase
 		]);
 	    $userIdNone = $this->library->getUserId();
 		$this->assertEquals('1', $userIdNone);
+		$this->assertFalse($this->library->getUserId('none@example.com'));
 	}
 
 	public function testBanUser()
@@ -135,6 +137,8 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->isBanned(1));
 	    $this->library->banUser(1);
 		$this->assertTrue($this->library->isBanned(1));
+		$this->assertFalse($this->library->banUser(99));
+		$this->assertCount(1, $this->library->getErrorsArray());
 	}
 
 	public function testUnbanUser()
@@ -143,5 +147,27 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->isBanned(1));
 	    $this->library->unbanUser(1);
 		$this->assertFalse($this->library->isBanned(1));
+		$this->assertFalse($this->library->unbanUser(99));
+		$this->assertCount(1, $this->library->getErrorsArray());
+	}
+
+
+	public function testUnbanUserSession()
+	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+		$session->set('user', [
+			'id'       => 1,
+		]);
+	    $this->library->banUser();
+		$this->assertTrue($this->library->isBanned());
+	    $this->library->unbanUser();
+		$this->assertFalse($this->library->isBanned());
+	}
+
+	public function testIsBanned()
+	{
+		$this->assertFalse($this->library->isBanned(99));
+		$this->assertCount(1, $this->library->getErrorsArray());
 	}
 }
