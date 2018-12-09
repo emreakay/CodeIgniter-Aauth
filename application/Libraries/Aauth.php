@@ -407,7 +407,7 @@ class Aauth
 	 *
 	 * @return boolean
 	 */
-	public function isBanned(int $userId)
+	public function isBanned(int $userId = null)
 	{
 		$userModel = new UserModel();
 
