@@ -100,7 +100,6 @@ class LoginTest extends CIDatabaseTestCase
         $session = $this->getInstance();
         $config = new AauthConfig();
         $config->loginUseUsername = true;
-        print_r($config);
 	    $this->library = new Aauth($config, $session);
 	    $this->assertTrue($this->library->login('admin', 'password123456'));
     }
@@ -120,9 +119,10 @@ class LoginTest extends CIDatabaseTestCase
         $session = $this->getInstance();
         $config = new AauthConfig();
         $config->loginUseUsername = true;
+	    $this->library = new Aauth($config, $session);
 	    $this->assertFalse($this->library->login('admina', 'password'));
 	    $this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
-	    $this->library = new Aauth($config, $session);
+        $config->loginUseUsername = false;
     }
 
     public function testLoginFalseNotVerified()
@@ -156,6 +156,7 @@ class LoginTest extends CIDatabaseTestCase
     {
         $session = $this->getInstance();
 	    $this->library = new Aauth(null, $session);
+	    $this->library->login('admina@example.com', 'password123456');
 	    $this->library->login('admina@example.com', 'password123456');
 	    $this->library->login('admina@example.com', 'password123456');
 	    $this->library->login('admina@example.com', 'password123456');
