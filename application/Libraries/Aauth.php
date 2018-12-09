@@ -623,6 +623,8 @@ class Aauth
 			return false;
 		}
 
+		print_r($loginAttemptModel->find());
+
 		// if ($this->config->ddos_protection && $this->config->recaptcha_active && $loginAttempts->get() > $this->config->recaptcha_login_attempts){
 		// 	$this->CI->load->helper('recaptchalib');
 		// 	$reCaptcha = new ReCaptcha( $this->config->recaptcha_secret);
@@ -635,7 +637,6 @@ class Aauth
 
 		if ($this->config->loginUseUsername)
 		{
-			print_r($this->config);
 			if (! $identifier || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
 				$this->error(lang('Aauth.loginFailedUsername'));
