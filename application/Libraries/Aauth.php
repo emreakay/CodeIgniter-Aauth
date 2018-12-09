@@ -840,7 +840,7 @@ class Aauth
 	public function isLoggedIn()
 	{
 		helper('cookie');
-		if (isset(session('user')['loggedIn']))
+		if (isset($this->session->get('user')['loggedIn']))
 		{
 			return true;
 		}
