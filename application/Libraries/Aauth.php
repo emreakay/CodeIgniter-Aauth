@@ -616,6 +616,8 @@ class Aauth
 		$loginAttemptModel = new LoginAttemptModel();
 		$userVariableModel = new UserVariableModel();
 
+		print_r($this->config);
+
 		if ($this->config->loginProtection && ! $loginAttemptModel->save())
 		{
 			$this->error(lang('Aauth.loginAttemptsExceeded'));
