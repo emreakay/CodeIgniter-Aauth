@@ -61,11 +61,21 @@ class LoginTest extends CIDatabaseTestCase
 
 	//--------------------------------------------------------------------
 
+    public function testLoginEmailTrue()
+    {
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+	    $this->assertTrue($this->library->login('admin@example.com', 'password123456'));
+	    print_r($_SESSION);
+    }
+
 	public function testIsLoggedIn()
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
-	    $this->assertTrue($this->library->login('admin@example.com', 'password123456'));
+		$session->set('user', [
+            'loggedIn' => true,
+        ]);
 	    $this->assertTrue($this->library->isLoggedIn());
 	}
 }
