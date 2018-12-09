@@ -623,8 +623,6 @@ class Aauth
 			return false;
 		}
 
-		print_r($loginAttemptModel->find());
-
 		// if ($this->config->ddos_protection && $this->config->recaptcha_active && $loginAttempts->get() > $this->config->recaptcha_login_attempts){
 		// 	$this->CI->load->helper('recaptchalib');
 		// 	$reCaptcha = new ReCaptcha( $this->config->recaptcha_secret);
