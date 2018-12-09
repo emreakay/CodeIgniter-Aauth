@@ -1,9 +1,11 @@
 <?php namespace Tests\Aauth\Libraries\Aauth;
 
 use Config\Aauth as AauthConfig;
+use Config\App;
 use Config\Logger;
 use Config\Services;
 use Tests\Support\Log\TestLogger;
+use Tests\Support\HTTP\MockResponse;
 use Tests\Support\Session\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
@@ -27,6 +29,8 @@ class LoginTest extends CIDatabaseTestCase
     {
         parent::setUp();
 
+        Services::injectMock('response', new MockResponse(new App()));
+        $this->response = service('response');
 	    $this->library = new Aauth(null, true);
         $_COOKIE = [];
         $_SESSION = [];

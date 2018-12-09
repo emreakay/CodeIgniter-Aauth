@@ -938,11 +938,14 @@ class Aauth
 	{
 		if ($includeNonFlash)
 		{
-			$this->flashErrors = array_merge($this->flashErrors, $this->errors);
+			$this->flashErrors = array_merge($this->session->getFlashdata('errors'), $this->errors);
+			$this->session->setFlashdata('errors', $this->flashErrors);
+		}
+		else
+		{
+			$this->session->keepFlashdata('errors');
 		}
 
-		$this->flashErrors = array_merge($this->flashErrors, (array)$this->session->getFlashdata('errors'));
-		$this->session->setFlashdata('errors', $this->flashErrors);
 	}
 
 	/**
@@ -1049,10 +1052,13 @@ class Aauth
 		if ($includeNonFlash)
 		{
 			$this->flashInfos = array_merge($this->flashInfos, $this->infos);
+			$this->flashInfos = array_merge($this->session->getFlashdata('infos'), $this->errors);
+			$this->session->setFlashdata('infos', $this->flashInfos);
 		}
-
-		$this->flashInfos = array_merge($this->flashInfos, (array)$this->session->getFlashdata('infos'));
-		$this->session->setFlashdata('infos', $this->flashInfos);
+		else
+		{
+			$this->session->keepFlashdata('infos');
+		}
 	}
 
 	/**
