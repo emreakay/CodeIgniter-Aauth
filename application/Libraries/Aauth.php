@@ -616,8 +616,6 @@ class Aauth
 		$loginAttemptModel = new LoginAttemptModel();
 		$userVariableModel = new UserVariableModel();
 
-		print_r($this->config);
-
 		if ($this->config->loginProtection && ! $loginAttemptModel->save())
 		{
 			$this->error(lang('Aauth.loginAttemptsExceeded'));
@@ -637,6 +635,7 @@ class Aauth
 
 		if ($this->config->loginUseUsername)
 		{
+			print_r($this->config);
 			if (! $identifier || strlen($password) < $this->config->passwordMin || strlen($password) > $this->config->passwordMax)
 			{
 				$this->error(lang('Aauth.loginFailedUsername'));
@@ -794,7 +793,7 @@ class Aauth
 	{
 		helper('cookie');
 		set_cookie('remember', '', -3600);
-		$this->session->destroy();
+		@$this->session->destroy();
 	}
 
 	/**
