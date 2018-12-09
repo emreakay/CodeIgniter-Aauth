@@ -794,6 +794,7 @@ class Aauth
 	{
 		helper('cookie');
 		set_cookie('remember', '', -3600);
+		$this->session->remove('user');
 		@$this->session->destroy();
 	}
 
