@@ -433,7 +433,7 @@ class Aauth
 	 *
 	 * @return boolean
 	 */
-	public function banUser(int $userId)
+	public function banUser(int $userId = null)
 	{
 		$userModel = new UserModel();
 
@@ -459,7 +459,7 @@ class Aauth
 	 *
 	 * @return boolean
 	 */
-	public function unbanUser(int $userId)
+	public function unbanUser(int $userId = null)
 	{
 		$userModel = new UserModel();
 
