@@ -1051,8 +1051,7 @@ class Aauth
 	{
 		if ($includeNonFlash)
 		{
-			$this->flashInfos = array_merge($this->flashInfos, $this->infos);
-			$this->flashInfos = array_merge($this->session->getFlashdata('infos'), $this->errors);
+			$this->flashInfos = array_merge($this->session->getFlashdata('infos'), $this->infos);
 			$this->session->setFlashdata('infos', $this->flashInfos);
 		}
 		else

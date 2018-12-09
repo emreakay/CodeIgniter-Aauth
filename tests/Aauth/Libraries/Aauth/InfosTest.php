@@ -123,6 +123,7 @@ class InfosTest extends \CIUnitTestCase
 		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info('test message 1 Flash', true);
         $session->start();
+	    $this->library = new Aauth(NULL, $session);
 		$this->library->info('test message 1 NonFlash');
 		$this->library->keepInfos(true);
         $session->start();
