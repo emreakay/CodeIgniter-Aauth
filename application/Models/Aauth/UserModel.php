@@ -138,7 +138,7 @@ class UserModel extends Model
 		$this->validationRules['password'] = 'if_exist|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
 		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
 
-		parent::update($id, $data);
+		return parent::update($id, $data);
 	}
 	/**
 	 * Update last login by User ID
