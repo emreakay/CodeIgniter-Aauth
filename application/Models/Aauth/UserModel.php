@@ -98,8 +98,8 @@ class UserModel extends Model
 		$this->table   = $this->config->dbTableUsers;
 		$this->DBGroup = $this->config->dbProfile;
 
-		$this->validationRules['email']    = 'required_with[username,password]|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
-		$this->validationRules['password'] = 'required_with[email,username]|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
+		$this->validationRules['email']    = 'required_with[password]|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
+		$this->validationRules['password'] = 'required_with[email]|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
 		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
 
 		$this->validationMessages = [
@@ -122,6 +122,8 @@ class UserModel extends Model
 
 		if ($this->config->loginUseUsername)
 		{
+			$this->validationRules['email']    = 'required_with[username,password]|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
+			$this->validationRules['password'] = 'required_with[email,username]|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
 			$this->validationRules['username'] = 'required_with[email,password]|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
 
 			$this->validationMessages['username']['required'] = lang('Aauth.requiredUsername');
