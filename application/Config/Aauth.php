@@ -68,14 +68,14 @@ class Aauth extends BaseConfig
 	|	User Verification, if TRUE sends a verification email on account creation
 	|	(default: false)
 	|
-	| 'userAdditionalChars'
+	| 'userRegexPattern'
 	|
 	|	Additional valid chars for username. Non alphanumeric characters that are
 	|	allowed by default
-	|	(default: [])
+	|	(default: '[a-zA-Z0-9]{3,}')
 	*/
-	public $userVerification    = false;
-	public $userAdditionalChars = [];
+	public $userVerification = false;
+	public $userRegexPattern = '[a-zA-Z0-9]{3,}';
 
 	/*
 	|--------------------------------------------------------------------------

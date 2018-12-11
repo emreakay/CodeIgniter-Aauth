@@ -95,7 +95,7 @@ class UserModel extends Model
 
 		$this->validationRules['email']    = 'required|if_exist|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
 		$this->validationRules['password'] = 'required|if_exist|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
-		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{id}]|alpha_numeric_space|min_length[3]';
+		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
 
 		$this->validationMessages = [
 			'email'    => [
@@ -108,13 +108,13 @@ class UserModel extends Model
 			],
 			'username' => [
 				'is_unique'  => lang('Aauth.existsAlreadyUsername'),
-				'min_length' => lang('Aauth.invalidUsername'),
+				'regex_match' => lang('Aauth.invalidUsername'),
 			],
 		];
 
 		if ($this->config->loginUseUsername)
 		{
-			$this->validationRules['username'] = 'is_unique[' . $this->table . '.username,id,{id}]|required|alpha_numeric_space|min_length[3]';
+			$this->validationRules['username'] = 'required|if_exist|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
 
 			$this->validationMessages['username']['required'] = lang('Aauth.requiredUsername');
 		}

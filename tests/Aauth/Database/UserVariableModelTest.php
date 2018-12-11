@@ -128,7 +128,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 	public function testDBCall()
 	{
 		$this->model->save(99, 'test', 'TRUE');
-		$this->assertEquals(99, $this->model->insertID());
+		$this->assertEquals(1, $this->model->insertID());
 	}
 
 }
