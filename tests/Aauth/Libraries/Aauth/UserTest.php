@@ -65,6 +65,9 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testUpdateUser()
 	{
+        $session = $this->getInstance();
+	    $this->library = new Aauth(NULL, $session);
+
 		$this->seeInDatabase($this->config->dbTableUsers, [
 		    'id' => 2,
 		    'email' => 'user@example.com',

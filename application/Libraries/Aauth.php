@@ -98,7 +98,7 @@ class Aauth
 	{
 		if (is_null($config))
 		{
-			$config  = new \Config\Aauth();
+			$config = new \Config\Aauth();
 		}
 
 		if (is_null($session))
@@ -732,7 +732,7 @@ class Aauth
 		// 	}
 		// }
 
-		if (! $user['banned'] && password_verify($password, $user['password']))
+		if (password_verify($password, $user['password']))
 		{
 			$data['id']       = $user['id'];
 			$data['username'] = $user['username'];
@@ -943,7 +943,6 @@ class Aauth
 		{
 			$this->session->keepFlashdata('errors');
 		}
-
 	}
 
 	/**
@@ -989,7 +988,8 @@ class Aauth
 	 */
 	public function clearErrors()
 	{
-		$this->errors = [];
+		$this->errors      = [];
+		$this->flashErrors = [];
 		$this->session->remove('errors');
 	}
 
@@ -1002,8 +1002,8 @@ class Aauth
 	 *
 	 * Add message to info array and set flash data
 	 *
-	 * @param string|array  $message   Message to add to infos array
-	 * @param boolean       $flashdata Whether add $message to CI flashdata (deflault: FALSE)
+	 * @param string|array $message   Message to add to infos array
+	 * @param boolean      $flashdata Whether add $message to CI flashdata (deflault: FALSE)
 	 *
 	 * @return void
 	 */
@@ -1101,7 +1101,8 @@ class Aauth
 	 */
 	public function clearInfos()
 	{
-		$this->infos = [];
+		$this->infos      = [];
+		$this->flashInfos = [];
 		$this->session->remove('infos');
 	}
 }

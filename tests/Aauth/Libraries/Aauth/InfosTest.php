@@ -99,7 +99,7 @@ class InfosTest extends \CIUnitTestCase
         $session->start();
 		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
 
-		$this->library->clearInfos();
+        $session->start();
 		$this->library->info(['test message 1','test message 2'], true);
         $session->start();
 		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('infos'));
