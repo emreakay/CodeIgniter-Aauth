@@ -85,7 +85,7 @@ class UserModel extends Model
 	/**
 	 * Constructor
 	 */
-	public function __construct($db = NULL, $validation = NULL, $config = NULL)
+	public function __construct($db = null, $validation = null, $config = null)
 	{
 		parent::__construct();
 
@@ -106,19 +106,21 @@ class UserModel extends Model
 			'email'    => [
 				'is_unique'   => lang('Aauth.existsAlreadyEmail'),
 				'valid_email' => lang('Aauth.invalidEmail'),
-				'required' => lang('Aauth.invalidEmail'),
+				'required'    => lang('Aauth.invalidEmail'),
 			],
 			'password' => [
 				'min_length' => lang('Aauth.invalidPassword'),
 				'max_length' => lang('Aauth.invalidPassword'),
-				'required' => lang('Aauth.invalidPassword'),
+				'required'   => lang('Aauth.invalidPassword'),
 			],
 			'username' => [
-				'is_unique'  => lang('Aauth.existsAlreadyUsername'),
-				'min_length' => lang('Aauth.invalidUsername'),
+				'is_unique'   => lang('Aauth.existsAlreadyUsername'),
+				'min_length'  => lang('Aauth.invalidUsername'),
 				'regex_match' => lang('Aauth.invalidUsername'),
 			],
 		];
+
+		print_r($this->config);
 
 		if ($this->config->loginUseUsername)
 		{
