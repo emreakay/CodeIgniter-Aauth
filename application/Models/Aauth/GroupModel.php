@@ -58,7 +58,7 @@ class GroupModel extends Model
 		$this->table   = $this->config->dbTableGroups;
 		$this->DBGroup = $this->config->dbProfile;
 
-		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{id}]';
+		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{$row->id}]';
 
 		$this->validationMessages = [
 			'name' => [
