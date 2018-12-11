@@ -100,6 +100,8 @@ class UserModel extends Model
 		$this->table   = $this->config->dbTableUsers;
 		$this->DBGroup = $this->config->dbProfile;
 
+		print_r($this->config);
+
 		$this->validationRules['email']    = 'required|if_exist|valid_email|is_unique[' . $this->table . '.email,id,{$row->id}]';
 		$this->validationRules['password'] = 'required|if_exist|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
 		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{$row->id}]|min_length[3]|regex_match[/' . $this->config->userRegexPattern . '/]';
