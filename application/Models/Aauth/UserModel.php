@@ -89,8 +89,6 @@ class UserModel extends Model
 	{
 		parent::__construct();
 
-		print_r($config);
-
 		if (is_null($config))
 		{
 			$config = new AauthConfig();
