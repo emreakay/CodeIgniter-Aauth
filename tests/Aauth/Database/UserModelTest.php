@@ -1,7 +1,8 @@
 <?php namespace Tests\Aauth\Database;
 
+use Config\Aauth as AauthConfig;
 use CodeIgniter\Test\CIDatabaseTestCase;
-use App\Models\Aauth\UserModel as UserModel;
+use App\Models\Aauth\UserModel;
 
 class UserModelTest extends CIDatabaseTestCase
 {
@@ -84,8 +85,8 @@ class UserModelTest extends CIDatabaseTestCase
 
 	public function testLoginUseUsernameDummy()
 	{
-		$config = new \Config\Aauth();
-		$config->loginUseUsername = TRUE;
+		$config = new AauthConfig();
+		$config->loginUseUsername = true;
 
 		$this->model = new UserModel($this->db, null, $config);
 		$newUser = $this->model->insert(['email' => 'test@test.local', 'password' => 'password123456']);

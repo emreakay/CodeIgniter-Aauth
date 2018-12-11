@@ -83,7 +83,6 @@ class UserTest extends CIDatabaseTestCase
 
 		$this->library->clearInfos();
     	$this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
-    	print_r($this->library->getUser(2));
 	    $this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
 
 		$this->library->clearErrors();
