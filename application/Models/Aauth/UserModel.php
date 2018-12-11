@@ -101,13 +101,16 @@ class UserModel extends Model
 			'email'    => [
 				'is_unique'   => lang('Aauth.existsAlreadyEmail'),
 				'valid_email' => lang('Aauth.invalidEmail'),
+				'required' => lang('Aauth.invalidEmail'),
 			],
 			'password' => [
 				'min_length' => lang('Aauth.invalidPassword'),
 				'max_length' => lang('Aauth.invalidPassword'),
+				'required' => lang('Aauth.invalidPassword'),
 			],
 			'username' => [
 				'is_unique'  => lang('Aauth.existsAlreadyUsername'),
+				'min_length' => lang('Aauth.invalidUsername'),
 				'regex_match' => lang('Aauth.invalidUsername'),
 			],
 		];
