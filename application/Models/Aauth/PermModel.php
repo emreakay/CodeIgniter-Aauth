@@ -58,7 +58,7 @@ class PermModel extends Model
 		$this->table   = $this->config->dbTablePerms;
 		$this->DBGroup = $this->config->dbProfile;
 
-		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{$row->id}]';
+		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{id}]';
 
 		$this->validationMessages = [
 			'name' => [
