@@ -65,13 +65,13 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testUpdateUser()
 	{
-		$this->seeInDatabase($this->config->dbTableUserVariables, [
+		$this->seeInDatabase($this->config->dbTableUsers, [
 		    'id' => 2,
 		    'email' => 'user@example.com',
 		    'username' => 'user',
 		]);
     	$this->library->updateUser(2, 'user1@example.com', 'password987654', 'user1');
-		$this->seeInDatabase($this->config->dbTableUserVariables, [
+		$this->seeInDatabase($this->config->dbTableUsers, [
 		    'id' => 2,
 		    'email' => 'user1@example.com',
 		    'username' => 'user1',
@@ -113,9 +113,9 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testDeleteUser()
 	{
-		$this->seeNumRecords(2, $this->config->dbTableUsers);
+		$this->seeNumRecords(2, $this->config->dbTableUsers, []);
 		$this->library->deleteUser(2);
-		$this->seeNumRecords(1, $this->config->dbTableUsers);
+		$this->seeNumRecords(1, $this->config->dbTableUsers, []);
 
 		$this->assertFalse($this->library->deleteUser(99));
 	    $this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
@@ -143,7 +143,7 @@ class UserTest extends CIDatabaseTestCase
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
 		$session->set('user', [
-			'id'       => 1,
+			'id' => 1,
 		]);
 	    $userIdNone = $this->library->getUser();
 		$this->assertEquals('admin', $userIdNone['username']);
@@ -163,13 +163,12 @@ class UserTest extends CIDatabaseTestCase
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
 		$session->set('user', [
-			'id'       => 1,
+			'id' => 1,
 		]);
 	    $userIdNone = $this->library->getUserId();
 		$this->assertEquals('1', $userIdNone);
 
 		$this->assertFalse($this->library->getUserId('none@example.com'));
-	    $this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
 
 	public function testBanUser()
@@ -226,10 +225,10 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testIsBanned()
 	{
+		$this->assertFalse($this->library->isBanned(1));
+
 	    $this->library->banUser(1);
 		$this->assertTrue($this->library->isBanned(1));
-
-		$this->assertFalse($this->library->isBanned(1));
 
 		$this->assertTrue($this->library->isBanned(99));
 	}

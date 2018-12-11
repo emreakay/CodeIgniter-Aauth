@@ -101,6 +101,7 @@ class LoginTest extends CIDatabaseTestCase
 
 		$userVariableModel = new UserVariableModel();
 		$userVariableModel->save(1, 'verification_code', '12345678', true);
+		$this->library->clearErrors();
 		$this->assertFalse($this->library->login('admin@example.com', 'password123456'));
 		$this->assertEquals(lang('Aauth.notVerified'), $this->library->getErrorsArray()[0]);
 
@@ -108,7 +109,6 @@ class LoginTest extends CIDatabaseTestCase
  		$this->library->clearErrors();
 		$this->assertFalse($this->library->login('admin@example.com', 'password123456'));
 		$this->assertEquals(lang('Aauth.invalidUserBanned'), $this->library->getErrorsArray()[0]);
-
 
 		$this->library->clearErrors();
 		$this->assertFalse($this->library->login('admin@example.com', 'password1234567'));
