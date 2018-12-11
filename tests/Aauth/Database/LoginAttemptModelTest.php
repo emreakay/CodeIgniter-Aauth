@@ -26,26 +26,16 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 		$this->assertEquals(0, $loginAttempt);
 	}
 
-	public function testSaveInsert()
+	public function testSave()
 	{
-		$this->model->save();
+		$this->assertTrue($this->model->save());
 		$loginAttempt = $this->model->find();
 		$this->assertEquals(1, $loginAttempt);
-	}
 
-	public function testSaveUpdate()
-	{
-		$this->model->save();
 		$this->assertTrue($this->model->save());
 		$loginAttempt = $this->model->find();
 		$this->assertEquals(2, $loginAttempt);
-	}
 
-	public function testSaveUpdateFalse()
-	{
-		$this->model->save();
-		$this->model->save();
-		$this->model->save();
 		$this->model->save();
 		$this->model->save();
 		$this->model->save();

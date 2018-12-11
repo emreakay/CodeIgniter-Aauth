@@ -22,14 +22,11 @@ class UserVariableModelTest extends CIDatabaseTestCase
 
 	//--------------------------------------------------------------------
 
-	public function testFindFalse()
+	public function testFind()
 	{
 		$userVariable = $this->model->find(99, 'test');
 		$this->assertFalse($userVariable);
-	}
 
-	public function testFindReturn()
-	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
@@ -50,7 +47,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->assertCount(1, $userVariables);
 	}
 
-	public function testSaveInsert()
+	public function testSave()
 	{
 		$this->model->save(99, 'test', 'TRUE');
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
@@ -58,11 +55,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		    'data_key' => 'test',
 		    'data_value' => 'TRUE',
 		]);
-	}
 
-	public function testSaveUpdate()
-	{
-		$this->model->save(99, 'test', 'TRUE');
 		$this->model->save(99, 'test', 'TRUE2');
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,

@@ -418,9 +418,7 @@ class Aauth
 
 		if (! $userModel->existsById($userId))
 		{
-			$this->error(lang('Aauth.notFoundUser'));
-
-			return false;
+			return true;
 		}
 
 		return $userModel->isBanned($userId);

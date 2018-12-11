@@ -68,19 +68,16 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1','test message 2'], $this->library->getErrorsArray());
 	}
 
-	public function testPrintErrorsReturn()
+	public function testPrintErrors()
 	{
+
 		$this->library->error('test message 1');
 		$this->assertEquals('test message 1', $this->library->printErrors('<br />', true));
 		$this->library->error('test message 2');
 		$this->assertEquals('test message 1<br />test message 2', $this->library->printErrors('<br />', true));
-	}
 
-	public function testPrintErrorsEcho()
-	{
-		$this->library->error('test message 1');
  		$this->library->printErrors('<br />');
- 		$this->expectOutputString('test message 1');
+ 		$this->expectOutputString('test message 1<br />test message 2');
 	}
 
 	public function testClearErrors()
@@ -102,21 +99,14 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->library->error('test message 1', true);
         $session->start();
 		$this->assertEquals(['test message 1'], $session->getFlashdata('errors'));
+
+	    $this->library = new Aauth(NULL, $session);
+		$this->library->error(['test message 1','test message 2'], true);
+        $session->start();
+		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('errors'));
 	}
 
 	public function testErrorsFlashKeep()
-	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
-		$this->assertNull($session->getFlashdata('errors'));
-		$this->library->error('test message 1', true);
-        $session->start();
-		$this->library->keepErrors();
-        $session->start();
-		$this->assertEquals(['test message 1'], $session->getFlashdata('errors'));
-	}
-
-	public function testErrorsFlashKeepMerge()
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
@@ -128,15 +118,5 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->library->keepErrors(true);
         $session->start();
 		$this->assertEquals(['test message 1 Flash', 'test message 1 NonFlash'], $session->getFlashdata('errors'));
-	}
-
-	public function testErrorsFlashArray()
-	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
-		$this->assertNull($session->getFlashdata('errors'));
-		$this->library->error(['test message 1','test message 2'], true);
-        $session->start();
-		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('errors'));
 	}
 }

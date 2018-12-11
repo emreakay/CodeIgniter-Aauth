@@ -31,14 +31,11 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 		]);
 	}
 
-	public function testExistsFalse()
+	public function testExists()
 	{
 		$groupToGroup = $this->model->exists(99, 99);
 		$this->assertFalse($groupToGroup);
-	}
 
-	public function testExistsTrue()
-	{
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
 		    'group_id' => 99,
 		    'subgroup_id' => 99,

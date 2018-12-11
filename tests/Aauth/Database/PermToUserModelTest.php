@@ -30,14 +30,11 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		]);
 	}
 
-	public function testExistsFalse()
+	public function testExists()
 	{
 		$permToUser = $this->model->exists(99, 99);
 		$this->assertFalse($permToUser);
-	}
 
-	public function testExistsTrue()
-	{
 		$this->hasInDatabase($this->config->dbTablePermToUser, [
 		    'perm_id' => 99,
 		    'user_id' => 99,

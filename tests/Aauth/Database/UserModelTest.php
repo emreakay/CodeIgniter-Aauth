@@ -40,45 +40,32 @@ class UserModelTest extends CIDatabaseTestCase
 		$this->assertTrue(strtotime("-5 seconds") < strtotime($user['last_activity']) && strtotime("+5 seconds") > strtotime($user['last_activity']));
 	}
 
-	public function testUpdateBannedTrue()
+	public function testUpdateBanned()
 	{
+		$this->assertFalse($this->model->isBanned(1));
+
 		$this->model->updateBanned(1, TRUE);
 		$this->assertTrue($this->model->isBanned(1));
 	}
 
-	public function testUpdateBannedFalse()
-	{
-		$this->model->updateBanned(1, FALSE);
-		$this->assertFalse($this->model->isBanned(1));
-	}
-
-	public function testExistsByIdTrue()
+	public function testExistsById()
 	{
 		$this->assertTrue($this->model->existsById(1));
-	}
 
-	public function testExistsByIdFalse()
-	{
 		$this->assertFalse($this->model->existsById(0));
 	}
 
-	public function testExistsByEmailTrue()
+	public function testExistsByEmail()
 	{
 		$this->assertTrue($this->model->existsByEmail("admin@example.com"));
-	}
 
-	public function testExistsByEmailFalse()
-	{
 		$this->assertFalse($this->model->existsByEmail(""));
 	}
 
-	public function testExistsByUsernameTrue()
+	public function testExistsByUsername()
 	{
 		$this->assertTrue($this->model->existsByUsername("admin"));
-	}
 
-	public function testExistsByUsernameFalse()
-	{
 		$this->assertFalse($this->model->existsByUsername(""));
 	}
 
@@ -88,10 +75,7 @@ class UserModelTest extends CIDatabaseTestCase
 		$this->model->update(1, ['id' => 1, 'password' => 'password123456']);
 		$userNew = $this->model->asArray()->find(1);
 		$this->assertTrue($userOld['password'] != $userNew['password'] && $userNew['password'] != 'password123456');
-	}
 
-	public function testHashPasswordNotSet()
-	{
 		$userOld = $this->model->asArray()->find(1);
 		$this->model->update(1, ['id' => 1, 'username' => 'admin']);
 		$userNew = $this->model->asArray()->find(1);

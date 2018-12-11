@@ -31,14 +31,11 @@ class GroupToUserModelTest extends CIDatabaseTestCase
 		]);
 	}
 
-	public function testExistsFalse()
+	public function testExists()
 	{
 		$groupToUser = $this->model->exists(99, 99);
 		$this->assertFalse($groupToUser);
-	}
 
-	public function testExistsTrue()
-	{
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
 		    'group_id' => 99,
 		    'user_id' => 99,

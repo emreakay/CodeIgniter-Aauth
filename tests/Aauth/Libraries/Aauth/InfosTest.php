@@ -68,19 +68,15 @@ class InfosTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1','test message 2'], $this->library->getInfosArray());
 	}
 
-	public function testPrintInfosReturn()
+	public function testPrintInfos()
 	{
 		$this->library->info('test message 1');
 		$this->assertEquals('test message 1', $this->library->printInfos('<br />', true));
 		$this->library->info('test message 2');
 		$this->assertEquals('test message 1<br />test message 2', $this->library->printInfos('<br />', true));
-	}
 
-	public function testPrintInfosEcho()
-	{
-		$this->library->info('test message 1');
  		$this->library->printInfos('<br />');
- 		$this->expectOutputString('test message 1');
+ 		$this->expectOutputString('test message 1<br />test message 2');
 	}
 
 	public function testClearInfos()
@@ -102,21 +98,14 @@ class InfosTest extends \CIUnitTestCase
 		$this->library->info('test message 1', true);
         $session->start();
 		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
+
+		$this->library->clearInfos();
+		$this->library->info(['test message 1','test message 2'], true);
+        $session->start();
+		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('infos'));
 	}
 
 	public function testInfosFlashKeep()
-	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
-		$this->assertNull($session->getFlashdata('infos'));
-		$this->library->info('test message 1', true);
-        $session->start();
-		$this->library->keepInfos();
-        $session->start();
-		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
-	}
-
-	public function testInfosFlashKeepMerge()
 	{
         $session = $this->getInstance();
 	    $this->library = new Aauth(NULL, $session);
@@ -128,15 +117,5 @@ class InfosTest extends \CIUnitTestCase
 		$this->library->keepInfos(true);
         $session->start();
 		$this->assertEquals(['test message 1 Flash', 'test message 1 NonFlash'], $session->getFlashdata('infos'));
-	}
-
-	public function testInfosFlashArray()
-	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
-		$this->assertNull($session->getFlashdata('infos'));
-		$this->library->info(['test message 1','test message 2'], true);
-        $session->start();
-		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('infos'));
 	}
 }
