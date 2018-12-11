@@ -24,7 +24,6 @@ class PermToGroupModelTest extends CIDatabaseTestCase
 	public function testInsert()
 	{
 		$permToGroup = $this->model->insert(99, 99);
-		$this->assertTrue($permToGroup);
 		$this->seeInDatabase($this->config->dbTablePermToGroup, [
 		    'perm_id' => 99,
 		    'group_id' => 99,
@@ -33,10 +32,6 @@ class PermToGroupModelTest extends CIDatabaseTestCase
 
 	public function testExistsFalse()
 	{
-		$this->hasInDatabase($this->config->dbTablePermToGroup, [
-		    'perm_id' => 99,
-		    'group_id' => 99,
-		]);
 		$permToGroup = $this->model->exists(99, 99);
 		$this->assertFalse($permToGroup);
 	}

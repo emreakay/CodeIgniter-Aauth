@@ -25,7 +25,6 @@ class GroupToUserModelTest extends CIDatabaseTestCase
 	public function testInsert()
 	{
 		$groupToGroup = $this->model->insert(99, 99);
-		$this->assertTrue($groupToGroup);
 		$this->seeInDatabase($this->config->dbTableGroupToUser, [
 		    'group_id' => 99,
 		    'user_id' => 99,

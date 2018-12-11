@@ -24,7 +24,6 @@ class PermToUserModelTest extends CIDatabaseTestCase
 	public function testInsert()
 	{
 		$permToUser = $this->model->insert(99, 99);
-		$this->assertTrue($permToUser);
 		$this->seeInDatabase($this->config->dbTablePermToUser, [
 		    'perm_id' => 99,
 		    'user_id' => 99,
@@ -33,10 +32,6 @@ class PermToUserModelTest extends CIDatabaseTestCase
 
 	public function testExistsFalse()
 	{
-		$this->hasInDatabase($this->config->dbTablePermToUser, [
-		    'perm_id' => 99,
-		    'user_id' => 99,
-		]);
 		$permToUser = $this->model->exists(99, 99);
 		$this->assertFalse($permToUser);
 	}
@@ -51,15 +46,15 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		$this->assertTrue($permToUser);
 	}
 
-	public function testFindAllByGroupId()
+	public function testFindAllByUserId()
 	{
-		$permsToUser = $this->model->findAllByGroupId(99);
+		$permsToUser = $this->model->findAllByUserId(99);
 		$this->assertCount(0, $permsToUser);
 		$this->hasInDatabase($this->config->dbTablePermToUser, [
 		    'perm_id' => 99,
 		    'user_id' => 99,
 		]);
-		$permsToUser = $this->model->findAllByGroupId(99);
+		$permsToUser = $this->model->findAllByUserId(99);
 		$this->assertCount(1, $permsToUser);
 	}
 
@@ -104,7 +99,7 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		$this->seeNumRecords(0, $this->config->dbTablePermToUser, $criteria);
 	}
 
-	public function testDeleteAllByGroupId()
+	public function testDeleteAllByUserId()
 	{
 		$this->hasInDatabase($this->config->dbTablePermToUser, [
 		    'perm_id' => 99,
@@ -114,7 +109,7 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		    'user_id' => 99,
 		];
 		$this->seeNumRecords(1, $this->config->dbTablePermToUser, $criteria);
-		$this->model->deleteAllByGroupId(99);
+		$this->model->deleteAllByUserId(99);
 		$this->seeNumRecords(0, $this->config->dbTablePermToUser, $criteria);
 	}
 
@@ -129,7 +124,7 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		    'perm_id' => 98,
 		    'user_id' => 99,
 		]);
-		$permsToUser = $this->model->findAllByGroupId(99);
+		$permsToUser = $this->model->findAllByUserId(99);
 		$this->assertCount(2, $permsToUser);
 	}
 }

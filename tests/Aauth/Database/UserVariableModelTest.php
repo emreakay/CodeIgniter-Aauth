@@ -33,7 +33,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 		$userVariable = $this->model->find(99, 'test');
 		$this->assertEquals('TRUE', $userVariable);
@@ -44,7 +44,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 		$userVariables = $this->model->findAll(99);
 		$this->assertCount(1, $userVariables);
@@ -56,7 +56,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 	}
 
@@ -67,7 +67,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE2',
+		    'data_value' => 'TRUE2',
 		]);
 	}
 
@@ -76,7 +76,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 		$criteria = [
 		    'user_id' => 99,
@@ -91,7 +91,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 		$userVariable = $this->model->asArray()->where(['data_key'=>'test', 'data_value'=>'TRUE'])->first();
 		$this->assertInternalType('array', $userVariable);
@@ -102,7 +102,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 		$userVariable = $this->model->asObject()->where(['data_key'=>'test', 'data_value'=>'TRUE'])->first();
 		$this->assertInternalType('object', $userVariable);
@@ -114,7 +114,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 		    'user_id' => 99,
 		    'data_key' => 'test',
-		    'date_value' => 'TRUE',
+		    'data_value' => 'TRUE',
 		]);
 		$userVariable = $this->model->asObject()->where(['data_key'=>'test', 'data_value'=>'TRUE'])->first();
 		$this->assertInternalType('object', $userVariable);
