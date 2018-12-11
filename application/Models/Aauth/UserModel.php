@@ -89,9 +89,11 @@ class UserModel extends Model
 	{
 		parent::__construct();
 
+		print_r($config);
+
 		if (is_null($config))
 		{
-			$config = new \Config\Aauth();
+			$config = new AauthConfig();
 		}
 
 		$this->config  = $config;
@@ -119,8 +121,6 @@ class UserModel extends Model
 				'regex_match' => lang('Aauth.invalidUsername'),
 			],
 		];
-
-		print_r($this->config);
 
 		if ($this->config->loginUseUsername)
 		{
