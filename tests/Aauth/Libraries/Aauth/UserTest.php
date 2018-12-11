@@ -1,5 +1,6 @@
 <?php namespace Tests\Aauth\Libraries\Aauth;
 
+use Config\Aauth as AauthConfig;
 use Config\Logger;
 use Config\Services;
 use Tests\Support\Log\TestLogger;
@@ -25,6 +26,7 @@ class UserTest extends CIDatabaseTestCase
         parent::setUp();
 
 	    $this->library = new Aauth(null, true);
+		$this->config = new AauthConfig();
         $_COOKIE = [];
         $_SESSION = [];
     }

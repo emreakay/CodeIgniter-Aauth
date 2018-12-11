@@ -75,7 +75,7 @@ class Aauth extends BaseConfig
 	|	(default: '[a-zA-Z0-9]{3,}')
 	*/
 	public $userVerification = false;
-	public $userRegexPattern = '[a-zA-Z0-9]{3,}';
+	public $userRegexPattern = '[a-zA-Z0-9]{3,}\s';
 
 	/*
 	|--------------------------------------------------------------------------
