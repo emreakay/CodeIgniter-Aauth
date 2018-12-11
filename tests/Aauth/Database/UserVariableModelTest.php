@@ -1,5 +1,6 @@
 <?php namespace Tests\Aauth\Database;
 
+use Config\Aauth as AauthConfig;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Models\Aauth\UserVariableModel;
 
@@ -16,56 +17,93 @@ class UserVariableModelTest extends CIDatabaseTestCase
 	    parent::setUp();
 
 		$this->model = new UserVariableModel($this->db);
+		$this->config = new AauthConfig();
 	}
 
 	//--------------------------------------------------------------------
 
 	public function testFindFalse()
 	{
-		$userVariable = $this->model->find(1, 'test');
+		$userVariable = $this->model->find(99, 'test');
 		$this->assertFalse($userVariable);
 	}
 
 	public function testFindReturn()
 	{
-		$this->model->save(1, 'test', 'TRUE');
-		$userVariable = $this->model->find(1, 'test');
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
+		$userVariable = $this->model->find(99, 'test');
 		$this->assertEquals('TRUE', $userVariable);
 	}
 
 	public function testFindAll()
 	{
-		$this->model->save(1, 'test', 'TRUE');
-		$userVariables = $this->model->findAll(1);
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
+		$userVariables = $this->model->findAll(99);
 		$this->assertCount(1, $userVariables);
+	}
+
+	public function testSaveInsert()
+	{
+		$this->model->save(99, 'test', 'TRUE');
+		$this->seeInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
 	}
 
 	public function testSaveUpdate()
 	{
-		$this->model->save(1, 'test', 'TRUE');
-		$this->model->save(1, 'test', 'TRUE2');
-		$userVariable = $this->model->find(1, 'test');
-		$this->assertEquals('TRUE2', $userVariable);
+		$this->model->save(99, 'test', 'TRUE');
+		$this->model->save(99, 'test', 'TRUE2');
+		$this->seeInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE2',
+		]);
 	}
 
 	public function testDelete()
 	{
-		$this->model->save(1, 'test', 'TRUE');
-		$this->model->delete(1, 'test');
-		$userVariables = $this->model->findAll(1);
-		$this->assertCount(0, $userVariables);
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
+		$criteria = [
+		    'user_id' => 99,
+		];
+		$this->seeNumRecords(1, $this->config->dbTableUserVariables, $criteria);
+		$this->model->delete(99, 'test');
+		$this->seeNumRecords(0, $this->config->dbTableUserVariables, $criteria);
 	}
 
 	public function testAsArrayFirst()
 	{
-		$this->model->save(1, 'test', 'TRUE');
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
 		$userVariable = $this->model->asArray()->where(['data_key'=>'test', 'data_value'=>'TRUE'])->first();
 		$this->assertInternalType('array', $userVariable);
 	}
 
 	public function testAsObjectFirst()
 	{
-		$this->model->save(1, 'test', 'TRUE');
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
 		$userVariable = $this->model->asObject()->where(['data_key'=>'test', 'data_value'=>'TRUE'])->first();
 		$this->assertInternalType('object', $userVariable);
 	}
@@ -73,7 +111,11 @@ class UserVariableModelTest extends CIDatabaseTestCase
 	public function testConfigDBGroup()
 	{
 		$this->model = new UserVariableModel();
-		$this->model->save(1, 'test', 'TRUE');
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+		    'user_id' => 99,
+		    'data_key' => 'test',
+		    'date_value' => 'TRUE',
+		]);
 		$userVariable = $this->model->asObject()->where(['data_key'=>'test', 'data_value'=>'TRUE'])->first();
 		$this->assertInternalType('object', $userVariable);
 	}
@@ -85,8 +127,8 @@ class UserVariableModelTest extends CIDatabaseTestCase
 
 	public function testDBCall()
 	{
-		$this->model->save(1, 'test', 'TRUE');
-		$this->assertEquals(1, $this->model->insertID());
+		$this->model->save(99, 'test', 'TRUE');
+		$this->assertEquals(99, $this->model->insertID());
 	}
 
 }
