@@ -80,7 +80,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->seeInDatabase($config->dbTableLoginTokens, [
 			'user_id' => 1,
 		]);
-        $this->assertTrue($this->response->hasCookie('remember'));
+		$this->assertTrue($this->response->hasCookie('remember'));
 
 		$this->assertFalse($this->library->login('admin', 'passwor'));
 		$this->assertEquals(lang('Aauth.loginFailedUsername'), $this->library->getErrorsArray()[0]);
@@ -134,14 +134,15 @@ class LoginTest extends CIDatabaseTestCase
 		$session->set('user', [
 			'loggedIn' => true,
 		]);
-		$session       = $this->getInstance();
-		$this->library = new Aauth(null, $session);
 
-		$config          = new AauthConfig();
-		$expire          = $config->loginRemember;
-		$userId          = base64_encode(1);
-		$randomString    = random_string('alnum', 32);
-		$selectorString  = random_string('alnum', 16);
+		helper('text');
+		$session        = $this->getInstance();
+		$this->library  = new Aauth(null, $session);
+		$config         = new AauthConfig();
+		$expire         = $config->loginRemember;
+		$userId         = base64_encode(1);
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
 
 		$this->response->setCookie('remember', $userId . ';' . $randomString . ';' . $selectorString, YEAR);
 
