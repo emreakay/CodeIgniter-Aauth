@@ -163,46 +163,34 @@ class LoginTest extends CIDatabaseTestCase
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
 
-		// $randomString   = random_string('alnum', 32);
-		// $selectorString = random_string('alnum', 16);
-		// $this->hasInDatabase($config->dbTableLoginTokens, [
-		// 	'user_id'       => 1,
-		// 	'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
-		// 	'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
-		// 	'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
-		// ]);
-		// $_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
+		$this->hasInDatabase($config->dbTableLoginTokens, [
+			'user_id'       => 3,
+			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
+			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
+		]);
 
-		// $this->assertTrue($this->library->isLoggedIn());
+		$_COOKIE['remember'] = base64_encode(3) . ';' . $randomString . ';' . $selectorString;
 
-		// $randomString   = random_string('alnum', 32);
-		// $selectorString = random_string('alnum', 16);
-		// $this->hasInDatabase($config->dbTableLoginTokens, [
-		// 	'user_id'       => 3,
-		// 	'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
-		// 	'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
-		// 	'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
-		// ]);
+		$this->assertFalse($this->library->isLoggedIn());
 
-		// $_COOKIE['remember'] = base64_encode(3) . ';' . $randomString . ';' . $selectorString;
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $selectorString . ';' . $randomString;
 
-		// $this->assertFalse($this->library->isLoggedIn());
+		$this->assertFalse($this->library->isLoggedIn());
 
-		// $_COOKIE['remember'] = base64_encode(1) . ';' . $selectorString . ';' . $randomString;
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
+		$this->hasInDatabase($config->dbTableLoginTokens, [
+			'user_id'       => 1,
+			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
+			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+			'expires_at'    => date('Y-m-d H:i:s', strtotime('-1 week')),
+		]);
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 
-		// $this->assertFalse($this->library->isLoggedIn());
-
-		// $randomString   = random_string('alnum', 32);
-		// $selectorString = random_string('alnum', 16);
-		// $this->hasInDatabase($config->dbTableLoginTokens, [
-		// 	'user_id'       => 1,
-		// 	'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
-		// 	'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
-		// 	'expires_at'    => date('Y-m-d H:i:s', strtotime('-1 week')),
-		// ]);
-		// $_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
-
-		// $this->assertFalse($this->library->isLoggedIn());
+		$this->assertFalse($this->library->isLoggedIn());
 	}
 
 	public function testLogout()
