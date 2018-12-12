@@ -96,7 +96,7 @@ class UserModelTest extends CIDatabaseTestCase
 	public function testUpdate()
 	{
 		$this->assertFalse($this->model->update(2, ['id' => 2, 'email' => 'admin@example.com']));
-		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->model->errors());
+		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->model->errors()[0]);
 
 		// $this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
 		// $this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
