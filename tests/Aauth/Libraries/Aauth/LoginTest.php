@@ -176,10 +176,12 @@ class LoginTest extends CIDatabaseTestCase
 		$_COOKIE['remember'] = base64_encode(99) . ';' . $randomString . ';' . $selectorString;
 
 		$this->assertFalse($this->library->isLoggedIn());
+		unset($_COOKIE['remember']);
 
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $selectorString . ';' . $randomString;
 
 		$this->assertFalse($this->library->isLoggedIn());
+		unset($_COOKIE['remember']);
 
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
@@ -192,6 +194,7 @@ class LoginTest extends CIDatabaseTestCase
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 
 		$this->assertFalse($this->library->isLoggedIn());
+		unset($_COOKIE['remember']);
 	}
 
 	public function testLogout()
