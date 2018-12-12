@@ -92,4 +92,31 @@ class UserModelTest extends CIDatabaseTestCase
 		$newUser     = $this->model->insert(['email' => 'test@test.local', 'password' => 'password123456']);
 		$this->assertFalse($newUser);
 	}
+
+	public function testUpdate()
+	{
+		$this->assertFalse($this->model->update(2, ['id' => 2, 'email' => 'admin@example.com']));
+		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->model->errors());
+
+		// $this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
+		// $this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
+
+		// $this->assertFalse($this->library->updateUser(2, 'adminexample.com', null, null));
+		// $this->assertEquals(lang('Aauth.invalidEmail'), $this->library->getErrorsArray()[0]);
+
+		// $this->assertFalse($this->library->updateUser(2, null, 'pass', null));
+		// $this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
+
+		// $this->assertFalse($this->library->updateUser(2, null, 'password12345678901011121314151617', null));
+		// $this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
+
+		// $this->assertFalse($this->library->updateUser(2, null, null, 'admin'));
+		// $this->assertEquals(lang('Aauth.existsAlreadyUsername'), $this->library->getErrorsArray()[0]);
+
+		// $this->assertFalse($this->library->updateUser(2, null, null, 'user+'));
+		// $this->assertEquals(lang('Aauth.invalidUsername'), $this->library->getErrorsArray()[0]);
+
+		// $this->assertFalse($this->library->updateUser(2));
+		// $this->assertCount(0, $this->library->getErrorsArray());
+	}
 }
