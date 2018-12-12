@@ -104,7 +104,7 @@ class InfosTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1', 'test message 2'], $session->getFlashdata('infos'));
 	}
 
-	public function testInfosFlashKeep()
+	public function testKeepInfos()
 	{
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);

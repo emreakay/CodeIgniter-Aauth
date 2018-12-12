@@ -8,6 +8,7 @@ use Tests\Support\Session\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
+use App\Models\Aauth\UserVariableModel;
 
 /**
  * @runTestsInSeparateProcesses
@@ -164,6 +165,18 @@ class UserTest extends CIDatabaseTestCase
 		$usersOrderBy = $this->library->listUsers(0, 0, null, 'id DESC');
 		$this->assertEquals('user', $usersOrderBy[0]['username']);
 		$this->assertEquals('admin', $usersOrderBy[1]['username']);
+	}
+
+	public function testVerifyUser()
+	{
+		$userVariableModel = new UserVariableModel();
+		$userVariableModel->save(1, 'verification_code', '12345678', true);
+
+		$this->assertFalse($this->library->verifyUser('123456789'));
+		$this->assertEquals(lang('Aauth.invalidVerficationCode'), $this->library->getErrorsArray()[0]);
+
+		$this->assertTrue($this->library->verifyUser('12345678'));
+		$this->assertEquals(lang('Aauth.infoVerification'), $this->library->getInfosArray()[0]);
 	}
 
 	public function testGetUser()

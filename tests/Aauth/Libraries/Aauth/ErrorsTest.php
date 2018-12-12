@@ -104,7 +104,7 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1', 'test message 2'], $session->getFlashdata('errors'));
 	}
 
-	public function testErrorsFlashKeep()
+	public function testKeepErrors()
 	{
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
