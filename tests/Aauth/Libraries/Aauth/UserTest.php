@@ -73,7 +73,6 @@ class UserTest extends CIDatabaseTestCase
 
 		$this->library = new Aauth(null, true);
 		$this->assertFalse($this->library->createUser('admin@example.com', 'password123456', null));
-		print_r($this->library->getErrorsArray());
 		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
 
 		$this->library = new Aauth(null, true);
@@ -114,7 +113,6 @@ class UserTest extends CIDatabaseTestCase
 
 		$this->library = new Aauth(null, true);
 		$this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
-		print_r($this->library->getErrorsArray());
 		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
 
 		$this->library = new Aauth(null, true);
