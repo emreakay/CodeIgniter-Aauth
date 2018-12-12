@@ -151,6 +151,8 @@ class LoginTest extends CIDatabaseTestCase
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
 
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 3,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
