@@ -839,6 +839,7 @@ class Aauth
 	public function isLoggedIn()
 	{
 		helper('cookie');
+
 		if (isset($this->session->get('user')['loggedIn']))
 		{
 			return true;
@@ -869,7 +870,7 @@ class Aauth
 						}
 						else
 						{
-							$loginTokenModel->delete($cookie[0]);
+							$loginTokenModel->deleteExpired($cookie[0]);
 							delete_cookie('remember');
 						}
 					}
@@ -936,7 +937,7 @@ class Aauth
 	{
 		if ($includeNonFlash)
 		{
-			$flashErrorsOld = $this->session->getFlashdata('errors');
+			$flashErrorsOld    = $this->session->getFlashdata('errors');
 			$this->flashErrors = array_merge((is_array($flashErrorsOld) ? $flashErrorsOld : []), $this->errors);
 			$this->session->setFlashdata('errors', $this->flashErrors);
 		}
@@ -1050,7 +1051,7 @@ class Aauth
 	{
 		if ($includeNonFlash)
 		{
-			$flashInfosOld = $this->session->getFlashdata('infos');
+			$flashInfosOld    = $this->session->getFlashdata('infos');
 			$this->flashInfos = array_merge((is_array($flashInfosOld) ? $flashInfosOld : []), $this->infos);
 			$this->session->setFlashdata('infos', $this->flashInfos);
 		}

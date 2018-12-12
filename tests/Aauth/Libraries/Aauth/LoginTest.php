@@ -134,6 +134,7 @@ class LoginTest extends CIDatabaseTestCase
 		$session->set('user', [
 			'loggedIn' => true,
 		]);
+		$this->assertTrue($this->library->isLoggedIn());
 
 		helper('text');
 		$config         = new AauthConfig();
@@ -149,6 +150,29 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
+
+		$session->remove('user');
+		$_COOKIE['remember'] = base64_encode(a) . ';' . $selectorString . ';' . $randomString;
+		$this->assertFalse($this->library->isLoggedIn());
+	}
+
+	public function testIsLoggedInExpired()
+	{
+		helper('text');
+		$session        = $this->getInstance();
+		$this->library  = new Aauth(null, $session);
+		$config         = new AauthConfig();
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+
+		$this->hasInDatabase($config->dbTableLoginTokens, [
+			'user_id'       => 1,
+			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
+			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+			'expires_at'    => date('Y-m-d H:i:s', strtotime('-1 week')),
+		]);
+		$this->assertFalse($this->library->isLoggedIn());
 	}
 
 	public function testLogout()
