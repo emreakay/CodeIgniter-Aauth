@@ -141,7 +141,11 @@ class LoginTest extends CIDatabaseTestCase
 			'loggedIn' => true,
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
+		$session->remove('user');
+	}
 
+	public function testIsLoggedInCookie()
+	{
 		helper('text');
 		$session        = $this->getInstance();
 		$this->library  = new Aauth(null, $session);
@@ -158,16 +162,6 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
-
-		// helper('text');
-		// $config        = new AauthConfig();
-		// $session       = $this->getInstance();
-		// $this->library = new Aauth(null, $session);
-		// $session->set('user', [
-		// 	'loggedIn' => true,
-		// ]);
-		// $this->assertTrue($this->library->isLoggedIn());
-		// $this->library->logout();
 
 		// $randomString   = random_string('alnum', 32);
 		// $selectorString = random_string('alnum', 16);
