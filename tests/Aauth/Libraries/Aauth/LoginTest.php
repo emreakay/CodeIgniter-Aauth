@@ -34,7 +34,7 @@ class LoginTest extends CIDatabaseTestCase
 
         Services::injectMock('response', new MockResponse(new App()));
         $this->response = service('response');
-		$this->request = new IncomingRequest(new App(), new URI(), null, new UserAgent());
+		$this->request  = new IncomingRequest(new App(), new URI(), null, new UserAgent());
         Services::injectMock('request', $this->request);
 
 		$this->library  = new Aauth(null, true);
@@ -135,6 +135,8 @@ class LoginTest extends CIDatabaseTestCase
 
 	public function testIsLoggedIn()
 	{
+		helper('text');
+		helper('cookie');
 		$config        = new AauthConfig();
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
@@ -144,14 +146,9 @@ class LoginTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->isLoggedIn());
 		$session->remove('user');
 
-		helper('text');
-		$session        = $this->getInstance();
-		$this->library  = new Aauth(null, $session);
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
-
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
-		set_cookie('remember', base64_encode(1) . ';' . $randomString . ';' . $selectorString, 9999);
 
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
@@ -160,29 +157,7 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
-
-		// $session->set('user', [
-		// 	'loggedIn' => true,
-		// ]);
-		// $this->assertTrue($this->library->isLoggedIn());
-		// $session->remove('user');
-
-		// $session        = $this->getInstance();
-		// $this->library  = new Aauth(null, $session);
-		// $config         = new AauthConfig();
-		// $randomString   = random_string('alnum', 32);
-		// $selectorString = random_string('alnum', 16);
-
-		// $this->hasInDatabase($config->dbTableLoginTokens, [
-		// 	'user_id'       => 1,
-		// 	'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
-		// 	'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
-		// 	'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
-		// ]);
-		// $_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
-
-		// $this->assertTrue($this->library->isLoggedIn());
-		// $session->remove('user');
+		$session->remove('user');
 
 		// $randomString   = random_string('alnum', 32);
 		// $selectorString = random_string('alnum', 16);
