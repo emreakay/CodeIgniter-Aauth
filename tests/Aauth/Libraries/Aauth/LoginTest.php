@@ -167,7 +167,7 @@ class LoginTest extends CIDatabaseTestCase
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
 		$this->hasInDatabase($config->dbTableLoginTokens, [
-			'user_id'       => 3,
+			'user_id'       => 99,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
