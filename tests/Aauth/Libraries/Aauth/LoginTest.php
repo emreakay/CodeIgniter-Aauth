@@ -155,7 +155,6 @@ class LoginTest extends CIDatabaseTestCase
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
-		$this->library->logout();
 		$this->library = new Aauth(null, $session);
 		$this->assertTrue($this->library->isLoggedIn());
 
