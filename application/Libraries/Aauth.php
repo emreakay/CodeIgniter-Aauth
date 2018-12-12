@@ -268,6 +268,41 @@ class Aauth
 	}
 
 	/**
+	 * List users with paginate
+	 *
+	 * Return users as an object array
+	 *
+	 * @param integer $limit          Limit of users to be returned
+	 * @param integer $offset         Offset for limited number of users
+	 * @param boolean $includeBanneds Include banned users
+	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of users
+	 */
+	public function listUsersPaginated(int $limit = 10, bool $includeBanneds = null, string $orderBy = null)
+	{
+		$userModel = new UserModel();
+
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
+		// eanbool $group_par = null,
+
+		if (is_null($includeBanneds))
+		{
+			$userModel->where('banned', 0);
+		}
+
+		if (! is_null($orderBy))
+		{
+			$userModel->orderBy($orderBy);
+		}
+
+		return [
+            'users' => $userModel->paginate($limit),
+            'pager' => $userModel->pager,
+        ];
+	}
+
+	/**
 	 * Send verification email
 	 *
 	 * Sends a verification email based on user id

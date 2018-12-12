@@ -2,7 +2,7 @@
       <div class="card card-login mx-auto mt-5">
         <div class="card-header"><?=lang('Account.loginHeader')?></div>
         <div class="card-body">
-          <form method="POST">
+          <?= form_open('account/login') ?>
 			<?if (isset($errors)):?>
 			<div class="alert alert-danger"><?=$errors?></div>
 			<?endif;?>
@@ -32,7 +32,7 @@
               </div>
             </div>
 						<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.loginLabelSubmit')?></button>
-          </form>
+          <?= form_close() ?>
         </div>
         <div class="card-footer">
 					<div class="row">

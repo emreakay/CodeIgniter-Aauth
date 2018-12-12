@@ -22,6 +22,11 @@
 			<button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
 				<i class="fas fa-bars"></i>
 			</button>
+			<ul class="navbar-nav ml-4">
+				<li class="nav-item">
+					<a href="<?= site_url() ?>">Home</a>
+				</li>
+			</ul>
 			<ul class="navbar-nav ml-auto">
 				<? if (is_loggedin()): ?>
 					<li class="nav-item dropdown no-arrow">
@@ -29,9 +34,9 @@
 							<i class="fas fa-user-circle fa-fw"></i>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-							<!-- <a class="dropdown-item" href="#">Settings</a> -->
-							<!-- <div class="dropdown-divider"></div> -->
-							<a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
+							<a class="dropdown-item" href="<?= site_url('account/edit') ?>">Edit Profile</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="<?= site_url('account/logout') ?>">Logout</a>
 						</div>
 					</li>
 				<?php endif; ?>
@@ -40,10 +45,16 @@
 
 		<div id="wrapper">
 			<ul class="sidebar navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link" href="index.html">
+				<li class="nav-item <?= (uri_string() == 'admin' ? 'active' : '') ?>">
+					<a class="nav-link" href="<?= site_url('admin') ?>">
 						<i class="fas fa-fw fa-tachometer-alt"></i>
 						<span>Dashboard</span>
+					</a>
+				</li>
+				<li class="nav-item <?= (strpos(uri_string(), 'admin/users') !== false ? 'active' : '') ?>">
+					<a class="nav-link" href="<?= site_url('admin/users') ?>">
+						<i class="fas fa-fw fa-users"></i>
+						<span>Users</span>
 					</a>
 				</li>
 			</ul>

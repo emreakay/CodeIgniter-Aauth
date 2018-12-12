@@ -5,6 +5,9 @@
 
 ## Code
 
+### Paginate
+  - ADD `'default_full'   => 'App\Views\Pagers\bootstrap_full',` into Config/Pager for BS4 Paginate
+
 ### Login Tokens
   - Config for Cookie Name
   - Single Login (Only one Token per User)

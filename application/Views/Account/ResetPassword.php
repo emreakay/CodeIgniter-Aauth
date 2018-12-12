@@ -2,7 +2,7 @@
 			<div class="card card-login mx-auto mt-5">
 				<div class="card-header"><?=lang('Account.resetPasswordHeader')?></div>
 				<div class="card-body">
-					<form method="POST">
+					<?= form_open('account/reset_password') ?>
 						<p><?=lang('Account.resetPasswordText')?></p>
 						<?if (isset($errors)):?>
 							<div class="alert alert-danger"><?=$errors?></div>
@@ -17,7 +17,7 @@
 							</div>
 						</div>
 						<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.resetPasswordLabelSubmit')?></button>
-					</form>
+					<?= form_close() ?>
 				</div>
 				<div class="card-footer">
 					<div class="row">

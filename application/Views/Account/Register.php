@@ -2,7 +2,7 @@
       <div class="card card-register mx-auto mt-5">
         <div class="card-header"><?=lang('Account.registerHeader')?></div>
         <div class="card-body">
-          <form method="POST">
+          <?= form_open('account/register') ?>
 						<?if (isset($errors)):?>
 							<div class="alert alert-danger"><?=$errors?></div>
 						<?endif;?>
@@ -29,7 +29,7 @@
             </div>
           	<p class="small">* <?=lang('Account.registerRequired')?></p>
 						<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.registerLabelSubmit')?></button>
-          </form>
+          <?= form_close() ?>
         </div>
         <div class="card-footer">
 					<div class="row">

@@ -1,7 +1,7 @@
       <div class="card">
         <div class="card-header"><?=lang('Account.editHeader')?></div>
         <div class="card-body">
-          <form method="POST">
+          <?= form_open('account/edit') ?>
 						<?if (isset($errors)):?>
 							<div class="alert alert-danger"><?=$errors?></div>
 						<?endif;?>
@@ -27,6 +27,6 @@
               </div>
             </div>
 						<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.editLabelSubmit')?></button>
-          </form>
+          <?= form_close() ?>
         </div>
       </div>
