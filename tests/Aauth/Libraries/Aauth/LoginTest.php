@@ -135,6 +135,7 @@ class LoginTest extends CIDatabaseTestCase
 			'loggedIn' => true,
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
+		$session->remove('user');
 
 		helper('text');
 		$session        = $this->getInstance();
