@@ -152,7 +152,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->isLoggedIn());
 
 		$session->remove('user');
-		$_COOKIE['remember'] = base64_encode(a) . ';' . $selectorString . ';' . $randomString;
+		$_COOKIE['remember'] = base64_encode('a') . ';' . $selectorString . ';' . $randomString;
 		$this->assertFalse($this->library->isLoggedIn());
 	}
 
