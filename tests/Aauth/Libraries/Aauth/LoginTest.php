@@ -150,8 +150,8 @@ class LoginTest extends CIDatabaseTestCase
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
 
-		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $s;
-		set_cookie(base64_encode(1) . ';' . $randomString . ';' . $s;
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+		set_cookie('remember', base64_encode(1) . ';' . $randomString . ';' . $selectorString, 9999);
 
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
