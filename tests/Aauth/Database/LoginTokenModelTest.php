@@ -13,7 +13,7 @@ class LoginTokenModelTest extends CIDatabaseTestCase
 
 	public function setUp()
 	{
-	    parent::setUp();
+		parent::setUp();
 
 		$this->model = new LoginTokenModel($this->db);
 	}
@@ -31,11 +31,11 @@ class LoginTokenModelTest extends CIDatabaseTestCase
 	{
 		$this->model->insert(['user_id' => 99, 'random_hash' => 'random_hash9999']);
 		$oldLoginTokens = $this->model->findAllByUserId(99);
-		$oldLoginToken = $oldLoginTokens[0];
+		$oldLoginToken  = $oldLoginTokens[0];
 		sleep(5);
 		$this->model->update($oldLoginToken['id']);
 		$loginTokens = $this->model->findAllByUserId(99);
-		$loginToken = $loginTokens[0];
+		$loginToken  = $loginTokens[0];
 		$this->assertNotEquals($oldLoginToken['expires_at'], $loginToken['expires_at']);
 	}
 

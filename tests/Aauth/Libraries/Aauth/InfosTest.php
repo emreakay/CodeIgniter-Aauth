@@ -9,48 +9,47 @@ use App\Libraries\Aauth;
 
 /**
  * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
+ * @preserveGlobalState         disabled
  */
 class InfosTest extends \CIUnitTestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
+	public function setUp()
+	{
+		parent::setUp();
 
-	    $this->library = new Aauth(null, true);
-        $_COOKIE = [];
-        $_SESSION = [];
-    }
+		$this->library = new Aauth(null, true);
+		$_COOKIE       = [];
+		$_SESSION      = [];
+	}
 
-    public function tearDown()
-    {
+	public function tearDown()
+	{
+	}
 
-    }
-
-    protected function getInstance($options=[])
-    {
-        $defaults = [
-			'sessionDriver' => 'CodeIgniter\Session\Handlers\FileHandler',
-			'sessionCookieName' => 'ci_session',
-			'sessionExpiration' => 7200,
-			'sessionSavePath' => 'null',
-			'sessionMatchIP' => false,
-			'sessionTimeToUpdate' => 300,
+	protected function getInstance($options = [])
+	{
+		$defaults = [
+			'sessionDriver'            => 'CodeIgniter\Session\Handlers\FileHandler',
+			'sessionCookieName'        => 'ci_session',
+			'sessionExpiration'        => 7200,
+			'sessionSavePath'          => 'null',
+			'sessionMatchIP'           => false,
+			'sessionTimeToUpdate'      => 300,
 			'sessionRegenerateDestroy' => false,
-			'cookieDomain' => '',
-			'cookiePrefix' => '',
-			'cookiePath' => '/',
-			'cookieSecure' => false,
-        ];
+			'cookieDomain'             => '',
+			'cookiePrefix'             => '',
+			'cookiePath'               => '/',
+			'cookieSecure'             => false,
+		];
 
-        $config = (object)$defaults;
+		$config = (object)$defaults;
 
-        $session = new MockSession(new FileHandler($config, Services::request()->getIPAddress()), $config);
-        $session->setLogger(new TestLogger(new Logger()));
-        $session->start();
+		$session = new MockSession(new FileHandler($config, Services::request()->getIPAddress()), $config);
+		$session->setLogger(new TestLogger(new Logger()));
+		$session->start();
 
-        return $session;
-    }
+		return $session;
+	}
 
 	//--------------------------------------------------------------------
 
@@ -64,8 +63,8 @@ class InfosTest extends \CIUnitTestCase
 	public function testInfosArray()
 	{
 		$this->assertCount(0, $this->library->getInfosArray());
-		$this->library->info(['test message 1','test message 2']);
-		$this->assertEquals(['test message 1','test message 2'], $this->library->getInfosArray());
+		$this->library->info(['test message 1', 'test message 2']);
+		$this->assertEquals(['test message 1', 'test message 2'], $this->library->getInfosArray());
 	}
 
 	public function testPrintInfos()
@@ -75,14 +74,14 @@ class InfosTest extends \CIUnitTestCase
 		$this->library->info('test message 2');
 		$this->assertEquals('test message 1<br />test message 2', $this->library->printInfos('<br />', true));
 
- 		$this->library->printInfos('<br />');
- 		$this->expectOutputString('test message 1<br />test message 2');
+		$this->library->printInfos('<br />');
+		$this->expectOutputString('test message 1<br />test message 2');
 	}
 
 	public function testClearInfos()
 	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
 		$this->library->info('test message 1', true);
 		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
 		$this->library->clearInfos();
@@ -92,30 +91,30 @@ class InfosTest extends \CIUnitTestCase
 
 	public function testInfosFlash()
 	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
 		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info('test message 1', true);
-        $session->start();
+		$session->start();
 		$this->assertEquals(['test message 1'], $session->getFlashdata('infos'));
 
-	    $this->library = new Aauth(NULL, $session);
-		$this->library->info(['test message 1','test message 2'], true);
-        $session->start();
-		$this->assertEquals(['test message 1','test message 2'], $session->getFlashdata('infos'));
+		$this->library = new Aauth(null, $session);
+		$this->library->info(['test message 1', 'test message 2'], true);
+		$session->start();
+		$this->assertEquals(['test message 1', 'test message 2'], $session->getFlashdata('infos'));
 	}
 
 	public function testInfosFlashKeep()
 	{
-        $session = $this->getInstance();
-	    $this->library = new Aauth(NULL, $session);
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
 		$this->assertNull($session->getFlashdata('infos'));
 		$this->library->info('test message 1 Flash', true);
-        $session->start();
-	    $this->library = new Aauth(NULL, $session);
+		$session->start();
+		$this->library = new Aauth(null, $session);
 		$this->library->info('test message 1 NonFlash');
 		$this->library->keepInfos(true);
-        $session->start();
+		$session->start();
 		$this->assertEquals(['test message 1 Flash', 'test message 1 NonFlash'], $session->getFlashdata('infos'));
 	}
 }

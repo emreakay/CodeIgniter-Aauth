@@ -13,7 +13,7 @@ class PermModelTest extends CIDatabaseTestCase
 
 	public function setUp()
 	{
-	    parent::setUp();
+		parent::setUp();
 
 		$this->model = new PermModel($this->db);
 	}

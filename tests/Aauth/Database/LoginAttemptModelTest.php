@@ -13,7 +13,7 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 
 	public function setUp()
 	{
-	    parent::setUp();
+		parent::setUp();
 
 		$this->model = new LoginAttemptModel($this->db);
 	}

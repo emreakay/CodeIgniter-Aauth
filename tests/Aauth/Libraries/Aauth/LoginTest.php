@@ -15,7 +15,7 @@ use App\Models\Aauth\LoginTokenModel;
 
 /**
  * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
+ * @preserveGlobalState         disabled
  */
 class LoginTest extends CIDatabaseTestCase
 {
@@ -31,30 +31,29 @@ class LoginTest extends CIDatabaseTestCase
 
 		Services::injectMock('response', new MockResponse(new App()));
 		$this->response = service('response');
-		$this->library = new Aauth(null, true);
-		$_COOKIE = [];
-		$_SESSION = [];
+		$this->library  = new Aauth(null, true);
+		$_COOKIE        = [];
+		$_SESSION       = [];
 	}
 
 	public function tearDown()
 	{
-
 	}
 
-	protected function getInstance($options=[])
+	protected function getInstance($options = [])
 	{
 		$defaults = [
-			'sessionDriver' => 'CodeIgniter\Session\Handlers\FileHandler',
-			'sessionCookieName' => 'ci_session',
-			'sessionExpiration' => 7200,
-			'sessionSavePath' => 'null',
-			'sessionMatchIP' => false,
-			'sessionTimeToUpdate' => 300,
+			'sessionDriver'            => 'CodeIgniter\Session\Handlers\FileHandler',
+			'sessionCookieName'        => 'ci_session',
+			'sessionExpiration'        => 7200,
+			'sessionSavePath'          => 'null',
+			'sessionMatchIP'           => false,
+			'sessionTimeToUpdate'      => 300,
 			'sessionRegenerateDestroy' => false,
-			'cookieDomain' => '',
-			'cookiePrefix' => '',
-			'cookiePath' => '/',
-			'cookieSecure' => false,
+			'cookieDomain'             => '',
+			'cookiePrefix'             => '',
+			'cookiePath'               => '/',
+			'cookieSecure'             => false,
 		];
 
 		$config = (object)$defaults;
@@ -70,8 +69,8 @@ class LoginTest extends CIDatabaseTestCase
 
 	public function testLogin()
 	{
-		$session = $this->getInstance();
-		$config = new AauthConfig();
+		$session                  = $this->getInstance();
+		$config                   = new AauthConfig();
 		$config->loginUseUsername = true;
 
 		$this->library = new Aauth($config, $session);
@@ -104,7 +103,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.loginFailedAll'), $this->library->getErrorsArray()[0]);
 
 		$this->library->banUser(1);
- 		$this->library->clearErrors();
+		$this->library->clearErrors();
 		$this->assertFalse($this->library->login('admin@example.com', 'password123456'));
 		$this->assertEquals(lang('Aauth.invalidUserBanned'), $this->library->getErrorsArray()[0]);
 
@@ -124,7 +123,7 @@ class LoginTest extends CIDatabaseTestCase
 
 	public function testIsLoggedIn()
 	{
-		$session = $this->getInstance();
+		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
 		$session->set('user', [
 			'loggedIn' => true,
@@ -134,7 +133,7 @@ class LoginTest extends CIDatabaseTestCase
 
 	public function testLogout()
 	{
-		$session = $this->getInstance();
+		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
 		$session->set('user', [
 			'loggedIn' => true,

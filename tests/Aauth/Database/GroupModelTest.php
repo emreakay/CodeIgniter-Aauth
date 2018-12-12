@@ -13,7 +13,7 @@ class GroupModelTest extends CIDatabaseTestCase
 
 	public function setUp()
 	{
-	    parent::setUp();
+		parent::setUp();
 
 		$this->model = new GroupModel($this->db);
 	}

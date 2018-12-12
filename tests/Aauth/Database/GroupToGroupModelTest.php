@@ -14,9 +14,9 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 
 	public function setUp()
 	{
-	    parent::setUp();
+		parent::setUp();
 
-		$this->model = new GroupToGroupModel($this->db);
+		$this->model  = new GroupToGroupModel($this->db);
 		$this->config = new AauthConfig();
 	}
 
@@ -26,8 +26,8 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 	{
 		$groupToGroup = $this->model->insert(99, 99);
 		$this->seeInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 	}
 
@@ -37,8 +37,8 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 		$this->assertFalse($groupToGroup);
 
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$groupToGroup = $this->model->exists(99, 99);
 		$this->assertTrue($groupToGroup);
@@ -49,8 +49,8 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 		$groupsToGroup = $this->model->findAllBySubgroupId(99);
 		$this->assertCount(0, $groupsToGroup);
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$groupsToGroup = $this->model->findAllBySubgroupId(99);
 		$this->assertCount(1, $groupsToGroup);
@@ -61,8 +61,8 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 		$groupToGroups = $this->model->findAllByGroupId(99);
 		$this->assertCount(0, $groupToGroups);
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$groupToGroups = $this->model->findAllByGroupId(99);
 		$this->assertCount(1, $groupToGroups);
@@ -71,12 +71,12 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 	public function testDelete()
 	{
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$criteria = [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		];
 		$this->seeNumRecords(1, $this->config->dbTableGroupToGroup, $criteria);
 		$this->model->delete(99, 99);
@@ -86,11 +86,11 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 	public function testDeleteAllByGroupId()
 	{
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$criteria = [
-		    'group_id' => 99
+			'group_id' => 99,
 		];
 		$this->seeNumRecords(1, $this->config->dbTableGroupToGroup, $criteria);
 		$this->model->deleteAllByGroupId(99);
@@ -100,11 +100,11 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 	public function testDeleteAllBySubgroupId()
 	{
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$criteria = [
-		    'subgroup_id' => 99
+			'subgroup_id' => 99,
 		];
 		$this->seeNumRecords(1, $this->config->dbTableGroupToGroup, $criteria);
 		$this->model->deleteAllBySubgroupId(99);
@@ -115,12 +115,12 @@ class GroupToGroupModelTest extends CIDatabaseTestCase
 	{
 		$this->model = new GroupToGroupModel();
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 99,
-		    'subgroup_id' => 99,
+			'group_id'    => 99,
+			'subgroup_id' => 99,
 		]);
 		$this->hasInDatabase($this->config->dbTableGroupToGroup, [
-		    'group_id' => 98,
-		    'subgroup_id' => 99,
+			'group_id'    => 98,
+			'subgroup_id' => 99,
 		]);
 		$groupsToGroup = $this->model->findAllBySubgroupId(99);
 		$this->assertCount(2, $groupsToGroup);
