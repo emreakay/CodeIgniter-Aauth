@@ -146,7 +146,7 @@ class LoginTest extends CIDatabaseTestCase
 
 		$this->response->setCookie('remember', $userId . ';' . $randomString . ';' . $selectorString, YEAR);
 
-		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
