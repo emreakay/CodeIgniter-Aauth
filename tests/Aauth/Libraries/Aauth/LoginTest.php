@@ -136,11 +136,11 @@ class LoginTest extends CIDatabaseTestCase
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
 
+		$session->remove('user');
 		helper('text');
 		$config         = new AauthConfig();
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
-		$session->remove('user');
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
@@ -148,6 +148,7 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+
 		$this->assertTrue($this->library->isLoggedIn());
 
 		$randomString   = random_string('alnum', 32);
@@ -159,8 +160,8 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 
-		$session->remove('user');
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $selectorString . ';' . $randomString;
+		$session->remove('user');
 		$this->assertFalse($this->library->isLoggedIn());
 
 		$_COOKIE['remember'] = base64_encode(3) . ';' . $randomString . ';' . $selectorString;
@@ -168,13 +169,13 @@ class LoginTest extends CIDatabaseTestCase
 
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('-1 week')),
 		]);
-		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 		$this->assertFalse($this->library->isLoggedIn());
 	}
 
