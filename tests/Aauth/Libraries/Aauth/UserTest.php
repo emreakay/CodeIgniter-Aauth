@@ -62,9 +62,43 @@ class UserTest extends CIDatabaseTestCase
 
 	//--------------------------------------------------------------------
 
+	public function testCreateUser()
+	{
+		$this->library->createUser('usertest@example.com', 'password987654', 'usertest');
+		$this->seeInDatabase($this->config->dbTableUsers, [
+			'email'    => 'usertest@example.com',
+			'username' => 'usertest',
+		]);
+		$this->assertEquals(lang('Aauth.infoCreateSuccess'), $this->library->getInfosArray()[0]);
+
+		$this->library = new Aauth(null, true);
+		$this->assertFalse($this->library->createUser('admin@example.com', 'password123456', null));
+		print_r($this->library->getErrorsArray());
+		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
+
+		$this->library = new Aauth(null, true);
+		$this->assertFalse($this->library->createUser('adminexample.com', 'password123456', null));
+		$this->assertEquals(lang('Aauth.invalidEmail'), $this->library->getErrorsArray()[0]);
+
+		$this->library = new Aauth(null, true);
+		$this->assertFalse($this->library->createUser('test@example.com', 'pass', null));
+		$this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
+
+		$this->library = new Aauth(null, true);
+		$this->assertFalse($this->library->createUser('test@example.com', 'password12345678901011121314151617', null));
+		$this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
+
+		$this->library = new Aauth(null, true);
+		$this->assertFalse($this->library->createUser('test@example.com', 'password123456', 'admin'));
+		$this->assertEquals(lang('Aauth.existsAlreadyUsername'), $this->library->getErrorsArray()[0]);
+
+		$this->library = new Aauth(null, true);
+		$this->assertFalse($this->library->createUser('test@example.com', 'password123456', 'user+'));
+		$this->assertEquals(lang('Aauth.invalidUsername'), $this->library->getErrorsArray()[0]);
+	}
+
 	public function testUpdateUser()
 	{
-		$this->library = new Aauth(null, true);
 		$this->seeInDatabase($this->config->dbTableUsers, [
 			'id'       => 2,
 			'email'    => 'user@example.com',
@@ -222,6 +256,7 @@ class UserTest extends CIDatabaseTestCase
 			'id'     => 1,
 			'banned' => 0,
 		]);
+		$this->assertFalse($this->library->isBanned());
 	}
 
 	public function testIsBanned()

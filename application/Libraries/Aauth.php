@@ -139,7 +139,7 @@ class Aauth
 
 		if (! $userId = $userModel->insert($data))
 		{
-			$this->error($userModel->errors());
+			$this->error(array_values($userModel->errors()));
 
 			return false;
 		}

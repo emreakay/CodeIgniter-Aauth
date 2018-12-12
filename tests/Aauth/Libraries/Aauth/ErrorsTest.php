@@ -111,6 +111,10 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertNull($session->getFlashdata('errors'));
 		$this->library->error('test message 1 Flash', true);
 		$session->start();
+		$this->library->keepErrors();
+		$session->start();
+		$this->assertEquals(['test message 1 Flash'], $session->getFlashdata('errors'));
+		$session->start();
 		$this->library = new Aauth(null, $session);
 		$this->library->error('test message 1 NonFlash');
 		$this->library->keepErrors(true);
