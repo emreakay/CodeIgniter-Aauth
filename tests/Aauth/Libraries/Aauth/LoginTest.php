@@ -76,6 +76,12 @@ class LoginTest extends CIDatabaseTestCase
 		$this->library = new Aauth($config, $session);
 		$this->assertTrue($this->library->login('admin', 'password123456'));
 
+		$this->assertTrue($this->library->login('admin', 'password123456', true));
+		$this->seeInDatabase($this->config->dbTableLoginTokens, [
+			'user_id' => 1,
+		]);
+        $this->assertTrue($this->response->hasCookie('remember'));
+
 		$this->assertFalse($this->library->login('admin', 'passwor'));
 		$this->assertEquals(lang('Aauth.loginFailedUsername'), $this->library->getErrorsArray()[0]);
 
