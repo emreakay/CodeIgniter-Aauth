@@ -173,7 +173,7 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 
-		$_COOKIE['remember'] = base64_encode(3) . ';' . $randomString . ';' . $selectorString;
+		$_COOKIE['remember'] = base64_encode(99) . ';' . $randomString . ';' . $selectorString;
 
 		$this->assertFalse($this->library->isLoggedIn());
 
