@@ -162,6 +162,7 @@ class LoginTest extends CIDatabaseTestCase
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
+		$this->library->logout();
 
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
