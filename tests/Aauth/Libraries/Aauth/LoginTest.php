@@ -147,15 +147,14 @@ class LoginTest extends CIDatabaseTestCase
 
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
-		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
-
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
-		$this->library = new Aauth(null, $session);
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+
 		$this->assertTrue($this->library->isLoggedIn());
 
 		// $randomString   = random_string('alnum', 32);
