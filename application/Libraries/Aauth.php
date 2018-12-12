@@ -208,7 +208,7 @@ class Aauth
 			return true;
 		}
 
-		$this->error($userModel->errors());
+		$this->error(array_values($userModel->errors()));
 
 		return false;
 	}
