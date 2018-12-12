@@ -3,10 +3,13 @@
 use Config\Aauth as AauthConfig;
 use Config\App;
 use Config\Logger;
-use Config\Services;
 use Tests\Support\Log\TestLogger;
 use Tests\Support\HTTP\MockResponse;
 use Tests\Support\Session\MockSession;
+use CodeIgniter\Config\Services;
+use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\URI;
+use CodeIgniter\HTTP\UserAgent;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
@@ -29,8 +32,11 @@ class LoginTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-		Services::injectMock('response', new MockResponse(new App()));
-		$this->response = service('response');
+        Services::injectMock('response', new MockResponse(new App()));
+        $this->response = service('response');
+		$this->request = new IncomingRequest(new App(), new URI(), null, new UserAgent());
+        Services::injectMock('request', $this->request);
+
 		$this->library  = new Aauth(null, true);
 		$_COOKIE        = [];
 		$_SESSION       = [];
@@ -139,12 +145,13 @@ class LoginTest extends CIDatabaseTestCase
 		$session->remove('user');
 
 		helper('text');
-		$randomString   = random_string('alnum', 32);
-		$selectorString = random_string('alnum', 16);
-		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 		$session        = $this->getInstance();
 		$this->library  = new Aauth(null, $session);
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
 
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $s;
+		set_cookie(base64_encode(1) . ';' . $randomString . ';' . $s;
 
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
