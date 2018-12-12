@@ -163,7 +163,14 @@ class LoginTest extends CIDatabaseTestCase
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
 		$this->library->logout();
+	}
 
+	public function testIsLoggedInCookieInvalidUser($value='')
+	{
+		helper('text');
+		$session        = $this->getInstance();
+		$this->library  = new Aauth(null, $session);
+		$config         = new AauthConfig();
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
 		$this->hasInDatabase($config->dbTableLoginTokens, [
@@ -177,12 +184,29 @@ class LoginTest extends CIDatabaseTestCase
 
 		$this->assertFalse($this->library->isLoggedIn());
 		unset($_COOKIE['remember']);
+	}
+
+	public function testIsLoggedInCookieInvalidCookie($value='')
+	{
+		helper('text');
+		$session        = $this->getInstance();
+		$this->library  = new Aauth(null, $session);
+		$config         = new AauthConfig();
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
 
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $selectorString . ';' . $randomString;
 
 		$this->assertFalse($this->library->isLoggedIn());
 		unset($_COOKIE['remember']);
+	}
 
+	public function testIsLoggedInCookieExpired($value='')
+	{
+		helper('text');
+		$session        = $this->getInstance();
+		$this->library  = new Aauth(null, $session);
+		$config         = new AauthConfig();
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
 		$this->hasInDatabase($config->dbTableLoginTokens, [
