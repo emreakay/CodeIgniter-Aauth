@@ -43,7 +43,7 @@
   - verification_link => linkVerification
   - totp_two_step_login_redirect => linkTotp
   - verification => userVerification
-  - additional_valid_chars => userAdditionalChars
+  - additional_valid_chars => userRegexPattern
   - min => passwordMin
   - max => passwordMax
   - password_hash_algo => passwordHashAlgo

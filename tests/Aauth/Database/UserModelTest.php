@@ -95,8 +95,21 @@ class UserModelTest extends CIDatabaseTestCase
 
 	public function testUpdate()
 	{
-		$this->assertFalse($this->model->update(2, ['id' => 2, 'email' => 'admin@example.com']));
+		$this->assertFalse($this->model->update(2, ['email' => 'admin@example.com']));
+		print_r($this->model->errors());
 		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->model->errors()[0]);
+
+		// $this->assertFalse($this->model->update(2, ['email' => 'adminexample.com']));
+		// $this->assertEquals(lang('Aauth.invalidEmail'), $this->model->errors()[0]);
+
+		// $this->assertFalse($this->model->update(2, ['password' => 'pass']));
+		// $this->assertEquals(lang('Aauth.invalidPassword'), $this->model->errors()[0]);
+
+		// $this->assertFalse($this->model->update(2, ['password' => 'password12345678901011121314151617']));
+		// $this->assertEquals(lang('Aauth.invalidPassword'), $this->model->errors()[0]);
+
+		// $this->assertFalse($this->model->update(2, ['password' => 'password12345678901011121314151617']));
+		// $this->assertEquals(lang('Aauth.invalidPassword'), $this->model->errors()[0]);
 
 		// $this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
 		// $this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);

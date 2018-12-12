@@ -70,9 +70,8 @@ class Aauth extends BaseConfig
 	|
 	| 'userRegexPattern'
 	|
-	|	Additional valid chars for username. Non alphanumeric characters that are
-	|	allowed by default
-	|	(default: '[a-zA-Z0-9]+')
+	|	Regex pattern for valid chars for username
+	|	(default: '^[a-zA-Z0-9]{3,}$')
 	*/
 	public $userVerification = false;
 	public $userRegexPattern = '^[a-zA-Z0-9]{3,}$';

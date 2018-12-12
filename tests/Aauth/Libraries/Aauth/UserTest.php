@@ -78,7 +78,7 @@ class UserTest extends CIDatabaseTestCase
 		]);
 		$this->assertEquals(lang('Aauth.infoUpdateSuccess'), $this->library->getInfosArray()[0]);
 
-		// moved to UserModelTest
+		// moved to UserModelTest, not working here :/
 		// $this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
 		// $this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
 
