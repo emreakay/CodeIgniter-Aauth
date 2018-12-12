@@ -136,12 +136,10 @@ class LoginTest extends CIDatabaseTestCase
 		]);
 
 		helper('text');
-		$session        = $this->getInstance();
-		$this->library  = new Aauth(null, $session);
 		$config         = new AauthConfig();
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
-
+		$session->remove('user');
 		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 
 		$this->hasInDatabase($config->dbTableLoginTokens, [

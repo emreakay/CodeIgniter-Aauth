@@ -839,7 +839,6 @@ class Aauth
 	public function isLoggedIn()
 	{
 		helper('cookie');
-		print_r(get_cookie('remember'));
 		if (isset($this->session->get('user')['loggedIn']))
 		{
 			return true;
