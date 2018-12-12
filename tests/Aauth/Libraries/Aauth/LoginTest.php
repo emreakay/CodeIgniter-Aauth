@@ -151,8 +151,18 @@ class LoginTest extends CIDatabaseTestCase
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
 
+		$this->hasInDatabase($config->dbTableLoginTokens, [
+			'user_id'       => 3,
+			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
+			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
+		]);
+
 		$session->remove('user');
-		$_COOKIE['remember'] = base64_encode('a') . ';' . $selectorString . ';' . $randomString;
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $selectorString . ';' . $randomString;
+		$this->assertFalse($this->library->isLoggedIn());
+
+		$_COOKIE['remember'] = base64_encode(3) . ';' . $randomString . ';' . $selectorString;
 		$this->assertFalse($this->library->isLoggedIn());
 	}
 
