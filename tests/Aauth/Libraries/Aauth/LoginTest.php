@@ -77,7 +77,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->login('admin', 'password123456'));
 
 		$this->assertTrue($this->library->login('admin', 'password123456', true));
-		$this->seeInDatabase($this->config->dbTableLoginTokens, [
+		$this->seeInDatabase($config->dbTableLoginTokens, [
 			'user_id' => 1,
 		]);
         $this->assertTrue($this->response->hasCookie('remember'));
@@ -134,6 +134,24 @@ class LoginTest extends CIDatabaseTestCase
 		$session->set('user', [
 			'loggedIn' => true,
 		]);
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
+
+		$config          = new AauthConfig();
+		$expire          = $config->loginRemember;
+		$userId          = base64_encode(1);
+		$randomString    = random_string('alnum', 32);
+		$selectorString  = random_string('alnum', 16);
+
+		$this->response->setCookie('remember', $userId . ';' . $randomString . ';' . $selectorString, YEAR);
+
+		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+			'user_id'       => 1,
+			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
+			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+			'expires_at'    => date('Y-m-d H:i:s', strtotime($expire)),
+		]);
+
 		$this->assertTrue($this->library->isLoggedIn());
 	}
 
