@@ -136,7 +136,6 @@ class LoginTest extends CIDatabaseTestCase
 	public function testIsLoggedIn()
 	{
 		helper('text');
-		helper('cookie');
 		$config        = new AauthConfig();
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
@@ -144,7 +143,7 @@ class LoginTest extends CIDatabaseTestCase
 			'loggedIn' => true,
 		]);
 		$this->assertTrue($this->library->isLoggedIn());
-		$session->remove('user');
+		$this->library->logout();
 
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
@@ -156,8 +155,9 @@ class LoginTest extends CIDatabaseTestCase
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
+		$this->library->logout();
+		$this->library = new Aauth(null, $session);
 		$this->assertTrue($this->library->isLoggedIn());
-		$session->remove('user');
 
 		// $randomString   = random_string('alnum', 32);
 		// $selectorString = random_string('alnum', 16);
