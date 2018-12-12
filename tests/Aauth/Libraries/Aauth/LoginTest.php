@@ -135,27 +135,50 @@ class LoginTest extends CIDatabaseTestCase
 
 	public function testIsLoggedIn()
 	{
-		helper('text');
-		$config        = new AauthConfig();
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
 		$session->set('user', [
 			'loggedIn' => true,
 		]);
-		$this->assertTrue($this->library->isLoggedIn());
-		$this->library->logout();
 
+		helper('text');
+		$session        = $this->getInstance();
+		$this->library  = new Aauth(null, $session);
+		$config         = new AauthConfig();
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
+
+		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
-		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
-
 		$this->assertTrue($this->library->isLoggedIn());
+
+		// helper('text');
+		// $config        = new AauthConfig();
+		// $session       = $this->getInstance();
+		// $this->library = new Aauth(null, $session);
+		// $session->set('user', [
+		// 	'loggedIn' => true,
+		// ]);
+		// $this->assertTrue($this->library->isLoggedIn());
+		// $this->library->logout();
+
+		// $randomString   = random_string('alnum', 32);
+		// $selectorString = random_string('alnum', 16);
+		// $this->hasInDatabase($config->dbTableLoginTokens, [
+		// 	'user_id'       => 1,
+		// 	'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
+		// 	'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
+		// 	'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
+		// ]);
+		// $_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+
+		// $this->assertTrue($this->library->isLoggedIn());
 
 		// $randomString   = random_string('alnum', 32);
 		// $selectorString = random_string('alnum', 16);
