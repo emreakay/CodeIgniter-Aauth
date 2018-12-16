@@ -110,520 +110,6 @@ class Aauth
 		$this->session = $session;
 	}
 
-	//--------------------------------------------------------------------
-	// User Functions
-	//--------------------------------------------------------------------
-
-	/**
-	 * Create user
-	 *
-	 * Creates a new user
-	 *
-	 * @param string         $email    User's email address
-	 * @param string         $password User's password
-	 * @param string|boolean $username User's username
-	 *
-	 * @return integer|boolean
-	 */
-	public function createUser(string $email, string $password, string $username = null)
-	{
-		$userModel = new UserModel();
-
-		$data['email']    = $email;
-		$data['password'] = $password;
-
-		if (! is_null($username))
-		{
-			$data['username'] = $username;
-		}
-
-		if (! $userId = $userModel->insert($data))
-		{
-			$this->error(array_values($userModel->errors()));
-
-			return false;
-		}
-
-		if ($this->config->userVerification)
-		{
-			$this->sendVerification($userId, $email);
-			$this->info(lang('Aauth.infoCreateVerification'));
-
-			return $userId;
-		}
-
-		$this->info(lang('Aauth.infoCreateSuccess'));
-
-		return $userId;
-	}
-
-	/**
-	 * Update user
-	 *
-	 * Updates existing user details
-	 *
-	 * @param integer        $userId   User id to update
-	 * @param string|boolean $email    User's email address, or FALSE if not to be updated
-	 * @param string|boolean $password User's password, or FALSE if not to be updated
-	 * @param string|boolean $username User's name, or FALSE if not to be updated
-	 *
-	 * @return boolean
-	 */
-	public function updateUser(int $userId, $email = null, string $password = null, string $username = null)
-	{
-		$userModel = new UserModel();
-
-		if (! $userModel->existsById($userId))
-		{
-			$this->error(lang('Aauth.notFoundUser'));
-
-			return false;
-		}
-		else if (is_null($email) && is_null($password) && is_null($username))
-		{
-			return false;
-		}
-
-		$data['id'] = $userId;
-
-		if (! is_null($email))
-		{
-			$data['email'] = $email;
-		}
-
-		if (! is_null($password))
-		{
-			$data['password'] = $password;
-		}
-
-		if (! is_null($username))
-		{
-			$data['username'] = $username;
-		}
-
-		if ($userModel->update($userId, $data))
-		{
-			$this->info(lang('Aauth.infoUpdateSuccess'));
-
-			return true;
-		}
-
-		$this->error(array_values($userModel->errors()));
-
-		return false;
-	}
-
-	/**
-	 * Delete user
-	 *
-	 * @param integer $userId User id to delete
-	 *
-	 * @return boolen
-	 */
-	public function deleteUser(int $userId)
-	{
-		$userModel = new UserModel();
-
-		if (! $userModel->existsById($userId))
-		{
-			$this->error(lang('Aauth.notFoundUser'));
-
-			return false;
-		}
-
-		return $userModel->delete($userId);
-	}
-
-	/**
-	 * List users
-	 *
-	 * Return users as an object array
-	 *
-	 * @param integer $limit          Limit of users to be returned
-	 * @param integer $offset         Offset for limited number of users
-	 * @param boolean $includeBanneds Include banned users
-	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
-	 *
-	 * @return array Array of users
-	 */
-	public function listUsers(int $limit = 0, int $offset = 0, bool $includeBanneds = null, string $orderBy = null)
-	{
-		$userModel = new UserModel();
-		$user      = $userModel->limit($limit, $offset);
-
-		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-		// eanbool $group_par = null,
-
-		if (is_null($includeBanneds))
-		{
-			$user->where('banned', 0);
-		}
-
-		if (! is_null($orderBy))
-		{
-			$user->orderBy($orderBy);
-		}
-
-		return $user->findAll();
-	}
-
-	/**
-	 * List users with paginate
-	 *
-	 * Return users as an object array
-	 *
-	 * @param integer $limit          Limit of users to be returned
-	 * @param integer $offset         Offset for limited number of users
-	 * @param boolean $includeBanneds Include banned users
-	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
-	 *
-	 * @return array Array of users
-	 */
-	public function listUsersPaginated(int $limit = 10, bool $includeBanneds = null, string $orderBy = null)
-	{
-		$userModel = new UserModel();
-
-		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-		// eanbool $group_par = null,
-
-		if (is_null($includeBanneds))
-		{
-			$userModel->where('banned', 0);
-		}
-
-		if (! is_null($orderBy))
-		{
-			$userModel->orderBy($orderBy);
-		}
-
-		return [
-            'users' => $userModel->paginate($limit),
-            'pager' => $userModel->pager,
-        ];
-	}
-
-	/**
-	 * Send verification email
-	 *
-	 * Sends a verification email based on user id
-	 *
-	 * @param integer $userId User id to send verification email to
-	 * @param string  $email  Email to send verification email to
-	 *
-	 * @return boolean
-	 */
-	protected function sendVerification(int $userId, string $email)
-	{
-		helper('text');
-		$userVariableModel = new UserVariableModel();
-		$emailService      = \Config\Services::email();
-		$verificationCode  = sha1(strtotime('now'));
-
-		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
-
-		$messageData['code'] = $verificationCode;
-		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
-
-		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-		$emailService->setTo($email);
-		$emailService->setSubject(lang('Aauth.subjectVerification'));
-		$emailService->setMessage(view('Aauth/Verification', $messageData));
-
-		return $emailService->send();
-	}
-
-	/**
-	 * Verify user
-	 *
-	 * Activates user account based on verification code
-	 *
-	 * @param string $verificationCode Code to validate against
-	 *
-	 * @return boolean Activation fails/succeeds
-	 */
-	public function verifyUser(string $verificationCode)
-	{
-		$userVariableModel = new UserVariableModel();
-		$userVariable      = [
-			'data_key'   => 'verification_code',
-			'data_value' => $verificationCode,
-			'system'     => 1,
-		];
-
-		if ($verificationCodeStored = $userVariableModel->where($userVariable)->first())
-		{
-			$userVariableModel->delete($verificationCodeStored['user_id'], 'verification_code', true);
-			$this->info(lang('Aauth.infoVerification'));
-
-			return true;
-		}
-
-		$this->error(lang('Aauth.invalidVerficationCode'));
-
-		return false;
-	}
-
-	/**
-	 * Get user
-	 *
-	 * Get user information
-	 *
-	 * @param integer|boolean $userId        User id to get or FALSE for current user
-	 * @param boolean         $withVariables Whether to get user variables
-	 * @param boolean         $inclSystem    Whether to get system user variables
-	 *
-	 * @return object|boolean User information or false if user not found
-	 */
-	public function getUser($userId = null, bool $withVariables = false, bool $inclSystem = false)
-	{
-		$userModel         = new UserModel();
-		$userVariableModel = new UserVariableModel();
-
-		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-
-		if (! $userId)
-		{
-			$userId = $this->session->user['id'];
-		}
-
-		if ($user = $userModel->find($userId))
-		{
-			if ($withVariables)
-			{
-				$variables = $userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
-				$variables = $variables->findAll($userId, $inclSystem);
-
-				$user['variables'] = $variables;
-			}
-
-			return $user;
-		}
-
-		$this->error(lang('Aauth.notFoundUser'));
-
-		return false;
-	}
-
-	/**
-	 * Get user id
-	 *
-	 * Get user id from email address, if par. not given, return current user's id
-	 *
-	 * @param string|boolean $email Email address for user
-	 *
-	 * @return object|boolean User information or false if user not found
-	 */
-	public function getUserId($email = null)
-	{
-		$userModel = new UserModel();
-
-		if (! $email)
-		{
-			$where = ['id' => $this->session->user['id']];
-		}
-		else
-		{
-			$where = ['email' => $email];
-		}
-
-		if ($user = $userModel->where($where)->first())
-		{
-			return $user['id'];
-		}
-
-		return false;
-	}
-
-	/**
-	 * Is banned
-	 *
-	 * @param integer $userId User id
-	 *
-	 * @return boolean
-	 */
-	public function isBanned(int $userId = null)
-	{
-		$userModel = new UserModel();
-
-		if (! $userId)
-		{
-			$userId = $this->session->user['id'];
-		}
-
-		if (! $userModel->existsById($userId))
-		{
-			return true;
-		}
-
-		return $userModel->isBanned($userId);
-	}
-
-	/**
-	 * Ban User
-	 *
-	 * @param integer $userId User id
-	 *
-	 * @return boolean
-	 */
-	public function banUser(int $userId = null)
-	{
-		$userModel = new UserModel();
-
-		if (! $userId)
-		{
-			$userId = $this->session->user['id'];
-		}
-
-		if (! $userModel->existsById($userId))
-		{
-			$this->error(lang('Aauth.notFoundUser'));
-
-			return false;
-		}
-
-		return $userModel->updateBanned($userId, 1);
-	}
-
-	/**
-	 * Unban User
-	 *
-	 * @param integer $userId User id
-	 *
-	 * @return boolean
-	 */
-	public function unbanUser(int $userId = null)
-	{
-		$userModel = new UserModel();
-
-		if (! $userId)
-		{
-			$userId = $this->session->user['id'];
-		}
-
-		if (! $userModel->existsById($userId))
-		{
-			$this->error(lang('Aauth.notFoundUser'));
-
-			return false;
-		}
-
-		return $userModel->updateBanned($userId, 0);
-	}
-
-	/**
-	 * Remind password
-	 *
-	 * Emails user with link to reset password
-	 *
-	 * @param string $email Email for account to remind
-	 *
-	 * @return boolean Remind fails/succeeds
-	 */
-	public function remindPassword(string $email)
-	{
-		$userModel = new UserModel();
-		if ($user = $userModel->where('email', $email)->first())
-		{
-			$userVariableModel = new UserVariableModel();
-			$emailService      = \Config\Services::email();
-			$resetCode         = sha1(strtotime('now'));
-			$userVariableModel->save($user['id'], 'verification_code', $resetCode, true);
-
-			$messageData['code'] = $resetCode;
-			$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
-
-			$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-			$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-			$emailService->setTo($user['email']);
-			$emailService->setSubject(lang('Aauth.subjectReset'));
-			$emailService->setMessage(view('Aauth/RemindPassword', $messageData));
-
-			if ($email = $emailService->send())
-			{
-				$this->info(lang('Aauth.infoRemindSuccess'));
-
-				return $email;
-			}
-			else
-			{
-				$this->error(explode('<br />', $emailService->printDebugger([])));
-
-				return false;
-			}
-		}
-
-		$this->error(lang('Aauth.notFoundUser'));
-
-		return false;
-	}
-	/**
-	 * Reset password
-	 *
-	 * Generate new password and email it to the user
-	 *
-	 * @param string $resetCode Verification code for account
-	 *
-	 * @return boolean Password reset fails/succeeds
-	 */
-	public function resetPassword(string $resetCode)
-	{
-		$userVariableModel = new UserVariableModel();
-		$variable          = [
-			'data_key'   => 'verification_code',
-			'data_value' => $resetCode,
-			'system'     => 1,
-		];
-
-		if ($userVariable = $userVariableModel->where($variable)->first())
-		{
-			helper('text');
-			$userModel = new UserModel();
-			$password  = random_string('alnum', $this->config->passwordMin);
-
-			if ($user = $userModel->find($userVariable['user_id']))
-			{
-				$emailService = \Config\Services::email();
-
-				$data['id']       = $user['id'];
-				$data['password'] = $password;
-
-				$userModel->update($user['id'], $data);
-				$userVariableModel->delete($user['id'], 'verification_code', true);
-
-				if ($this->config->totpEnabled && $this->config->totpResetPassword)
-				{
-					$userVariableModel->delete($user['id'], 'totp_secret', true);
-				}
-
-				$messageData['password'] = $password;
-
-				$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-				$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-				$emailService->setTo($user['email']);
-				$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
-				$emailService->setMessage(view('Aauth/ResetPassword', $messageData));
-
-				if ($email = $emailService->send())
-				{
-					$this->info(lang('Aauth.infoResetSuccess'));
-
-					return $email;
-				}
-				else
-				{
-					$this->error(explode('<br />', $emailService->printDebugger([])));
-
-					return false;
-				}
-			}
-		}
-
-		$this->error(lang('Aauth.invalidVerficationCode'));
-
-		return false;
-	}
-
 	//--------------------------------------------------------------------------
 	// Login Functions
 	//--------------------------------------------------------------------------
@@ -916,6 +402,662 @@ class Aauth
 		return false;
 	}
 
+	//--------------------------------------------------------------------
+	// User Functions
+	//--------------------------------------------------------------------
+
+	/**
+	 * Create user
+	 *
+	 * Creates a new user
+	 *
+	 * @param string         $email    User's email address
+	 * @param string         $password User's password
+	 * @param string|boolean $username User's username
+	 *
+	 * @return integer|boolean
+	 */
+	public function createUser(string $email, string $password, string $username = null)
+	{
+		$userModel = new UserModel();
+
+		$data['email']    = $email;
+		$data['password'] = $password;
+
+		if (! is_null($username))
+		{
+			$data['username'] = $username;
+		}
+
+		if (! $userId = $userModel->insert($data))
+		{
+			$this->error(array_values($userModel->errors()));
+
+			return false;
+		}
+
+		if ($this->config->userVerification)
+		{
+			$this->sendVerification($userId, $email);
+			$this->info(lang('Aauth.infoCreateVerification'));
+
+			return $userId;
+		}
+
+		$this->info(lang('Aauth.infoCreateSuccess'));
+
+		return $userId;
+	}
+
+	/**
+	 * Update user
+	 *
+	 * Updates existing user details
+	 *
+	 * @param integer        $userId   User id to update
+	 * @param string|boolean $email    User's email address, or FALSE if not to be updated
+	 * @param string|boolean $password User's password, or FALSE if not to be updated
+	 * @param string|boolean $username User's name, or FALSE if not to be updated
+	 *
+	 * @return boolean
+	 */
+	public function updateUser(int $userId, $email = null, string $password = null, string $username = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+		else if (is_null($email) && is_null($password) && is_null($username))
+		{
+			return false;
+		}
+
+		$data['id'] = $userId;
+
+		if (! is_null($email))
+		{
+			$data['email'] = $email;
+		}
+
+		if (! is_null($password))
+		{
+			$data['password'] = $password;
+		}
+
+		if (! is_null($username))
+		{
+			$data['username'] = $username;
+		}
+
+		if ($userModel->update($userId, $data))
+		{
+			$this->info(lang('Aauth.infoUpdateSuccess'));
+
+			return true;
+		}
+
+		$this->error(array_values($userModel->errors()));
+
+		return false;
+	}
+
+	/**
+	 * Delete user
+	 *
+	 * @param integer $userId User id to delete
+	 *
+	 * @return boolen
+	 */
+	public function deleteUser(int $userId)
+	{
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		return $userModel->delete($userId);
+	}
+
+	/**
+	 * List users
+	 *
+	 * Return users as an object array
+	 *
+	 * @param integer $limit          Limit of users to be returned
+	 * @param integer $offset         Offset for limited number of users
+	 * @param boolean $includeBanneds Include banned users
+	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of users
+	 */
+	public function listUsers(int $limit = 0, int $offset = 0, bool $includeBanneds = null, string $orderBy = null)
+	{
+		$userModel = new UserModel();
+		$user      = $userModel->limit($limit, $offset);
+
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
+		// eanbool $group_par = null,
+
+		if (is_null($includeBanneds))
+		{
+			$user->where('banned', 0);
+		}
+
+		if (! is_null($orderBy))
+		{
+			$user->orderBy($orderBy);
+		}
+
+		return $user->findAll();
+	}
+
+	/**
+	 * List users with paginate
+	 *
+	 * Return users as an object array
+	 *
+	 * @param integer $limit          Limit of users to be returned
+	 * @param integer $offset         Offset for limited number of users
+	 * @param boolean $includeBanneds Include banned users
+	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of users
+	 */
+	public function listUsersPaginated(int $limit = 10, bool $includeBanneds = null, string $orderBy = null)
+	{
+		$userModel = new UserModel();
+
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
+		// eanbool $group_par = null,
+
+		if (is_null($includeBanneds))
+		{
+			$userModel->where('banned', 0);
+		}
+
+		if (! is_null($orderBy))
+		{
+			$userModel->orderBy($orderBy);
+		}
+
+		return [
+			'users' => $userModel->paginate($limit),
+			'pager' => $userModel->pager,
+		];
+	}
+
+	/**
+	 * Send verification email
+	 *
+	 * Sends a verification email based on user id
+	 *
+	 * @param integer $userId User id to send verification email to
+	 * @param string  $email  Email to send verification email to
+	 *
+	 * @return boolean
+	 */
+	protected function sendVerification(int $userId, string $email)
+	{
+		helper('text');
+		$userVariableModel = new UserVariableModel();
+		$emailService      = \Config\Services::email();
+		$verificationCode  = sha1(strtotime('now'));
+
+		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
+
+		$messageData['code'] = $verificationCode;
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+
+		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->setTo($email);
+		$emailService->setSubject(lang('Aauth.subjectVerification'));
+		$emailService->setMessage(view('Aauth/Verification', $messageData));
+
+		return $emailService->send();
+	}
+
+	/**
+	 * Verify user
+	 *
+	 * Activates user account based on verification code
+	 *
+	 * @param string $verificationCode Code to validate against
+	 *
+	 * @return boolean Activation fails/succeeds
+	 */
+	public function verifyUser(string $verificationCode)
+	{
+		$userVariableModel = new UserVariableModel();
+		$userVariable      = [
+			'data_key'   => 'verification_code',
+			'data_value' => $verificationCode,
+			'system'     => 1,
+		];
+
+		if ($verificationCodeStored = $userVariableModel->where($userVariable)->first())
+		{
+			$userVariableModel->delete($verificationCodeStored['user_id'], 'verification_code', true);
+			$this->info(lang('Aauth.infoVerification'));
+
+			return true;
+		}
+
+		$this->error(lang('Aauth.invalidVerficationCode'));
+
+		return false;
+	}
+
+	/**
+	 * Get user
+	 *
+	 * Get user information
+	 *
+	 * @param integer|boolean $userId        User id to get or FALSE for current user
+	 * @param boolean         $withVariables Whether to get user variables
+	 * @param boolean         $inclSystem    Whether to get system user variables
+	 *
+	 * @return object|boolean User information or false if user not found
+	 */
+	public function getUser($userId = null, bool $withVariables = false, bool $inclSystem = false)
+	{
+		$userModel         = new UserModel();
+		$userVariableModel = new UserVariableModel();
+
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
+
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		if ($user = $userModel->find($userId))
+		{
+			if ($withVariables)
+			{
+				$variables = $userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
+				$variables = $variables->findAll($userId, $inclSystem);
+
+				$user['variables'] = $variables;
+			}
+
+			return $user;
+		}
+
+		$this->error(lang('Aauth.notFoundUser'));
+
+		return false;
+	}
+
+	/**
+	 * Get user id
+	 *
+	 * Get user id from email address, if par. not given, return current user's id
+	 *
+	 * @param string|boolean $email Email address for user,
+	 *
+	 * @return object|boolean User information or false if user not found
+	 */
+	public function getUserId($email = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $email)
+		{
+			$where = ['id' => $this->session->user['id']];
+		}
+		else
+		{
+			$where = ['email' => $email];
+		}
+
+		if ($user = $userModel->where($where)->first())
+		{
+			return $user['id'];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Is banned
+	 *
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean
+	 */
+	public function isBanned(int $userId = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			return true;
+		}
+
+		return $userModel->isBanned($userId);
+	}
+
+	/**
+	 * Ban User
+	 *
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean
+	 */
+	public function banUser(int $userId = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		return $userModel->updateBanned($userId, 1);
+	}
+
+	/**
+	 * Unban User
+	 *
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean
+	 */
+	public function unbanUser(int $userId = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		return $userModel->updateBanned($userId, 0);
+	}
+
+	/**
+	 * Remind password
+	 *
+	 * Emails user with link to reset password
+	 *
+	 * @param string $email Email for account to remind
+	 *
+	 * @return boolean Remind fails/succeeds
+	 */
+	public function remindPassword(string $email)
+	{
+		$userModel = new UserModel();
+		if ($user = $userModel->where('email', $email)->first())
+		{
+			$userVariableModel = new UserVariableModel();
+			$emailService      = \Config\Services::email();
+			$resetCode         = sha1(strtotime('now'));
+			$userVariableModel->save($user['id'], 'verification_code', $resetCode, true);
+
+			$messageData['code'] = $resetCode;
+			$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
+
+			$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+			$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+			$emailService->setTo($user['email']);
+			$emailService->setSubject(lang('Aauth.subjectReset'));
+			$emailService->setMessage(view('Aauth/RemindPassword', $messageData));
+
+			if ($email = $emailService->send())
+			{
+				$this->info(lang('Aauth.infoRemindSuccess'));
+
+				return $email;
+			}
+			else
+			{
+				$this->error(explode('<br />', $emailService->printDebugger([])));
+
+				return false;
+			}
+		}
+
+		$this->error(lang('Aauth.notFoundUser'));
+
+		return false;
+	}
+
+	/**
+	 * Reset password
+	 *
+	 * Generate new password and email it to the user
+	 *
+	 * @param string $resetCode Verification code for account
+	 *
+	 * @return boolean Password reset fails/succeeds
+	 */
+	public function resetPassword(string $resetCode)
+	{
+		$userVariableModel = new UserVariableModel();
+		$variable          = [
+			'data_key'   => 'verification_code',
+			'data_value' => $resetCode,
+			'system'     => 1,
+		];
+
+		if ($userVariable = $userVariableModel->where($variable)->first())
+		{
+			helper('text');
+			$userModel = new UserModel();
+			$password  = random_string('alnum', $this->config->passwordMin);
+
+			if ($user = $userModel->find($userVariable['user_id']))
+			{
+				$emailService = \Config\Services::email();
+
+				$data['id']       = $user['id'];
+				$data['password'] = $password;
+
+				$userModel->update($user['id'], $data);
+				$userVariableModel->delete($user['id'], 'verification_code', true);
+
+				if ($this->config->totpEnabled && $this->config->totpResetPassword)
+				{
+					$userVariableModel->delete($user['id'], 'totp_secret', true);
+				}
+
+				$messageData['password'] = $password;
+
+				$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+				$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+				$emailService->setTo($user['email']);
+				$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
+				$emailService->setMessage(view('Aauth/ResetPassword', $messageData));
+
+				if ($email = $emailService->send())
+				{
+					$this->info(lang('Aauth.infoResetSuccess'));
+
+					return $email;
+				}
+				else
+				{
+					$this->error(explode('<br />', $emailService->printDebugger([])));
+
+					return false;
+				}
+			}
+		}
+
+		$this->error(lang('Aauth.invalidVerficationCode'));
+
+		return false;
+	}
+
+	/**
+	 * Set User Variable as key value
+	 * if variable not set before, it will ve set
+	 * if set, overwrites the value
+	 *
+	 * @param string  $key
+	 * @param string  $value
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean
+	 */
+	public function setUserVar(string $key, string $value, int $userId = null)
+	{
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$userVariableModel = new UserVariableModel();
+
+		return $userVariableModel->save($userId, $key, $value);
+	}
+
+	/**
+	 * Unset User Variable as key value
+	 *
+	 * @param string  $key
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean
+	 */
+	public function unsetUserVar(string $key, int $userId = null)
+	{
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$userVariableModel = new UserVariableModel();
+
+		return $userVariableModel->delete($userId, $key);
+	}
+
+	/**
+	 * Get User Variable by key
+	 *
+	 * @param string  $key    Variable Key
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean|string FALSE if var is not set, the value of var if set
+	 */
+	public function getUserVar(string $key, int $userId = null)
+	{
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$userVariableModel = new UserVariableModel();
+
+		if ($variable = $userVariableModel->find($user['id'], 'verification_code', true))
+		{
+			return $variable;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get User Variables by user id
+	 * Return array with all user keys & variables
+	 *
+	 * @param  integer $user_id ; if not given current user
+	 * @return boolean|array , FALSE if var is not set, the value of var if set
+	 */
+	public function getUserVars(int $userId = null)
+	{
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$userVariableModel = new UserVariableModel();
+
+		return $userVariableModel->findAll();
+	}
+
+	/**
+	 * List User Variable Keys by UserID
+	 * Return array of variable keys or FALSE
+	 *
+	 * @param  integer $user_id ; if not given current user
+	 * @return boolean|array
+	 */
+	public function list_user_var_keys($user_id = false)
+	{
+		if (! $userId)
+		{
+			$userId = $this->session->user['id'];
+		}
+
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$userVariableModel = new UserVariableModel();
+		$userVariableModel->select('data_key as key');
+
+		return $userVariableModel->findAll();
+	}
 	//--------------------------------------------------------------------------
 	// Error Functions
 	//--------------------------------------------------------------------------
