@@ -27,8 +27,7 @@
     "scripts": {
         "post-update-cmd": [
             "composer dump-autoload",
-            "CodeIgniter\\ComposerScripts::postUpdate",
-            "bash admin/setup.sh"
+            "CodeIgniter\\ComposerScripts::postUpdate"
         ]
     },
     "support": {
