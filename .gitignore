@@ -14,20 +14,20 @@ tests/README.md
 vendor/
 writable/
 
-application/index.html
-application/.htaccess
+app/index.html
+app/.htaccess
 
-application/Config/
-!application/Config/Aauth.php
+app/Config/*
+!app/Config/Aauth.php
 
-application/Filters/Throttle.php
-application/Filters/Honeypot.php
-application/Filters/CSRF.php
-application/Filters/DebugToolbar.php
+app/Filters/Throttle.php
+app/Filters/Honeypot.php
+app/Filters/CSRF.php
+app/Filters/DebugToolbar.php
 
-application/Views/errors/
-application/Views/welcome_message.php
-application/Views/form.php
+app/Views/errors/
+app/Views/welcome_message.php
+app/Views/form.php
 
 composer.lock
 spark
