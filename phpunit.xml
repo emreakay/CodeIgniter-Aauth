@@ -21,11 +21,11 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./application/Models/Aauth</directory>
-            <directory suffix=".php">./application/Language/*/Aauth</directory>
-            <file>./application/Config/Aauth.php</file>
-            <file>./application/Config/Aauth.php</file>
-            <file>./application/Libraries/Aauth.php</file>
+            <directory suffix=".php">./app/Models/Aauth</directory>
+            <directory suffix=".php">./app/Language/*/Aauth</directory>
+            <file>./app/Config/Aauth.php</file>
+            <file>./app/Config/Aauth.php</file>
+            <file>./app/Libraries/Aauth.php</file>
         </whitelist>
     </filter>
 
