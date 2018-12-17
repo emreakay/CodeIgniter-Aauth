@@ -34,12 +34,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					<? foreach ($users as $user): ?>
+					<?php foreach ($users as $user): ?>
 						<tr>
 							<th scope="row"><?= $user['id'] ?></th>
 							<td><?= $user['email'] ?></td>
 							<td><?= $user['username'] ?></td>
-							<td><?= $user['banned'] == 1 ? 'Yes' : 'No' ?></td>
+							<td><?= $user['banned'] === 1 ? 'Yes' : 'No' ?></td>
 							<td><?= $user['created_at'] ?></td>
 							<td><?= $user['updated_at'] ?></td>
 							<td><?= $user['last_ip_address'] ?></td>
@@ -53,7 +53,7 @@
 								</div>
 							</td>
 						</tr>
-					<? endforeach; ?>
+					<?php endforeach; ?>
 				</tbody>
 			</table>
 		</div>

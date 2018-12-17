@@ -118,7 +118,7 @@ class Users extends Controller
 		$username = $this->request->getPost('username');
 		$password = $this->request->getPost('password');
 
-		if (! $this->aauth->updateUser($userId,  empty($email) ? null : $email,  empty($password) ? null : $password, empty($username) ? null : $username))
+		if (! $this->aauth->updateUser($userId, empty($email) ? null : $email, empty($password) ? null : $password, empty($username) ? null : $username))
 		{
 			return redirect()->back()->with('errors', $this->aauth->getErrorsArray());
 		}
@@ -153,9 +153,9 @@ class Users extends Controller
 		}
 
 		$id = $this->request->getPost('id');
-		if ($userId == $id)
+		if ($userId === $id)
 		{
-			if($this->aauth->deleteUser($userId))
+			if ($this->aauth->deleteUser($userId))
 			{
 				return redirect()->to('/admin/users');
 			}
@@ -167,6 +167,5 @@ class Users extends Controller
 		echo view('Admin/Users/Delete', $data);
 		echo view('Templates/FooterAdmin');
 	}
-
 
 }

@@ -41,7 +41,7 @@ return [
    'usersEditSubmit'           => 'Update user',
    'usersShowHeader'           => 'Show user',
    'usersDeleteHeader'         => 'Delete user',
- 	'usersDeleteSubmit'         => 'Delete user',
+   'usersDeleteSubmit'         => 'Delete user',
    'usersBreadcrumbTitle'      => 'Users',
    'usersLabelId'              => 'Id',
    'usersLabelEmail'           => 'Email address',
