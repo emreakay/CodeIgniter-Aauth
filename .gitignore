@@ -1,33 +1,33 @@
 ###CI4###
 
-public/.htaccess
-public/favicon.ico
-public/index.php
-public/robots.txt
+/public/.htaccess
+/public/favicon.ico
+/public/index.php
+/public/robots.txt
 
-build/
-system/
-tests/_support
-tests/system
-tests/.htaccess
-tests/README.md
-vendor/
-writable/
+/admin/
+/build/
+/system/
+/tests/_support
+/tests/system
+/tests/.htaccess
+/tests/README.md
+/vendor/
+/writable/
 
-app/index.html
-app/.htaccess
+/app/index.html
+/app/.htaccess
 
-app/Config/*
-!app/Config/Aauth.php
+/app/Config/*
+!/app/Config/Aauth.php
 
-app/Filters/Throttle.php
-app/Filters/Honeypot.php
-app/Filters/CSRF.php
-app/Filters/DebugToolbar.php
+/app/Filters/Throttle.php
+/app/Filters/Honeypot.php
+/app/Filters/CSRF.php
+/app/Filters/DebugToolbar.php
 
-app/Views/errors/
-app/Views/welcome_message.php
-app/Views/form.php
+/app/Views/errors/
+/app/Views/welcome_message.php
 
 composer.lock
 spark
@@ -47,4 +47,3 @@ spark
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-admin

@@ -4,6 +4,13 @@
 	</li>
 	<li class="breadcrumb-item active"><?= lang('Admin.usersBreadcrumbTitle') ?></li>
 </ol>
+<?php if (session('infos')): ?>
+	<div class="alert alert-info">
+		<?php foreach (session('infos') as $info) : ?>
+			<?= esc($info) ?><br />
+		<?php endforeach ?>
+	</div>
+<?php endif; ?>
 <div class="card mb-3">
 	<div class="card-header">
 		<a href="<?= site_url('admin/users/new') ?>" class="btn btn-sm btn-success float-right"><?= lang('Admin.usersLinkNew') ?></a>
