@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -111,7 +111,7 @@ class LoginTokenModel
 	 *
 	 * @param array $data Array with data
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function insert(array $data)
 	{
@@ -121,7 +121,9 @@ class LoginTokenModel
 		$data['expires_at'] = date('Y-m-d H:i:s', strtotime($this->config->loginRemember));
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
-		return $builder->insert($data);
+		$builder->insert($data);
+
+		return true;
 	}
 
 	/**
@@ -147,15 +149,16 @@ class LoginTokenModel
 	 *
 	 * @param integer $userId User id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteExpired(int $userId)
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
 		$builder->where('expires_at <', date('Y-m-d H:i:s'));
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**

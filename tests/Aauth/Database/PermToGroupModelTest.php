@@ -21,26 +21,45 @@ class PermToGroupModelTest extends CIDatabaseTestCase
 	}
 
 	//--------------------------------------------------------------------
-	public function testInsert()
+	public function testSave()
 	{
-		$permToGroup = $this->model->insert(99, 99);
+		$this->model->save(99, 99, 1);
 		$this->seeInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 99,
 			'group_id' => 99,
+			'state'    => 1,
+		]);
+
+		$this->model->save(99, 99, 0);
+		$this->seeInDatabase($this->config->dbTablePermToGroup, [
+			'perm_id'  => 99,
+			'group_id' => 99,
+			'state'    => 0,
 		]);
 	}
 
-	public function testExists()
+	public function testAllowed()
 	{
-		$permToGroup = $this->model->exists(99, 99);
-		$this->assertFalse($permToGroup);
+		$this->assertFalse($this->model->allowed(99, 99));
 
 		$this->hasInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 99,
 			'group_id' => 99,
+			'state'    => 1,
 		]);
-		$permToGroup = $this->model->exists(99, 99);
-		$this->assertTrue($permToGroup);
+		$this->assertTrue($this->model->allowed(99, 99));
+	}
+
+	public function testDenied()
+	{
+		$this->assertFalse($this->model->denied(99, 99));
+
+		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+			'perm_id'  => 99,
+			'group_id' => 99,
+			'state'    => 0,
+		]);
+		$this->assertTrue($this->model->denied(99, 99));
 	}
 
 	public function testFindAllByGroupId()
@@ -65,21 +84,6 @@ class PermToGroupModelTest extends CIDatabaseTestCase
 		]);
 		$permToGroups = $this->model->findAllByPermId(99);
 		$this->assertCount(1, $permToGroups);
-	}
-
-	public function testDelete()
-	{
-		$this->hasInDatabase($this->config->dbTablePermToGroup, [
-			'perm_id'  => 99,
-			'group_id' => 99,
-		]);
-		$criteria = [
-			'perm_id'  => 99,
-			'group_id' => 99,
-		];
-		$this->seeNumRecords(1, $this->config->dbTablePermToGroup, $criteria);
-		$this->model->delete(99, 99);
-		$this->seeNumRecords(0, $this->config->dbTablePermToGroup, $criteria);
 	}
 
 	public function testDeleteAllByPermId()

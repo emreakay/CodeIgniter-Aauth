@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -47,6 +47,11 @@ class Migration_create_perm_to_user extends Migration
 				'type'       => 'INT',
 				'constraint' => 11,
 				'unsigned'   => true,
+			],
+			'state'   => [
+				'type'       => 'TINYINT',
+				'constraint' => 1,
+				'default'    => 1,
 			],
 		]);
 		$this->forge->addKey(['perm_id', 'user_id'], true);

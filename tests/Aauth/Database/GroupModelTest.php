@@ -20,9 +20,15 @@ class GroupModelTest extends CIDatabaseTestCase
 
 	//--------------------------------------------------------------------
 
-	public function testDummy()
+	public function testExistsById()
 	{
-		$groups = $this->model->findAll();
-		$this->assertCount(3, $groups);
+		$this->assertTrue($this->model->existsById(1));
+		$this->assertFalse($this->model->existsById(99));
+	}
+
+	public function testGetByName()
+	{
+		$this->assertEquals(1, $this->model->getByName('admin')['id']);
+		$this->assertFalse($this->model->getByName('test_group'));
 	}
 }

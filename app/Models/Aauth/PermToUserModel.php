@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -100,7 +100,7 @@ class PermToUserModel
 	public function findAllByUserId(int $userId)
 	{
 		$builder = $this->builder();
-		$builder->select('perm_id');
+		$builder->select('perm_id, state');
 		$builder->where('user_id', $userId);
 
 		return $builder->get()->getResult('array');
@@ -116,62 +116,81 @@ class PermToUserModel
 	public function findAllByPermId(int $permId)
 	{
 		$builder = $this->builder();
-		$builder->select('user_id');
+		$builder->select('user_id, state');
 		$builder->where('perm_id', $permId);
 
 		return $builder->get()->getResult('array');
 	}
 
 	/**
-	 * Check if exists by Perm Id and User Id
+	 * Check if Perm Id is allowed by User Id
 	 *
 	 * @param integer $permId Perm Id
 	 * @param integer $userId User Id
 	 *
 	 * @return boolean
 	 */
-	public function exists(int $permId, int $userId)
+	public function allowed(int $permId, int $userId)
 	{
 		$builder = $this->builder();
 
 		$builder->where('perm_id', $permId);
 		$builder->where('user_id', $userId);
+		$builder->where('state', 1);
 		return ($builder->countAllResults() ? true : false);
 	}
 
 	/**
-	 * Insert
+	 * Check if Perm Id is allowed by User Id
 	 *
 	 * @param integer $permId Perm Id
 	 * @param integer $userId User Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
-	public function insert(int $permId, int $userId)
+	public function denied(int $permId, int $userId)
 	{
 		$builder = $this->builder();
 
-		$data['perm_id'] = $permId;
-		$data['user_id'] = $userId;
-
-		return $builder->insert($data);
+		$builder->where('perm_id', $permId);
+		$builder->where('user_id', $userId);
+		$builder->where('state', 0);
+		return ($builder->countAllResults() ? true : false);
 	}
 
 	/**
-	 * Delete by Perm Id and User Id
+	 * Save
+	 *
+	 * Inserts or Updates Perm to User
 	 *
 	 * @param integer $permId Perm Id
 	 * @param integer $userId User Id
+	 * @param integer $state  State Int (0 deny, 1 allow)
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
-	public function delete(int $permId, int $userId)
+	public function save(int $permId, int $userId, int $state = 1)
 	{
 		$builder = $this->builder();
 		$builder->where('perm_id', $permId);
 		$builder->where('user_id', $userId);
 
-		return $builder->delete();
+		if (! $row = $builder->get()->getFirstRow())
+		{
+			$data['perm_id'] = $permId;
+			$data['user_id'] = $userId;
+			$data['state']   = $state;
+
+			$builder->insert($data);
+		}
+		else
+		{
+			$data['state'] = $state;
+
+			$builder->update($data, ['perm_id' => $permId, 'user_id' => $userId]);
+		}
+
+		return true;
 	}
 
 	/**
@@ -179,14 +198,15 @@ class PermToUserModel
 	 *
 	 * @param integer $permId Perm Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteAllByPermId(int $permId)
 	{
 		$builder = $this->builder();
 		$builder->where('perm_id', $permId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**
@@ -194,14 +214,15 @@ class PermToUserModel
 	 *
 	 * @param integer $userId User Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteAllByUserId(int $userId)
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**

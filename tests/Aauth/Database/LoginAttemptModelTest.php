@@ -29,12 +29,10 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 	public function testSave()
 	{
 		$this->assertTrue($this->model->save());
-		$loginAttempt = $this->model->find();
-		$this->assertEquals(1, $loginAttempt);
+		$this->assertEquals(1, $this->model->find());
 
 		$this->assertTrue($this->model->save());
-		$loginAttempt = $this->model->find();
-		$this->assertEquals(2, $loginAttempt);
+		$this->assertEquals(2, $this->model->find());
 
 		$this->model->save();
 		$this->model->save();
@@ -49,18 +47,16 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 	public function testDelete()
 	{
 		$this->model->save();
-		$loginAttempt = $this->model->find();
-		$this->assertEquals(1, $loginAttempt);
+		$this->assertEquals(1, $this->model->find());
+
 		$this->model->delete();
-		$loginAttempt = $this->model->find();
-		$this->assertEquals(0, $loginAttempt);
+		$this->assertEquals(0, $this->model->find());
 	}
 
 	public function testConfigDBGroup()
 	{
 		$this->model = new LoginAttemptModel();
 		$this->model->save();
-		$groupsToGroup = $this->model->find();
-		$this->assertEquals(1, $groupsToGroup);
+		$this->assertEquals(1, $this->model->find());
 	}
 }

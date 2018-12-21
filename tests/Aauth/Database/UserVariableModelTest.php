@@ -79,6 +79,21 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		$this->seeNumRecords(0, $this->config->dbTableUserVariables, $criteria);
 	}
 
+	public function testDeleteAllByUserId()
+	{
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+			'user_id'    => 99,
+			'data_key'   => 'test',
+			'data_value' => 'TRUE',
+		]);
+		$criteria = [
+			'user_id' => 99,
+		];
+		$this->seeNumRecords(1, $this->config->dbTableUserVariables, $criteria);
+		$this->model->deleteAllByUserId(99);
+		$this->seeNumRecords(0, $this->config->dbTableUserVariables, $criteria);
+	}
+
 	public function testAsArrayFirst()
 	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [

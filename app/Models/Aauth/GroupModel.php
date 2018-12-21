@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -29,6 +29,15 @@ use Config\Aauth as AauthConfig;
  */
 class GroupModel extends Model
 {
+	/**
+	 * If this model should use "softDeletes" and
+	 * simply set a flag when rows are deleted, or
+	 * do hard deletes.
+	 *
+	 * @var boolean
+	 */
+	protected $useSoftDeletes = true;
+
 	/**
 	 * If true, will set created_at, and updated_at
 	 * values during insert and update routines.
@@ -62,10 +71,56 @@ class GroupModel extends Model
 
 		$this->validationMessages = [
 			'name' => [
-				'required'  => lang('Aauth.requiredPermName'),
-				'is_unique' => lang('Aauth.existsAlreadyPerm'),
+				'required'  => lang('Aauth.requiredGroupName'),
+				'is_unique' => lang('Aauth.existsAlreadyGroup'),
 			],
 		];
+	}
+
+	/**
+	 * Checks if group exist by group id
+	 *
+	 * @param integer $groupId Group id
+	 *
+	 * @return boolean
+	 */
+	public function existsById(int $groupId)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where($this->primaryKey, $groupId);
+		return ($builder->countAllResults() ? true : false);
+	}
+
+	/**
+	 * Get group by group name
+	 *
+	 * @param string $groupName Group name
+	 *
+	 * @return boolean
+	 */
+	public function getByName(string $groupName)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where('name', $groupName);
+
+		if (! $group = $builder->get()->getFirstRow($this->tempReturnType))
+		{
+			return false;
+		}
+
+		return $group;
 	}
 
 }

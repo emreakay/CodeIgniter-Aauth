@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -136,6 +136,7 @@ class GroupToGroupModel
 
 		$builder->where('group_id', $groupId);
 		$builder->where('subgroup_id', $subgroupId);
+
 		return ($builder->countAllResults() ? true : false);
 	}
 
@@ -145,7 +146,7 @@ class GroupToGroupModel
 	 * @param integer $groupId    Group Id
 	 * @param integer $subgroupId Subgroup Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function insert(int $groupId, int $subgroupId)
 	{
@@ -154,7 +155,9 @@ class GroupToGroupModel
 		$data['group_id']    = $groupId;
 		$data['subgroup_id'] = $subgroupId;
 
-		return $builder->insert($data);
+		$builder->insert($data);
+
+		return true;
 	}
 
 	/**
@@ -163,15 +166,16 @@ class GroupToGroupModel
 	 * @param integer $groupId    Group Id
 	 * @param integer $subgroupId Subgroup Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function delete(int $groupId, int $subgroupId)
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
 		$builder->where('subgroup_id', $subgroupId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**
@@ -179,14 +183,15 @@ class GroupToGroupModel
 	 *
 	 * @param integer $groupId Group Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteAllByGroupId(int $groupId)
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**
@@ -194,14 +199,15 @@ class GroupToGroupModel
 	 *
 	 * @param integer $subgroupId Subgroup Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteAllBySubgroupId(int $subgroupId)
 	{
 		$builder = $this->builder();
 		$builder->where('subgroup_id', $subgroupId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**

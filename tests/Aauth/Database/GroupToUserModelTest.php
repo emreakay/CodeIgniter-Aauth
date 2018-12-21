@@ -33,39 +33,35 @@ class GroupToUserModelTest extends CIDatabaseTestCase
 
 	public function testExists()
 	{
-		$groupToUser = $this->model->exists(99, 99);
-		$this->assertFalse($groupToUser);
+		$this->assertFalse($this->model->exists(99, 99));
 
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
 			'group_id' => 99,
 			'user_id'  => 99,
 		]);
-		$groupToUser = $this->model->exists(99, 99);
-		$this->assertTrue($groupToUser);
+		$this->assertTrue($this->model->exists(99, 99));
 	}
 
 	public function testFindAllByUserId()
 	{
-		$groupToUsers = $this->model->findAllByUserId(99);
-		$this->assertCount(0, $groupToUsers);
+		$this->assertCount(0, $this->model->findAllByUserId(99));
+
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
 			'group_id' => 99,
 			'user_id'  => 99,
 		]);
-		$groupToUsers = $this->model->findAllByUserId(99);
-		$this->assertCount(1, $groupToUsers);
+		$this->assertCount(1, $this->model->findAllByUserId(99));
 	}
 
 	public function testFindAllByGroupId()
 	{
-		$groupToUsers = $this->model->findAllByGroupId(99);
-		$this->assertCount(0, $groupToUsers);
+		$this->assertCount(0, $this->model->findAllByGroupId(99));
+
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
 			'group_id' => 99,
 			'user_id'  => 99,
 		]);
-		$groupToUsers = $this->model->findAllByGroupId(99);
-		$this->assertCount(1, $groupToUsers);
+		$this->assertCount(1, $this->model->findAllByGroupId(99));
 	}
 
 	public function testDelete()

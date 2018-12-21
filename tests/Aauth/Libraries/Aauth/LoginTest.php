@@ -32,14 +32,14 @@ class LoginTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-        Services::injectMock('response', new MockResponse(new App()));
-        $this->response = service('response');
+		Services::injectMock('response', new MockResponse(new App()));
+		$this->response = service('response');
 		$this->request  = new IncomingRequest(new App(), new URI(), null, new UserAgent());
-        Services::injectMock('request', $this->request);
+		Services::injectMock('request', $this->request);
 
-		$this->library  = new Aauth(null, true);
-		$_COOKIE        = [];
-		$_SESSION       = [];
+		$this->library = new Aauth(null, true);
+		$_COOKIE       = [];
+		$_SESSION      = [];
 	}
 
 	public function tearDown()
@@ -133,17 +133,6 @@ class LoginTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.loginAttemptsExceeded'), $this->library->getErrorsArray()[0]);
 	}
 
-	public function testIsLoggedIn()
-	{
-		$session       = $this->getInstance();
-		$this->library = new Aauth(null, $session);
-		$session->set('user', [
-			'loggedIn' => true,
-		]);
-		$this->assertTrue($this->library->isLoggedIn());
-		$session->remove('user');
-	}
-
 	public function testIsLoggedInCookie()
 	{
 		helper('text');
@@ -165,7 +154,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->library->logout();
 	}
 
-	public function testIsLoggedInCookieInvalidUser($value='')
+	public function testIsLoggedInCookieInvalidUser($value = '')
 	{
 		helper('text');
 		$session        = $this->getInstance();
@@ -186,7 +175,7 @@ class LoginTest extends CIDatabaseTestCase
 		unset($_COOKIE['remember']);
 	}
 
-	public function testIsLoggedInCookieInvalidCookie($value='')
+	public function testIsLoggedInCookieInvalidCookie($value = '')
 	{
 		helper('text');
 		$session        = $this->getInstance();
@@ -201,7 +190,7 @@ class LoginTest extends CIDatabaseTestCase
 		unset($_COOKIE['remember']);
 	}
 
-	public function testIsLoggedInCookieExpired($value='')
+	public function testIsLoggedInCookieExpired($value = '')
 	{
 		helper('text');
 		$session        = $this->getInstance();

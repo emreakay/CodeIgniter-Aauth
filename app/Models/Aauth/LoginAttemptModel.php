@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -166,7 +166,7 @@ class LoginAttemptModel
 	 *
 	 * Delete login attempt based on time and ip address
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function delete()
 	{
@@ -174,7 +174,9 @@ class LoginAttemptModel
 		$builder->where('ip_address', $this->request->getIPAddress());
 		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
 
-		return $builder->delete();
+		$builder->delete();
+
+		return true;
 	}
 
 	/**
@@ -182,7 +184,7 @@ class LoginAttemptModel
 	 *
 	 * @param string $table Table name
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	protected function builder(string $table = null)
 	{

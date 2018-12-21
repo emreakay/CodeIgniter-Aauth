@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -44,7 +44,7 @@ return [
    'notVerified'            => 'Your account has not been verified. Please check your email and verify your account.',
 
    'loginFailedEmail'       => 'Email Address and Password do not match.',
-   'loginFailedUsername'        => 'Username and Password do not match.',
+   'loginFailedUsername'    => 'Username and Password do not match.',
    'loginFailedAll'         => 'Email, Username or Password do not match.',
    'loginAttemptsExceeded'  => 'You have exceeded your login attempts, your account has now been locked.',
 

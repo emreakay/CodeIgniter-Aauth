@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -39,15 +39,15 @@ class Migration_create_default_groups extends Migration
 		$config = new AauthConfig();
 		$data   = [
 			[
-				'name'       => $config->adminGroup,
+				'name'       => $config->groupAdmin,
 				'definition' => 'Administators',
 			],
 			[
-				'name'       => $config->defaultGroup,
+				'name'       => $config->groupDefault,
 				'definition' => 'Users',
 			],
 			[
-				'name'       => $config->publicGroup,
+				'name'       => $config->groupPublic,
 				'definition' => 'Guests',
 			],
 		];

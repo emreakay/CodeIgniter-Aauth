@@ -10,10 +10,6 @@ use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 use App\Models\Aauth\UserVariableModel;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState         disabled
- */
 class UserTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -167,6 +163,19 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals('admin', $usersOrderBy[1]['username']);
 	}
 
+	public function testListUsersPaginated()
+	{
+		$users = $this->library->listUsersPaginated();
+		$this->assertTrue(isset($users['pager']));
+		$this->assertCount(2, $users['users']);
+		$this->assertEquals('admin', $users['users'][0]['username']);
+		$this->assertEquals('user', $users['users'][1]['username']);
+
+		$usersOrderBy = $this->library->listUsersPaginated(10, null, 'id DESC');
+		$this->assertEquals('user', $usersOrderBy['users'][0]['username']);
+		$this->assertEquals('admin', $usersOrderBy['users'][1]['username']);
+	}
+
 	public function testVerifyUser()
 	{
 		$userVariableModel = new UserVariableModel();
@@ -179,6 +188,10 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.infoVerification'), $this->library->getInfosArray()[0]);
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
 	public function testGetUser()
 	{
 		$user = $this->library->getUser(1);
@@ -201,6 +214,10 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
 	public function testGetUserId()
 	{
 		$userIdEmail = $this->library->getUserId('admin@example.com');
@@ -250,6 +267,10 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
 	public function testBanUnbanUserSession()
 	{
 		$session       = $this->getInstance();

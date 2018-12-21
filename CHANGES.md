@@ -65,9 +65,9 @@
   - email => emailFrom
   - name => emailFromName
   - email_config => emailConfig
-  - admin_group => adminGroup
-  - default_group => defaultGroup
-  - public_group => publicGroup
+  - admin_group => groupAdmin
+  - default_group => groupDefault
+  - public_group => groupPublic
   - db_profile => dbProfile
   - users => dbTableUsers
   - user_variables => dbTableUserVariables

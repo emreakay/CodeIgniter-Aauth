@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -18,6 +18,12 @@
 namespace App\Libraries;
 
 use \App\Models\Aauth\UserModel;
+use \App\Models\Aauth\GroupModel;
+use \App\Models\Aauth\PermModel;
+use \App\Models\Aauth\GroupToGroupModel;
+use \App\Models\Aauth\GroupToUserModel;
+use \App\Models\Aauth\PermToGroupModel;
+use \App\Models\Aauth\PermToUserModel;
 use \App\Models\Aauth\LoginAttemptModel;
 use \App\Models\Aauth\LoginTokenModel;
 use \App\Models\Aauth\UserVariableModel;
@@ -110,9 +116,9 @@ class Aauth
 		$this->session = $session;
 	}
 
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 	// Login Functions
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 	/**
 	 * Login user
@@ -331,24 +337,24 @@ class Aauth
 		$userModel->where('id', $userId);
 		$userModel->where('banned', 0);
 
-		if ($user = $userModel->get()->getFirstRow())
+		if (! $user = $userModel->get()->getFirstRow())
 		{
-			$this->session->set('user', [
-				'id'       => $user->id,
-				'username' => $user->username,
-				'email'    => $user->email,
-				'loggedIn' => true,
-			]);
-
-			return true;
+			return false;
 		}
 
-		return false;
+		$this->session->set('user', [
+			'id'       => $user->id,
+			'username' => $user->username,
+			'email'    => $user->email,
+			'loggedIn' => true,
+		]);
+
+		return true;
 	}
 
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 	// Access Functions
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 	/**
 	 * Check user login
@@ -395,6 +401,187 @@ class Aauth
 							delete_cookie('remember');
 						}
 					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Is member
+	 *
+	 * @param integer|string $groupPar Group id or name to check
+	 * @param integer        $userId   User id, if not given current user
+	 *
+	 * @return boolean
+	 */
+	public function isMember($groupPar, int $userId = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		$groupToUserModel = new GroupToUserModel();
+
+		$groupId = $this->getGroupId($groupPar);
+
+		return $groupToUserModel->exists($groupId, $userId);
+	}
+
+	/**
+	 * Is admin
+	 *
+	 * @param integer $userId User id to check, if it is not given checks current user
+	 *
+	 * @return boolean
+	 */
+	public function isAdmin(int $userId = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		return $this->isMember($this->config->groupAdmin, $userId);
+	}
+
+	/**
+	 * Is user allowed
+	 *
+	 * Check if user allowed to do specified action, admin always allowed
+	 * first checks user permissions then check group permissions
+	 *
+	 * @param integer|string $permPar Permission id or name to check
+	 * @param integer|null   $userId  User id to check, or if false checks current user
+	 *
+	 * @return boolean
+	 */
+	public function isAllowed($permPar, int $userId = null)
+	{
+		// if($this->CI->session->userdata('totp_required')){
+		// 	$this->error($this->CI->lang->line('aauth_error_totp_verification_required'));
+		// 	redirect($this->config_vars['totp_two_step_login_redirect']);
+		// }
+
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+		else if ($this->isAdmin($userId))
+		{
+			return true;
+		}
+		else
+		{
+			if (! $permId = $this->getPermId($permPar))
+			{
+				return false;
+			}
+
+			$permToUserModel = new PermToUserModel();
+
+			if ($permToUserModel->allowed($permId, $userId))
+			{
+				return true;
+			}
+			else
+			{
+				$groupAllowed = false;
+
+				foreach ($this->listUserGroups($userId) as $group)
+				{
+					if ($this->isGroupAllowed($permId, $group['id']))
+					{
+						$groupAllowed = true;
+						break;
+					}
+				}
+
+				return $groupAllowed;
+			}
+		}
+	}
+
+	/**
+	 * Is Group allowed
+	 *
+	 * Check if group is allowed to do specified action, admin always allowed
+	 *
+	 * @param integer        $permPar  Permission id or name to check
+	 * @param integer|string $groupPar Group id or name to check, or if false checks all user groups
+	 *
+	 * @return boolean
+	 */
+	public function isGroupAllowed($permPar, $groupPar = null)
+	{
+		if (! $permId = $this->getPermId($permPar))
+		{
+			return false;
+		}
+
+		if ($groupPar)
+		{
+			if (strcasecmp($groupPar, $this->config->groupAdmin) === 0)
+			{
+				return true;
+			}
+
+			$permToGroupModel = new PermToGroupModel();
+			$groupId          = $this->getGroupId($groupPar);
+			$groupAllowed     = false;
+
+			if ($subgroups = $this->getSubgroups($groupId))
+			{
+				foreach ($subgroups as $group)
+				{
+					if (! $groupAllowed)
+					{
+						if ($this->isGroupAllowed($permId, $group['subgroup_id']))
+						{
+							$groupAllowed = true;
+						}
+					}
+				}
+			}
+
+			if ($groupAllowed || $permToGroupModel->allowed($permId, $groupId))
+			{
+				return true;
+			}
+			else if (! $groupAllowed)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if ($this->isAdmin() || $this->isGroupAllowed($permId, $this->config->groupPublic))
+			{
+				return true;
+			}
+			else if (! $this->isLoggedIn())
+			{
+				return false;
+			}
+
+			foreach ($this->listUserGroups() as $group)
+			{
+				if ($this->isGroupAllowed($permId, $group['id']))
+				{
+					return true;
 				}
 			}
 		}
@@ -455,9 +642,9 @@ class Aauth
 	 * Updates existing user details
 	 *
 	 * @param integer        $userId   User id to update
-	 * @param string|boolean $email    User's email address, or FALSE if not to be updated
-	 * @param string|boolean $password User's password, or FALSE if not to be updated
-	 * @param string|boolean $username User's name, or FALSE if not to be updated
+	 * @param string|boolean $email    User's email address, or false if not to be updated
+	 * @param string|boolean $password User's password, or false if not to be updated
+	 * @param string|boolean $username User's name, or false if not to be updated
 	 *
 	 * @return boolean
 	 */
@@ -493,16 +680,16 @@ class Aauth
 			$data['username'] = $username;
 		}
 
-		if ($userModel->update($userId, $data))
+		if (! $userModel->update($userId, $data))
 		{
-			$this->info(lang('Aauth.infoUpdateSuccess'));
+			$this->error(array_values($userModel->errors()));
 
-			return true;
+			return false;
 		}
 
-		$this->error(array_values($userModel->errors()));
+		$this->info(lang('Aauth.infoUpdateSuccess'));
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -544,7 +731,7 @@ class Aauth
 		$user      = $userModel->limit($limit, $offset);
 
 		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-		// eanbool $group_par = null,
+		// eanbool $groupPar = null,
 
 		if (is_null($includeBanneds))
 		{
@@ -576,7 +763,7 @@ class Aauth
 		$userModel = new UserModel();
 
 		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-		// eanbool $group_par = null,
+		// eanbool $groupPar = null,
 
 		if (is_null($includeBanneds))
 		{
@@ -643,17 +830,17 @@ class Aauth
 			'system'     => 1,
 		];
 
-		if ($verificationCodeStored = $userVariableModel->where($userVariable)->first())
+		if (! $verificationCodeStored = $userVariableModel->where($userVariable)->first())
 		{
-			$userVariableModel->delete($verificationCodeStored['user_id'], 'verification_code', true);
-			$this->info(lang('Aauth.infoVerification'));
+			$this->error(lang('Aauth.invalidVerficationCode'));
 
-			return true;
+			return false;
 		}
 
-		$this->error(lang('Aauth.invalidVerficationCode'));
+		$userVariableModel->delete($verificationCodeStored['user_id'], 'verification_code', true);
+		$this->info(lang('Aauth.infoVerification'));
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -661,13 +848,13 @@ class Aauth
 	 *
 	 * Get user information
 	 *
-	 * @param integer|boolean $userId        User id to get or FALSE for current user
+	 * @param integer|boolean $userId        User id to get or false for current user
 	 * @param boolean         $withVariables Whether to get user variables
 	 * @param boolean         $inclSystem    Whether to get system user variables
 	 *
 	 * @return object|boolean User information or false if user not found
 	 */
-	public function getUser($userId = null, bool $withVariables = false, bool $inclSystem = false)
+	public function getUser(int $userId = null, bool $withVariables = false, bool $inclSystem = false)
 	{
 		$userModel         = new UserModel();
 		$userVariableModel = new UserVariableModel();
@@ -676,25 +863,25 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
-		if ($user = $userModel->find($userId))
+		if (! $user = $userModel->find($userId))
 		{
-			if ($withVariables)
-			{
-				$variables = $userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
-				$variables = $variables->findAll($userId, $inclSystem);
+			$this->error(lang('Aauth.notFoundUser'));
 
-				$user['variables'] = $variables;
-			}
-
-			return $user;
+			return false;
 		}
 
-		$this->error(lang('Aauth.notFoundUser'));
+		if ($withVariables)
+		{
+			$variables = $userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
+			$variables = $variables->findAll($userId, $inclSystem);
 
-		return false;
+			$user['variables'] = $variables;
+		}
+
+		return $user;
 	}
 
 	/**
@@ -706,7 +893,7 @@ class Aauth
 	 *
 	 * @return object|boolean User information or false if user not found
 	 */
-	public function getUserId($email = null)
+	public function getUserId(string $email = null)
 	{
 		$userModel = new UserModel();
 
@@ -719,12 +906,12 @@ class Aauth
 			$where = ['email' => $email];
 		}
 
-		if ($user = $userModel->where($where)->first())
+		if (! $user = $userModel->where($where)->first())
 		{
-			return $user['id'];
+			return false;
 		}
 
-		return false;
+		return $user['id'];
 	}
 
 	/**
@@ -740,7 +927,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		if (! $userModel->existsById($userId))
@@ -764,7 +951,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		if (! $userModel->existsById($userId))
@@ -790,7 +977,7 @@ class Aauth
 
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		if (! $userModel->existsById($userId))
@@ -815,39 +1002,38 @@ class Aauth
 	public function remindPassword(string $email)
 	{
 		$userModel = new UserModel();
-		if ($user = $userModel->where('email', $email)->first())
+
+		if (! $user = $userModel->where('email', $email)->first())
 		{
-			$userVariableModel = new UserVariableModel();
-			$emailService      = \Config\Services::email();
-			$resetCode         = sha1(strtotime('now'));
-			$userVariableModel->save($user['id'], 'verification_code', $resetCode, true);
+			$this->error(lang('Aauth.notFoundUser'));
 
-			$messageData['code'] = $resetCode;
-			$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
-
-			$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-			$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-			$emailService->setTo($user['email']);
-			$emailService->setSubject(lang('Aauth.subjectReset'));
-			$emailService->setMessage(view('Aauth/RemindPassword', $messageData));
-
-			if ($email = $emailService->send())
-			{
-				$this->info(lang('Aauth.infoRemindSuccess'));
-
-				return $email;
-			}
-			else
-			{
-				$this->error(explode('<br />', $emailService->printDebugger([])));
-
-				return false;
-			}
+			return false;
 		}
 
-		$this->error(lang('Aauth.notFoundUser'));
+		$userVariableModel = new UserVariableModel();
+		$emailService      = \Config\Services::email();
+		$resetCode         = sha1(strtotime('now'));
+		$userVariableModel->save($user['id'], 'verification_code', $resetCode, true);
 
-		return false;
+		$messageData['code'] = $resetCode;
+		$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
+
+		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->setTo($user['email']);
+		$emailService->setSubject(lang('Aauth.subjectReset'));
+		$emailService->setMessage(view('Aauth/RemindPassword', $messageData));
+
+		if (! $email = $emailService->send())
+		{
+			$this->error(explode('<br />', $emailService->printDebugger([])));
+
+			return false;
+		}
+
+		$this->info(lang('Aauth.infoRemindSuccess'));
+
+		return $email;
 	}
 
 	/**
@@ -868,58 +1054,61 @@ class Aauth
 			'system'     => 1,
 		];
 
-		if ($userVariable = $userVariableModel->where($variable)->first())
+		if (! $userVariable = $userVariableModel->where($variable)->first())
 		{
-			helper('text');
-			$userModel = new UserModel();
-			$password  = random_string('alnum', $this->config->passwordMin);
+			$this->error(lang('Aauth.invalidVerficationCode'));
 
-			if ($user = $userModel->find($userVariable['user_id']))
-			{
-				$emailService = \Config\Services::email();
-
-				$data['id']       = $user['id'];
-				$data['password'] = $password;
-
-				$userModel->update($user['id'], $data);
-				$userVariableModel->delete($user['id'], 'verification_code', true);
-
-				if ($this->config->totpEnabled && $this->config->totpResetPassword)
-				{
-					$userVariableModel->delete($user['id'], 'totp_secret', true);
-				}
-
-				$messageData['password'] = $password;
-
-				$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-				$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-				$emailService->setTo($user['email']);
-				$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
-				$emailService->setMessage(view('Aauth/ResetPassword', $messageData));
-
-				if ($email = $emailService->send())
-				{
-					$this->info(lang('Aauth.infoResetSuccess'));
-
-					return $email;
-				}
-				else
-				{
-					$this->error(explode('<br />', $emailService->printDebugger([])));
-
-					return false;
-				}
-			}
+			return false;
 		}
 
-		$this->error(lang('Aauth.invalidVerficationCode'));
+		helper('text');
+		$userModel = new UserModel();
+		$password  = random_string('alnum', $this->config->passwordMin);
 
-		return false;
+		if (! $user = $userModel->find($userVariable['user_id']))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+
+		$emailService = \Config\Services::email();
+
+		$data['id']       = $user['id'];
+		$data['password'] = $password;
+
+		$userModel->update($user['id'], $data);
+		$userVariableModel->delete($user['id'], 'verification_code', true);
+
+		if ($this->config->totpEnabled && $this->config->totpResetPassword)
+		{
+			$userVariableModel->delete($user['id'], 'totp_secret', true);
+		}
+
+		$messageData['password'] = $password;
+
+		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->setTo($user['email']);
+		$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
+		$emailService->setMessage(view('Aauth/ResetPassword', $messageData));
+
+		if (! $email = $emailService->send())
+		{
+			$this->error(explode('<br />', $emailService->printDebugger([])));
+
+			return false;
+		}
+
+		$this->info(lang('Aauth.infoResetSuccess'));
+
+		return $email;
 	}
 
 	/**
 	 * Set User Variable as key value
-	 * if variable not set before, it will ve set
+	 *
+	 * if variable not set before, it will be set
 	 * if set, overwrites the value
 	 *
 	 * @param string  $key
@@ -932,12 +1121,12 @@ class Aauth
 	{
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		$userModel = new UserModel();
 
-		if (! $userModel->existsById($userId))
+		if (! @$userModel->existsById($userId))
 		{
 			return false;
 		}
@@ -959,7 +1148,7 @@ class Aauth
 	{
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		$userModel = new UserModel();
@@ -980,13 +1169,13 @@ class Aauth
 	 * @param string  $key    Variable Key
 	 * @param integer $userId User id, can be null to use session user
 	 *
-	 * @return boolean|string FALSE if var is not set, the value of var if set
+	 * @return boolean|string false if var is not set, the value of var if set
 	 */
 	public function getUserVar(string $key, int $userId = null)
 	{
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		$userModel = new UserModel();
@@ -998,26 +1187,28 @@ class Aauth
 
 		$userVariableModel = new UserVariableModel();
 
-		if ($variable = $userVariableModel->find($user['id'], 'verification_code', true))
+		if (! $variable = $userVariableModel->find($userId, $key))
 		{
-			return $variable;
+			return false;
 		}
 
-		return false;
+		return $variable;
 	}
 
 	/**
 	 * Get User Variables by user id
+	 *
 	 * Return array with all user keys & variables
 	 *
-	 * @param  integer $user_id ; if not given current user
-	 * @return boolean|array , FALSE if var is not set, the value of var if set
+	 * @param integer $userId User id, can be null to use session user
+	 *
+	 * @return boolean|array , false if var is not set, the value of var if set
 	 */
 	public function getUserVars(int $userId = null)
 	{
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		$userModel = new UserModel();
@@ -1029,21 +1220,23 @@ class Aauth
 
 		$userVariableModel = new UserVariableModel();
 
-		return $userVariableModel->findAll();
+		return $userVariableModel->findAll($userId);
 	}
 
 	/**
-	 * List User Variable Keys by UserID
-	 * Return array of variable keys or FALSE
+	 * List User Variable Keys by UserId
 	 *
-	 * @param  integer $user_id ; if not given current user
+	 * Return array of variable keys or false
+	 *
+	 * @param integer $userId User id, can be null to use session user
+	 *
 	 * @return boolean|array
 	 */
-	public function list_user_var_keys($user_id = false)
+	public function listUserVarKeys(int $userId = null)
 	{
 		if (! $userId)
 		{
-			$userId = $this->session->user['id'];
+			$userId = (int) @$this->session->user['id'];
 		}
 
 		$userModel = new UserModel();
@@ -1056,11 +1249,948 @@ class Aauth
 		$userVariableModel = new UserVariableModel();
 		$userVariableModel->select('data_key as key');
 
-		return $userVariableModel->findAll();
+		return $userVariableModel->findAll($userId);
 	}
-	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// Group Functions
+	//--------------------------------------------------------------------
+
+	/**
+	 * Create group
+	 *
+	 * @param string $groupName  New group name
+	 * @param string $definition Description of the group
+	 *
+	 * @return integer|boolean Group id or false on fail
+	 */
+	public function createGroup(string $name, string $definition = '')
+	{
+		$groupModel = new GroupModel();
+
+		$data['name']       = $name;
+		$data['definition'] = $definition;
+
+		if (! $groupId = $groupModel->insert($data))
+		{
+			$this->error(array_values($groupModel->errors()));
+
+			return false;
+		}
+
+		return $groupId;
+	}
+
+	/**
+	 * Update group
+	 *
+	 * @param string|integer $groupPar   Group id or name
+	 * @param string         $name       New group name
+	 * @param string         $definition New group definition
+	 *
+	 * @return boolean Update success/failure
+	 */
+	public function updateGroup($groupPar, string $name = null, string $definition = null)
+	{
+		$groupModel = new GroupModel();
+
+		if (is_null($name) && is_null($definition))
+		{
+			return false;
+		}
+		else if (! $groupId = $this->getGroupId($groupPar))
+		{
+			$this->error(lang('Aauth.notFoundGroup'));
+
+			return false;
+		}
+
+		$data['id'] = $groupId;
+
+		if (! is_null($name))
+		{
+			$data['name'] = $name;
+		}
+
+		if (! is_null($definition))
+		{
+			$data['definition'] = $definition;
+		}
+
+		if (! $groupModel->update($groupId, $data))
+		{
+			$this->error(array_values($groupModel->errors()));
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Delete group
+	 *
+	 * @param string|integer $groupPar Group id or name
+	 *
+	 * @return boolean Delete success/failure
+	 */
+	public function deleteGroup($groupPar)
+	{
+		$groupModel        = new GroupModel();
+		$groupToGroupModel = new GroupToGroupModel();
+		$groupToUserModel  = new GroupToUserModel();
+		$permToGroupModel  = new PermToGroupModel();
+
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			$this->error(lang('Aauth.notFoundGroup'));
+
+			return false;
+		}
+
+		$groupModel->transStart();
+		$groupToGroupModel->deleteAllByGroupId($groupId);
+		$groupToGroupModel->deleteAllBySubgroupId($groupId);
+		$groupToUserModel->deleteAllByGroupId($groupId);
+		$permToGroupModel->deleteAllByGroupId($groupId);
+		$groupModel->delete($groupId);
+		$groupModel->transComplete();
+
+		if ($groupModel->transStatus() === false)
+		{
+			$groupModel->transRollback();
+
+			return false;
+		}
+		else
+		{
+			$groupModel->transCommit();
+			// $this->precacheGroups();
+
+			return true;
+		}
+	}
+
+	/**
+	 * Add member to group
+	 *
+	 * @param integer        $userId   User id to add to group
+	 * @param integer|string $groupPar Group id or name to add user to
+	 *
+	 * @return boolean Add success/failure
+	 */
+	public function addMember($groupPar, int $userId)
+	{
+		$userModel        = new UserModel();
+		$groupToUserModel = new GroupToUserModel();
+
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			$this->error(lang('Aauth.notFoundGroup'));
+
+			return false;
+		}
+		else if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+		else if ($groupToUserModel->exists($groupId, $userId))
+		{
+			$this->info(lang('Aauth.alreadyMemberGroup'));
+
+			return true;
+		}
+
+		return $groupToUserModel->insert($groupId, $userId);
+	}
+
+	/**
+	 * Remove member from group
+	 *
+	 * @param integer        $userId   User id to remove from group
+	 * @param integer|string $groupPar Group id or name to remove user from
+	 *
+	 * @return boolean Remove success/failure
+	 */
+	public function removeMember($groupPar, int $userId)
+	{
+		$groupToUserModel = new GroupToUserModel();
+
+		$groupId = $this->getGroupId($groupPar);
+
+		return $groupToUserModel->delete($groupId, $userId);
+	}
+
+	/**
+	 * Add subgroup to group
+	 *
+	 * @param integer        $userId   User id to add to group
+	 * @param integer|string $groupPar Group id or name to add user to
+	 *
+	 * @return boolean Add success/failure
+	 */
+	public function addSubgroup($groupPar, $subgroupPar)
+	{
+		$groupModel        = new GroupModel();
+		$groupToGroupModel = new GroupToGroupModel();
+
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			$this->error(lang('Aauth.notFoundGroup'));
+
+			return false;
+		}
+		else if (! $subgroupId = $this->getGroupId($subgroupPar))
+		{
+			$this->error(lang('Aauth.notFoundSubgroup'));
+
+			return false;
+		}
+		else if ($groupToGroupModel->exists($groupId, $subgroupId))
+		{
+			$this->info(lang('Aauth.alreadyMemberSubgroup'));
+
+			return true;
+		}
+
+		if ($groupGroups = $groupToGroupModel->findAllByGroupId($groupId))
+		{
+			foreach ($groupGroups as $item)
+			{
+				if ($item['subgroup_id'] === $subgroupId)
+				{
+					return false;
+				}
+			}
+		}
+
+		if ($subgroupGroups = $groupToGroupModel->findAllByGroupId($subgroupId))
+		{
+			foreach ($subgroupGroups as $item)
+			{
+				if ($item['subgroup_id'] === $groupId)
+				{
+					return false;
+				}
+			}
+		}
+
+		return $groupToGroupModel->insert($groupId, $subgroupId);
+	}
+
+	/**
+	 * Remove subgroup from group
+	 *
+	 * @param integer|string $groupPar    Group id or name to remove
+	 * @param integer|string $subgroupPar Sub-Group id or name to remove
+	 *
+	 * @return boolean Remove success/failure
+	 */
+	public function removeSubgroup($groupPar, $subgroupPar)
+	{
+		$groupToGroupModel = new GroupToGroupModel();
+		$groupId           = $this->getGroupId($groupPar);
+		$subgroupId        = $this->getGroupId($subgroupPar);
+
+		return $groupToGroupModel->delete($groupId, $subgroupId);
+	}
+
+	/**
+	 * Get subgroups
+	 *
+	 * @param integer|string $groupPar Group id or name to get
+	 *
+	 * @return object Array of subgroup_id's
+	 */
+	public function getSubgroups($groupPar)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			return false;
+		}
+
+		$groupToGroupModel = new GroupToGroupModel();
+
+		return $groupToGroupModel->findAllByGroupId($groupId);
+	}
+
+	/**
+	 * Remove member from all groups
+	 *
+	 * @param integer $userId User id to remove from all groups
+	 *
+	 * @return boolean Remove success/failure
+	 */
+	public function removeMemberFromAll(int $userId)
+	{
+		$groupToUserModel = new GroupToUserModel();
+
+		return $groupToUserModel->deleteAllByUserId($userId);
+	}
+
+	/**
+	 * List all groups
+	 *
+	 * @return object Array of groups
+	 */
+	public function listGroups()
+	{
+		$groupModel = new GroupModel();
+
+		return $groupModel->findAll();
+	}
+
+	/**
+	 * List groups with paginate
+	 *
+	 * Return groups as an object array
+	 *
+	 * @param integer $limit   Limit of users to be returned
+	 * @param string  $orderBy Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of groups
+	 */
+	public function listGroupsPaginated(int $limit = 10, string $orderBy = null)
+	{
+		$groupModel = new GroupModel();
+
+		$groupModel->select('id, name, definition');
+
+		if (! is_null($orderBy))
+		{
+			$groupModel->orderBy($orderBy);
+		}
+
+		return [
+			'groups' => $groupModel->paginate($limit),
+			'pager'  => $groupModel->pager,
+		];
+	}
+
+	/**
+	 * Get group name
+	 *
+	 * @param integer $groupId Group id to get
+	 *
+	 * @return string Group name
+	 */
+	public function getGroupName($groupId)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $group = $groupModel->find($groupId))
+		{
+			return false;
+		}
+
+		return $group['name'];
+	}
+
+	/**
+	 * Get group id
+	 *
+	 * @param integer|string $groupPar Group id or name to get
+	 *
+	 * @return integer Group id
+	 */
+	public function getGroupId($groupPar)
+	{
+		$groupModel = new GroupModel();
+
+		if (is_numeric($groupPar))
+		{
+			if (! $group = $groupModel->asArray()->find($groupPar))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (! $group = $groupModel->asArray()->getByName($groupPar))
+			{
+				return false;
+			}
+		}
+
+		return $group['id'];
+
+		// $key = str_replace(' ', '', trim(strtolower($groupPar)));
+		// if (isset($this->cache_group_id[$key]))
+		// {
+		// 	return $this->cache_group_id[$key];
+		// }
+	}
+
+	/**
+	 * Get group
+	 *
+	 * @param integer|string $groupPar Group id or name to get
+	 *
+	 * @return integer Group id
+	 */
+	public function getGroup($groupPar)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			return false;
+		}
+
+		return $groupModel->asArray()->find($groupId);
+	}
+
+	/**
+	 * List user groups
+	 *
+	 * @param integer|null $userId User id to get or false for current user
+	 *
+	 * @return integer Group id
+	 */
+	public function listUserGroups(int $userId = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$groupModel = new GroupModel();
+
+		$groupModel->select('id, name, definition');
+		$groupModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToUser . '.group_id');
+		$groupModel->where($this->config->dbTableGroupToUser . '.user_id', $userId);
+
+		return $groupModel->get()->getResult('array');
+	}
+
+	/**
+	 * List user groups with paginate
+	 *
+	 * Return users as an object array
+	 *
+	 * @param integer|null $userId  User id to get or false for current user
+	 * @param integer      $limit   Limit of users to be returned
+	 * @param string       $orderBy Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of users
+	 */
+	public function listUserGroupsPaginated(int $userId = null, int $limit = 10, string $orderBy = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$groupModel = new GroupModel();
+
+		$groupModel->select('id, name, definition');
+		$groupModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToUser . '.group_id');
+		$groupModel->where($this->config->dbTableGroupToUser . '.user_id', $userId);
+
+		if (! is_null($orderBy))
+		{
+			$groupModel->orderBy($orderBy);
+		}
+
+		return [
+			'groups' => $groupModel->paginate($limit),
+			'pager'  => $groupModel->pager,
+		];
+	}
+
+	//--------------------------------------------------------------------
+	// Perm Functions
+	//--------------------------------------------------------------------
+
+	/**
+	 * Create permission
+	 *
+	 * Creates a new permission type
+	 *
+	 * @param string $name       New permission name
+	 * @param string $definition Permission description
+	 *
+	 * @return integer|boolean Permission id or false on fail
+	 */
+	public function createPerm(string $name, string $definition = '')
+	{
+		$permModel = new PermModel();
+
+		$data['name']       = $name;
+		$data['definition'] = $definition;
+
+		if (! $permId = $permModel->insert($data))
+		{
+			$this->error(array_values($permModel->errors()));
+
+			return false;
+		}
+
+		// $this->precache_perms();
+
+		return $permId;
+	}
+
+	/**
+	 * Update permission
+	 *
+	 * Updates permission name and description
+	 *
+	 * @param integer|string $permPar    Permission id or permission name
+	 * @param string         $name       New permission name
+	 * @param string         $definition Permission description
+	 *
+	 * @return boolean Update success/failure
+	 */
+	public function updatePerm($permPar, string $name = null, string $definition = null)
+	{
+		$permModel = new PermModel();
+
+		if (is_null($name) && is_null($definition))
+		{
+			return false;
+		}
+		else if (! $permId = $this->getPermId($permPar))
+		{
+			$this->error(lang('Aauth.notFoundPerm'));
+
+			return false;
+		}
+
+		$data['id'] = $permId;
+
+		if (! is_null($name))
+		{
+			$data['name'] = $name;
+		}
+
+		if (! is_null($definition))
+		{
+			$data['definition'] = $definition;
+		}
+
+		if (! $permModel->update($permId, $data))
+		{
+			$this->error(array_values($permModel->errors()));
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Delete permission
+	 *
+	 * Delete a permission from database. WARNING Can't be undone
+	 *
+	 * @param integer|string $permPar Permission id or perm name
+	 *
+	 * @return boolean Delete success/failure
+	 */
+	public function deletePerm($permPar)
+	{
+		$permModel        = new PermModel();
+		$permToGroupModel = new PermToGroupModel();
+		$permToUserModel  = new PermToUserModel();
+
+		if (! $permId = $this->getPermId($permPar))
+		{
+			$this->error(lang('Aauth.notFoundPerm'));
+
+			return false;
+		}
+
+		$permModel->transStart();
+		$permToGroupModel->deleteAllByPermId($permId);
+		$permToUserModel->deleteAllByPermId($permId);
+		$permModel->delete($permId);
+		$permModel->transComplete();
+
+		if ($permModel->transStatus() === false)
+		{
+			$permModel->transRollback();
+
+			return false;
+		}
+		else
+		{
+			$permModel->transCommit();
+			// $this->precachePerms();
+
+			return true;
+		}
+	}
+
+	/*$userId User id to allow
+	 *
+	 * @return bool Allow success/failure
+	 */
+	public function allowUser($permPar, int $userId)
+	{
+		$userModel       = new UserModel();
+		$permToUserModel = new PermToUserModel();
+
+		if (! $permId = $this->getPermId($permPar))
+		{
+			$this->error(lang('Aauth.notFoundPerm'));
+
+			return false;
+		}
+		else if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+		else if ($permToUserModel->allowed($permId, $userId))
+		{
+			return true;
+		}
+
+		return $permToUserModel->save($permId, $userId, 1);
+	}
+
+	/*$userId User id to deny
+	 *
+	 * @return bool Deny success/failure
+	 */
+	public function denyUser($permPar, int $userId)
+	{
+		$userModel       = new UserModel();
+		$permToUserModel = new PermToUserModel();
+
+		if (! $permId = $this->getPermId($permPar))
+		{
+			$this->error(lang('Aauth.notFoundPerm'));
+
+			return false;
+		}
+		else if (! $userModel->existsById($userId))
+		{
+			$this->error(lang('Aauth.notFoundUser'));
+
+			return false;
+		}
+		else if ($permToUserModel->denied($permId, $userId))
+		{
+			return true;
+		}
+
+		return $permToUserModel->save($permId, $userId, 0);
+	}
+
+	/**
+	 * Allow Group
+	 *
+	 * Add group to permission
+	 *
+	 * @param integer|string $permPar  Permission id or perm name
+	 * @param integer|string $groupPar Group id or name to allow
+	 *
+	 * @return boolean Allow success/failure
+	 */
+	public function allowGroup($permPar, $groupPar)
+	{
+		$permToGroupModel = new PermToGroupModel();
+
+		if (! $permId = $this->getPermId($permPar))
+		{
+			$this->error(lang('Aauth.notFoundPerm'));
+
+			return false;
+		}
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			$this->error(lang('Aauth.notFoundGroup'));
+
+			return false;
+		}
+		else if ($permToGroupModel->allowed($permId, $groupId))
+		{
+			return true;
+		}
+
+		return $permToGroupModel->save($permId, $groupId, 1);
+	}
+
+	/**
+	 * Deny Group
+	 *
+	 * Remove group from permission
+	 *
+	 * @param integer|string $permPar  Permission id or perm name
+	 * @param integer|string $groupPar Group id or name to deny
+	 *
+	 * @return boolean Deny success/failure
+	 */
+	public function denyGroup($permPar, $groupPar)
+	{
+		$permToGroupModel = new PermToGroupModel();
+
+		if (! $permId = $this->getPermId($permPar))
+		{
+			$this->error(lang('Aauth.notFoundPerm'));
+
+			return false;
+		}
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			$this->error(lang('Aauth.notFoundGroup'));
+
+			return false;
+		}
+		else if ($permToGroupModel->denied($permId, $groupId))
+		{
+			return true;
+		}
+
+		return $permToGroupModel->save($permId, $groupId, 0);
+	}
+
+	/**
+	 * List Permissions
+	 * List all permissions
+	 *
+	 * @return object Array of permissions
+	 */
+	public function listPerms()
+	{
+		$permModel = new PermModel();
+
+		return $permModel->findAll();
+	}
+
+	/**
+	 * List perms with paginate
+	 *
+	 * Return perms as an object array
+	 *
+	 * @param integer $limit   Limit of users to be returned
+	 * @param string  $orderBy Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of perms
+	 */
+	public function listPermsPaginated(int $limit = 10, string $orderBy = null)
+	{
+		$permModel = new PermModel();
+
+		$permModel->select('id, name, definition');
+
+		if (! is_null($orderBy))
+		{
+			$permModel->orderBy($orderBy);
+		}
+
+		return [
+			'perms' => $permModel->paginate($limit),
+			'pager' => $permModel->pager,
+		];
+	}
+
+	/**
+	 * Get permission id
+	 *
+	 * @param integer|string $permPar Permission id or name to get
+	 *
+	 * @return integer Permission id or NULL if perm does not exist
+	 */
+	public function getPermId($permPar)
+	{
+		$permModel = new PermModel();
+
+		if (is_numeric($permPar))
+		{
+			if (! $perm = $permModel->asArray()->find($permPar))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (! $perm = $permModel->asArray()->getByName($permPar))
+			{
+				return false;
+			}
+		}
+
+		// if (isset($this->cache_perm_id[$key]))
+		// {
+		// 	return $this->cache_perm_id[$key];
+		// }
+
+		return $perm['id'];
+	}
+
+	/**
+	 * Get permission
+	 * Get permission from permisison name or id
+	 *
+	 * @param  integer|string $permPar Permission id or name to get
+	 * @return integer Permission id or NULL if perm does not exist
+	 */
+	public function getPerm($permPar)
+	{
+		$permModel = new PermModel();
+
+		if (! $permId = $this->getPermId($permPar))
+		{
+			return false;
+		}
+
+		return $permModel->asArray()->find($permId);
+	}
+
+	/**
+	 * List group permissions
+	 *
+	 * @param integer|string $groupPar Group id or name to get
+	 *
+	 * @return integer Group id
+	 */
+	public function listGroupPerms($groupPar)
+	{
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			return false;
+		}
+
+		$permModel = new PermModel();
+
+		$permModel->select('id, name, definition, state');
+		$permModel->join($this->config->dbTablePermToGroup, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToGroup . '.perm_id');
+		$permModel->where($this->config->dbTablePermToGroup . '.group_id', $groupId);
+
+		return $permModel->get()->getResult('array');
+	}
+
+	/**
+	 * List users with paginate
+	 *
+	 * Return users as an object array
+	 *
+	 * @param integer $limit          Limit of users to be returned
+	 * @param integer $offset         Offset for limited number of users
+	 * @param boolean $includeBanneds Include banned users
+	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of users
+	 */
+	public function listGroupPermsPaginated(int $groupId, int $limit = 10, string $orderBy = null)
+	{
+		$permModel = new PermModel();
+
+		$permModel->select('id, name, definition, state');
+		$permModel->join($this->config->dbTablePermToGroup, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToGroup . '.perm_id');
+		$permModel->where($this->config->dbTablePermToGroup . '.group_id', $groupId);
+
+		if (! is_null($orderBy))
+		{
+			$permModel->orderBy($orderBy);
+		}
+
+		return [
+			'perms' => $permModel->paginate($limit),
+			'pager' => $permModel->pager,
+		];
+	}
+
+	/**
+	 * List user permissions
+	 *
+	 * @param integer|string $groupPar Group id or name to get
+	 *
+	 * @return integer Group id
+	 */
+	public function listUserPerms(int $userId = null)
+	{
+		$userModel  = new UserModel();
+		$groupModel = new GroupModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$permModel = new PermModel();
+
+		$permModel->select('id, name, definition, state');
+		$permModel->join($this->config->dbTablePermToUser, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToUser . '.perm_id');
+		$permModel->where($this->config->dbTablePermToUser . '.user_id', $userId);
+
+		return $permModel->get()->getResult('array');
+	}
+
+	/**
+	 * List users with paginate
+	 *
+	 * Return users as an object array
+	 *
+	 * @param integer $limit          Limit of users to be returned
+	 * @param integer $offset         Offset for limited number of users
+	 * @param boolean $includeBanneds Include banned users
+	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array Array of users
+	 */
+	public function listUserPermsPaginated(int $userId = null, int $limit = 10, string $orderBy = null)
+	{
+		$userModel  = new UserModel();
+		$groupModel = new GroupModel();
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$permModel = new PermModel();
+
+		$permModel->select('id, name, definition, state');
+		$permModel->join($this->config->dbTablePermToUser, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToUser . '.perm_id');
+		$permModel->where($this->config->dbTablePermToUser . '.user_id', $userId);
+
+		if (! is_null($orderBy))
+		{
+			$permModel->orderBy($orderBy);
+		}
+
+		return [
+			'perms' => $permModel->paginate($limit),
+			'pager' => $permModel->pager,
+		];
+	}
+
+	//--------------------------------------------------------------------
 	// Error Functions
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 	/**
 	 * Error
@@ -1172,9 +2302,9 @@ class Aauth
 		$this->session->remove('errors');
 	}
 
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 	// Info Functions
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 	/**
 	 * Info
@@ -1182,7 +2312,7 @@ class Aauth
 	 * Add message to info array and set flash data
 	 *
 	 * @param string|array $message   Message to add to infos array
-	 * @param boolean      $flashdata Whether add $message to CI flashdata (deflault: FALSE)
+	 * @param boolean      $flashdata Whether add $message to CI flashdata (deflault: false)
 	 *
 	 * @return void
 	 */

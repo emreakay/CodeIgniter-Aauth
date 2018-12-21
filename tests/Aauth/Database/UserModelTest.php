@@ -31,14 +31,15 @@ class UserModelTest extends CIDatabaseTestCase
 	{
 		$this->model->updateLastLogin(1);
 		$user = $this->model->asArray()->find(1);
-		$this->assertTrue((strtotime('-5 seconds') < strtotime($user['last_login']) && strtotime('+5 seconds') > strtotime($user['last_login'])) && strtotime('-5 seconds') < strtotime($user['last_activity']) && strtotime('+5 seconds') > strtotime($user['last_activity']));
+		$this->assertCloseEnough(strtotime('now'), strtotime($user['last_login']), '', 5);
+		$this->assertCloseEnough(strtotime('now'), strtotime($user['last_activity']), '', 5);
 	}
 
 	public function testUpdateLastActivity()
 	{
 		$this->model->updateLastActivity(1);
 		$user = $this->model->asArray()->find(1);
-		$this->assertTrue(strtotime('-5 seconds') < strtotime($user['last_activity']) && strtotime('+5 seconds') > strtotime($user['last_activity']));
+		$this->assertCloseEnough(strtotime('now'), strtotime($user['last_activity']), '', 5);
 	}
 
 	public function testUpdateBanned()
@@ -75,7 +76,8 @@ class UserModelTest extends CIDatabaseTestCase
 		$userOld = $this->model->asArray()->find(1);
 		$this->model->update(1, ['id' => 1, 'password' => 'password123456']);
 		$userNew = $this->model->asArray()->find(1);
-		$this->assertTrue($userOld['password'] !== $userNew['password'] && $userNew['password'] !== 'password123456');
+		$this->assertNotEquals($userOld['password'], $userNew['password']);
+		$this->assertNotEquals('password123456', $userNew['password']);
 
 		$userOld = $this->model->asArray()->find(1);
 		$this->model->update(1, ['id' => 1, 'username' => 'admin']);
@@ -85,11 +87,11 @@ class UserModelTest extends CIDatabaseTestCase
 
 	public function testLoginUseUsernameDummy()
 	{
-		$config                   = new AauthConfig();
+		$config = new AauthConfig();
+
 		$config->loginUseUsername = true;
 
 		$this->model = new UserModel($this->db, null, $config);
-		$newUser     = $this->model->insert(['email' => 'test@test.local', 'password' => 'password123456']);
-		$this->assertFalse($newUser);
+		$this->assertFalse($this->model->insert(['email' => 'test@test.local', 'password' => 'password123456']));
 	}
 }

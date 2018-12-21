@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -29,6 +29,15 @@ use Config\Aauth as AauthConfig;
  */
 class PermModel extends Model
 {
+	/**
+	 * If this model should use "softDeletes" and
+	 * simply set a flag when rows are deleted, or
+	 * do hard deletes.
+	 *
+	 * @var boolean
+	 */
+	protected $useSoftDeletes = true;
+
 	/**
 	 * If true, will set created_at, and updated_at
 	 * values during insert and update routines.
@@ -68,4 +77,49 @@ class PermModel extends Model
 		];
 	}
 
+	/**
+	 * Checks if perm exist by perm id
+	 *
+	 * @param integer $permId Perm id
+	 *
+	 * @return boolean
+	 */
+	public function existsById(int $permId)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where($this->primaryKey, $permId);
+		return ($builder->countAllResults() ? true : false);
+	}
+
+	/**
+	 * Get perm by perm name
+	 *
+	 * @param string $name Perm name
+	 *
+	 * @return boolean
+	 */
+	public function getByName(string $name)
+	{
+		$builder = $this->builder();
+
+		if ($this->tempUseSoftDeletes === true)
+		{
+			$builder->where($this->deletedField, 0);
+		}
+
+		$builder->where('name', $name);
+
+		if (! $perm = $builder->get()->getFirstRow($this->tempReturnType))
+		{
+			return false;
+		}
+
+		return $perm;
+	}
 }

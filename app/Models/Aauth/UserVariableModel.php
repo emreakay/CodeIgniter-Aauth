@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -190,8 +190,8 @@ class UserVariableModel
 	 * @param string  $dataKey   Key of variable
 	 * @param string  $dataValue Value of variable
 	 * @param boolean $system    Whether system variable
-
-	 * @return BaseBuilder
+	 *
+	 * @return boolean
 	 */
 	public function insert(int $userId, string $dataKey, string $dataValue, bool $system = null)
 	{
@@ -204,7 +204,9 @@ class UserVariableModel
 		$data['created_at'] = date('Y-m-d H:i:s');
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
-		return $builder->insert($data);
+		$builder->insert($data);
+
+		return true;
 	}
 
 	/**
@@ -237,7 +239,7 @@ class UserVariableModel
 	 * @param string  $dataKey Key of variable
 	 * @param boolean $system  Whether system variable
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function delete(int $userId, string $dataKey, bool $system = null)
 	{
@@ -245,8 +247,25 @@ class UserVariableModel
 		$builder->where('user_id', $userId);
 		$builder->where('data_key', $dataKey);
 		$builder->where('system', ($system ? 1 : 0));
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
+	}
+
+	/**
+	 * Delete all User Variables by User ID
+	 *
+	 * @param integer $userId User id
+	 *
+	 * @return boolean
+	 */
+	public function deleteAllByUserId(int $userId)
+	{
+		$builder = $this->builder();
+		$builder->where('user_id', $userId);
+		$builder->delete();
+
+		return true;
 	}
 
 	//--------------------------------------------------------------------

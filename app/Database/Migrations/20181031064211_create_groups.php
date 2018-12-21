@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -53,6 +53,11 @@ class Migration_create_groups extends Migration
 			],
 			'created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 			'updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+			'deleted' => [
+				'type'       => 'TINYINT',
+				'constraint' => 1,
+				'default'    => 0,
+			],
 		]);
 		$this->forge->addKey('id', true);
 		$this->forge->createTable($config->dbTableGroups, true);

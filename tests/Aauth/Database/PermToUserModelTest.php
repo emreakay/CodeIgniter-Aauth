@@ -21,26 +21,45 @@ class PermToUserModelTest extends CIDatabaseTestCase
 	}
 
 	//--------------------------------------------------------------------
-	public function testInsert()
+	public function testSave()
 	{
-		$permToUser = $this->model->insert(99, 99);
+		$this->model->save(99, 99, 1);
 		$this->seeInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 99,
 			'user_id' => 99,
+			'state'   => 1,
+		]);
+
+		$this->model->save(99, 99, 0);
+		$this->seeInDatabase($this->config->dbTablePermToUser, [
+			'perm_id' => 99,
+			'user_id' => 99,
+			'state'   => 0,
 		]);
 	}
 
-	public function testExists()
+	public function testAllowed()
 	{
-		$permToUser = $this->model->exists(99, 99);
-		$this->assertFalse($permToUser);
+		$this->assertFalse($this->model->allowed(99, 99));
 
 		$this->hasInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 99,
 			'user_id' => 99,
+			'state'   => 1,
 		]);
-		$permToUser = $this->model->exists(99, 99);
-		$this->assertTrue($permToUser);
+		$this->assertTrue($this->model->allowed(99, 99));
+	}
+
+	public function testDenied()
+	{
+		$this->assertFalse($this->model->denied(99, 99));
+
+		$this->hasInDatabase($this->config->dbTablePermToUser, [
+			'perm_id' => 99,
+			'user_id' => 99,
+			'state'   => 0,
+		]);
+		$this->assertTrue($this->model->denied(99, 99));
 	}
 
 	public function testFindAllByUserId()
@@ -65,21 +84,6 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		]);
 		$permToUsers = $this->model->findAllByPermId(99);
 		$this->assertCount(1, $permToUsers);
-	}
-
-	public function testDelete()
-	{
-		$this->hasInDatabase($this->config->dbTablePermToUser, [
-			'perm_id' => 99,
-			'user_id' => 99,
-		]);
-		$criteria = [
-			'perm_id' => 99,
-			'user_id' => 99,
-		];
-		$this->seeNumRecords(1, $this->config->dbTablePermToUser, $criteria);
-		$this->model->delete(99, 99);
-		$this->seeNumRecords(0, $this->config->dbTablePermToUser, $criteria);
 	}
 
 	public function testDeleteAllByPermId()

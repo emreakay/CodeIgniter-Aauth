@@ -4,7 +4,7 @@
  *
  * Aauth is a User Authorization Library for CodeIgniter 4.x, which aims to make
  * easy some essential jobs such as login, permissions and access operations.
- * Despite ease of use, it has also very advanced features like groupping,
+ * Despite ease of use, it has also very advanced features like grouping,
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
@@ -145,7 +145,7 @@ class GroupToUserModel
 	 * @param integer $groupId Group Id
 	 * @param integer $userId  User Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function insert(int $groupId, int $userId)
 	{
@@ -154,7 +154,9 @@ class GroupToUserModel
 		$data['group_id'] = $groupId;
 		$data['user_id']  = $userId;
 
-		return $builder->insert($data);
+		$builder->insert($data);
+
+		return true;
 	}
 
 	/**
@@ -163,15 +165,16 @@ class GroupToUserModel
 	 * @param integer $groupId Group Id
 	 * @param integer $userId  User Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function delete(int $groupId, int $userId)
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
 		$builder->where('user_id', $userId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**
@@ -179,14 +182,15 @@ class GroupToUserModel
 	 *
 	 * @param integer $groupId Group Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteAllByGroupId(int $groupId)
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**
@@ -194,14 +198,15 @@ class GroupToUserModel
 	 *
 	 * @param integer $userId User Id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function deleteAllByUserId(int $userId)
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
+		$builder->delete();
 
-		return $builder->delete();
+		return true;
 	}
 
 	/**

@@ -7,10 +7,6 @@ use Tests\Support\Session\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use App\Libraries\Aauth;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState         disabled
- */
 class ErrorsTest extends \CIUnitTestCase
 {
 	public function setUp()
@@ -78,6 +74,10 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->expectOutputString('test message 1<br />test message 2');
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
 	public function testClearErrors()
 	{
 		$session       = $this->getInstance();
@@ -89,6 +89,10 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertNull($session->getFlashdata('errors'));
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
 	public function testErrorsFlash()
 	{
 		$session       = $this->getInstance();
@@ -104,6 +108,10 @@ class ErrorsTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1', 'test message 2'], $session->getFlashdata('errors'));
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
 	public function testKeepErrors()
 	{
 		$session       = $this->getInstance();

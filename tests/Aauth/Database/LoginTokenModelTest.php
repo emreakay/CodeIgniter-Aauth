@@ -31,21 +31,18 @@ class LoginTokenModelTest extends CIDatabaseTestCase
 	{
 		$this->model->insert(['user_id' => 99, 'random_hash' => 'random_hash9999']);
 		$oldLoginTokens = $this->model->findAllByUserId(99);
-		$oldLoginToken  = $oldLoginTokens[0];
-		sleep(5);
-		$this->model->update($oldLoginToken['id']);
+		sleep(2);
+		$this->model->update($oldLoginTokens[0]['id']);
 		$loginTokens = $this->model->findAllByUserId(99);
-		$loginToken  = $loginTokens[0];
-		$this->assertNotEquals($oldLoginToken['expires_at'], $loginToken['expires_at']);
+		$this->assertNotEquals($oldLoginTokens[0]['expires_at'], $loginTokens[0]['expires_at']);
 	}
 
 	public function testDeleteExpired()
 	{
 		$this->model->insert(['user_id' => 99, 'random_hash' => 'random_hash9999']);
-		sleep(5);
+		sleep(2);
 		$this->model->deleteExpired(99);
-		$loginTokens = $this->model->findAllByUserId(99);
-		$this->assertCount(0, $loginTokens);
+		$this->assertCount(0, $this->model->findAllByUserId(99));
 	}
 
 	public function testConfigDBGroup()
