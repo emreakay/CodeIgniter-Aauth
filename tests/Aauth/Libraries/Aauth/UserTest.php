@@ -158,9 +158,11 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals('admin', $users[0]['username']);
 		$this->assertEquals('user', $users[1]['username']);
 
-		$usersOrderBy = $this->library->listUsers(0, 0, null, 'id DESC');
+		$usersOrderBy = $this->library->listUsers(null, 0, 0, null, 'id DESC');
 		$this->assertEquals('user', $usersOrderBy[0]['username']);
 		$this->assertEquals('admin', $usersOrderBy[1]['username']);
+
+		$this->assertCount(1, $this->library->listUsers($this->config->groupAdmin));
 	}
 
 	public function testListUsersPaginated()
@@ -171,9 +173,11 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals('admin', $users['users'][0]['username']);
 		$this->assertEquals('user', $users['users'][1]['username']);
 
-		$usersOrderBy = $this->library->listUsersPaginated(10, null, 'id DESC');
+		$usersOrderBy = $this->library->listUsersPaginated(null, 10, null, 'id DESC');
 		$this->assertEquals('user', $usersOrderBy['users'][0]['username']);
 		$this->assertEquals('admin', $usersOrderBy['users'][1]['username']);
+
+		$this->assertCount(1, $this->library->listUsersPaginated($this->config->groupAdmin)['users']);
 	}
 
 	public function testVerifyUser()

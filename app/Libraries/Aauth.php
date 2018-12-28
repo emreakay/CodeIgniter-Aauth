@@ -43,6 +43,13 @@ class Aauth
 	protected $config;
 
 	/**
+	 * Variable for loading the app config array into
+	 *
+	 * @var \Config\App
+	 */
+	protected $configApp;
+
+	/**
 	 * Variable for loading the session service into
 	 *
 	 * @var \CodeIgniter\Session\Session
@@ -112,8 +119,9 @@ class Aauth
 			$session = \Config\Services::session();
 		}
 
-		$this->config  = $config;
-		$this->session = $session;
+		$this->configApp = new \Config\App();
+		$this->config    = $config;
+		$this->session   = $session;
 	}
 
 	//--------------------------------------------------------------------
@@ -718,32 +726,38 @@ class Aauth
 	 *
 	 * Return users as an object array
 	 *
-	 * @param integer $limit          Limit of users to be returned
-	 * @param integer $offset         Offset for limited number of users
-	 * @param boolean $includeBanneds Include banned users
-	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 * @param string|integer $groupPar       Specify group id to list group or null for all users
+	 * @param integer        $limit          Limit of users to be returned
+	 * @param integer        $offset         Offset for limited number of users
+	 * @param boolean        $includeBanneds Include banned users
+	 * @param string         $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
 	 * @return array Array of users
 	 */
-	public function listUsers(int $limit = 0, int $offset = 0, bool $includeBanneds = null, string $orderBy = null)
+	public function listUsers($groupPar = null, int $limit = 0, int $offset = 0, bool $includeBanneds = null, string $orderBy = null)
 	{
 		$userModel = new UserModel();
-		$user      = $userModel->limit($limit, $offset);
+		$userModel->limit($limit, $offset);
 
 		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-		// eanbool $groupPar = null,
+
+		if ($groupPar && $groupId = $this->getGroupId($groupPar))
+		{
+			$userModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroupToUser . '.user_id = ' . $this->config->dbTableUsers . '.id');
+			$userModel->where($this->config->dbTableGroupToUser . '.group_id', $groupId);
+		}
 
 		if (is_null($includeBanneds))
 		{
-			$user->where('banned', 0);
+			$userModel->where('banned', 0);
 		}
 
 		if (! is_null($orderBy))
 		{
-			$user->orderBy($orderBy);
+			$userModel->orderBy($orderBy);
 		}
 
-		return $user->findAll();
+		return $userModel->findAll();
 	}
 
 	/**
@@ -751,19 +765,25 @@ class Aauth
 	 *
 	 * Return users as an object array
 	 *
-	 * @param integer $limit          Limit of users to be returned
-	 * @param integer $offset         Offset for limited number of users
-	 * @param boolean $includeBanneds Include banned users
-	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 * @param string|integer $groupPar       Specify group id to list group or null for all users
+	 * @param integer        $limit          Limit of users to be returned
+	 * @param integer        $offset         Offset for limited number of users
+	 * @param boolean        $includeBanneds Include banned users
+	 * @param string         $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
 	 * @return array Array of users
 	 */
-	public function listUsersPaginated(int $limit = 10, bool $includeBanneds = null, string $orderBy = null)
+	public function listUsersPaginated($groupPar = null, int $limit = 10, bool $includeBanneds = null, string $orderBy = null)
 	{
 		$userModel = new UserModel();
 
 		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
-		// eanbool $groupPar = null,
+
+		if ($groupPar && $groupId = $this->getGroupId($groupPar))
+		{
+			$userModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroupToUser . '.user_id = ' . $this->config->dbTableUsers . '.id');
+			$userModel->where($this->config->dbTableGroupToUser . '.group_id', $groupId);
+		}
 
 		if (is_null($includeBanneds))
 		{
