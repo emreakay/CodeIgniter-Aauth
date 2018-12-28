@@ -8,11 +8,11 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @author    Magefly Team
- * @copyright 2014-2017 Emre Akay
- * @copyright 2018 Magefly
- * @license   https://opensource.org/licenses/MIT	MIT License
- * @link      https://github.com/magefly/CodeIgniter-Aauth
+ * @author    Emre Akay
+ * @author    Raphael "REJack" Jackstadt
+ * @copyright 2014-2019 Emre Akay
+ * @license   https://opensource.org/licenses/MIT   MIT License
+ * @link      https://github.com/emreakay/CodeIgniter-Aauth
  */
 
 namespace App\Controllers\Account;
