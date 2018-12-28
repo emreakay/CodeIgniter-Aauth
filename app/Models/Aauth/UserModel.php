@@ -30,15 +30,6 @@ use Config\Aauth as AauthConfig;
 class UserModel extends Model
 {
 	/**
-	 * If this model should use "softDeletes" and
-	 * simply set a flag when rows are deleted, or
-	 * do hard deletes.
-	 *
-	 * @var boolean
-	 */
-	protected $useSoftDeletes = true;
-
-	/**
 	 * If true, will set created_at, and updated_at
 	 * values during insert and update routines.
 	 *
@@ -94,9 +85,10 @@ class UserModel extends Model
 			$config = new AauthConfig();
 		}
 
-		$this->config  = $config;
-		$this->table   = $this->config->dbTableUsers;
-		$this->DBGroup = $this->config->dbProfile;
+		$this->config             = $config;
+		$this->table              = $this->config->dbTableUsers;
+		$this->DBGroup            = $this->config->dbProfile;
+		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteGroups;
 
 		$this->validationRules['email']    = 'required|valid_email|is_unique[' . $this->table . '.email]';
 		$this->validationRules['password'] = 'required|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';

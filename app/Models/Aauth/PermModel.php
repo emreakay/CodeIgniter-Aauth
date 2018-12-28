@@ -30,15 +30,6 @@ use Config\Aauth as AauthConfig;
 class PermModel extends Model
 {
 	/**
-	 * If this model should use "softDeletes" and
-	 * simply set a flag when rows are deleted, or
-	 * do hard deletes.
-	 *
-	 * @var boolean
-	 */
-	protected $useSoftDeletes = true;
-
-	/**
 	 * If true, will set created_at, and updated_at
 	 * values during insert and update routines.
 	 *
@@ -60,12 +51,19 @@ class PermModel extends Model
 	/**
 	 * Constructor
 	 */
-	public function __construct()
+	public function __construct($db = null, $validation = null, $config = null)
 	{
 		parent::__construct();
-		$this->config  = new AauthConfig();
-		$this->table   = $this->config->dbTablePerms;
-		$this->DBGroup = $this->config->dbProfile;
+
+		if (is_null($config))
+		{
+			$config = new AauthConfig();
+		}
+
+		$this->config             = $config;
+		$this->table              = $this->config->dbTablePerms;
+		$this->DBGroup            = $this->config->dbProfile;
+		$this->tempUseSoftDeletes = $this->config->dbSoftDeletePerms;
 
 		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{id}]';
 

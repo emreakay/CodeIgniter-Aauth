@@ -341,6 +341,24 @@ class Aauth extends BaseConfig
 	|
 	|    The table which contains permissions for groups
 	|    (default: 'aauth_perm_to_group')
+	|
+	| 'dbSoftDeleteUsers'
+	|
+	|    Enables soft delete for Users
+	|	 If this is enabled, it simply set a flag when rows are deleted.
+	|    (default: false)
+	|
+	| 'dbSoftDeleteGroups'
+	|
+	|    Enables soft delete for Groups
+	|	 If this is enabled, it simply set a flag when rows are deleted.
+	|    (default: false)
+	|
+	| 'dbSoftDeletePerms'
+	|
+	|    Enables soft delete for Perms
+	|	 If this is enabled, it simply set a flag when rows are deleted.
+	|    (default: false)
 	*/
 	public $dbProfile            = 'default';
 	public $dbTableUsers         = 'aauth_users';
@@ -353,4 +371,7 @@ class Aauth extends BaseConfig
 	public $dbTablePerms         = 'aauth_perms';
 	public $dbTablePermToUser    = 'aauth_perm_to_user';
 	public $dbTablePermToGroup   = 'aauth_perm_to_group';
+	public $dbSoftDeleteUsers    = true;
+	public $dbSoftDeleteGroups   = true;
+	public $dbSoftDeletePerms    = true;
 }
