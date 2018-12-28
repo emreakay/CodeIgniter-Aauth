@@ -135,7 +135,7 @@ class Aauth
 	public function login(string $identifier, string $password, bool $remember = null, string $totpCode = null)
 	{
 		helper('cookie');
-		delete_cookie('remember');
+		delete_cookie($this->config->loginRememberCookie);
 
 		$userModel         = new UserModel();
 		$loginAttemptModel = new LoginAttemptModel();
@@ -276,7 +276,7 @@ class Aauth
 				$randomString    = random_string('alnum', 32);
 				$selectorString  = random_string('alnum', 16);
 
-				$cookieData['name']   = 'remember';
+				$cookieData['name']   = $this->config->loginRememberCookie;
 				$cookieData['value']  = $userId . ';' . $randomString . ';' . $selectorString;
 				$cookieData['expire'] = YEAR;
 
@@ -316,7 +316,7 @@ class Aauth
 	public function logout()
 	{
 		helper('cookie');
-		set_cookie('remember', '', -3600);
+		set_cookie($this->config->loginRememberCookie, '', -3600);
 		$this->session->remove('user');
 		@$this->session->destroy();
 	}
@@ -371,7 +371,7 @@ class Aauth
 		{
 			return true;
 		}
-		else if ($cookie = get_cookie('remember'))
+		else if ($cookie = get_cookie($this->config->loginRememberCookie))
 		{
 			$cookie    = explode(';', $cookie);
 			$cookie[0] = base64_decode($cookie[0]);
@@ -398,7 +398,7 @@ class Aauth
 						else
 						{
 							$loginTokenModel->deleteExpired($cookie[0]);
-							delete_cookie('remember');
+							delete_cookie($this->config->loginRememberCookie);
 						}
 					}
 				}

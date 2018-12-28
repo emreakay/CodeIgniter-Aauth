@@ -48,6 +48,7 @@ class Aauth extends BaseConfig
 	|
 	|	Link for verification without site_url or base_url
 	|	(default: '/account/verification/index')
+	|
 	| 'linkVerification'
 	|
 	|	Redirect path to TOTP Verification page
@@ -113,11 +114,6 @@ class Aauth extends BaseConfig
 	| Login Variables
 	|--------------------------------------------------------------------------
 	|
-	| 'loginUseUsername'
-	|
-	|	Login Identificator, if TRUE username needed to login else email address
-	|	(default: false)
-	|
 	| 'loginRemember'
 	|
 	|	Remember time (in relative format) elapsed after connecting and automatic
@@ -125,6 +121,21 @@ class Aauth extends BaseConfig
 	|	Relative format (e.g. '+ 1 week', '+ 1 month') for details see
 	|	http://php.net/manual/de/datetime.formats.relative.php
 	|	(default: '+14 days')
+	|
+	| 'loginRememberCookie'
+	|
+	|	Remember cookie name.
+	|	(default: 'remember')
+	|
+	| 'loginSingleMode'
+	|
+	|	Login Single Mode, if true only one session per user can be active.
+	|	(default: false)
+	|
+	| 'loginUseUsername'
+	|
+	|	Login Identificator, if TRUE username needed to login else email address
+	|	(default: false)
 	|
 	| 'loginProtection'
 	|
@@ -135,6 +146,11 @@ class Aauth extends BaseConfig
 	|
 	|	Login attempts limit
 	|	(default: 10)
+	|
+	| 'loginAttemptCookie'
+	|
+	|	Login attempts count & block trough Cookie instead of Login Attempt DB & IP
+	|	(default: false)
 	|
 	| 'loginAttemptLimitTimePeriod'
 	|
@@ -147,9 +163,12 @@ class Aauth extends BaseConfig
 	|	(default: true)
 	*/
 	public $loginRemember                = '+14 days';
+	public $loginRememberCookie          = 'remember';
+	public $loginSingleMode              = false;
 	public $loginUseUsername             = false;
 	public $loginProtection              = true;
 	public $loginAttemptLimit            = 10;
+	public $loginAttemptCookie           = false;
 	public $loginAttemptLimitTimePeriod  = '5 minutes';
 	public $loginAttemptRemoveSuccessful = true;
 
