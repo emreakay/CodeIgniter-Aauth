@@ -35,7 +35,7 @@ class Aauth extends BaseConfig
 	|
 	| 'linkNoPermission'
 	|
-	|	If user don't have permisssion to see the page he will be redirected
+	|	If user don't have permission to see the page he will be redirected
 	|	the page specified.
 	|	(default: false)
 	|
@@ -289,12 +289,12 @@ class Aauth extends BaseConfig
 	|
 	| 'dbProfile'
 	|
-	|    The configuration database profile (definied in Config/Database.php)
+	|    The configuration database profile (defined in Config/Database.php)
 	|    (default: 'default')
 	|
 	| 'dbTableUsers'
 	|
-	|    The table which containss users
+	|    The table which contains users
 	|    (default: 'aauth_users')
 	|
 	| 'dbTableUserVariables'
