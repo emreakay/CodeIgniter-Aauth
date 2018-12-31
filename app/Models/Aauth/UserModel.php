@@ -88,7 +88,8 @@ class UserModel extends Model
 		$this->config             = $config;
 		$this->table              = $this->config->dbTableUsers;
 		$this->DBGroup            = $this->config->dbProfile;
-		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteGroups;
+		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteUsers;
+		$this->tempReturnType     = $this->config->dbReturnType;
 
 		$this->validationRules['email']    = 'required|valid_email|is_unique[' . $this->table . '.email]';
 		$this->validationRules['password'] = 'required|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';

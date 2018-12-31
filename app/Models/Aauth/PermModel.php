@@ -64,6 +64,7 @@ class PermModel extends Model
 		$this->table              = $this->config->dbTablePerms;
 		$this->DBGroup            = $this->config->dbProfile;
 		$this->tempUseSoftDeletes = $this->config->dbSoftDeletePerms;
+		$this->tempReturnType     = $this->config->dbReturnType;
 
 		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{id}]';
 

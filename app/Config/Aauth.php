@@ -292,6 +292,15 @@ class Aauth extends BaseConfig
 	|    The configuration database profile (defined in Config/Database.php)
 	|    (default: 'default')
 	|
+	| 'dbReturnType'
+	|
+	|    The format that the results should be returned as, for any get* &
+	|    list* function. (e.g. getUser, listUsers, ...).
+	|    Available types:
+	|       - array
+	|       - object
+	|    (default: 'array')
+	|
 	| 'dbTableUsers'
 	|
 	|    The table which contains users
@@ -366,6 +375,7 @@ class Aauth extends BaseConfig
 	|    (default: false)
 	*/
 	public $dbProfile             = 'default';
+	public $dbReturnType          = 'array';
 	public $dbTableUsers          = 'aauth_users';
 	public $dbTableUserVariables  = 'aauth_user_variables';
 	public $dbTableLoginAttempts  = 'aauth_login_attempts';

@@ -64,6 +64,7 @@ class GroupModel extends Model
 		$this->table              = $this->config->dbTableGroups;
 		$this->DBGroup            = $this->config->dbProfile;
 		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteGroups;
+		$this->tempReturnType     = $this->config->dbReturnType;
 
 		$this->validationRules['name'] = 'required|is_unique[' . $this->table . '.name,id,{id}]';
 
