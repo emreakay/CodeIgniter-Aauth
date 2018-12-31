@@ -18,16 +18,16 @@
 namespace App\Libraries;
 
 use \App\Models\Aauth\UserModel;
-use \App\Models\Aauth\GroupModel;
-use \App\Models\Aauth\PermModel;
-use \App\Models\Aauth\GroupToGroupModel;
-use \App\Models\Aauth\GroupToUserModel;
-use \App\Models\Aauth\PermToGroupModel;
-use \App\Models\Aauth\PermToUserModel;
+use \App\Models\Aauth\UserVariableModel;
 use \App\Models\Aauth\LoginAttemptModel;
 use \App\Models\Aauth\LoginTokenModel;
-use \App\Models\Aauth\UserVariableModel;
+use \App\Models\Aauth\GroupModel;
+use \App\Models\Aauth\GroupToGroupModel;
+use \App\Models\Aauth\GroupToUserModel;
 use \App\Models\Aauth\GroupVariableModel;
+use \App\Models\Aauth\PermModel;
+use \App\Models\Aauth\PermToGroupModel;
+use \App\Models\Aauth\PermToUserModel;
 
 /**
  * Aauth Library
