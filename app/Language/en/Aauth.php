@@ -27,7 +27,7 @@
 return [
    'subjectVerification'    => 'Account Verification',
    'subjectReset'           => 'Reset Password',
-   'subjectResetSuccess'    => 'Successful Pasword Reset',
+   'subjectResetSuccess'    => 'Successful Password Reset',
 
    'textVerification'       => "Your verification code is: {code}. You can also click on (or copy and paste) the following link\n\n {link}",
    'textReset'              => "To reset your password click on (or copy and paste in your browser address bar) the link below:\n\n {link}",
