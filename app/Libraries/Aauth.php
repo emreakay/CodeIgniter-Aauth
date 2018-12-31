@@ -176,7 +176,7 @@ class Aauth
 				return false;
 			}
 
-			if (! $user = $userModel->where('username', $identifier)->first())
+			if (! $user = $userModel->where('username', $identifier)->getFirstRow('array'))
 			{
 				$this->error(lang('Aauth.notFoundUser'));
 
@@ -194,7 +194,7 @@ class Aauth
 				return false;
 			}
 
-			if (! $user = $userModel->where('email', $identifier)->first())
+			if (! $user = $userModel->where('email', $identifier)->getFirstRow('array'))
 			{
 				$this->error(lang('Aauth.notFoundUser'));
 
@@ -346,7 +346,7 @@ class Aauth
 		$userModel->where('id', $userId);
 		$userModel->where('banned', 0);
 
-		if (! $user = $userModel->get()->getFirstRow())
+		if (! $user = $userModel->get()->getFirstRow('array'))
 		{
 			return false;
 		}
@@ -851,7 +851,7 @@ class Aauth
 			'system'     => 1,
 		];
 
-		if (! $verificationCodeStored = $userVariableModel->where($userVariable)->first())
+		if (! $verificationCodeStored = $userVariableModel->where($userVariable)->getFirstRow('array'))
 		{
 			$this->error(lang('Aauth.invalidVerficationCode'));
 
@@ -896,8 +896,8 @@ class Aauth
 
 		if ($withVariables)
 		{
-			$variables = $userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
-			$variables = $variables->findAll($userId, $inclSystem);
+			$userVariableModel->select('data_key, data_value' . ($inclSystem ? ', system' : ''));
+			$variables = $userVariableModel->findAll($userId, $inclSystem);
 
 			$user['variables'] = $variables;
 		}
@@ -927,7 +927,7 @@ class Aauth
 			$where = ['email' => $email];
 		}
 
-		if (! $user = $userModel->where($where)->first())
+		if (! $user = $userModel->where($where)->getFirstRow('array'))
 		{
 			return false;
 		}
@@ -1024,7 +1024,7 @@ class Aauth
 	{
 		$userModel = new UserModel();
 
-		if (! $user = $userModel->where('email', $email)->first())
+		if (! $user = $userModel->where('email', $email)->getFirstRow('array'))
 		{
 			$this->error(lang('Aauth.notFoundUser'));
 
@@ -1075,7 +1075,7 @@ class Aauth
 			'system'     => 1,
 		];
 
-		if (! $userVariable = $userVariableModel->where($variable)->first())
+		if (! $userVariable = $userVariableModel->where($variable)->getFirstRow('array'))
 		{
 			$this->error(lang('Aauth.invalidVerficationCode'));
 
