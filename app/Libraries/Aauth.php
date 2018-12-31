@@ -176,7 +176,7 @@ class Aauth
 				return false;
 			}
 
-			if (! $user = $userModel->where('username', $identifier)->getFirstRow('array'))
+			if (! $user = $userModel->where('username', $identifier)->asArray()->first())
 			{
 				$this->error(lang('Aauth.notFoundUser'));
 
@@ -194,7 +194,7 @@ class Aauth
 				return false;
 			}
 
-			if (! $user = $userModel->where('email', $identifier)->getFirstRow('array'))
+			if (! $user = $userModel->where('email', $identifier)->asArray()->first())
 			{
 				$this->error(lang('Aauth.notFoundUser'));
 
@@ -346,15 +346,15 @@ class Aauth
 		$userModel->where('id', $userId);
 		$userModel->where('banned', 0);
 
-		if (! $user = $userModel->get()->getFirstRow('array'))
+		if (! $user = $userModel->asArray()->first())
 		{
 			return false;
 		}
 
 		$this->session->set('user', [
-			'id'       => $user->id,
-			'username' => $user->username,
-			'email'    => $user->email,
+			'id'       => $user['id'],
+			'username' => $user['username'],
+			'email'    => $user['email'],
 			'loggedIn' => true,
 		]);
 
@@ -851,7 +851,7 @@ class Aauth
 			'system'     => 1,
 		];
 
-		if (! $verificationCodeStored = $userVariableModel->where($userVariable)->getFirstRow('array'))
+		if (! $verificationCodeStored = $userVariableModel->where($userVariable)->asArray()->first())
 		{
 			$this->error(lang('Aauth.invalidVerficationCode'));
 
@@ -927,7 +927,7 @@ class Aauth
 			$where = ['email' => $email];
 		}
 
-		if (! $user = $userModel->where($where)->getFirstRow('array'))
+		if (! $user = $userModel->where($where)->asArray()->first())
 		{
 			return false;
 		}

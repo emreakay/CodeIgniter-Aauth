@@ -232,8 +232,7 @@ class UserTest extends CIDatabaseTestCase
 		$session->set('user', [
 			'id' => 1,
 		]);
-		$userIdNone = $this->library->getUserId();
-		$this->assertEquals('1', $userIdNone);
+		$this->assertEquals('1', $this->library->getUserId());
 
 		$this->assertFalse($this->library->getUserId('none@example.com'));
 	}
