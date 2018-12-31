@@ -327,6 +327,11 @@ class Aauth extends BaseConfig
 	|    The table which contains join of subgroups and groups
 	|    (default: 'aauth_group_to_group')
 	|
+	| 'dbTableGroupVariables'
+	|
+	|    The table which contains group variables
+	|    (default: 'aauth_group_variables')
+	|
 	| 'dbTablePerms'
 	|
 	|    The table which contains permissions
@@ -360,18 +365,19 @@ class Aauth extends BaseConfig
 	|	 If this is enabled, it simply set a flag when rows are deleted.
 	|    (default: false)
 	*/
-	public $dbProfile            = 'default';
-	public $dbTableUsers         = 'aauth_users';
-	public $dbTableUserVariables = 'aauth_user_variables';
-	public $dbTableLoginAttempts = 'aauth_login_attempts';
-	public $dbTableLoginTokens   = 'aauth_login_tokens';
-	public $dbTableGroups        = 'aauth_groups';
-	public $dbTableGroupToUser   = 'aauth_group_to_user';
-	public $dbTableGroupToGroup  = 'aauth_group_to_group';
-	public $dbTablePerms         = 'aauth_perms';
-	public $dbTablePermToUser    = 'aauth_perm_to_user';
-	public $dbTablePermToGroup   = 'aauth_perm_to_group';
-	public $dbSoftDeleteUsers    = true;
-	public $dbSoftDeleteGroups   = true;
-	public $dbSoftDeletePerms    = true;
+	public $dbProfile             = 'default';
+	public $dbTableUsers          = 'aauth_users';
+	public $dbTableUserVariables  = 'aauth_user_variables';
+	public $dbTableLoginAttempts  = 'aauth_login_attempts';
+	public $dbTableLoginTokens    = 'aauth_login_tokens';
+	public $dbTableGroups         = 'aauth_groups';
+	public $dbTableGroupToUser    = 'aauth_group_to_user';
+	public $dbTableGroupToGroup   = 'aauth_group_to_group';
+	public $dbTableGroupVariables = 'aauth_group_variables';
+	public $dbTablePerms          = 'aauth_perms';
+	public $dbTablePermToUser     = 'aauth_perm_to_user';
+	public $dbTablePermToGroup    = 'aauth_perm_to_group';
+	public $dbSoftDeleteUsers     = true;
+	public $dbSoftDeleteGroups    = true;
+	public $dbSoftDeletePerms     = true;
 }
