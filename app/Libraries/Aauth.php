@@ -27,6 +27,7 @@ use \App\Models\Aauth\PermToUserModel;
 use \App\Models\Aauth\LoginAttemptModel;
 use \App\Models\Aauth\LoginTokenModel;
 use \App\Models\Aauth\UserVariableModel;
+use \App\Models\Aauth\GroupVariableModel;
 
 /**
  * Aauth Library
@@ -1146,7 +1147,7 @@ class Aauth
 
 		$userModel = new UserModel();
 
-		if (! @$userModel->existsById($userId))
+		if (! $userModel->existsById($userId))
 		{
 			return false;
 		}
@@ -1734,6 +1735,128 @@ class Aauth
 			'groups' => $groupModel->paginate($limit),
 			'pager'  => $groupModel->pager,
 		];
+	}
+
+	/**
+	 * Set Group Variable as key value
+	 *
+	 * if variable not set before, it will be set
+	 * if set, overwrites the value
+	 *
+	 * @param string  $key
+	 * @param string  $value
+	 * @param integer $groupId Group id
+	 *
+	 * @return boolean
+	 */
+	public function setGroupVar(string $key, string $value, int $groupId)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupModel->existsById($groupId))
+		{
+			return false;
+		}
+
+		$groupVariableModel = new GroupVariableModel();
+
+		return $groupVariableModel->save($groupId, $key, $value);
+	}
+
+	/**
+	 * Unset Group Variable as key value
+	 *
+	 * @param string  $key
+	 * @param integer $groupId Group id
+	 *
+	 * @return boolean
+	 */
+	public function unsetGroupVar(string $key, int $groupId)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupModel->existsById($groupId))
+		{
+			return false;
+		}
+
+		$groupVariableModel = new GroupVariableModel();
+
+		return $groupVariableModel->delete($groupId, $key);
+	}
+
+	/**
+	 * Get Group Variable by key
+	 *
+	 * @param string  $key     Variable Key
+	 * @param integer $groupId Group id
+	 *
+	 * @return boolean|string false if var is not set, the value of var if set
+	 */
+	public function getGroupVar(string $key, int $groupId)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupModel->existsById($groupId))
+		{
+			return false;
+		}
+
+		$groupVariableModel = new GroupVariableModel();
+
+		if (! $variable = $groupVariableModel->find($groupId, $key))
+		{
+			return false;
+		}
+
+		return $variable;
+	}
+
+	/**
+	 * Get Group Variables by group id
+	 *
+	 * Return array with all group keys & variables
+	 *
+	 * @param integer $groupId Group id
+	 *
+	 * @return array
+	 */
+	public function getGroupVars(int $groupId = null)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupModel->existsById($groupId))
+		{
+			return false;
+		}
+
+		$groupVariableModel = new GroupVariableModel();
+
+		return $groupVariableModel->findAll($groupId);
+	}
+
+	/**
+	 * List Group Variable Keys by GroupId
+	 *
+	 * Return array of variable keys or false
+	 *
+	 * @param integer $groupId Group id
+	 *
+	 * @return boolean|array
+	 */
+	public function listGroupVarKeys(int $groupId = null)
+	{
+		$groupModel = new GroupModel();
+
+		if (! $groupModel->existsById($groupId))
+		{
+			return false;
+		}
+
+		$groupVariableModel = new GroupVariableModel();
+		$groupVariableModel->select('data_key as key');
+
+		return $groupVariableModel->findAll($groupId);
 	}
 
 	//--------------------------------------------------------------------
