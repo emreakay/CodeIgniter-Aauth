@@ -104,7 +104,9 @@ class LoginAttemptModel
 	 */
 	public function find()
 	{
+		$agent   = $this->request->getUserAgent();
 		$builder = $this->builder();
+		$builder->where('user_agent', md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform()));
 		$builder->where('ip_address', $this->request->getIPAddress());
 		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
 
@@ -128,13 +130,17 @@ class LoginAttemptModel
 	public function save()
 	{
 		$ipAddress = $this->request->getIPAddress();
+		$agent     = $this->request->getUserAgent();
+		$userAgent = md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform());
 		$builder   = $this->builder();
+		$builder->where('user_agent', $userAgent);
 		$builder->where('ip_address', $ipAddress);
 		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
 
 		if (! $row = $builder->get()->getFirstRow())
 		{
 			$data['ip_address'] = $ipAddress;
+			$data['user_agent'] = $userAgent;
 			$data['count']      = 1;
 			$data['created_at'] = date('Y-m-d H:i:s');
 			$data['updated_at'] = date('Y-m-d H:i:s');
@@ -170,7 +176,9 @@ class LoginAttemptModel
 	 */
 	public function delete()
 	{
+		$agent   = $this->request->getUserAgent();
 		$builder = $this->builder();
+		$builder->where('user_agent', md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform()));
 		$builder->where('ip_address', $this->request->getIPAddress());
 		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
 

@@ -49,6 +49,9 @@ class Migration_create_login_attempts extends Migration
 				'constraint' => 39,
 				'default'    => 0,
 			],
+			'user_agent' => [
+				'type' => 'TINYTEXT',
+			],
 			'count' => [
 				'type'       => 'TINYINT',
 				'constraint' => 2,
