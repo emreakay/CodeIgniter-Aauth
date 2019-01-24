@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 7.1
   - 7.2
   - 7.3
   - nightly
@@ -9,7 +8,6 @@ php:
 matrix:
   fast_finish: true
   allow_failures:
-    - php: 7.3
     - php: nightly
 
 global:
@@ -21,29 +19,20 @@ sudo: required
 dist: trusty
 group: edge
 
-env:
-  - DB=mysqli
-  - DB=postgres
-  - DB=sqlite
-
 services:
   - memcached
   - mysql
-  - postgresql
-  - redis-server
 
 script:
   - php vendor/bin/phpunit -v
 
 before_install:
-  - mysql -e "CREATE DATABASE IF NOT EXISTS test;" -uroot;
-  - mysql -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'test';" -uroot
-  - psql -c 'CREATE DATABASE test;' -U postgres
+  - mysql -e "CREATE DATABASE IF NOT EXISTS aauth_test;" -uroot;
+  - mysql -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'aauth_test';" -uroot
 
 before_script:
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - shopt -s extglob dotglob && mkdir aauth_temp && mv !(aauth_temp) aauth_temp
+  - git clone https://github.com/codeigniter4/CodeIgniter4.git CodeIgniter4 -b v4.0.0-alpha.4
+  - cp -r aauth_temp/* CodeIgniter4 && cd CodeIgniter4 && cp _travis/env .env
   - composer install --prefer-source
-
-after_success:
-  - travis_retry php tests/bin/php-coveralls.phar -v
