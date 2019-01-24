@@ -3,7 +3,8 @@
 image: rejack/php7-testing-phpunit-ci4:7.2
 
 before_script:
-  - shopt -s extglob dotglob && mkdir aauth_temp && mv !(aauth_temp) aauth_temp
+  - shopt -s extglob dotglob && mkdir aauth_temp
+  - mv !(aauth_temp) aauth_temp
   - git clone https://github.com/codeigniter4/CodeIgniter4.git CodeIgniter4 -b ${CODEIGNITER_VERSION}
   - cp -r aauth_temp/* CodeIgniter4 && cd CodeIgniter4 && cp _travis/env_gitlab .env
   - composer install --prefer-source
@@ -24,7 +25,7 @@ variables:
 # If Xdebug was installed you can generate a coverage report and see code coverage metrics.
 test:
   after_script: 
-  - cp -R CodeIgniter4-${CODEIGNITER_VERSION}/build/coverage coverage
+  - cp -R CodeIgniter4/build/coverage coverage
 
   artifacts:
     when: always
