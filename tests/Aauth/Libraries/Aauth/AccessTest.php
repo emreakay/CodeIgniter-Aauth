@@ -18,7 +18,7 @@ class AccessTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = TESTPATH . '../application' . 'Database/Migrations';
+	protected $basePath = FCPATH . '../app/Database/Migrations';
 
 	protected $namespace = 'App';
 
