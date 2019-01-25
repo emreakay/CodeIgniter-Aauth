@@ -98,7 +98,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.existsAlreadyPerm'), $this->library->getErrorsArray()[0]);
 
 		$this->library = new Aauth(null, true);
-		$this->assertFalse($this->library->updatePerm('testPerm1'));
+		$this->assertTrue($this->library->updatePerm('testPerm1'));
 		$this->assertCount(0, $this->library->getErrorsArray());
 
 		$this->library = new Aauth(null, true);

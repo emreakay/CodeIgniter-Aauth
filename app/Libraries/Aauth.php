@@ -1511,7 +1511,7 @@ class Aauth
 
 			return false;
 		}
-		else if (! $groupId = $subgroupId)
+		else if ($groupId === $subgroupId)
 		{
 			return false;
 		}

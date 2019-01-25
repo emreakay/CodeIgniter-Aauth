@@ -133,7 +133,7 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.invalidUsername'), $this->library->getErrorsArray()[0]);
 
 		$this->library = new Aauth(null, true);
-		$this->assertFalse($this->library->updateUser(2));
+		$this->assertTrue($this->library->updateUser(2));
 		$this->assertCount(0, $this->library->getErrorsArray());
 
 		$this->library = new Aauth(null, true);

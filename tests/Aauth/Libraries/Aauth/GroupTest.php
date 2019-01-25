@@ -102,7 +102,7 @@ class GroupTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.existsAlreadyGroup'), $this->library->getErrorsArray()[0]);
 
 		$this->library = new Aauth(null, true);
-		$this->assertFalse($this->library->updateGroup($this->config->groupAdmin));
+		$this->assertTrue($this->library->updateGroup($this->config->groupAdmin));
 		$this->assertCount(0, $this->library->getErrorsArray());
 
 		$this->library = new Aauth(null, true);
@@ -334,6 +334,8 @@ class GroupTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->addSubgroup('testGroup1', 'testGroup3'));
 
 		$subgroups = $this->library->getSubgroups(4);
+
+		var_dump( $subgroups);
 		$this->assertCount(2, $subgroups);
 		$this->assertEquals([['subgroup_id' => '5'], ['subgroup_id' => '6']], $subgroups);
 		$this->assertFalse($this->library->getSubgroups('testGroup99'));
