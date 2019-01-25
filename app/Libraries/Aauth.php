@@ -1579,8 +1579,6 @@ class Aauth
 	{
 		$groupModel = new GroupModel();
 
-		$groupModel->select('id, name, definition');
-
 		if (! is_null($orderBy))
 		{
 			$groupModel->orderBy($orderBy);
@@ -2135,8 +2133,6 @@ class Aauth
 	public function listPermsPaginated(int $limit = 10, string $orderBy = null)
 	{
 		$permModel = new PermModel();
-
-		$permModel->select('id, name, definition');
 
 		if (! is_null($orderBy))
 		{

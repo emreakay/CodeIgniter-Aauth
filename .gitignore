@@ -29,6 +29,7 @@
 /app/Views/errors/
 /app/Views/welcome_message.php
 
+.env
 composer.lock
 spark
 
