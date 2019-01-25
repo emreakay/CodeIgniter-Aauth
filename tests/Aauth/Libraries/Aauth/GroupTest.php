@@ -335,7 +335,6 @@ class GroupTest extends CIDatabaseTestCase
 
 		$subgroups = $this->library->getSubgroups(4);
 
-		var_dump( $subgroups);
 		$this->assertCount(2, $subgroups);
 		$this->assertEquals([['subgroup_id' => '5'], ['subgroup_id' => '6']], $subgroups);
 		$this->assertFalse($this->library->getSubgroups('testGroup99'));
