@@ -24,6 +24,38 @@
 			<label><?= lang('Admin.groupsLabelDefinition') ?></label>
 			<p><?= $group['definition'] ?></p>
 		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label for="inputSubGroups"><?= lang('Admin.groupsLabelSubGroups') ?></label>
+					<?php foreach ($groups as $group): ?>
+						<?php if (! in_array(['subgroup_id' => $group['id']], $activeGroups)): ?>
+							<?php continue; ?>
+						<?php endif; ?>
+						<div class="form-check">
+							<label>
+								<?= $group['definition'] ?> (<?= $group['name'] ?>)
+							</label>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label for="inputPerms"><?= lang('Admin.groupsLabelPerms') ?></label>
+					<?php foreach ($perms as $perm): ?>
+						<?php if (! in_array(['perm_id' => $perm['id'], 'state' => 1], $activePerms)): ?>
+							<?php continue; ?>
+						<?php endif; ?>
+						<div class="form-check">
+							<label>
+								<?= $perm['definition'] ?> (<?= $perm['name'] ?>)
+							</label>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="card-footer">
 		<a href="<?= site_url('admin/groups') ?>" class="btn btn-warning"><?= lang('Admin.groupsLinkBack') ?></a>

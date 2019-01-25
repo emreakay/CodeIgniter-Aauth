@@ -1,0 +1,4 @@
+.table thead td,
+.table thead th {
+	border-top: none;
+}

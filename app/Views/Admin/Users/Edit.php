@@ -46,6 +46,36 @@
 				<label for="inputPassword"><?= lang('Admin.usersLabelPassword') ?></label>
 				<input type="password" class="form-control" name="password" id="inputPassword" placeholder="<?= lang('Admin.usersLabelPassword') ?>">
 			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="inputGroups"><?= lang('Admin.usersLabelGroups') ?></label>
+						<?php foreach ($groups as $group): ?>
+							<input type="hidden" name="groups[<?= $group['id'] ?>]" value="0">
+							<div class="form-check">
+								<label>
+									<input type="checkbox" name="groups[<?= $group['id'] ?>]" value="1" <?= ($group['id'] === 2 ? 'checked disabled' : ($group['id'] === 3 ? 'disabled' : (is_member($group['id'], $user['id']) ? 'checked' : ''))) ?>>
+									<?= $group['definition'] ?> (<?= $group['name'] ?>)
+								</label>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="inputPerms"><?= lang('Admin.usersLabelPerms') ?></label>
+						<?php foreach ($perms as $perm): ?>
+							<input type="hidden" name="perms[<?= $perm['id'] ?>]" value="0">
+							<div class="form-check">
+								<label>
+									<input type="checkbox" name="perms[<?= $perm['id'] ?>]" value="1" <?= (is_allowed($perm['id'], $user['id']) ? 'checked' : '') ?>>
+									<?= $perm['definition'] ?> (<?= $perm['name'] ?>)
+								</label>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="card-footer">
 			<button type="submit" class="btn btn-primary float-right"><?= lang('Admin.usersEditSubmit') ?></button>

@@ -669,7 +669,7 @@ class Aauth
 		}
 		else if (is_null($email) && is_null($password) && is_null($username))
 		{
-			return false;
+			return true;
 		}
 
 		$data['id'] = $userId;
@@ -1317,7 +1317,7 @@ class Aauth
 
 		if (is_null($name) && is_null($definition))
 		{
-			return false;
+			return true;
 		}
 		else if (! $groupId = $this->getGroupId($groupPar))
 		{
@@ -1445,10 +1445,52 @@ class Aauth
 	}
 
 	/**
+	 * Get User Groups
+	 *
+	 * @param integer|string $userId User id
+	 *
+	 * @return object Array of group_id's
+	 */
+	public function getUserGroups($userId)
+	{
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$groupToUserModel = new GroupToUserModel();
+
+		return $groupToUserModel->findAllByUserId($userId);
+	}
+
+	/**
+	 * Get User Perms
+	 *
+	 * @param integer|string $userId User id
+	 *
+	 * @return object Array of perm_id's
+	 */
+	public function getUserPerms($userId, $state = null)
+	{
+		$userModel = new UserModel();
+
+		if (! $userModel->existsById($userId))
+		{
+			return false;
+		}
+
+		$permToUserModel = new PermToUserModel();
+
+		return $permToUserModel->findAllByUserId($userId, $state);
+	}
+
+	/**
 	 * Add subgroup to group
 	 *
-	 * @param integer        $userId   User id to add to group
-	 * @param integer|string $groupPar Group id or name to add user to
+	 * @param integer|string $groupPar    Group id
+	 * @param integer|string $subgroupPar Subgroup id or name to add to group
 	 *
 	 * @return boolean Add success/failure
 	 */
@@ -1467,6 +1509,10 @@ class Aauth
 		{
 			$this->error(lang('Aauth.notFoundSubgroup'));
 
+			return false;
+		}
+		else if (! $groupId = $subgroupId)
+		{
 			return false;
 		}
 		else if ($groupToGroupModel->exists($groupId, $subgroupId))
@@ -1537,6 +1583,26 @@ class Aauth
 		$groupToGroupModel = new GroupToGroupModel();
 
 		return $groupToGroupModel->findAllByGroupId($groupId);
+	}
+
+	/**
+	 * Get group perms
+	 *
+	 * @param integer|string $groupPar Group id or name to get
+	 * @param integer        $state    State (1 = allowed, 0 = denied)
+	 *
+	 * @return object Array of subgroup_id's
+	 */
+	public function getGroupPerms($groupPar, int $state = null)
+	{
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			return false;
+		}
+
+		$permToGroupModel = new PermToGroupModel();
+
+		return $permToGroupModel->findAllByGroupId($groupId, $state);
 	}
 
 	/**
@@ -1907,7 +1973,7 @@ class Aauth
 
 		if (is_null($name) && is_null($definition))
 		{
-			return false;
+			return true;
 		}
 		else if (! $permId = $this->getPermId($permPar))
 		{

@@ -97,11 +97,20 @@ class PermToUserModel
 	 *
 	 * @return array|null
 	 */
-	public function findAllByUserId(int $userId)
+	public function findAllByUserId(int $userId, int $state = null)
 	{
 		$builder = $this->builder();
-		$builder->select('perm_id, state');
 		$builder->where('user_id', $userId);
+
+		if (! $state)
+		{
+			$builder->select('perm_id, state');
+		}
+		else if ($state)
+		{
+			$builder->select('perm_id');
+			$builder->where('state', $state);
+		}
 
 		return $builder->get()->getResult('array');
 	}

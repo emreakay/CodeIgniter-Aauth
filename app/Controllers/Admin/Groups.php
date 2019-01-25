@@ -64,8 +64,10 @@ class Groups extends Controller
 	 */
 	public function new()
 	{
+		$data['groups'] = $this->aauth->listGroups();
+		$data['perms']  = $this->aauth->listPerms();
 		echo view('Templates/HeaderAdmin');
-		echo view('Admin/Groups/New');
+		echo view('Admin/Groups/New', $data);
 		echo view('Templates/FooterAdmin');
 	}
 
@@ -78,10 +80,28 @@ class Groups extends Controller
 	{
 		$name       = $this->request->getPost('name');
 		$definition = $this->request->getPost('definition');
+		$subGroups  = $this->request->getPost('sub_groups');
+		$perms      = $this->request->getPost('perms');
 
-		if (! $this->aauth->createGroup($name, $definition))
+		if (! $groupId = $this->aauth->createGroup($name, $definition))
 		{
 			return redirect()->back()->with('errors', $this->aauth->getErrorsArray());
+		}
+
+		foreach ($subGroups as $subgroupId => $state)
+		{
+			if ($state === 1)
+			{
+				$this->aauth->addSubgroup($groupId, $subgroupId);
+			}
+		}
+
+		foreach ($perms as $permId => $state)
+		{
+			if ($state === 1)
+			{
+				$this->aauth->allowGroup($permId, $groupId);
+			}
 		}
 
 		return redirect()->to('/admin/groups');
@@ -94,7 +114,11 @@ class Groups extends Controller
 	 */
 	public function edit($groupId)
 	{
-		$data['group'] = $this->aauth->getGroup($groupId);
+		$data['group']        = $this->aauth->getGroup($groupId);
+		$data['groups']       = $this->aauth->listGroups();
+		$data['perms']        = $this->aauth->listPerms();
+		$data['activeGroups'] = $this->aauth->getSubgroups($groupId);
+		$data['activePerms']  = $this->aauth->getGroupPerms($groupId);
 
 		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Groups/Edit', $data);
@@ -110,10 +134,39 @@ class Groups extends Controller
 	{
 		$name       = $this->request->getPost('name');
 		$definition = $this->request->getPost('definition');
+		$subGroups  = $this->request->getPost('sub_groups');
+		$perms      = $this->request->getPost('perms');
 
 		if (! $this->aauth->updateGroup($groupId, empty($name) ? null : $name, empty($definition) ? null : $definition))
 		{
 			return redirect()->back()->with('errors', $this->aauth->getErrorsArray());
+		}
+
+		$activeSubGroups = $this->aauth->getSubgroups($groupId);
+		$activePerms     = $this->aauth->getGroupPerms($groupId, 1);
+
+		foreach ($subGroups as $subgroupId => $state)
+		{
+			if (! in_array(['subgroup_id' => $subgroupId], $activeSubGroups) && $state === 1)
+			{
+				$this->aauth->addSubgroup($groupId, $subgroupId);
+			}
+			else if (in_array(['subgroup_id' => $subgroupId], $activeSubGroups) && $state === 0)
+			{
+				$this->aauth->removeSubgroup($groupId, $subgroupId);
+			}
+		}
+
+		foreach ($perms as $permId => $state)
+		{
+			if (! in_array(['perm_id' => $permId], $activePerms) && $state === 1)
+			{
+				$this->aauth->allowGroup($permId, $groupId);
+			}
+			else if (! in_array(['perm_id' => $permId], $activePerms) && $state === 0)
+			{
+				$this->aauth->denyGroup($permId, $groupId);
+			}
 		}
 
 		return redirect()->to('/admin/groups/edit/' . $groupId);
@@ -126,7 +179,11 @@ class Groups extends Controller
 	 */
 	public function show($groupId)
 	{
-		$data['group'] = $this->aauth->getGroup($groupId);
+		$data['group']        = $this->aauth->getGroup($groupId);
+		$data['groups']       = $this->aauth->listGroups();
+		$data['perms']        = $this->aauth->listPerms();
+		$data['activeGroups'] = $this->aauth->getSubgroups($groupId);
+		$data['activePerms']  = $this->aauth->getGroupPerms($groupId);
 
 		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Groups/Show', $data);
@@ -154,7 +211,11 @@ class Groups extends Controller
 			}
 		}
 
-		$data['group'] = $this->aauth->getGroup($groupId);
+		$data['group']        = $this->aauth->getGroup($groupId);
+		$data['groups']       = $this->aauth->listGroups();
+		$data['perms']        = $this->aauth->listPerms();
+		$data['activeGroups'] = $this->aauth->getSubgroups($groupId);
+		$data['activePerms']  = $this->aauth->getGroupPerms($groupId);
 
 		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Groups/Delete', $data);

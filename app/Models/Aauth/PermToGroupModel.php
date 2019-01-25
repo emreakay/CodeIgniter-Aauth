@@ -97,12 +97,20 @@ class PermToGroupModel
 	 *
 	 * @return array|null
 	 */
-	public function findAllByGroupId(int $groupId)
+	public function findAllByGroupId(int $groupId, int $state = null)
 	{
 		$builder = $this->builder();
-		$builder->select('perm_id, state');
 		$builder->where('group_id', $groupId);
 
+		if (! $state)
+		{
+			$builder->select('perm_id, state');
+		}
+		else if ($state)
+		{
+			$builder->select('perm_id');
+			$builder->where('state', $state);
+		}
 		return $builder->get()->getResult('array');
 	}
 

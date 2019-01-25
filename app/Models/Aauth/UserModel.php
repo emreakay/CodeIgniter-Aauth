@@ -143,9 +143,11 @@ class UserModel extends Model
 	public function updateLastLogin(int $userId)
 	{
 		$builder = $this->builder();
+		$request = \Config\Services::request();
 
-		$data['last_login']    = $this->setDate();
-		$data['last_activity'] = $this->setDate();
+		$data['last_login']      = $this->setDate();
+		$data['last_activity']   = $this->setDate();
+		$data['last_ip_address'] = $request->getIPAddress();
 
 		return $builder->update($data, [$this->primaryKey => $userId]);
 	}

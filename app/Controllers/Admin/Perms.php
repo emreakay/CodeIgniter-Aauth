@@ -49,7 +49,7 @@ class Perms extends Controller
 		$data = $this->aauth->listPermsPaginated();
 
 		$data['cssFiles'] = [
-			'/assets/css/admin/groups/index.css'
+			'/assets/css/admin/perms/index.css'
 		];
 
 		echo view('Templates/HeaderAdmin', $data);
@@ -84,7 +84,7 @@ class Perms extends Controller
 			return redirect()->back()->with('errors', $this->aauth->getErrorsArray());
 		}
 
-		return redirect()->to('/admin/groups');
+		return redirect()->to('/admin/perms');
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Perms extends Controller
 	 */
 	public function edit($permId)
 	{
-		$data['group'] = $this->aauth->getPerm($permId);
+		$data['perm'] = $this->aauth->getPerm($permId);
 
 		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Perms/Edit', $data);
@@ -116,7 +116,7 @@ class Perms extends Controller
 			return redirect()->back()->with('errors', $this->aauth->getErrorsArray());
 		}
 
-		return redirect()->to('/admin/groups/edit/' . $permId);
+		return redirect()->to('/admin/perms/edit/' . $permId);
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Perms extends Controller
 	 */
 	public function show($permId)
 	{
-		$data['group'] = $this->aauth->getPerm($permId);
+		$data['perm'] = $this->aauth->getPerm($permId);
 
 		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Perms/Show', $data);
@@ -142,7 +142,7 @@ class Perms extends Controller
 	{
 		if (! $this->aauth->getPerm($permId))
 		{
-			return redirect()->to('/admin/groups');
+			return redirect()->to('/admin/perms');
 		}
 
 		$id = $this->request->getPost('id');
@@ -150,11 +150,11 @@ class Perms extends Controller
 		{
 			if ($this->aauth->deletePerm($permId))
 			{
-				return redirect()->to('/admin/groups');
+				return redirect()->to('/admin/perms');
 			}
 		}
 
-		$data['group'] = $this->aauth->getPerm($permId);
+		$data['perm'] = $this->aauth->getPerm($permId);
 
 		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Perms/Delete', $data);

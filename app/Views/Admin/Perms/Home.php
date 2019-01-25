@@ -21,7 +21,7 @@
 			<table class="table mb-0">
 				<thead>
 					<tr>
-						<th scope="col"><?= lang('Admin.permsLabelId') ?></th>
+						<th scope="col" class="text-center"><?= lang('Admin.permsLabelId') ?></th>
 						<th scope="col"><?= lang('Admin.permsLabelName') ?></th>
 						<th scope="col"><?= lang('Admin.permsLabelDefinition') ?></th>
 						<th scope="col"><?= lang('Admin.permsLabelCreatedAt') ?></th>
@@ -32,7 +32,7 @@
 				<tbody>
 					<?php foreach ($perms as $perm): ?>
 						<tr>
-							<th scope="row"><?= $perm['id'] ?></th>
+							<th scope="row" class="text-center"><?= $perm['id'] ?></th>
 							<td><?= $perm['name'] ?></td>
 							<td><?= $perm['definition'] ?></td>
 							<td><?= $perm['created_at'] ?></td>

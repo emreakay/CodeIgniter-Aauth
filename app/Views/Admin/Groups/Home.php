@@ -21,9 +21,11 @@
 			<table class="table mb-0">
 				<thead>
 					<tr>
-						<th scope="col"><?= lang('Admin.groupsLabelId') ?></th>
+						<th scope="col" class="text-center"><?= lang('Admin.groupsLabelId') ?></th>
 						<th scope="col"><?= lang('Admin.groupsLabelName') ?></th>
 						<th scope="col"><?= lang('Admin.groupsLabelDefinition') ?></th>
+						<th scope="col" class="text-center"><?= lang('Admin.groupsLabelSubGroups') ?></th>
+						<th scope="col" class="text-center"><?= lang('Admin.groupsLabelPerms') ?></th>
 						<th scope="col"><?= lang('Admin.groupsLabelCreatedAt') ?></th>
 						<th scope="col"><?= lang('Admin.groupsLabelUpdatedAt') ?></th>
 						<th scope="col"></th>
@@ -32,9 +34,11 @@
 				<tbody>
 					<?php foreach ($groups as $group): ?>
 						<tr>
-							<th scope="row"><?= $group['id'] ?></th>
+							<th scope="row" class="text-center"><?= $group['id'] ?></th>
 							<td><?= $group['name'] ?></td>
 							<td><?= $group['definition'] ?></td>
+							<td class="text-center"><?= count(get_subgroups($group['id'])) ?></td>
+							<td class="text-center"><?= count(get_group_perms($group['id'], 1)) ?></td>
 							<td><?= $group['created_at'] ?></td>
 							<td><?= $group['updated_at'] ?></td>
 							<td class="text-right p-1">
