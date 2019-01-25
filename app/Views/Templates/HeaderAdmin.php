@@ -6,15 +6,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<title><? (isset($title) ? $title : '') ?></title>
+		<title><?php (isset($title) ? $title : '') ?></title>
 		<link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
 		<link href="/assets/css/sb-admin.min.css" rel="stylesheet">
-		<? if (isset($cssFiles)): ?>
-		<? foreach ($cssFiles as $cssFile): ?>
+		<?php if (isset($cssFiles)): ?>
+			<?php foreach ($cssFiles as $cssFile): ?>
 		<link href="<?= $cssFile; ?>" rel="stylesheet">
-	<? endforeach; ?>
-	<? endif; ?>
+	<?php endforeach; ?>
+	<?php endif; ?>
 	</head>
 	<body id="page-top">
 		<nav class="navbar navbar-expand navbar-dark bg-dark static-top">
@@ -28,7 +28,7 @@
 				</li>
 			</ul>
 			<ul class="navbar-nav ml-auto">
-				<? if (is_loggedin()): ?>
+				<?php if (is_loggedin()): ?>
 					<li class="nav-item dropdown no-arrow">
 						<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="fas fa-user-circle fa-fw"></i>
@@ -45,7 +45,7 @@
 
 		<div id="wrapper">
 			<ul class="sidebar navbar-nav">
-				<li class="nav-item <?= (uri_string() == 'admin' ? 'active' : '') ?>">
+				<li class="nav-item <?= (uri_string() === 'admin' ? 'active' : '') ?>">
 					<a class="nav-link" href="<?= site_url('admin') ?>">
 						<i class="fas fa-fw fa-tachometer-alt"></i>
 						<span>Dashboard</span>
@@ -53,8 +53,20 @@
 				</li>
 				<li class="nav-item <?= (strpos(uri_string(), 'admin/users') !== false ? 'active' : '') ?>">
 					<a class="nav-link" href="<?= site_url('admin/users') ?>">
-						<i class="fas fa-fw fa-users"></i>
+						<i class="fas fa-fw fa-user"></i>
 						<span>Users</span>
+					</a>
+				</li>
+				<li class="nav-item <?= (strpos(uri_string(), 'admin/groups') !== false ? 'active' : '') ?>">
+					<a class="nav-link" href="<?= site_url('admin/groups') ?>">
+						<i class="fas fa-fw fa-users"></i>
+						<span>Groups</span>
+					</a>
+				</li>
+				<li class="nav-item <?= (strpos(uri_string(), 'admin/perms') !== false ? 'active' : '') ?>">
+					<a class="nav-link" href="<?= site_url('admin/perms') ?>">
+						<i class="fas fa-fw fa-lock"></i>
+						<span>Perms</span>
 					</a>
 				</li>
 			</ul>

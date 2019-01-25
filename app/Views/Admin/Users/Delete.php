@@ -5,7 +5,7 @@
 	<li class="breadcrumb-item">
 		<a href="<?= site_url('admin/users') ?>"><?= lang('Admin.usersBreadcrumbTitle') ?></a>
 	</li>
-	<li class="breadcrumb-item active"><?= lang('Admin.breadcrumbCommonShow') ?></li>
+	<li class="breadcrumb-item active"><?= lang('Admin.breadcrumbCommonDelete') ?></li>
 </ol>
 <div class="card mb-3">
 	<div class="card-header">
