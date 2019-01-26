@@ -19,6 +19,7 @@ namespace App\Libraries;
 
 use \App\Models\Aauth\UserModel;
 use \App\Models\Aauth\UserVariableModel;
+use \App\Models\Aauth\UserSessionModel;
 use \App\Models\Aauth\LoginAttemptModel;
 use \App\Models\Aauth\LoginTokenModel;
 use \App\Models\Aauth\GroupModel;
@@ -975,6 +976,53 @@ class Aauth
 		}
 
 		return $user['id'];
+	}
+
+	public function getActiveUsersCount()
+	{
+		$userSessionModel = new UserSessionModel();
+
+		return count($userSessionModel->findAll());
+	}
+
+	public function listActiveUsers()
+	{
+		$userSessionModel = new UserSessionModel();
+
+		$usersIds = [];
+
+		foreach ($userSessionModel->findAll() as $userSession)
+		{
+			$result = $matches = [];
+			$data   = ';' . $userSession['data'];
+			$keyreg = '/;([^|{}"]+)\|/';
+
+			preg_match_all($keyreg, $data, $matches);
+
+			if (isset($matches[1]))
+			{
+				$keys   = $matches[1];
+				$values = preg_split($keyreg, $data);
+
+				if (count($values) > 1)
+				{
+					array_shift($values);
+				}
+
+				$result = array_combine($keys, $values);
+			}
+
+			$user       = unserialize($result['user']);
+			$usersIds[] = $user['id'];
+		}
+
+		$userModel = new UserModel();
+
+		$userModel->select('id, email, username, banned, created_at, updated_at, last_activity, last_ip_address, last_login');
+
+		$userModel->whereIn('id', $usersIds);
+
+		return $userModel->findAll();
 	}
 
 	/**

@@ -64,6 +64,11 @@ class Aauth extends BaseConfig
 	| User Variables
 	|--------------------------------------------------------------------------
 	|
+	| 'userActiveTime'
+	|
+	|	User Active Time, time range for session time checkup
+	|	(default: '5 minutes')
+	|
 	| 'userVerification'
 	|
 	|	User Verification, if TRUE sends a verification email on account creation
@@ -74,6 +79,7 @@ class Aauth extends BaseConfig
 	|	Regex pattern for valid chars for username
 	|	(default: '^[a-zA-Z0-9]{3,}$')
 	*/
+	public $userActiveTime   = '5 minutes';
 	public $userVerification = false;
 	public $userRegexPattern = '^[a-zA-Z0-9]{3,}$';
 
@@ -306,6 +312,11 @@ class Aauth extends BaseConfig
 	|    The table which contains users
 	|    (default: 'aauth_users')
 	|
+	| 'dbTableUserSessions'
+	|
+	|    The table which contains user sessions
+	|    (default: 'aauth_user_sessions')
+	|
 	| 'dbTableUserVariables'
 	|
 	|    The table which contains users variables
@@ -377,6 +388,7 @@ class Aauth extends BaseConfig
 	public $dbProfile             = 'default';
 	public $dbReturnType          = 'array';
 	public $dbTableUsers          = 'aauth_users';
+	public $dbTableUserSessions   = 'aauth_user_sessions';
 	public $dbTableUserVariables  = 'aauth_user_variables';
 	public $dbTableLoginAttempts  = 'aauth_login_attempts';
 	public $dbTableLoginTokens    = 'aauth_login_tokens';

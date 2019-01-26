@@ -18,6 +18,7 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
+use Config\Aauth as AauthConfig;
 
 /**
  * Create CI session table
@@ -26,7 +27,7 @@ use CodeIgniter\Database\Migration;
  *
  * @codeCoverageIgnore
  */
-class Migration_create_ci_sessions_table extends Migration
+class Migration_create_user_sessions_table extends Migration
 {
 	/**
 	 * Create Table
@@ -35,6 +36,8 @@ class Migration_create_ci_sessions_table extends Migration
 	 */
 	public function up()
 	{
+		$config = new AauthConfig();
+
 		$this->forge->addField([
 			'id'         => [
 				'type'       => 'VARCHAR',
@@ -61,7 +64,7 @@ class Migration_create_ci_sessions_table extends Migration
 		]);
 		$this->forge->addKey('id', true);
 		$this->forge->addKey('timestamp');
-		$this->forge->createTable('ci_sessions', true);
+		$this->forge->createTable($config->dbTableUserSessions, true);
 	}
 
 	//--------------------------------------------------------------------
@@ -73,6 +76,6 @@ class Migration_create_ci_sessions_table extends Migration
 	 */
 	public function down()
 	{
-		$this->forge->dropTable('ci_sessions', true);
+		$this->forge->dropTable($config->dbTableUserSessions, true);
 	}
 }
