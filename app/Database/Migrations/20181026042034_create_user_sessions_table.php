@@ -76,6 +76,7 @@ class Migration_create_user_sessions_table extends Migration
 	 */
 	public function down()
 	{
+		$config = new AauthConfig();
 		$this->forge->dropTable($config->dbTableUserSessions, true);
 	}
 }
