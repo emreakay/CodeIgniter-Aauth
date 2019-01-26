@@ -138,12 +138,15 @@ class AccessTest extends CIDatabaseTestCase
 		$this->hasInDatabase($config->dbTablePermToGroup, [
 			'perm_id'  => 1,
 			'group_id' => 2,
+			'state'    => 1,
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->isAllowed('testPerm1', 2));
 
 		$this->hasInDatabase($config->dbTablePermToUser, [
 			'perm_id' => 1,
 			'user_id' => 2,
+			'state'   => 1,
 		]);
 		$this->assertTrue($this->library->isAllowed('testPerm1', 2));
 
@@ -173,10 +176,10 @@ class AccessTest extends CIDatabaseTestCase
 			'definition' => 'Test Perm 1',
 		]);
 
-		$this->assertTrue($this->library->isGroupAllowed('testPerm1', $config->groupAdmin));
-
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
+
+		$this->assertTrue($this->library->isGroupAllowed('testPerm1', $config->groupAdmin));
 
 		$session->set('user', [
 			'id'       => 2,
@@ -188,6 +191,7 @@ class AccessTest extends CIDatabaseTestCase
 		$this->hasInDatabase($config->dbTablePermToGroup, [
 			'perm_id'  => 1,
 			'group_id' => 2,
+			'state'    => 1,
 		]);
 		$this->assertTrue($this->library->isGroupAllowed('testPerm1', 2));
 
@@ -228,7 +232,6 @@ class AccessTest extends CIDatabaseTestCase
 			'name'       => 'testGroups1',
 			'definition' => 'Test Group 1',
 		]);
-
 		$this->hasInDatabase($config->dbTableGroupToGroup, [
 			'group_id'    => 2,
 			'subgroup_id' => 4,
@@ -236,7 +239,10 @@ class AccessTest extends CIDatabaseTestCase
 		$this->hasInDatabase($config->dbTablePermToGroup, [
 			'perm_id'  => 1,
 			'group_id' => 4,
+			'state'    => 1,
 		]);
+
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->isGroupAllowed('testPerm1', 2));
 	}
 }

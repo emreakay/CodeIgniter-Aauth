@@ -93,7 +93,8 @@ class PermToGroupModel
 	/**
 	 * Get all Perm Ids by Group Id
 	 *
-	 * @param integer $groupId Group Id
+	 * @param integer      $groupId Group Id
+	 * @param integer|null $state   State (0 = denied, 1 = allowed)
 	 *
 	 * @return array|null
 	 */
@@ -102,15 +103,16 @@ class PermToGroupModel
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
 
-		if (! $state)
-		{
-			$builder->select('perm_id, state');
-		}
-		else if ($state)
+		if (is_int($state))
 		{
 			$builder->select('perm_id');
 			$builder->where('state', $state);
 		}
+		else
+		{
+			$builder->select('perm_id, state');
+		}
+
 		return $builder->get()->getResult('array');
 	}
 
@@ -145,6 +147,7 @@ class PermToGroupModel
 		$builder->where('perm_id', $permId);
 		$builder->where('group_id', $groupId);
 		$builder->where('state', 1);
+
 		return ($builder->countAllResults() ? true : false);
 	}
 
@@ -163,6 +166,7 @@ class PermToGroupModel
 		$builder->where('perm_id', $permId);
 		$builder->where('group_id', $groupId);
 		$builder->where('state', 0);
+
 		return ($builder->countAllResults() ? true : false);
 	}
 

@@ -87,6 +87,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm2',
 			'definition' => 'Test Perm 2',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->library->updatePerm('testPerm1', 'testPerm1N', 'Test Perm 1 New');
 		$this->seeInDatabase($this->config->dbTablePerms, [
 			'id'         => 1,
@@ -116,6 +117,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->deletePerm('testPerm1'));
 		$this->dontSeeInDatabase($this->config->dbTablePerms, [
 			'name'       => 'testPerm1',
@@ -270,6 +272,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 
 		$this->assertEquals(1, $this->library->getPermId('testPerm1'));
 		$this->assertEquals(1, $this->library->getPermId(1));
@@ -282,6 +285,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 
 		$perm = $this->library->getPerm('testPerm1');
 		$this->assertEquals(1, $perm['id']);
@@ -298,6 +302,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->allowUser(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 1,
@@ -320,6 +325,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->denyUser(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 1,
@@ -342,6 +348,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->allowGroup(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 1,
@@ -364,6 +371,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->denyGroup(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 1,

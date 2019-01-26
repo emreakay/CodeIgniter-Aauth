@@ -91,6 +91,7 @@ class GroupTest extends CIDatabaseTestCase
 			'name'       => 'testGroup1',
 			'definition' => 'Test Group 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->library->updateGroup('testGroup1', 'testGroup1N', 'Test Group 1 New');
 		$this->seeInDatabase($this->config->dbTableGroups, [
 			'id'         => 4,
@@ -121,6 +122,7 @@ class GroupTest extends CIDatabaseTestCase
 			'name'       => 'testGroup1',
 			'definition' => 'Test Group 1',
 		]);
+		$this->library = new Aauth(null, true);
 		$this->assertTrue($this->library->deleteGroup('testGroup1'));
 		$this->dontSeeInDatabase($this->config->dbTableGroups, [
 			'id'         => 4,
