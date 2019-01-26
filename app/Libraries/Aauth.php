@@ -94,14 +94,14 @@ class Aauth
 	 *
 	 * @var array
 	 */
-	protected $cachePermIds = [];
+	protected $cachePermIds;
 
 	/**
 	 * Array to cache group-ids.
 	 *
 	 * @var array
 	 */
-	protected $cacheGroupIds = [];
+	protected $cacheGroupIds;
 
 	/**
 	 * Constructor
@@ -123,6 +123,48 @@ class Aauth
 		$this->configApp = new \Config\App();
 		$this->config    = $config;
 		$this->session   = $session;
+
+		$this->cachePermIds  = [];
+		$this->cacheGroupIds = [];
+
+		$this->precachePerms();
+		$this->precacheGroups();
+	}
+
+	//--------------------------------------------------------------------
+	// Caching Functions
+	//--------------------------------------------------------------------
+
+	/**
+	 * PreCache Perms
+	 *
+	 * Caches all permission IDs for later use.
+	 */
+	private function precachePerms()
+	{
+		$permModel = new PermModel();
+
+		foreach ($permModel->asArray()->findAll() as $perm)
+		{
+			$key                      = str_replace(' ', '', trim(strtolower($perm['name'])));
+			$this->cachePermIds[$key] = $perm['id'];
+		}
+	}
+
+	/**
+	 * PreCache Groups
+	 *
+	 * Caches all group IDs for later use.
+	 */
+	private function precacheGroups()
+	{
+		$groupModel = new GroupModel();
+
+		foreach ($groupModel->asArray()->findAll() as $group)
+		{
+			$key                       = str_replace(' ', '', trim(strtolower($group['name'])));
+			$this->cacheGroupIds[$key] = $group['id'];
+		}
 	}
 
 	//--------------------------------------------------------------------
@@ -1299,6 +1341,8 @@ class Aauth
 			return false;
 		}
 
+		$this->precacheGroups();
+
 		return $groupId;
 	}
 
@@ -1345,6 +1389,8 @@ class Aauth
 			return false;
 		}
 
+		$this->precacheGroups();
+
 		return true;
 	}
 
@@ -1386,7 +1432,7 @@ class Aauth
 		else
 		{
 			$groupModel->transCommit();
-			// $this->precacheGroups();
+			$this->precacheGroups();
 
 			return true;
 		}
@@ -1684,30 +1730,24 @@ class Aauth
 	 */
 	public function getGroupId($groupPar)
 	{
-		$groupModel = new GroupModel();
-
 		if (is_numeric($groupPar))
 		{
-			if (! $group = $groupModel->asArray()->find($groupPar))
+			if (array_search($groupPar, $this->cacheGroupIds))
 			{
-				return false;
+				return $groupPar;
 			}
 		}
 		else
 		{
-			if (! $group = $groupModel->asArray()->getByName($groupPar))
+			$groupPar = str_replace(' ', '', trim(strtolower($groupPar)));
+
+			if (isset($this->cacheGroupIds[$groupPar]))
 			{
-				return false;
+				return $this->cacheGroupIds[$groupPar];
 			}
 		}
 
-		return $group['id'];
-
-		// $key = str_replace(' ', '', trim(strtolower($groupPar)));
-		// if (isset($this->cache_group_id[$key]))
-		// {
-		// 	return $this->cache_group_id[$key];
-		// }
+		return false;
 	}
 
 	/**
@@ -1951,7 +1991,7 @@ class Aauth
 			return false;
 		}
 
-		// $this->precache_perms();
+		$this->precachePerms();
 
 		return $permId;
 	}
@@ -2001,6 +2041,8 @@ class Aauth
 			return false;
 		}
 
+		$this->precachePerms();
+
 		return true;
 	}
 
@@ -2041,7 +2083,7 @@ class Aauth
 		else
 		{
 			$permModel->transCommit();
-			// $this->precachePerms();
+			$this->precachePerms();
 
 			return true;
 		}
@@ -2220,29 +2262,24 @@ class Aauth
 	 */
 	public function getPermId($permPar)
 	{
-		$permModel = new PermModel();
-
 		if (is_numeric($permPar))
 		{
-			if (! $perm = $permModel->asArray()->find($permPar))
+			if (array_search($permPar, $this->cachePermIds))
 			{
-				return false;
+				return $permPar;
 			}
 		}
 		else
 		{
-			if (! $perm = $permModel->asArray()->getByName($permPar))
+			$permPar = str_replace(' ', '', trim(strtolower($permPar)));
+
+			if (isset($this->cachePermIds[$permPar]))
 			{
-				return false;
+				return $this->cachePermIds[$permPar];
 			}
 		}
 
-		// if (isset($this->cache_perm_id[$key]))
-		// {
-		// 	return $this->cache_perm_id[$key];
-		// }
-
-		return $perm['id'];
+		return false;
 	}
 
 	/**

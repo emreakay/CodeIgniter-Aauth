@@ -69,9 +69,13 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 99,
 			'user_id' => 99,
+			'state'   => 1,
 		]);
-		$permsToUser = $this->model->findAllByUserId(99);
+		$permsToUser = $this->model->findAllByUserId(99, 1);
 		$this->assertCount(1, $permsToUser);
+
+		$permsToUser = $this->model->findAllByUserId(99, 0);
+		$this->assertCount(0, $permsToUser);
 	}
 
 	public function testFindAllByPermId()

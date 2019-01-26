@@ -69,9 +69,13 @@ class PermToGroupModelTest extends CIDatabaseTestCase
 		$this->hasInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 99,
 			'group_id' => 99,
+			'state'    => 1,
 		]);
-		$permsToGroup = $this->model->findAllByGroupId(99);
+		$permsToGroup = $this->model->findAllByGroupId(99, 1);
 		$this->assertCount(1, $permsToGroup);
+
+		$permsToGroup = $this->model->findAllByGroupId(99, 0);
+		$this->assertCount(0, $permsToGroup);
 	}
 
 	public function testFindAllByPermId()
