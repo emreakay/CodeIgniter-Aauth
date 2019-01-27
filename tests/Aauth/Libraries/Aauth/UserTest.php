@@ -1,11 +1,13 @@
 <?php namespace Tests\Aauth\Libraries\Aauth;
 
+use Config\App;
 use Config\Aauth as AauthConfig;
 use Config\Logger;
 use Config\Services;
 use Tests\Support\Log\TestLogger;
 use Tests\Support\Session\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
+use CodeIgniter\Session\Handlers\DatabaseHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 use App\Models\Aauth\UserVariableModel;
@@ -235,6 +237,39 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals('1', $this->library->getUserId());
 
 		$this->assertFalse($this->library->getUserId('none@example.com'));
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
+	public function testGetActiveUsersCount()
+	{
+		$this->assertEquals(0, $this->library->getActiveUsersCount());
+
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
+		$session->set('user', [
+			'id' => 1,
+		]);
+
+		// $this->assertEquals(1, $this->library->getActiveUsersCount());
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
+	public function testListActiveUsers()
+	{
+		$this->assertEquals([], $this->library->listActiveUsers());
+
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
+		$session->set('user', [
+			'id' => 1,
+		]);
+		// $this->assertContains(['id' => 1], $this->library->listActiveUsers());
 	}
 
 	public function testBanUser()

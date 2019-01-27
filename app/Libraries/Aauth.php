@@ -675,13 +675,13 @@ class Aauth
 			return false;
 		}
 
-		if ($this->config->userVerification)
-		{
-			$this->sendVerification($userId, $email);
-			$this->info(lang('Aauth.infoCreateVerification'));
+		// if ($this->config->userVerification)
+		// {
+		// 	$this->sendVerification($userId, $email);
+		// 	$this->info(lang('Aauth.infoCreateVerification'));
 
-			return $userId;
-		}
+		// 	return $userId;
+		// }
 
 		$this->info(lang('Aauth.infoCreateSuccess'));
 
@@ -855,26 +855,26 @@ class Aauth
 	 *
 	 * @return boolean
 	 */
-	protected function sendVerification(int $userId, string $email)
-	{
-		helper('text');
-		$userVariableModel = new UserVariableModel();
-		$emailService      = \Config\Services::email();
-		$verificationCode  = sha1(strtotime('now'));
+	// protected function sendVerification(int $userId, string $email)
+	// {
+	// 	helper('text');
+	// 	$userVariableModel = new UserVariableModel();
+	// 	$emailService      = \Config\Services::email();
+	// 	$verificationCode  = sha1(strtotime('now'));
 
-		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
+	// 	$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
 
-		$messageData['code'] = $verificationCode;
-		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+	// 	$messageData['code'] = $verificationCode;
+	// 	$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
 
-		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-		$emailService->setTo($email);
-		$emailService->setSubject(lang('Aauth.subjectVerification'));
-		$emailService->setMessage(view('Aauth/Verification', $messageData));
+	// 	$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+	// 	$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+	// 	$emailService->setTo($email);
+	// 	$emailService->setSubject(lang('Aauth.subjectVerification'));
+	// 	$emailService->setMessage(view('Aauth/Verification', $messageData));
 
-		return $emailService->send();
-	}
+	// 	return $emailService->send();
+	// }
 
 	/**
 	 * Verify user
@@ -978,6 +978,11 @@ class Aauth
 		return $user['id'];
 	}
 
+	/**
+	 * Get active users count
+	 *
+	 * @return integer Count of active users
+	 */
 	public function getActiveUsersCount()
 	{
 		$userSessionModel = new UserSessionModel();
@@ -985,6 +990,13 @@ class Aauth
 		return count($userSessionModel->findAll());
 	}
 
+	/**
+	 * List active users
+	 *
+	 * Return users as an object array
+	 *
+	 * @return array Array of active users
+	 */
 	public function listActiveUsers()
 	{
 		$userSessionModel = new UserSessionModel();
@@ -1014,6 +1026,11 @@ class Aauth
 
 			$user       = unserialize($result['user']);
 			$usersIds[] = $user['id'];
+		}
+
+		if (count($usersIds) === 0)
+		{
+			return [];
 		}
 
 		$userModel = new UserModel();
