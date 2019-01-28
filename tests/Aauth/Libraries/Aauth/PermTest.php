@@ -176,6 +176,37 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertEquals('testPerm1', $permsOrderBy['perms'][1]['name']);
 	}
 
+	public function testGetUserPerms()
+	{
+		$this->assertCount(0, $this->library->getUserPerms(1, 1));
+
+		$this->hasInDatabase($this->config->dbTablePerms, [
+			'id'         => 1,
+			'name'       => 'testPerm1',
+			'definition' => 'Test Perm 1',
+		]);
+		$this->hasInDatabase($this->config->dbTablePerms, [
+			'id'         => 2,
+			'name'       => 'testPerm2',
+			'definition' => 'Test Perm 2',
+		]);
+		$this->hasInDatabase($this->config->dbTablePermToUser, [
+			'perm_id' => 1,
+			'user_id' => 1,
+			'state'   => 1,
+		]);
+		$this->hasInDatabase($this->config->dbTablePermToUser, [
+			'perm_id' => 2,
+			'user_id' => 1,
+			'state'   => 0,
+		]);
+
+		$this->assertCount(1, $this->library->getUserPerms(1, 1));
+		$this->assertCount(1, $this->library->getUserPerms(1, 0));
+		$this->assertCount(2, $this->library->getUserPerms(1));
+		$this->assertFalse($this->library->getUserPerms(99, 1));
+	}
+
 	/**
 	 * @runInSeparateProcess
 	 * @preserveGlobalState  disabled
@@ -385,6 +416,37 @@ class PermTest extends CIDatabaseTestCase
 		$this->library = new Aauth(null, true);
 		$this->assertFalse($this->library->denyGroup(1, 99));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
+	}
+
+	public function testGetGroupPerms()
+	{
+		$this->assertCount(0, $this->library->getGroupPerms(1, 1));
+
+		$this->hasInDatabase($this->config->dbTablePerms, [
+			'id'         => 1,
+			'name'       => 'testPerm1',
+			'definition' => 'Test Perm 1',
+		]);
+		$this->hasInDatabase($this->config->dbTablePerms, [
+			'id'         => 2,
+			'name'       => 'testPerm2',
+			'definition' => 'Test Perm 2',
+		]);
+		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+			'perm_id'  => 1,
+			'group_id' => 1,
+			'state'    => 1,
+		]);
+		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+			'perm_id'  => 2,
+			'group_id' => 1,
+			'state'    => 0,
+		]);
+
+		$this->assertCount(1, $this->library->getGroupPerms(1, 1));
+		$this->assertCount(1, $this->library->getGroupPerms(1, 0));
+		$this->assertCount(2, $this->library->getGroupPerms(1));
+		$this->assertFalse($this->library->getGroupPerms(99, 1));
 	}
 
 	public function testListGroupPerms()

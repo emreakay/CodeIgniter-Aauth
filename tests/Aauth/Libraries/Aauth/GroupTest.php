@@ -220,6 +220,13 @@ class GroupTest extends CIDatabaseTestCase
 		]);
 	}
 
+	public function testGetUserGroups()
+	{
+		$this->assertCount(2, $this->library->getUserGroups(1));
+		$this->assertCount(1, $this->library->getUserGroups(2));
+		$this->assertFalse($this->library->getUserGroups(99));
+	}
+
 	public function testRemoveMemberFromAll()
 	{
 		$this->assertTrue($this->library->removeMemberFromAll(1));

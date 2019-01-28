@@ -753,7 +753,9 @@ class Aauth
 	 */
 	public function deleteUser(int $userId)
 	{
-		$userModel = new UserModel();
+		$userModel        = new UserModel();
+		$groupToUserModel = new GroupToUserModel();
+		$permToUserModel  = new PermToUserModel();
 
 		if (! $userModel->existsById($userId))
 		{
@@ -762,7 +764,24 @@ class Aauth
 			return false;
 		}
 
-		return $userModel->delete($userId);
+		$userModel->transStart();
+		$groupToUserModel->deleteAllByUserId($userId);
+		$permToUserModel->deleteAllByUserId($userId);
+		$userModel->delete($userId);
+		$userModel->transComplete();
+
+		if ($userModel->transStatus() === false)
+		{
+			$userModel->transRollback();
+
+			return false;
+		}
+		else
+		{
+			$userModel->transCommit();
+
+			return true;
+		}
 	}
 
 	/**
