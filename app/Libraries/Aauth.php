@@ -313,6 +313,41 @@ class Aauth
 
 		if (password_verify($password, $user['password']))
 		{
+			$loginTokenModel = new LoginTokenModel();
+
+			if ($this->config->loginSingleMode)
+			{
+				$loginTokenModel->deleteAll($user['id']);
+				$userSessionModel = new UserSessionModel();
+				foreach ($userSessionModel->findAll() as $userSessionRow)
+				{
+					$result      = $matches = [];
+					$sessionData = ';' . $userSessionRow['data'];
+					$keyreg      = '/;([^|{}"]+)\|/';
+
+					preg_match_all($keyreg, $sessionData, $matches);
+
+					if (isset($matches[1]))
+					{
+						$keys   = $matches[1];
+						$values = preg_split($keyreg, $sessionData);
+
+						if (count($values) > 1)
+						{
+							array_shift($values);
+						}
+
+						$result      = array_combine($keys, $values);
+						$userSession = unserialize($result['user']);
+
+						if ($userSession['id'] === $user['id'])
+						{
+							$userSessionModel->delete($userSessionRow['id']);
+						}
+					}
+				}
+			}
+
 			$data['id']       = $user['id'];
 			$data['username'] = $user['username'];
 			$data['email']    = $user['email'];
@@ -322,11 +357,10 @@ class Aauth
 			if ($remember)
 			{
 				helper('text');
-				$loginTokenModel = new LoginTokenModel();
-				$expire          = $this->config->loginRemember;
-				$userId          = base64_encode($user['id']);
-				$randomString    = random_string('alnum', 32);
-				$selectorString  = random_string('alnum', 16);
+				$expire         = $this->config->loginRemember;
+				$userId         = base64_encode($user['id']);
+				$randomString   = random_string('alnum', 32);
+				$selectorString = random_string('alnum', 16);
 
 				$cookieData['name']   = $this->config->loginRememberCookie;
 				$cookieData['value']  = $userId . ';' . $randomString . ';' . $selectorString;

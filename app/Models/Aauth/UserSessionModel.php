@@ -95,7 +95,6 @@ class UserSessionModel
 		$this->config         = new AauthConfig();
 		$this->DBGroup        = $this->config->dbProfile;
 		$this->table          = $this->config->dbTableUserSessions;
-		$this->tempReturnType = $this->returnType;
 
 		if ($db instanceof ConnectionInterface)
 		{
@@ -122,9 +121,7 @@ class UserSessionModel
 		$builder->where("data NOT LIKE CONCAT('%', timestamp, '%')");
 		$builder->like('data', 'user|');
 
-		$this->tempReturnType = $this->returnType;
-
-		return $builder->get()->getResult($this->tempReturnType);
+		return $builder->get()->getResult($this->returnType);
 	}
 
 	/**

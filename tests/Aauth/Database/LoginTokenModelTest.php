@@ -45,6 +45,13 @@ class LoginTokenModelTest extends CIDatabaseTestCase
 		$this->assertCount(0, $this->model->findAllByUserId(99));
 	}
 
+	public function testDeleteAll()
+	{
+		$this->model->insert(['user_id' => 99, 'random_hash' => 'random_hash9999']);
+		$this->model->deleteAll(99);
+		$this->assertCount(0, $this->model->findAllByUserId(99));
+	}
+
 	public function testConfigDBGroup()
 	{
 		$this->model = new LoginTokenModel();

@@ -162,6 +162,22 @@ class LoginTokenModel
 	}
 
 	/**
+	 * Deletes all Login Tokens by userId.
+	 *
+	 * @param integer $userId User id
+	 *
+	 * @return boolean
+	 */
+	public function deleteAll(int $userId)
+	{
+		$builder = $this->builder();
+		$builder->where('user_id', $userId);
+		$builder->delete();
+
+		return true;
+	}
+
+	/**
 	 * Provides a shared instance of the Query Builder.
 	 *
 	 * @param string $table Table Name
