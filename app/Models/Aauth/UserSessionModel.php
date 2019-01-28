@@ -92,9 +92,9 @@ class UserSessionModel
 	 */
 	public function __construct(ConnectionInterface &$db = null)
 	{
-		$this->config         = new AauthConfig();
-		$this->DBGroup        = $this->config->dbProfile;
-		$this->table          = $this->config->dbTableUserSessions;
+		$this->config  = new AauthConfig();
+		$this->DBGroup = $this->config->dbProfile;
+		$this->table   = $this->config->dbTableUserSessions;
 
 		if ($db instanceof ConnectionInterface)
 		{
