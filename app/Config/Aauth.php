@@ -148,6 +148,11 @@ class Aauth extends BaseConfig
 	|	Enables the DDoS Protection, user will be banned temporary when he exceed the login 'try'
 	|	(default: true)
 	|
+	| 'loginAccurateErrors'
+	|
+	|	Enables unified error message (loginFailedAll vs loginFailedEmail/loginFailedUsername)
+	|	(default: false)
+	|
 	| 'loginAttemptLimit'
 	|
 	|	Login attempts limit
@@ -173,6 +178,7 @@ class Aauth extends BaseConfig
 	public $loginSingleMode              = false;
 	public $loginUseUsername             = false;
 	public $loginProtection              = true;
+	public $loginAccurateErrors          = false;
 	public $loginAttemptLimit            = 10;
 	public $loginAttemptCookie           = false;
 	public $loginAttemptLimitTimePeriod  = '5 minutes';

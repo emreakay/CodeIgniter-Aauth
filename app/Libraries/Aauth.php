@@ -386,8 +386,21 @@ class Aauth
 		}
 		else
 		{
-			$this->error(lang('Aauth.loginFailedAll'));
-
+			if ($this->config->loginAccurateErrors)
+			{
+				if ($this->config->loginUseUsername)
+				{
+					$this->error(lang('Aauth.loginFailedUsername'));
+				}
+				else
+				{
+					$this->error(lang('Aauth.loginFailedEmail'));
+				}
+			}
+			else
+			{
+				$this->error(lang('Aauth.loginFailedAll'));
+			}
 			return false;
 		}
 	}
