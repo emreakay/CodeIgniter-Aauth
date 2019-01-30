@@ -56,7 +56,7 @@ class Migration_create_users_table extends Migration
 			],
 			'password' => [
 				'type'       => 'VARCHAR',
-				'constraint' => 60,
+				'constraint' => 255,
 			],
 			'banned' => [
 				'type'       => 'TINYINT',
