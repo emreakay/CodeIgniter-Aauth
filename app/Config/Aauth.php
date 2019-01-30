@@ -242,33 +242,42 @@ class Aauth extends BaseConfig
 
 	/*
 	|--------------------------------------------------------------------------
-	| reCAPTCHA Variables
+	| CAPTCHA Variables
 	|--------------------------------------------------------------------------
 	|
-	| 'recaptchaEnabled'
+	| 'captchaEnabled'
 	|
-	|	Enables reCAPTCHA (for details see www.google.com/recaptcha/admin)
-	|	(default: 'admin@example.com')
+	|	Enables CAPTCHA
+	|	(default: false)
 	|
-	| 'recaptchaLoginAttempts'
+	| 'captchaType'
 	|
-	|	Login Attempts to display reCAPTCHA
+	|	CAPTCHA Types
+	|	Available Options:
+	|	 - 'recaptcha' (for details see https://www.google.com/captcha/admin)
+	|	 - 'hcaptcha' (for details see https://hcaptcha.com/docs)
+	|	(default: 'recaptcha')
+	|
+	| 'captchaLoginAttempts'
+	|
+	|	Login Attempts to display CAPTCHA
+	|	(default: 6)
+	|
+	| 'captchaSiteKey'
+	|
+	|	The CAPTCHA siteKey
 	|	(default: '')
 	|
-	| 'recaptchaSiteKey'
+	| 'captchaSecret'
 	|
-	|	The reCAPTCHA siteKey
-	|	(default: '')
-	|
-	| 'recaptchaSecret'
-	|
-	|	The reCAPTCHA secretKey
+	|	The CAPTCHA secretKey
 	|	(default: '')
 	*/
-	public $recaptchaEnabled       = false;
-	public $recaptchaLoginAttempts = 6;
-	public $recaptchaSiteKey       = '';
-	public $recaptchaSecret        = '';
+	public $captchaEnabled       = false;
+	public $captchaType          = 'recaptcha';
+	public $captchaLoginAttempts = 6;
+	public $captchaSiteKey       = '';
+	public $captchaSecret        = '';
 
 	/*
 	|--------------------------------------------------------------------------

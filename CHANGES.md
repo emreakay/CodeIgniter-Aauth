@@ -37,6 +37,18 @@
 
 ## CONFIG
 
+### ADDED
+  - loginRememberCookie
+  - loginSingleMode
+  - loginAccurateErrors
+  - captchaType
+  - dbReturnType
+  - dbTableUserSessions
+  - dbTableGroupVariables
+  - dbSoftDeleteUsers
+  - dbSoftDeleteGroups
+  - dbSoftDeletePerms
+
 ### RENAMED
   - no_permission => linkNoPermission
   - reset_password_link => linkResetPassword
@@ -58,10 +70,10 @@
   - totp_only_on_ip_change => totpOnIpChange
   - totp_reset_over_reset_password => totpResetPassword
   - totp_two_step_login => totpLoginDisabled
-  - recaptcha_active => recaptchaEnabled
-  - recaptcha_login_attempts => recaptchaLoginAttempts
-  - recaptcha_siteKey => recaptchaSiteKey
-  - recaptcha_secret => recaptchaSecret
+  - recaptcha_active => captchaEnabled
+  - recaptcha_login_attempts => captchaLoginAttempts
+  - recaptcha_siteKey => captchaSiteKey
+  - recaptcha_secret => captchaSecret
   - email => emailFrom
   - name => emailFromName
   - email_config => emailConfig
@@ -100,6 +112,12 @@
   - removed `verification_code` (moved to User System Variable)
   - removed `totp_secret` (moved to User System Variable)
 
+### USER SESSIONS
+  - added `id` 'VARCHAR(128)' PKey A_I
+  - added `ip_address` 'VARCHAR(45)'
+  - added `timestamp` 'INT(10)'
+  - added `data` 'TEXT'
+
 ### USER VARIABLES
   - renamed `value` to `data_value`
   - added `created_at` 'DATETIME'
@@ -125,6 +143,15 @@
 ### GROUPS
   - added `created_at` 'DATETIME'
   - added `updated_at` 'DATETIME'
+
+### GROUP VARIABLES
+  - added `id` 'INT(11)' PKey A_I
+  - added `group_id` 'INT(11)'
+  - added `data_key` 'VARCHAR(100)'
+  - added `data_value` 'TEXT'
+  - added `created_at` 'DATETIME'
+  - added `updated_at` 'DATETIME'
+  - added `system` 'TINYINT(1)'
 
 ### PERMS
   - added `created_at` 'DATETIME'
@@ -164,8 +191,8 @@
   - aauth_error_update_username_exists => existsAlreadyUsername
   - aauth_info_group_exists => existsAlreadyGroup
   - aauth_info_perm_exists => existsAlreadyPerm
-  - aauth_error_username_required => requiredUsername
-  - aauth_error_totp_code_required => requiredTOTPCode
+  - aauth_error_username_required => quiredUsername
+  - aauth_error_totp_code_required => quiredTOTPCode
   - aauth_error_no_user => notFoundUser
   - aauth_error_no_group => notFoundGroup
   - aauth_error_no_subgroup => notFoundSubgroup
