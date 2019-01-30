@@ -18,8 +18,8 @@
 namespace App\Libraries;
 
 use \App\Models\Aauth\UserModel;
-use \App\Models\Aauth\UserVariableModel;
 use \App\Models\Aauth\UserSessionModel;
+use \App\Models\Aauth\UserVariableModel;
 use \App\Models\Aauth\LoginAttemptModel;
 use \App\Models\Aauth\LoginTokenModel;
 use \App\Models\Aauth\GroupModel;
