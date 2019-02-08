@@ -59,6 +59,13 @@ class Aauth
 	protected $session;
 
 	/**
+	 * Array with modules
+	 *
+	 * @var array
+	 */
+	protected $modules = [];
+
+	/**
 	 * Array to store error messages
 	 *
 	 * @var array
@@ -124,6 +131,7 @@ class Aauth
 		$this->configApp = new \Config\App();
 		$this->config    = $config;
 		$this->session   = $session;
+		$this->modules   = $this->config->modules;
 
 		$this->cachePermIds  = [];
 		$this->cacheGroupIds = [];
@@ -2787,5 +2795,30 @@ class Aauth
 		$this->infos      = [];
 		$this->flashInfos = [];
 		$this->session->remove('infos');
+	}
+
+	/**
+	 * Provides direct access to method in the builder (if available)
+	 * and the database connection.
+	 *
+	 * @param string $name
+	 * @param array  $params
+	 *
+	 * @return Model|null
+	 */
+	public function __call($name, array $params)
+	{
+		foreach ($this->modules as $module)
+		{
+			$module      = '\\App\\Libraries\\Aauth\\' . $module;
+			$moduleClass = new $module;
+
+			if (method_exists($moduleClass, $name))
+			{
+				return $moduleClass->$name(...$params);
+			}
+		}
+
+		trigger_error('Call to undefined method ' . __CLASS__ . '::' . $name . '()', E_USER_ERROR);
 	}
 }
