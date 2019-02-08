@@ -133,6 +133,16 @@ class Aauth
 		$this->session   = $session;
 		$this->modules   = $this->config->modules;
 
+		if ($this->config->captchaEnabled)
+		{
+			$this->modules = array_merge($this->config->modules, ['CAPTCHA']);
+		}
+
+		if ($this->config->totpEnabled)
+		{
+			$this->modules = array_merge($this->config->modules, ['TOTP']);
+		}
+
 		$this->cachePermIds  = [];
 		$this->cacheGroupIds = [];
 
