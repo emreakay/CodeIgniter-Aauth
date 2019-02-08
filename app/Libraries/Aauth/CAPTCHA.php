@@ -28,7 +28,6 @@ use \App\Models\Aauth\LoginAttemptModel;
  */
 class CAPTCHA extends \App\Libraries\Aauth
 {
-
 	/**
 	 * Verify Response
 	 *
@@ -78,17 +77,15 @@ class CAPTCHA extends \App\Libraries\Aauth
 
 		$answer = json_decode($request, true);
 
-		if (trim($answer['success']) === true)
-		{
-			return ['success' => true];
-		}
-		else
+		if (trim($answer['success']) !== true)
 		{
 			return [
 				'success'    => false,
 				'errorCodes' => $answer['error-codes'],
 			];
 		}
+
+		return ['success' => true];
 	}
 
 	/**
@@ -110,8 +107,8 @@ class CAPTCHA extends \App\Libraries\Aauth
 
 				if ($this->config->captchaType === 'recaptcha')
 				{
-					$content .= "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
-					$content  = '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+					$content  = "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+					$content .= '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 				}
 				else if ($this->config->captchaType === 'hcaptcha')
 				{

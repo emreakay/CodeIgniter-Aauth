@@ -57,19 +57,21 @@ class TOTP extends \App\Libraries\Aauth
 	 */
 	public function generateUniqueTotpSecret()
 	{
-		$stop = false;
+		$endSecret = false;
 
-		while (! $stop)
+		$userVariableModel = new UserVariableModel();
+
+		while (! $endSecret)
 		{
 			$secret = OTPHP_TOTP::create();
 
-			if ($userVariable !== $userVariableModel->where(['data_key' => 'totp_secret', 'data_value' => $secret, 'system' => 1])->getFirstRow('array'))
+			if ($secret->getSecret() !== $userVariableModel->where(['data_key' => 'totp_secret', 'data_value' => $secret->getSecret(), 'system' => 1])->getFirstRow('array'))
 			{
-				$stop = true;
-
-				return $secret;
+				$endSecret = $secret->getSecret();
 			}
 		}
+
+		return $endSecret;
 	}
 
 	/**
@@ -81,9 +83,10 @@ class TOTP extends \App\Libraries\Aauth
 	 *
 	 * @return string
 	 */
-	public function generateTotpQrCode(string $secret)
+	public function generateTotpQrCode(string $secret, string $label = '')
 	{
 		$totp = OTPHP_TOTP::create($secret);
+		$totp->setLabel($label);
 
 		return $totp->getQrCodeUri();
 	}
@@ -98,40 +101,29 @@ class TOTP extends \App\Libraries\Aauth
 	 */
 	public function verifyUserTotpCode(int $totpCode, string $userId = null)
 	{
-		if (! $this->isTotpRequired())
+		if ($this->isTotpRequired())
 		{
-			return true;
+			if (! $userId)
+			{
+				$userId = (int) @$this->session->user['id'];
+			}
+
+			$userVariableModel = new UserVariableModel();
+
+			if ($totpSecret = $userVariableModel->find($userId, 'totp_secret', true))
+			{
+				$totp = OTPHP_TOTP::create($totpSecret);
+
+				if (! $totp->verify($totpCode))
+				{
+					return false;
+				}
+
+				unset($_SESSION['user']['totp_required']);
+			}
 		}
 
-		if (! $userId)
-		{
-			$userId = (int) @$this->session->user['id'];
-		}
-
-		if (empty($totpCode))
-		{
-			$this->error(lang('Aauth.requiredTOTPCode'));
-
-			return false;
-		}
-
-		$userVariableModel = new UserVariableModel();
-
-		$totpSecret = $userVariableModel->find($userId, 'totp_secret', true);
-		$totp       = OTPHP_TOTP::create($totpSecret);
-
-		if (! $totp->verify($totpCode))
-		{
-			$this->error(lang('Aauth.invalidTOTPCode'));
-
-			return false;
-		}
-		else
-		{
-			unset($_SESSION['user']['totp_required']);
-
-			return true;
-		}
+		return true;
 	}
 
 	/**
