@@ -20,7 +20,7 @@ variables:
   # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
   MYSQL_DATABASE: aauth_v3_ci4_testing
   MYSQL_ROOT_PASSWORD: root
-  CODEIGNITER_VERSION: 'v4.0.0-alpha.4'
+  CODEIGNITER_VERSION: 'v4.0.0.0-alpha.5'
 
 # Run our tests
 # If Xdebug was installed you can generate a coverage report and see code coverage metrics.
