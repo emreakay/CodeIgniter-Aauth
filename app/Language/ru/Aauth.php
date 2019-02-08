@@ -52,12 +52,9 @@ return [
    'invalidEmail'           => 'Некорректный адрес e-mail',
    'invalidPassword'        => 'Некорректный пароль',
    'invalidUsername'        => 'Некорректное имя пользователя',
-   'invalidTOTPCode'        => 'Неверный код аутентификации',
-   'invalidRecaptcha'       => 'Извините, текст с reCAPTCHA введен неверно.',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'Логин обязателен',
-   'requiredTOTPCode'       => 'Требуется код аутентификации',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

@@ -54,12 +54,9 @@ return [
    'invalidEmail'           => '无效的电子邮件地址',
    'invalidPassword'        => '无效的密码',
    'invalidUsername'        => '无效的用户名',
-   'invalidTOTPCode'        => '无效的证认码',
-   'invalidRecaptcha'       => '对不起，reCAPTCHA 验证码输入错误。',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'Username required',
-   'requiredTOTPCode'       => '需要证认码',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

@@ -52,12 +52,9 @@ return [
    'invalidEmail'           => 'Ogiltig e-postadress',
    'invalidPassword'        => 'Ogiltigt lösenord',
    'invalidUsername'        => 'Ogiltigt användarnamn',
-   'invalidTOTPCode'        => 'Ogiltig bekräftelsekod',
-   'invalidRecaptcha'       => 'Tyvärr, reCAPTCHA-texten var felaktig.',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'Användarnamn obligatoriskt',
-   'requiredTOTPCode'       => 'Bekräftelsekod behövs',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

@@ -52,12 +52,9 @@ return [
    'invalidEmail'           => 'آدرس ایمیل نامعتبر است',
    'invalidPassword'        => 'کلمه عبور نامعتبر است',
    'invalidUsername'        => 'نام کاربری نامعتبر است',
-   'invalidTOTPCode'        => 'کد احراز هویت نامعتبر است',
-   'invalidRecaptcha'       => 'کد کپتچا به درستی وارد نشده.',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'ورود نام کاربری الزامی است',
-   'requiredTOTPCode'       => 'ورود کد احراز هویت الزامی است',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

@@ -52,12 +52,9 @@ return [
    'invalidEmail'           => 'Correo electrónico inválido',
    'invalidPassword'        => 'Contraseña invalida',
    'invalidUsername'        => 'Nombre de usuario invalido',
-   'invalidTOTPCode'        => 'Código TOTP obligatorio',
-   'invalidRecaptcha'       => 'Ups, El texto ingresado es incorrecto.',
    'invalidVerficationCode' => 'Código de verificación invalido',
 
    'requiredUsername'       => 'Nombre de usuario obligatorio',
-   'requiredTOTPCode'       => 'El código TOTP es obligatorio',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

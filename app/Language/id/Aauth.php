@@ -52,12 +52,9 @@ return [
    'invalidEmail'           => 'Alamat email tidak valid',
    'invalidPassword'        => 'kata sandi tidak valid',
    'invalidUsername'        => 'Username tidak valid',
-   'invalidTOTPCode'        => 'Kode autentikasi tidak valid',
-   'invalidRecaptcha'       => 'Maaf, teks reCAPTCHA yang anda dimasukkan salah.',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => 'Username tidak boleh kosong',
-   'requiredTOTPCode'       => 'Kode autentikasi tidak boleh kosong',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

@@ -54,12 +54,9 @@ return [
    'invalidEmail'           => '無效的電子郵件地址',
    'invalidPassword'        => '無效的密碼',
    'invalidUsername'        => '無效的用戶名',
-   'invalidTOTPCode'        => '無效的證認碼',
-   'invalidRecaptcha'       => '對不起，reCAPTCHA 驗證碼輸入錯誤。',
    'invalidVerficationCode' => 'Invalid Verification Code',
 
    'requiredUsername'       => '需要用戶名',
-   'requiredTOTPCode'       => '需要證認碼',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
 

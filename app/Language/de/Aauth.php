@@ -52,12 +52,9 @@ return [
    'invalidEmail'           => 'Ungültige E-Mail-Adresse',
    'invalidPassword'        => 'Ungültiges Passwort',
    'invalidUsername'        => 'Ungültiger Benutzername',
-   'invalidTOTPCode'        => 'Ungültiger Bestätigungscode',
-   'invalidRecaptcha'       => 'Hupps, der eingegebene reCAPTCHA Text war falsch.',
    'invalidVerficationCode' => 'Ungültiger Überprüfungs-Code',
 
    'requiredUsername'       => 'Benutzername wird benötigt',
-   'requiredTOTPCode'       => 'Bestätigungscode wird benötigt',
    'requiredGroupName'      => 'Gruppen-Name wird benötigt',
    'requiredPermName'       => 'Berechtigungs-Regel-Name wird benötigt',
 
