@@ -50,5 +50,4 @@ class UserSessionModelTest extends CIDatabaseTestCase
 		$this->assertEquals(1, $this->model->affectedRows());
 		$this->assertEquals(1, $this->model->countAll());
 	}
-
 }
