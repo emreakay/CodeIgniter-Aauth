@@ -53,7 +53,7 @@
   - no_permission => linkNoPermission
   - reset_password_link => linkResetPassword
   - verification_link => linkVerification
-  - totp_two_step_login_redirect => linkTotp
+  - totp_two_step_login_redirect => totpLink
   - verification => userVerification
   - additional_valid_chars => userRegexPattern
   - min => passwordMin

@@ -49,15 +49,10 @@ class Aauth extends BaseConfig
 	|	Link for verification without site_url or base_url
 	|	(default: '/account/verification/index')
 	|
-	| 'linkVerification'
-	|
-	|	Redirect path to TOTP Verification page
-	|	(default: '/account/twofactor_verification/index')
 	*/
 	public $linkNoPermission  = false;
 	public $linkResetPassword = '/account/reset_password/index';
 	public $linkVerification  = '/account/verification/index';
-	public $linkTotp          = '/account/twofactor_verification/index';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -234,11 +229,17 @@ class Aauth extends BaseConfig
 	|
 	|	TOTP required if uses has TOTP secret on login()
 	|	(default: false)
+	|
+	| 'totpLink'
+	|
+	|	Redirect path to TOTP Verification page
+	|	(default: '/account/twofactor_verification/index')
 	*/
 	public $totpEnabled       = false;
 	public $totpOnIpChange    = false;
 	public $totpResetPassword = false;
 	public $totpLogin         = false;
+	public $totpLink          = '/account/twofactor_verification/index';
 
 	/*
 	|--------------------------------------------------------------------------
