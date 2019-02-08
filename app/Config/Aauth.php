@@ -255,8 +255,8 @@ class Aauth extends BaseConfig
 	|
 	|	CAPTCHA Types
 	|	Available Options:
-	|	 - 'recaptcha' (for details see https://www.google.com/captcha/admin)
-	|	 - 'hcaptcha' (for details see https://hcaptcha.com/docs)
+	|       - 'recaptcha' (for details see https://www.google.com/captcha/admin)
+	|       - 'hcaptcha' (for details see https://hcaptcha.com/docs)
 	|	(default: 'recaptcha')
 	|
 	| 'captchaLoginAttempts'
@@ -428,7 +428,7 @@ class Aauth extends BaseConfig
 	public $dbTablePerms          = 'aauth_perms';
 	public $dbTablePermToUser     = 'aauth_perm_to_user';
 	public $dbTablePermToGroup    = 'aauth_perm_to_group';
-	public $dbSoftDeleteUsers     = true;
-	public $dbSoftDeleteGroups    = true;
-	public $dbSoftDeletePerms     = true;
+	public $dbSoftDeleteUsers     = false;
+	public $dbSoftDeleteGroups    = false;
+	public $dbSoftDeletePerms     = false;
 }
