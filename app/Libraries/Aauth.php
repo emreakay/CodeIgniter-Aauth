@@ -2818,10 +2818,13 @@ class Aauth
 	 */
 	public function __call($name, array $params)
 	{
+		$config  = $this->config;
+		$session = $this->session;
+
 		foreach ($this->modules as $module)
 		{
 			$module      = '\\App\\Libraries\\Aauth\\' . $module;
-			$moduleClass = new $module;
+			$moduleClass = new $module($config, $session);
 
 			if (method_exists($moduleClass, $name))
 			{
