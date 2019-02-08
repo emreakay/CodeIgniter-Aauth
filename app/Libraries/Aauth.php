@@ -540,12 +540,12 @@ class Aauth
 	 */
 	public function isAdmin(int $userId = null)
 	{
-		$userModel = new UserModel();
-
 		if (! $userId)
 		{
 			$userId = (int) @$this->session->user['id'];
 		}
+
+		$userModel = new UserModel();
 
 		return $this->isMember($this->config->groupAdmin, $userId);
 	}
