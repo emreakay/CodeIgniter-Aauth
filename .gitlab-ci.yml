@@ -8,6 +8,7 @@ before_script:
   - git clone https://github.com/codeigniter4/CodeIgniter4.git CodeIgniter4 -b ${CODEIGNITER_VERSION}
   - cp -r aauth_temp/* CodeIgniter4 && cd CodeIgniter4 && cp _travis/env_gitlab .env
   - composer install --prefer-source
+  - composer require spomky-labs/otphp --prefer-source
 
 # Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 # See http://docs.gitlab.com/ce/ci/services/README.html for examples.
