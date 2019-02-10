@@ -159,6 +159,18 @@ class AccessTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->isAllowed('testPerm1'));
 		$session->remove('user');
 
+		$config->totpEnabled = true;
+
+		$session       = $this->getInstance();
+		$this->library = new Aauth($config, $session);
+		$session->set('user', [
+			'id'            => 1,
+			'loggedIn'      => true,
+			'totp_required' => true,
+		]);
+		$this->assertTrue($this->library->isAllowed('testPerm1') instanceof \CodeIgniter\HTTP\RedirectResponse);
+		$session->remove('user');
+
 		$this->assertFalse($this->library->isAllowed('testPerm99', 2));
 		$this->assertFalse($this->library->isAllowed('testPerm1', 99));
 	}

@@ -285,60 +285,62 @@ class Aauth
 			return false;
 		}
 
-		// if ($this->config->totpEnabled && ! $this->config->totpOnIpChange && $this->config->totpLogin)
-		// {
-		// 	if ($this->config->totpLogin == true)
-		// 	{
-		// 		$this->session->set('totp_required', true);
-		// 	}
+		if ($this->config->totpEnabled)
+		{
+			$totpSecret = $userVariableModel->find($user['id'], 'totp_secret', true);
+			$request    = \Config\Services::request();
 
-		// 	$totp_secret =  $userVariableModel->find($user['id'], 'totp_secret', true);
-		// 	if ( ! empty($totp_secret) && ! $totp_code) {
-		// 		$this->error(lang('Aauth.requiredTOTPCode'));
-		// 		return false;
-		// 	} else {
-		// 		if( ! empty($totp_secret)){
-		// 			$this->CI->load->helper('googleauthenticator');
-		// 			$ga = new PHPGangsta_GoogleAuthenticator();
-		// 			$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
-		// 			if ( ! $checkResult) {
-		// 				$this->error(lang('Aauth.invalidTOTPCode'));
-		// 				return false;
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// else if ($this->config->totpEnabled && $this->config->totpOnIpChange)
-		// {
-		// 	$query = null;
-		// 	$query = $this->aauth_db->where($db_identifier, $identifier);
-		// 	$query = $this->aauth_db->get($this->config->users);
-		// 	$totp_secret =  $query->row()->totp_secret;
-		// 	$ip_address = $query->row()->ip_address;
-		// 	$current_ip_address = $this->CI->input->ip_address();
-		// 	if ($query->num_rows() > 0 AND !$totp_code) {
-		// 		if($ip_address != $current_ip_address ){
-		// 			if($this->config->totpLogin == false){
-		// 				$this->error(lang('Aauth.aauth_error_totp_code_required'));
-		// 				return false;
-		// 			} else if($this->config->totpLogin == true){
-		// 				$this->session->set('totp_required', true);
-		// 			}
-		// 		}
-		// 	}else {
-		// 		if(!empty($totp_secret)){
-		// 			if($ip_address != $current_ip_address ){
-		// 				$this->CI->load->helper('googleauthenticator');
-		// 				$ga = new PHPGangsta_GoogleAuthenticator();
-		// 				$checkResult = $ga->verifyCode($totp_secret, $totp_code, 0);
-		// 				if (!$checkResult) {
-		// 					$this->error(lang('Aauth.aauth_error_totp_code_invalid'));
-		// 					return false;
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
+			if ($this->config->totpLogin)
+			{
+				if (! $this->config->totpOnIpChange)
+				{
+					if (! empty($totpSecret) && ! $totpCode)
+					{
+						$this->error(lang('Aauth.requiredTOTPCode'));
+
+						return false;
+					}
+					else if (! $this->verifyUserTotpCode($totpCode, $user['id']))
+					{
+						$this->error(lang('Aauth.invalidTOTPCode'));
+
+						return false;
+					}
+				}
+				else if ($this->config->totpOnIpChange)
+				{
+					if ($request->getIPAddress() !== $lastIpAddress)
+					{
+						if (! empty($totpSecret) && ! $totpCode)
+						{
+							$this->error(lang('Aauth.requiredTOTPCode'));
+
+							return false;
+						}
+						else if (! $this->verifyUserTotpCode($totpCode, $user['id']))
+						{
+							$this->error(lang('Aauth.invalidTOTPCode'));
+
+							return false;
+						}
+					}
+				}
+			}
+			else if (! $this->config->totpLogin)
+			{
+				if (! $this->config->totpOnIpChange)
+				{
+					$this->session->set('totp_required', true);
+				}
+				else if ($this->config->totpOnIpChange)
+				{
+					if ($request->getIPAddress() !== $lastIpAddress)
+					{
+						$this->session->set('totp_required', true);
+					}
+				}
+			}
+		}
 
 		if (password_verify($password, $user['password']))
 		{
@@ -592,10 +594,13 @@ class Aauth
 	 */
 	public function isAllowed($permPar, int $userId = null)
 	{
-		// if($this->CI->session->userdata('totp_required')){
-		// 	$this->error($this->CI->lang->line('aauth_error_totp_verification_required'));
-		// 	redirect($this->config_vars['totp_two_step_login_redirect']);
-		// }
+		if ($this->config->totpEnabled && ! $this->config->totpLogin)
+		{
+			if ($this->isTotpRequired())
+			{
+				return redirect()->to($this->config->totpLink);
+			}
+		}
 
 		$userModel = new UserModel();
 
