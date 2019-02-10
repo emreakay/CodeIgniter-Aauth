@@ -22,7 +22,7 @@ aauth.dbSoftDeletePerms = true
 # APP
 #--------------------------------------------------------------------
 
-app.baseURL = 'http://aauth-ci4.local'
+# app.baseURL = ''
 # app.forceGlobalSecureRequests = false
 
 # app.sessionDriver = 'CodeIgniter\Session\Handlers\FileHandler'
