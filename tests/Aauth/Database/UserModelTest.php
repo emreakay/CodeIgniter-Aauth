@@ -92,6 +92,6 @@ class UserModelTest extends CIDatabaseTestCase
 		$config->loginUseUsername = true;
 
 		$this->model = new UserModel($this->db, null, $config);
-		$this->assertFalse($this->model->insert(['email' => 'test@test.local', 'password' => 'password123456']));
+		$this->assertFalse($this->model->insert(['email' => 'test@test.local', 'password' => 'password123456', 'username' => '']));
 	}
 }
