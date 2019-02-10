@@ -53,6 +53,7 @@ return [
    'invalidPassword'        => 'kata sandi tidak valid',
    'invalidUsername'        => 'Username tidak valid',
    'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidCaptcha'         => 'Maaf, teks CAPTCHA yang anda dimasukkan salah.',
 
    'requiredUsername'       => 'Username tidak boleh kosong',
    'requiredGroupName'      => 'Group name required',

@@ -55,6 +55,7 @@ return [
    'invalidPassword'        => '无效的密码',
    'invalidUsername'        => '无效的用户名',
    'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidCaptcha'         => '对不起，CAPTCHA 验证码输入错误。',
 
    'requiredUsername'       => 'Username required',
    'requiredGroupName'      => 'Group name required',

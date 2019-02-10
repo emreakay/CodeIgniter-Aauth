@@ -55,6 +55,7 @@ return [
    'invalidPassword'        => '無效的密碼',
    'invalidUsername'        => '無效的用戶名',
    'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidCaptcha'         => '對不起，CAPTCHA 驗證碼輸入錯誤。',
 
    'requiredUsername'       => '需要用戶名',
    'requiredGroupName'      => 'Group name required',

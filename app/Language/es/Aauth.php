@@ -53,6 +53,7 @@ return [
    'invalidPassword'        => 'Contraseña invalida',
    'invalidUsername'        => 'Nombre de usuario invalido',
    'invalidVerficationCode' => 'Código de verificación invalido',
+   'invalidCaptcha'         => 'Ups, El texto ingresado es incorrecto.',
 
    'requiredUsername'       => 'Nombre de usuario obligatorio',
    'requiredGroupName'      => 'Group name required',

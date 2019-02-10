@@ -53,6 +53,7 @@ return [
    'invalidPassword'        => 'Некорректный пароль',
    'invalidUsername'        => 'Некорректное имя пользователя',
    'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidCaptcha'         => 'Извините, текст с CAPTCHA введен неверно.',
 
    'requiredUsername'       => 'Логин обязателен',
    'requiredGroupName'      => 'Group name required',

@@ -184,6 +184,7 @@
   - aauth_error_email_invalid => invalidEmail
   - aauth_error_password_invalid => invalidPassword
   - aauth_error_username_invalid => invalidUsername
+  - aauth_error_recaptcha_not_correct => invalidRecaptcha
   - aauth_error_vercode_invalid => invalidVercode
   - aauth_error_update_email_exists => existsAlreadyEmail
   - aauth_error_update_username_exists => existsAlreadyUsername
@@ -199,7 +200,6 @@
 ### REMOVED
   - aauth_error_totp_code_required
   - aauth_error_totp_code_invalid
-  - aauth_error_recaptcha_not_correct
   - aauth_error_self_pm
   - aauth_error_no_pm
   - aauth_email_verification_code (merged with textVerification)

@@ -53,6 +53,7 @@ return [
    'invalidPassword'        => 'کلمه عبور نامعتبر است',
    'invalidUsername'        => 'نام کاربری نامعتبر است',
    'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidCaptcha'         => 'کد کپتچا به درستی وارد نشده.',
 
    'requiredUsername'       => 'ورود نام کاربری الزامی است',
    'requiredGroupName'      => 'Group name required',

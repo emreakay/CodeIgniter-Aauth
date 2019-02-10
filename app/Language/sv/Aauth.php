@@ -53,6 +53,7 @@ return [
    'invalidPassword'        => 'Ogiltigt lösenord',
    'invalidUsername'        => 'Ogiltigt användarnamn',
    'invalidVerficationCode' => 'Invalid Verification Code',
+   'invalidCaptcha'         => 'Tyvärr, CAPTCHA-texten var felaktig.',
 
    'requiredUsername'       => 'Användarnamn obligatoriskt',
    'requiredGroupName'      => 'Group name required',
