@@ -138,25 +138,25 @@ class Aauth extends BaseConfig
 	|	Login Identificator, if TRUE username needed to login else email address
 	|	(default: false)
 	|
+	| 'loginAccurateErrors'
+	|
+	|	Enables unified error message (loginFailedAll vs loginFailedEmail/loginFailedUsername)
+	|	(default: false)
+	|
 	| 'loginProtection'
 	|
 	|	Enables the DDoS Protection, user will be banned temporary when he exceed the login 'try'
 	|	(default: true)
 	|
-	| 'loginAccurateErrors'
+	| 'loginAttemptCookie'
 	|
-	|	Enables unified error message (loginFailedAll vs loginFailedEmail/loginFailedUsername)
+	|	Login attempts count & block trough Cookie instead of Login Attempt DB & IP
 	|	(default: false)
 	|
 	| 'loginAttemptLimit'
 	|
 	|	Login attempts limit
 	|	(default: 10)
-	|
-	| 'loginAttemptCookie'
-	|
-	|	Login attempts count & block trough Cookie instead of Login Attempt DB & IP
-	|	(default: false)
 	|
 	| 'loginAttemptLimitTimePeriod'
 	|
@@ -172,10 +172,10 @@ class Aauth extends BaseConfig
 	public $loginRememberCookie          = 'remember';
 	public $loginSingleMode              = false;
 	public $loginUseUsername             = false;
-	public $loginProtection              = true;
 	public $loginAccurateErrors          = false;
-	public $loginAttemptLimit            = 10;
+	public $loginProtection              = true;
 	public $loginAttemptCookie           = false;
+	public $loginAttemptLimit            = 10;
 	public $loginAttemptLimitTimePeriod  = '5 minutes';
 	public $loginAttemptRemoveSuccessful = true;
 
