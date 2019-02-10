@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Nombre de usuario invalido',
    'invalidVerficationCode' => 'Código de verificación invalido',
    'invalidCaptcha'         => 'Ups, El texto ingresado es incorrecto.',
+   'invalidTOTPCode'        => 'Código TOTP obligatorio',
 
    'requiredUsername'       => 'Nombre de usuario obligatorio',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'El código TOTP es obligatorio',
 
    'existsAlreadyEmail'     => 'El correo electrónico ya existe. Si olvidaste tu contraseña, puedes hacer click en el siguiente link.',
    'existsAlreadyUsername'  => 'Ya existe una cuenta con ese nombre de usuario. Por favor ingrese un nombre de usuario diferente, o si olvidaste tu contraseña puedes hacer click en el siguiente link.',

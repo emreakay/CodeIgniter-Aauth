@@ -184,8 +184,10 @@
   - aauth_error_email_invalid => invalidEmail
   - aauth_error_password_invalid => invalidPassword
   - aauth_error_username_invalid => invalidUsername
-  - aauth_error_recaptcha_not_correct => invalidRecaptcha
+  - aauth_error_recaptcha_not_correct => invalidCaptcha
   - aauth_error_vercode_invalid => invalidVercode
+  - aauth_error_totp_code_required => requiredTOTPCode
+  - aauth_error_totp_code_invalid => invalidTOTPCode
   - aauth_error_update_email_exists => existsAlreadyEmail
   - aauth_error_update_username_exists => existsAlreadyUsername
   - aauth_info_group_exists => existsAlreadyGroup

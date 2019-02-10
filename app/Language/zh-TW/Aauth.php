@@ -56,10 +56,12 @@ return [
    'invalidUsername'        => '無效的用戶名',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => '對不起，CAPTCHA 驗證碼輸入錯誤。',
+   'invalidTOTPCode'        => '無效的證認碼',
 
    'requiredUsername'       => '需要用戶名',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => '需要證認碼',
 
    'existsAlreadyEmail'     => '電郵地址已存在系統中。如果您忘了密碼，可以按下方連結。',
    'existsAlreadyUsername'  => '此用戶名的帳號已存在系統中，請輸入不同的用戶名。如果是忘了密碼，請按下方連結。',

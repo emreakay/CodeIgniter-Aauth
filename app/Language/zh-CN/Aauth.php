@@ -56,10 +56,12 @@ return [
    'invalidUsername'        => '无效的用户名',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => '对不起，CAPTCHA 验证码输入错误。',
+   'invalidTOTPCode'        => '无效的证认码',
 
    'requiredUsername'       => 'Username required',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => '需要证认码',
 
    'existsAlreadyEmail'     => '电邮地址已存在系统中。如果您忘了密码，可以按下方链接。',
    'existsAlreadyUsername'  => '此用户名的帐户已存在系统中，请输入不同的用户名。如果是忘了密码，请按下方链接。',

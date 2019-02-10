@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Username tidak valid',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => 'Maaf, teks CAPTCHA yang anda dimasukkan salah.',
+   'invalidTOTPCode'        => 'Kode autentikasi tidak valid',
 
    'requiredUsername'       => 'Username tidak boleh kosong',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'Kode autentikasi tidak boleh kosong',
 
    'existsAlreadyEmail'     => 'Email sudah digunakan di sistem. Jika anda lupa kata sandi, silahkan klik tautan dibawah ini.',
    'existsAlreadyUsername'  => 'Username telah digunakan oleh akun lain pada sistem.  Silahkan masukan username lain, atau jika anda lupa kata sandi, silahkan klik tautan dibawah ini.',

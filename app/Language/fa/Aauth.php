@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'نام کاربری نامعتبر است',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => 'کد کپتچا به درستی وارد نشده.',
+   'invalidTOTPCode'        => 'کد احراز هویت نامعتبر است',
 
    'requiredUsername'       => 'ورود نام کاربری الزامی است',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'ورود کد احراز هویت الزامی است',
 
    'existsAlreadyEmail'     => 'آدرس ایمیل در سیستم موجود است. در صورتی که کلمه عبور خود را فراموش کردید، میتوانید بر روی لینک زیر کلیک کنید.',
    'existsAlreadyUsername'  => 'نام کاربری وارد شده در سیستم موجود هست. لطفا یک نام کاربری دیگر انتخاب کنید، و یا اگر کلمه عبور خود را فراموش کرده اید بر روی لینک زیر کلیک کنید.',

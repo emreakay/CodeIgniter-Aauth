@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Invalid Username',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => 'Sorry, the CAPTCHA text entered was incorrect.',
+   'invalidTOTPCode'        => 'Invalid Authentication Code',
 
    'requiredUsername'       => 'Username required',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'Authentication Code required',
 
    'existsAlreadyEmail'     => 'Email address already exists on the system. Please enter a different email address.',
    'existsAlreadyUsername'  => 'Username already exists on the system. Please enter a different username.',

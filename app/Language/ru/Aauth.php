@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Некорректное имя пользователя',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => 'Извините, текст с CAPTCHA введен неверно.',
+   'invalidTOTPCode'        => 'Неверный код аутентификации',
 
    'requiredUsername'       => 'Логин обязателен',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'Требуется код аутентификации',
 
    'existsAlreadyEmail'     => 'Email уже зарегистрирован в системе. Если вы забыли ваш пароль, нажмите на ссылку ниже.',
    'existsAlreadyUsername'  => 'Аккаунт с этим именен пользователя уже есть в системе.  Введите другое имя пользователя, или если вы забыли ваш пароль, нажмите на ссылку ниже.',

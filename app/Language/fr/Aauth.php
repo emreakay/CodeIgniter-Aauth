@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Nom d\'utilisateur invalide',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => 'Désolé, le texte renseigné pour le CAPTCHA est incorrect.',
+   'invalidTOTPCode'        => 'Code TOTP invalide',
 
    'requiredUsername'       => 'Nom d\'utilisateur requis',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'Code TOTP requis',
 
    'existsAlreadyEmail'     => 'Cette adresse email est déjà utilisée. Si vous avez oublié votre mot de passe cliquez sur le lien ci-dessous.',
    'existsAlreadyUsername'  => 'Un compte avec ce nom d\'utilisateur existe déjà. Merci de renseigner un nom d\'utilisateur différent. Si vous avez oublié votre mot de passe cliquez sur le lien ci-dessous.',

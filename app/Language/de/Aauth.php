@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Ungültiger Benutzername',
    'invalidVerficationCode' => 'Ungültiger Überprüfungs-Code',
    'invalidCaptcha'         => 'Hupps, der eingegebene CAPTCHA Text war falsch.',
+   'invalidTOTPCode'        => 'Ungültiger Bestätigungscode',
 
    'requiredUsername'       => 'Benutzername wird benötigt',
    'requiredGroupName'      => 'Gruppen-Name wird benötigt',
    'requiredPermName'       => 'Berechtigungs-Regel-Name wird benötigt',
+   'requiredTOTPCode'       => 'Bestätigungscode wird benötigt',
 
    'existsAlreadyEmail'     => 'Diese E-Mail-Adresse ist bereits registriert. Wenn du dein Passwort vergessen hast,
 											folge dem Link unten.',

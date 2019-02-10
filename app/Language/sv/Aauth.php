@@ -54,10 +54,12 @@ return [
    'invalidUsername'        => 'Ogiltigt användarnamn',
    'invalidVerficationCode' => 'Invalid Verification Code',
    'invalidCaptcha'         => 'Tyvärr, CAPTCHA-texten var felaktig.',
+   'invalidTOTPCode'        => 'Ogiltig bekräftelsekod',
 
    'requiredUsername'       => 'Användarnamn obligatoriskt',
    'requiredGroupName'      => 'Group name required',
    'requiredPermName'       => 'Perm name required',
+   'requiredTOTPCode'       => 'Bekräftelsekod behövs',
 
    'existsAlreadyEmail'     => 'E-postadressen finns redan i systemet. Om du glömt ditt lösenord kan du trycka på länken nedan.',
    'existsAlreadyUsername'  => 'Det finns redan ett konto i systemet med det användarnamnet. Var vänlig ange ett annat användarnamn. Om du lömt ditt lösenord var vänlig tryck på länken nedan.',
