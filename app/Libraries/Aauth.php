@@ -954,6 +954,8 @@ class Aauth
 	 * @param string  $email  Email to send verification email to
 	 *
 	 * @return boolean
+	 *
+	 * @codeCoverageIgnore
 	 */
 	// protected function sendVerification(int $userId, string $email)
 	// {
@@ -1096,6 +1098,8 @@ class Aauth
 	 * Return users as an object array
 	 *
 	 * @return array Array of active users
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function listActiveUsers()
 	{
@@ -1226,6 +1230,8 @@ class Aauth
 	 * @param string $email Email for account to remind
 	 *
 	 * @return boolean Remind fails/succeeds
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function remindPassword(string $email)
 	{
@@ -1272,6 +1278,8 @@ class Aauth
 	 * @param string $resetCode Verification code for account
 	 *
 	 * @return boolean Password reset fails/succeeds
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function resetPassword(string $resetCode)
 	{
