@@ -91,9 +91,9 @@ class UserModel extends Model
 		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteUsers;
 		$this->tempReturnType     = $this->config->dbReturnType;
 
-		$this->validationRules['email']    = 'required|valid_email|is_unique[' . $this->table . '.email]';
+		$this->validationRules['email']    = 'required|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
 		$this->validationRules['password'] = 'required|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
-		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username]|regex_match[/' . $this->config->userRegexPattern . '/]';
+		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
 
 		$this->validationMessages = [
 			'email'    => [
