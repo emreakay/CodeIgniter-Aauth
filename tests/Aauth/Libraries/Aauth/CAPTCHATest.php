@@ -93,17 +93,17 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$this->assertContains('https://hcaptcha.com/1', $this->library->generateCaptchaHtml());
 	}
 
-	public function testVerifyResponse()
+	public function testVerifyCaptchaResponse()
 	{
 		$config                 = new AauthConfig();
 		$config->captchaEnabled = true;
 		$this->library          = new Aauth($config, true);
 
-		$this->assertContains('missing-input', $this->library->verifyResponse(null)['errorCodes']);
-		$this->assertContains('invalid-input-response', $this->library->verifyResponse('0123456789')['errorCodes']);
+		$this->assertContains('missing-input', $this->library->verifyCaptchaResponse(null)['errorCodes']);
+		$this->assertContains('invalid-input-response', $this->library->verifyCaptchaResponse('0123456789')['errorCodes']);
 
 		$config->captchaType = 'hcaptcha';
 		$this->library       = new Aauth($config, true);
-		$this->assertContains('invalid-input-response', $this->library->verifyResponse('0123456789')['errorCodes']);
+		$this->assertContains('invalid-input-response', $this->library->verifyCaptchaResponse('0123456789')['errorCodes']);
 	}
 }

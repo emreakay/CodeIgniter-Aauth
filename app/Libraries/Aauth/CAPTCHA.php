@@ -29,7 +29,7 @@ use \App\Models\Aauth\LoginAttemptModel;
 class CAPTCHA extends \App\Libraries\Aauth
 {
 	/**
-	 * Verify Response
+	 * Verify CAPTCHA Response
 	 *
 	 * Calls the CAPTCHA site verify API to verify whether the user passes
 	 * CAPTCHA test.
@@ -38,7 +38,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 *
 	 * @return array
 	 */
-	public function verifyResponse($response)
+	public function verifyCaptchaResponse($response)
 	{
 		if ($response === null || strlen($response) === 0)
 		{
@@ -97,28 +97,35 @@ class CAPTCHA extends \App\Libraries\Aauth
 	{
 		$content = '';
 
-		if ($this->config->loginProtection && $this->config->captchaEnabled)
+		if ($this->config->loginProtection && $this->config->captchaEnabled && $this->isCaptchaRequired())
 		{
-			$loginAttemptModel = new LoginAttemptModel();
+			$siteKey = $this->config->captchaSiteKey;
 
-			if ($loginAttemptModel->find() >= $this->config->captchaLoginAttempts)
+			if ($this->config->captchaType === 'recaptcha')
 			{
-				$siteKey = $this->config->captchaSiteKey;
-
-				if ($this->config->captchaType === 'recaptcha')
-				{
-					$content  = "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
-					$content .= '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
-				}
-				else if ($this->config->captchaType === 'hcaptcha')
-				{
-					$content  = "<div class='h-captcha' data-sitekey='{$siteKey}'></div>";
-					$content .= '<script src="https://hcaptcha.com/1/api.js" async defer></script>';
-				}
+				$content  = "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+				$content .= '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+			}
+			else if ($this->config->captchaType === 'hcaptcha')
+			{
+				$content  = "<div class='h-captcha' data-sitekey='{$siteKey}'></div>";
+				$content .= '<script src="https://hcaptcha.com/1/api.js" async defer></script>';
 			}
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Is CAPTCHA Required
+	 *
+	 * @return boolean
+	 */
+	public function isCaptchaRequired()
+	{
+		$loginAttemptModel = new LoginAttemptModel();
+
+		return $loginAttemptModel->find() >= $this->config->captchaLoginAttempts;
 	}
 
 	/**

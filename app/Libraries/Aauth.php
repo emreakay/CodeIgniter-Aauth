@@ -218,15 +218,26 @@ class Aauth
 			return false;
 		}
 
-		// if ($this->config->ddos_protection && $this->config->recaptcha_active && $loginAttempts->get() > $this->config->recaptcha_login_attempts){
-		// 	$this->CI->load->helper('recaptchalib');
-		// 	$reCaptcha = new ReCaptcha( $this->config->recaptcha_secret);
-		// 	$resp      = $reCaptcha->verifyResponse( $this->CI->input->server("REMOTE_ADDR"), $this->CI->input->post("g-recaptcha-response") );
-		// 	if( ! $resp->success){
-		// 		$this->error(lang('Aauth.aauth_error_recaptcha_not_correct'));
-		// 		return false;
-		// 	}
-		// }
+		if ($this->config->loginProtection && $this->config->captchaEnabled && $this->isCaptchaRequired())
+		{
+			$request = \Config\Services::request();
+
+			if ($this->config->captchaType === 'recaptcha')
+			{
+				$response = $request->getPostGet('g-recaptcha-response');
+			}
+			else if ($this->config->captchaType === 'recaptcha')
+			{
+				$response = $request->getPostGet('h-captcha-response');
+			}
+
+			if (! $this->verifyCaptchaResponse($response))
+			{
+				$this->error('Aauth.invalidCaptcha');
+
+				return false;
+			}
+		}
 
 		if ($this->config->loginUseUsername)
 		{
