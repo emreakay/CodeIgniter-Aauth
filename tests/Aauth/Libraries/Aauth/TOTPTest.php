@@ -153,10 +153,11 @@ class TOTPTest extends CIDatabaseTestCase
 		]);
 		$this->assertFalse($this->library->verifyUserTotpCode('999000', 1));
 
-		$totp = TOTP::create('JBSWY3DPEHPK3PXP');
-		$totp->setLabel('');
+		$totp     = TOTP::create('JBSWY3DPEHPK3PXP');
+		$totpCode = $totp->now();
+		usleep(1000);
 
-		$this->assertTrue($this->library->verifyUserTotpCode($totp->now(), 1));
+		$this->assertTrue($this->library->verifyUserTotpCode($totpCode, 1));
 	}
 
 	/**
