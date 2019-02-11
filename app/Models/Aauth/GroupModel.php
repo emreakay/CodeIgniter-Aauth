@@ -53,16 +53,17 @@ class GroupModel extends Model
 	 */
 	public function __construct($db = null, $validation = null, $config = null)
 	{
-		parent::__construct();
-
 		if (is_null($config))
 		{
 			$config = new AauthConfig();
 		}
 
-		$this->config             = $config;
+		$this->config  = $config;
+		$this->DBGroup = $this->config->dbProfile;
+
+		parent::__construct();
+
 		$this->table              = $this->config->dbTableGroups;
-		$this->DBGroup            = $this->config->dbProfile;
 		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteGroups;
 		$this->tempReturnType     = $this->config->dbReturnType;
 

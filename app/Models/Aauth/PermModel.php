@@ -53,16 +53,17 @@ class PermModel extends Model
 	 */
 	public function __construct($db = null, $validation = null, $config = null)
 	{
-		parent::__construct();
-
 		if (is_null($config))
 		{
 			$config = new AauthConfig();
 		}
 
-		$this->config             = $config;
+		$this->config  = $config;
+		$this->DBGroup = $this->config->dbProfile;
+
+		parent::__construct();
+
 		$this->table              = $this->config->dbTablePerms;
-		$this->DBGroup            = $this->config->dbProfile;
 		$this->tempUseSoftDeletes = $this->config->dbSoftDeletePerms;
 		$this->tempReturnType     = $this->config->dbReturnType;
 

@@ -78,16 +78,17 @@ class UserModel extends Model
 	 */
 	public function __construct($db = null, $validation = null, $config = null)
 	{
-		parent::__construct();
-
 		if (is_null($config))
 		{
 			$config = new AauthConfig();
 		}
 
-		$this->config             = $config;
+		$this->config  = $config;
+		$this->DBGroup = $this->config->dbProfile;
+
+		parent::__construct();
+
 		$this->table              = $this->config->dbTableUsers;
-		$this->DBGroup            = $this->config->dbProfile;
 		$this->tempUseSoftDeletes = $this->config->dbSoftDeleteUsers;
 		$this->tempReturnType     = $this->config->dbReturnType;
 
