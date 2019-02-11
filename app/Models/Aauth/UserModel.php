@@ -122,18 +122,6 @@ class UserModel extends Model
 	}
 
 	/**
-	 * Update
-	 */
-	public function update($id = null, $data = null)
-	{
-		$this->validationRules['email']    = 'if_exist|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
-		$this->validationRules['password'] = 'if_exist|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
-		$this->validationRules['username'] = 'if_exist|is_unique[' . $this->table . '.username,id,{id}]|regex_match[/' . $this->config->userRegexPattern . '/]';
-
-		return parent::update($id, $data);
-	}
-
-	/**
 	 * Update last login by User ID
 	 *
 	 * @param integer $userId User id
