@@ -29,6 +29,7 @@ use \App\Models\Aauth\GroupVariableModel;
 use \App\Models\Aauth\PermModel;
 use \App\Models\Aauth\PermToGroupModel;
 use \App\Models\Aauth\PermToUserModel;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Aauth Library
@@ -957,26 +958,63 @@ class Aauth
 	 *
 	 * @codeCoverageIgnore
 	 */
-	// protected function sendVerification(int $userId, string $email)
-	// {
-	// 	helper('text');
-	// 	$userVariableModel = new UserVariableModel();
-	// 	$emailService      = \Config\Services::email();
-	// 	$verificationCode  = sha1(strtotime('now'));
+	protected function sendVerification(int $userId, string $email)
+	{
+		helper('text');
+		$userVariableModel = new UserVariableModel();
+		// $emailService      = \Config\Services::email();
+		$emailService     = new PHPMailer;
+		$verificationCode = sha1(strtotime('now'));
 
-	// 	$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
+		$userVariableModel->save($userId, 'verification_code', $verificationCode, true);
 
-	// 	$messageData['code'] = $verificationCode;
-	// 	$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
+		$messageData['code'] = $verificationCode;
+		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
 
-	// 	$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
-	// 	$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-	// 	$emailService->setTo($email);
-	// 	$emailService->setSubject(lang('Aauth.subjectVerification'));
-	// 	$emailService->setMessage(view('Aauth/Verification', $messageData));
+		if (isset($this->config->emailConfig->protocol))
+		{
+			if ($this->config->emailConfig->protocol === 'smtp')
+			{
+				$emailService->isSMTP();
+				$emailService->Host       = $this->config->emailConfig->SMTPHost ? : '';
+				$emailService->SMTPAuth   = true;
+				$emailService->Username   = $this->config->emailConfig->SMTPUser ? : '';
+				$emailService->Password   = $this->config->emailConfig->SMTPPass ? : '';
+				$emailService->SMTPSecure = $this->config->emailConfig->SMTPCrypto ? : 'tls';
+				$emailService->Port       = $this->config->emailConfig->SMTPPort ? : 587;
+			}
+			else if ($this->config->emailConfig->protocol === 'sendmail')
+			{
+				$emailService->isSendmail();
+			}
+			else if ($this->config->emailConfig->protocol === 'mail')
+			{
+			}
+		}
 
-	// 	return $emailService->send();
-	// }
+		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		$emailService->addAddress($email);
+		$emailService->isHTML(true);
+		$emailService->Subject = lang('Aauth.subjectVerification');
+		$emailService->Body    = view('Aauth/Verification', $messageData);
+
+		if (! $emailService->send())
+		{
+			$this->error(explode('<br />', $emailService->ErrorInfo));
+
+			return false;
+		}
+
+		return true;
+
+		// $emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		// $emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		// $emailService->setTo($email);
+		// $emailService->setSubject(lang('Aauth.subjectVerification'));
+		// $emailService->setMessage(view('Aauth/Verification', $messageData));
+
+		// return $emailService->send();
+	}
 
 	/**
 	 * Verify user
@@ -1245,25 +1283,60 @@ class Aauth
 		}
 
 		$userVariableModel = new UserVariableModel();
-		$emailService      = \Config\Services::email();
-		$resetCode         = sha1(strtotime('now'));
+		// $emailService      = \Config\Services::email();
+		$emailService = new PHPMailer;
+		$resetCode    = sha1(strtotime('now'));
 		$userVariableModel->save($user['id'], 'verification_code', $resetCode, true);
 
 		$messageData['code'] = $resetCode;
 		$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
 
-		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		if (isset($this->config->emailConfig->protocol))
+		{
+			if ($this->config->emailConfig->protocol === 'smtp')
+			{
+				$emailService->isSMTP();
+				$emailService->Host       = $this->config->emailConfig->SMTPHost ? : '';
+				$emailService->SMTPAuth   = true;
+				$emailService->Username   = $this->config->emailConfig->SMTPUser ? : '';
+				$emailService->Password   = $this->config->emailConfig->SMTPPass ? : '';
+				$emailService->SMTPSecure = $this->config->emailConfig->SMTPCrypto ? : 'tls';
+				$emailService->Port       = $this->config->emailConfig->SMTPPort ? : 587;
+			}
+			else if ($this->config->emailConfig->protocol === 'sendmail')
+			{
+				$emailService->isSendmail();
+			}
+			else if ($this->config->emailConfig->protocol === 'mail')
+			{
+			}
+		}
+
 		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-		$emailService->setTo($user['email']);
-		$emailService->setSubject(lang('Aauth.subjectReset'));
-		$emailService->setMessage(view('Aauth/RemindPassword', $messageData));
+		$emailService->addAddress($user['email']);
+		$emailService->isHTML(true);
+		$emailService->Subject = lang('Aauth.subjectReset');
+		$emailService->Body    = view('Aauth/RemindPassword', $messageData);
 
 		if (! $email = $emailService->send())
 		{
-			$this->error(explode('<br />', $emailService->printDebugger([])));
+			$this->error(explode('<br />', $emailService->ErrorInfo));
 
 			return false;
 		}
+
+		// $emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		// $emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		// $emailService->setTo($user['email']);
+		// $emailService->setSubject(lang('Aauth.subjectReset'));
+		// $emailService->setMessage(view('Aauth/RemindPassword', $messageData));
+
+		// if (! $email = $emailService->send())
+		// {
+		// 	$this->error(explode('<br />', $emailService->printDebugger([])));
+
+		// 	return false;
+		// }
 
 		$this->info(lang('Aauth.infoRemindSuccess'));
 
@@ -1308,7 +1381,8 @@ class Aauth
 			return false;
 		}
 
-		$emailService = \Config\Services::email();
+		// $emailService = \Config\Services::email();
+		$emailService = new PHPMailer;
 
 		$data['id']       = $user['id'];
 		$data['password'] = $password;
@@ -1323,18 +1397,52 @@ class Aauth
 
 		$messageData['password'] = $password;
 
-		$emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		if (isset($this->config->emailConfig->protocol))
+		{
+			if ($this->config->emailConfig->protocol === 'smtp')
+			{
+				$emailService->isSMTP();
+				$emailService->Host       = $this->config->emailConfig->SMTPHost ? : '';
+				$emailService->SMTPAuth   = true;
+				$emailService->Username   = $this->config->emailConfig->SMTPUser ? : '';
+				$emailService->Password   = $this->config->emailConfig->SMTPPass ? : '';
+				$emailService->SMTPSecure = $this->config->emailConfig->SMTPCrypto ? : 'tls';
+				$emailService->Port       = $this->config->emailConfig->SMTPPort ? : 587;
+			}
+			else if ($this->config->emailConfig->protocol === 'sendmail')
+			{
+				$emailService->isSendmail();
+			}
+			else if ($this->config->emailConfig->protocol === 'mail')
+			{
+			}
+		}
+
 		$emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
-		$emailService->setTo($user['email']);
-		$emailService->setSubject(lang('Aauth.subjectResetSuccess'));
-		$emailService->setMessage(view('Aauth/ResetPassword', $messageData));
+		$emailService->addAddress($user['email']);
+		$emailService->isHTML(true);
+		$emailService->Subject = lang('Aauth.subjectResetSuccess');
+		$emailService->Body    = view('Aauth/ResetPassword', $messageData);
 
 		if (! $email = $emailService->send())
 		{
-			$this->error(explode('<br />', $emailService->printDebugger([])));
+			$this->error(explode('<br />', $emailService->ErrorInfo));
 
 			return false;
 		}
+
+		// $emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
+		// $emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
+		// $emailService->setTo($user['email']);
+		// $emailService->setSubject(lang('Aauth.subjectResetSuccess'));
+		// $emailService->setMessage(view('Aauth/ResetPassword', $messageData));
+
+		// if (! $email = $emailService->send())
+		// {
+		// 	$this->error(explode('<br />', $emailService->printDebugger([])));
+
+		// 	return false;
+		// }
 
 		$this->info(lang('Aauth.infoResetSuccess'));
 
