@@ -151,6 +151,7 @@ class Aauth extends BaseConfig
 	| 'loginAttemptCookie'
 	|
 	|	Login attempts count & block trough Cookie instead of Login Attempt DB & IP
+	|	You can set a string to set the cookie name, default cookie name is logins.
 	|	(default: false)
 	|
 	| 'loginAttemptLimit'

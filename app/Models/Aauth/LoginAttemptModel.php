@@ -104,20 +104,31 @@ class LoginAttemptModel
 	 */
 	public function find()
 	{
-		$agent   = $this->request->getUserAgent();
-		$builder = $this->builder();
-		$builder->where('user_agent', md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform()));
-		$builder->where('ip_address', $this->request->getIPAddress());
-		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
-
-		if ($builder->countAllResults() !== 0)
+		if ($this->config->loginAttemptCookie)
 		{
-			return $builder->get()->getFirstRow()->count;
+			helper('cookie');
+			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->lologinAttemptCookie;
+
+			if ($cookie === get_cookie($cookieName))
+			{
+				return $cookie;
+			}
 		}
 		else
 		{
-			return 0;
+			$agent   = $this->request->getUserAgent();
+			$builder = $this->builder();
+			$builder->where('user_agent', md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform()));
+			$builder->where('ip_address', $this->request->getIPAddress());
+			$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+			if ($builder->countAllResults() !== 0)
+			{
+				return $builder->get()->getFirstRow()->count;
+			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -129,40 +140,69 @@ class LoginAttemptModel
 	 */
 	public function save()
 	{
-		$ipAddress = $this->request->getIPAddress();
-		$agent     = $this->request->getUserAgent();
-		$userAgent = md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform());
-		$builder   = $this->builder();
-		$builder->where('user_agent', $userAgent);
-		$builder->where('ip_address', $ipAddress);
-		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
-
-		if (! $row = $builder->get()->getFirstRow())
+		if ($this->config->loginAttemptCookie)
 		{
-			$data['ip_address'] = $ipAddress;
-			$data['user_agent'] = $userAgent;
-			$data['count']      = 1;
-			$data['created_at'] = date('Y-m-d H:i:s');
-			$data['updated_at'] = date('Y-m-d H:i:s');
+			helper('cookie');
+			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->lologinAttemptCookie;
+			$expire     = strtotime($this->config->loginAttemptLimitTimePeriod) - strtotime('now');
 
-			$builder->insert($data);
-
-			return true;
-		}
-		else
-		{
-			$data['count']      = $row->count + 1;
-			$data['updated_at'] = date('Y-m-d H:i:s');
-
-			$builder->update($data, ['id' => $row->id]);
-
-			if ($data['count'] >= $this->config->loginAttemptLimit)
+			if ($cookie = get_cookie($cookieName))
 			{
-				return false;
+				set_cookie($cookieName, $cookie + 1, $expire);
+
+				if ($cookie >= $this->config->loginAttemptLimit)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}
 			else
 			{
+				set_cookie($cookieName, 1, $expire);
+
 				return true;
+			}
+		}
+		else
+		{
+			$ipAddress = $this->request->getIPAddress();
+			$agent     = $this->request->getUserAgent();
+			$userAgent = md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform());
+			$builder   = $this->builder();
+			$builder->where('user_agent', $userAgent);
+			$builder->where('ip_address', $ipAddress);
+			$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+
+			if (! $row = $builder->get()->getFirstRow())
+			{
+				$data['ip_address'] = $ipAddress;
+				$data['user_agent'] = $userAgent;
+				$data['count']      = 1;
+				$data['created_at'] = date('Y-m-d H:i:s');
+				$data['updated_at'] = date('Y-m-d H:i:s');
+
+				$builder->insert($data);
+
+				return true;
+			}
+			else
+			{
+				$data['count']      = $row->count + 1;
+				$data['updated_at'] = date('Y-m-d H:i:s');
+
+				$builder->update($data, ['id' => $row->id]);
+
+				if ($data['count'] >= $this->config->loginAttemptLimit)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}
 		}
 	}
@@ -176,13 +216,21 @@ class LoginAttemptModel
 	 */
 	public function delete()
 	{
-		$agent   = $this->request->getUserAgent();
-		$builder = $this->builder();
-		$builder->where('user_agent', md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform()));
-		$builder->where('ip_address', $this->request->getIPAddress());
-		$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
-
-		$builder->delete();
+		if ($this->config->loginAttemptCookie)
+		{
+			helper('cookie');
+			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->lologinAttemptCookie;
+			delete_cookie($cookieName);
+		}
+		else
+		{
+			$agent   = $this->request->getUserAgent();
+			$builder = $this->builder();
+			$builder->where('user_agent', md5($agent->getBrowser() . ' - ' . $agent->getVersion() . ' - ' . $agent->getPlatform()));
+			$builder->where('ip_address', $this->request->getIPAddress());
+			$builder->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-' . $this->config->loginAttemptLimitTimePeriod)));
+			$builder->delete();
+		}
 
 		return true;
 	}

@@ -227,7 +227,7 @@ class Aauth
 			{
 				$response = $request->getPostGet('g-recaptcha-response');
 			}
-			else if ($this->config->captchaType === 'recaptcha')
+			else if ($this->config->captchaType === 'hcaptcha')
 			{
 				$response = $request->getPostGet('h-captcha-response');
 			}
