@@ -857,9 +857,11 @@ class Aauth
 
 		if ($userModel->transStatus() === false)
 		{
+			// @codeCoverageIgnoreStart
 			$userModel->transRollback();
 
 			return false;
+			// @codeCoverageIgnoreEnd
 		}
 		else
 		{
@@ -1709,9 +1711,11 @@ class Aauth
 
 		if ($groupModel->transStatus() === false)
 		{
+			// @codeCoverageIgnoreStart
 			$groupModel->transRollback();
 
 			return false;
+			// @codeCoverageIgnoreEnd
 		}
 		else
 		{
@@ -2360,9 +2364,11 @@ class Aauth
 
 		if ($permModel->transStatus() === false)
 		{
+			// @codeCoverageIgnoreStart
 			$permModel->transRollback();
 
 			return false;
+			// @codeCoverageIgnoreEnd
 		}
 		else
 		{
@@ -2977,6 +2983,6 @@ class Aauth
 			}
 		}
 
-		trigger_error('Call to undefined method ' . __CLASS__ . '::' . $name . '()', E_USER_ERROR);
+		return trigger_error('Call to undefined method ' . __CLASS__ . '::' . $name . '()', E_USER_ERROR);
 	}
 }

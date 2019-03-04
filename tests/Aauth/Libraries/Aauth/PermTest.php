@@ -517,5 +517,7 @@ class PermTest extends CIDatabaseTestCase
 		$groupPermsOrderBy = $this->library->listGroupPermsPaginated(2, 10, 'id DESC');
 		$this->assertEquals('testPerm2', $groupPermsOrderBy['perms'][0]['name']);
 		$this->assertEquals('testPerm1', $groupPermsOrderBy['perms'][1]['name']);
+
+		$this->assertFalse($this->library->listGroupPermsPaginated(99));
 	}
 }

@@ -62,8 +62,10 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 		$config                     = new \Config\Aauth();
 		$config->loginAttemptCookie = true;
 		$this->model                = new LoginAttemptModel($this->db, $config);
-		$loginAttempt               = $this->model->find();
-		$this->assertEquals(0, $loginAttempt);
+		$this->assertEquals(0, $this->model->find());
+
+		$this->model->save();
+		$this->assertEquals(1, $this->model->find());
 	}
 
 	public function testSaveCookie()
@@ -76,6 +78,11 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 		$this->assertEquals(1, $this->model->find());
 
 		$this->assertTrue($this->model->save());
+
+		$this->response = new \CodeIgniter\HTTP\Response(new App());
+		$this->response->setCookie('logins', 10, 4000);
+		$this->model = new LoginAttemptModel($this->db, $config, $this->response);
+		$this->assertFalse($this->model->save());
 	}
 
 	public function testDeleteCookie()

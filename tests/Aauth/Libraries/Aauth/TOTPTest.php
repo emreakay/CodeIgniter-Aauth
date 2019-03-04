@@ -94,7 +94,6 @@ class TOTPTest extends CIDatabaseTestCase
 
 		$totp     = TOTP::create('JBSWY3DPEHPK3PXP');
 		$totpCode = $totp->now();
-		usleep(1000);
 		$this->assertTrue($this->library->login('admin@example.com', 'password123456', null, $totpCode));
 
 		$userModel = new UserModel();
@@ -110,6 +109,8 @@ class TOTPTest extends CIDatabaseTestCase
 		$this->library = new Aauth($config, $session);
 
 		$this->library = new Aauth($config, $session);
+		$totp          = TOTP::create('JBSWY3DPEHPK3PXP');
+		$totpCode      = $totp->now();
 		$this->assertTrue($this->library->login('admin@example.com', 'password123456', null, $totpCode));
 
 		$userModel->protect(false)->update(1, ['last_ip_address' => '99.99.99.99']);
@@ -202,7 +203,6 @@ class TOTPTest extends CIDatabaseTestCase
 
 		$totp     = TOTP::create('JBSWY3DPEHPK3PXP');
 		$totpCode = $totp->now();
-		usleep(1000);
 
 		$this->assertTrue($this->library->verifyUserTotpCode($totpCode));
 		$this->assertTrue($this->library->verifyUserTotpCode($totpCode, 1));
