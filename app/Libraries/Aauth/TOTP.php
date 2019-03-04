@@ -8,6 +8,7 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
+ * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
@@ -95,35 +96,32 @@ class TOTP extends \App\Libraries\Aauth
 	 * Verify user TOTP Code
 	 *
 	 * @param integer $totpCode TOTP Code
-	 * @param string  $userId   User Id
+	 * @param integer $userId   User Id
 	 *
 	 * @return boolean
 	 */
-	public function verifyUserTotpCode(int $totpCode, string $userId = null)
+	public function verifyUserTotpCode(int $totpCode, int $userId = null)
 	{
-		if ($this->isTotpRequired())
+		if (! $userId)
 		{
-			if (! $userId)
-			{
-				$userId = (int) @$this->session->user['id'];
-			}
-
-			$userVariableModel = new UserVariableModel();
-
-			if ($totpSecret = $userVariableModel->find($userId, 'totp_secret', true))
-			{
-				$totp = OTPHP_TOTP::create($totpSecret);
-
-				if (! $totp->verify($totpCode))
-				{
-					return false;
-				}
-
-				unset($_SESSION['user']['totp_required']);
-			}
+			$userId = (int) @$this->session->user['id'];
 		}
 
-		return true;
+		$userVariableModel = new UserVariableModel();
+
+		if ($totpSecret = $userVariableModel->find($userId, 'totp_secret', true))
+		{
+			$totp = OTPHP_TOTP::create($totpSecret);
+
+			if ($totp->verify($totpCode))
+			{
+				return true;
+			}
+
+			unset($_SESSION['user']['totp_required']);
+		}
+
+		return false;
 	}
 
 	/**

@@ -83,13 +83,16 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$this->library->login('admina@example.com', 'password123456');
 		$this->library->login('admina@example.com', 'password123456');
 		$this->library->login('admina@example.com', 'password123456');
+		$_POST['g-recaptcha-response'] = '0123456789';
 		$this->library->login('admina@example.com', 'password123456');
 
 		$this->assertContains('https://www.google.com/recaptcha', $this->library->generateCaptchaHtml());
 
-		$config->captchaType = 'hcaptcha';
-		$this->library       = new Aauth($config, true);
-
+		$config->captchaType           = 'hcaptcha';
+		$this->library                 = new Aauth($config, true);
+		$_POST['h-recaptcha-response'] = '0123456789';
+		$this->library->login('admina@example.com', 'password123456');
+		$this->assertEquals(lang('Aauth.invalidCaptcha'), $this->library->getErrorsArray()[0]);
 		$this->assertContains('https://hcaptcha.com/1', $this->library->generateCaptchaHtml());
 	}
 
@@ -105,5 +108,9 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$config->captchaType = 'hcaptcha';
 		$this->library       = new Aauth($config, true);
 		$this->assertContains('invalid-input-response', $this->library->verifyCaptchaResponse('0123456789')['errorCodes']);
+
+		$config->captchaType = 'hcaptcha';
+		$this->library       = new Aauth($config, true);
+		$this->assertTrue($this->library->verifyCaptchaResponse('testing')['success']);
 	}
 }

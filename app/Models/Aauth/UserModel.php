@@ -8,6 +8,7 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
+ * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay

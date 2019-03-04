@@ -8,6 +8,7 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
+ * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
@@ -77,7 +78,12 @@ class CAPTCHA extends \App\Libraries\Aauth
 
 		$answer = json_decode($request, true);
 
-		if (trim($answer['success']) !== true)
+		if (ENVIRONMENT === 'testing' && $response === 'testing')
+		{
+			$answer = ['success' => true];
+		}
+
+		if ($answer['success'] !== true)
 		{
 			return [
 				'success'    => false,
@@ -136,7 +142,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 * @param string $url  URL path to CAPTCHA server.
 	 * @param array  $data Array of parameters to be sent.
 	 *
-	 * @return array response
+	 * @return string
 	 */
 	private function _submitGet($url, $data)
 	{
@@ -156,7 +162,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 * @param string $url  URL path to CAPTCHA server.
 	 * @param array  $data Array of parameters to be sent.
 	 *
-	 * @return array response
+	 * @return string
 	 */
 	private function _submitPost($url, $data)
 	{

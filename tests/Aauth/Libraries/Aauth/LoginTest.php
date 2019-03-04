@@ -86,7 +86,24 @@ class LoginTest extends CIDatabaseTestCase
 		$this->seeInDatabase($config->dbTableLoginTokens, [
 			'user_id' => 1,
 		]);
+
 		$this->assertTrue($this->response->hasCookie('remember'));
+
+		$this->hasInDatabase($config->dbTableUserSessions, [
+			'id'         => md5(time()),
+			'ip_address' => '127.0.0.1',
+			'timestamp'  => time(),
+			'data'       => '__ci_last_regenerate|i:' . time() . ';user|a:4:{s:2:"id";s:1:"1";s:8:"username";s:5:"admin";s:5:"email";s:17:"admin@example.com";s:8:"loggedIn";b:1;}',
+			'data'       => '__ci_last_regenerate|i:1551553466;user|a:4:{s:2:"id";s:1:"1";s:8:"username";s:5:"admin";s:5:"email";s:17:"admin@example.com";s:8:"loggedIn";b:1;}',
+		]);
+
+		$config->loginSingleMode = true;
+		$this->library           = new Aauth($config, $session);
+
+		$this->assertTrue($this->library->login('admin', 'password123456'));
+
+		$config->loginSingleMode = false;
+		$this->library           = new Aauth($config, $session);
 
 		$this->assertFalse($this->library->login('admin', 'passwor'));
 		$this->assertEquals(lang('Aauth.loginFailedUsername'), $this->library->getErrorsArray()[0]);
@@ -95,6 +112,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->login('admin', 'password1234'));
 		$this->assertEquals(lang('Aauth.loginFailedAll'), $this->library->getErrorsArray()[0]);
 
+		$config->loginSingleMode     = false;
 		$config->loginAccurateErrors = true;
 		$this->library               = new Aauth($config, $session);
 		$this->library->clearErrors();
@@ -104,7 +122,6 @@ class LoginTest extends CIDatabaseTestCase
 		$this->library->clearErrors();
 		$this->assertFalse($this->library->login('user99', 'password123456'));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
-		// $config->loginUseUsername = false;
 
 		$this->library = new Aauth(null, $session);
 		$this->assertTrue($this->library->login('admin@example.com', 'password123456'));

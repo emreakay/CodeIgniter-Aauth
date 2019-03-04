@@ -8,6 +8,7 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
+ * @version   3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
@@ -232,9 +233,9 @@ class Aauth
 				$response = $request->getPostGet('h-captcha-response');
 			}
 
-			if (! $this->verifyCaptchaResponse($response))
+			if (! $this->verifyCaptchaResponse($response)['success'])
 			{
-				$this->error('Aauth.invalidCaptcha');
+				$this->error(lang('Aauth.invalidCaptcha'));
 
 				return false;
 			}
@@ -310,7 +311,7 @@ class Aauth
 				}
 				else if ($this->config->totpOnIpChange)
 				{
-					if ($request->getIPAddress() !== $lastIpAddress)
+					if ($request->getIPAddress() !== $user['last_ip_address'])
 					{
 						if (! empty($totpSecret) && ! $totpCode)
 						{
@@ -335,7 +336,7 @@ class Aauth
 				}
 				else if ($this->config->totpOnIpChange)
 				{
-					if ($request->getIPAddress() !== $lastIpAddress)
+					if ($request->getIPAddress() !== $user['last_ip_address'])
 					{
 						$this->session->set('totp_required', true);
 					}
@@ -351,6 +352,7 @@ class Aauth
 			{
 				$loginTokenModel->deleteAll($user['id']);
 				$userSessionModel = new UserSessionModel();
+
 				foreach ($userSessionModel->findAll() as $userSessionRow)
 				{
 					$result      = $matches = [];
@@ -433,6 +435,7 @@ class Aauth
 			{
 				$this->error(lang('Aauth.loginFailedAll'));
 			}
+
 			return false;
 		}
 	}
@@ -1267,7 +1270,7 @@ class Aauth
 	 *
 	 * @param string $email Email for account to remind
 	 *
-	 * @return boolean Remind fails/succeeds
+	 * @return boolean
 	 *
 	 * @codeCoverageIgnore
 	 */
@@ -1350,7 +1353,7 @@ class Aauth
 	 *
 	 * @param string $resetCode Verification code for account
 	 *
-	 * @return boolean Password reset fails/succeeds
+	 * @return boolean
 	 *
 	 * @codeCoverageIgnore
 	 */
@@ -1634,7 +1637,7 @@ class Aauth
 	 * @param string         $name       New group name
 	 * @param string         $definition New group definition
 	 *
-	 * @return boolean Update success/failure
+	 * @return boolean
 	 */
 	public function updateGroup($groupPar, string $name = null, string $definition = null)
 	{
@@ -1680,7 +1683,7 @@ class Aauth
 	 *
 	 * @param string|integer $groupPar Group id or name
 	 *
-	 * @return boolean Delete success/failure
+	 * @return boolean
 	 */
 	public function deleteGroup($groupPar)
 	{
@@ -1725,7 +1728,7 @@ class Aauth
 	 * @param integer        $userId   User id to add to group
 	 * @param integer|string $groupPar Group id or name to add user to
 	 *
-	 * @return boolean Add success/failure
+	 * @return boolean
 	 */
 	public function addMember($groupPar, int $userId)
 	{
@@ -1760,7 +1763,7 @@ class Aauth
 	 * @param integer        $userId   User id to remove from group
 	 * @param integer|string $groupPar Group id or name to remove user from
 	 *
-	 * @return boolean Remove success/failure
+	 * @return boolean
 	 */
 	public function removeMember($groupPar, int $userId)
 	{
@@ -1776,7 +1779,7 @@ class Aauth
 	 *
 	 * @param integer|string $userId User id
 	 *
-	 * @return object Array of group_id's
+	 * @return boolean|array
 	 */
 	public function getUserGroups($userId)
 	{
@@ -1797,7 +1800,7 @@ class Aauth
 	 *
 	 * @param integer|string $userId User id
 	 *
-	 * @return object Array of perm_id's
+	 * @return boolean|array
 	 */
 	public function getUserPerms($userId, $state = null)
 	{
@@ -1819,7 +1822,7 @@ class Aauth
 	 * @param integer|string $groupPar    Group id
 	 * @param integer|string $subgroupPar Subgroup id or name to add to group
 	 *
-	 * @return boolean Add success/failure
+	 * @return boolean
 	 */
 	public function addSubgroup($groupPar, $subgroupPar)
 	{
@@ -1880,7 +1883,7 @@ class Aauth
 	 * @param integer|string $groupPar    Group id or name to remove
 	 * @param integer|string $subgroupPar Sub-Group id or name to remove
 	 *
-	 * @return boolean Remove success/failure
+	 * @return boolean
 	 */
 	public function removeSubgroup($groupPar, $subgroupPar)
 	{
@@ -1896,7 +1899,7 @@ class Aauth
 	 *
 	 * @param integer|string $groupPar Group id or name to get
 	 *
-	 * @return object Array of subgroup_id's
+	 * @return boolean|array
 	 */
 	public function getSubgroups($groupPar)
 	{
@@ -1918,7 +1921,7 @@ class Aauth
 	 * @param integer|string $groupPar Group id or name to get
 	 * @param integer        $state    State (1 = allowed, 0 = denied)
 	 *
-	 * @return object Array of subgroup_id's
+	 * @return boolean|array
 	 */
 	public function getGroupPerms($groupPar, int $state = null)
 	{
@@ -1937,7 +1940,7 @@ class Aauth
 	 *
 	 * @param integer $userId User id to remove from all groups
 	 *
-	 * @return boolean Remove success/failure
+	 * @return boolean
 	 */
 	public function removeMemberFromAll(int $userId)
 	{
@@ -1949,7 +1952,7 @@ class Aauth
 	/**
 	 * List all groups
 	 *
-	 * @return object Array of groups
+	 * @return array
 	 */
 	public function listGroups()
 	{
@@ -1966,7 +1969,7 @@ class Aauth
 	 * @param integer $limit   Limit of users to be returned
 	 * @param string  $orderBy Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
-	 * @return array Array of groups
+	 * @return array
 	 */
 	public function listGroupsPaginated(int $limit = 10, string $orderBy = null)
 	{
@@ -1988,7 +1991,7 @@ class Aauth
 	 *
 	 * @param integer $groupId Group id to get
 	 *
-	 * @return string Group name
+	 * @return string
 	 */
 	public function getGroupName($groupId)
 	{
@@ -2007,7 +2010,7 @@ class Aauth
 	 *
 	 * @param integer|string $groupPar Group id or name to get
 	 *
-	 * @return integer Group id
+	 * @return integer
 	 */
 	public function getGroupId($groupPar)
 	{
@@ -2036,7 +2039,7 @@ class Aauth
 	 *
 	 * @param integer|string $groupPar Group id or name to get
 	 *
-	 * @return integer Group id
+	 * @return integer
 	 */
 	public function getGroup($groupPar)
 	{
@@ -2055,7 +2058,7 @@ class Aauth
 	 *
 	 * @param integer|null $userId User id to get or false for current user
 	 *
-	 * @return integer Group id
+	 * @return boolean|array
 	 */
 	public function listUserGroups(int $userId = null)
 	{
@@ -2089,7 +2092,7 @@ class Aauth
 	 * @param integer      $limit   Limit of users to be returned
 	 * @param string       $orderBy Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
-	 * @return array Array of users
+	 * @return boolean|array
 	 */
 	public function listUserGroupsPaginated(int $userId = null, int $limit = 10, string $orderBy = null)
 	{
@@ -2176,7 +2179,7 @@ class Aauth
 	 * @param string  $key     Variable Key
 	 * @param integer $groupId Group id
 	 *
-	 * @return boolean|string false if var is not set, the value of var if set
+	 * @return boolean|string
 	 */
 	public function getGroupVar(string $key, int $groupId)
 	{
@@ -2286,7 +2289,7 @@ class Aauth
 	 * @param string         $name       New permission name
 	 * @param string         $definition Permission description
 	 *
-	 * @return boolean Update success/failure
+	 * @return boolean
 	 */
 	public function updatePerm($permPar, string $name = null, string $definition = null)
 	{
@@ -2334,7 +2337,7 @@ class Aauth
 	 *
 	 * @param integer|string $permPar Permission id or perm name
 	 *
-	 * @return boolean Delete success/failure
+	 * @return boolean
 	 */
 	public function deletePerm($permPar)
 	{
@@ -2370,9 +2373,13 @@ class Aauth
 		}
 	}
 
-	/*$userId User id to allow
+	/**
+	 * Allow User
 	 *
-	 * @return bool Allow success/failure
+	 * @param integer|string $permPar Permission id or perm name
+	 * @param integer        $userId  User id to allow
+	 *
+	 * @return boolean
 	 */
 	public function allowUser($permPar, int $userId)
 	{
@@ -2399,9 +2406,13 @@ class Aauth
 		return $permToUserModel->save($permId, $userId, 1);
 	}
 
-	/*$userId User id to deny
+	/**
+	 * Deny User
 	 *
-	 * @return bool Deny success/failure
+	 * @param integer|string $permPar Permission id or perm name
+	 * @param integer        $userId  User id to deny
+	 *
+	 * @return boolean
 	 */
 	public function denyUser($permPar, int $userId)
 	{
@@ -2436,7 +2447,7 @@ class Aauth
 	 * @param integer|string $permPar  Permission id or perm name
 	 * @param integer|string $groupPar Group id or name to allow
 	 *
-	 * @return boolean Allow success/failure
+	 * @return boolean
 	 */
 	public function allowGroup($permPar, $groupPar)
 	{
@@ -2470,7 +2481,7 @@ class Aauth
 	 * @param integer|string $permPar  Permission id or perm name
 	 * @param integer|string $groupPar Group id or name to deny
 	 *
-	 * @return boolean Deny success/failure
+	 * @return boolean
 	 */
 	public function denyGroup($permPar, $groupPar)
 	{
@@ -2498,9 +2509,10 @@ class Aauth
 
 	/**
 	 * List Permissions
+	 *
 	 * List all permissions
 	 *
-	 * @return object Array of permissions
+	 * @return array
 	 */
 	public function listPerms()
 	{
@@ -2565,9 +2577,11 @@ class Aauth
 
 	/**
 	 * Get permission
+	 *
 	 * Get permission from permisison name or id
 	 *
-	 * @param  integer|string $permPar Permission id or name to get
+	 * @param integer|string $permPar Permission id or name to get
+	 *
 	 * @return integer Permission id or NULL if perm does not exist
 	 */
 	public function getPerm($permPar)
@@ -2587,7 +2601,7 @@ class Aauth
 	 *
 	 * @param integer|string $groupPar Group id or name to get
 	 *
-	 * @return integer Group id
+	 * @return boolean|array
 	 */
 	public function listGroupPerms($groupPar)
 	{
@@ -2615,10 +2629,15 @@ class Aauth
 	 * @param boolean $includeBanneds Include banned users
 	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
-	 * @return array Array of users
+	 * @return boolean|array
 	 */
 	public function listGroupPermsPaginated(int $groupId, int $limit = 10, string $orderBy = null)
 	{
+		if (! $groupId = $this->getGroupId($groupId))
+		{
+			return false;
+		}
+
 		$permModel = new PermModel();
 
 		$permModel->select('id, name, definition, state');
@@ -2641,19 +2660,16 @@ class Aauth
 	 *
 	 * @param integer|string $groupPar Group id or name to get
 	 *
-	 * @return integer Group id
+	 * @return boolean|array
 	 */
 	public function listUserPerms(int $userId = null)
 	{
-		$userModel  = new UserModel();
-		$groupModel = new GroupModel();
-
 		if (! $userId)
 		{
 			$userId = (int) @$this->session->user['id'];
 		}
 
-		if (! $userModel->existsById($userId))
+		if (! $this->getUser($userId))
 		{
 			return false;
 		}
@@ -2677,19 +2693,16 @@ class Aauth
 	 * @param boolean $includeBanneds Include banned users
 	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
-	 * @return array Array of users
+	 * @return boolean|array
 	 */
 	public function listUserPermsPaginated(int $userId = null, int $limit = 10, string $orderBy = null)
 	{
-		$userModel  = new UserModel();
-		$groupModel = new GroupModel();
-
 		if (! $userId)
 		{
 			$userId = (int) @$this->session->user['id'];
 		}
 
-		if (! $userModel->existsById($userId))
+		if (! $this->getUser($userId))
 		{
 			return false;
 		}

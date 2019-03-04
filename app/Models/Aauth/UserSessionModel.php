@@ -8,6 +8,7 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
+ * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
@@ -143,6 +144,53 @@ class UserSessionModel
 	//--------------------------------------------------------------------
 	// Utility
 	//--------------------------------------------------------------------
+
+	/**
+	 * Sets the return type of the results to be as an associative array.
+	 *
+	 * @return Model
+	 */
+	public function asArray()
+	{
+		$this->tempReturnType = $this->returnType = 'array';
+
+		return $this;
+	}
+
+	/**
+	 * Sets the return type to be of the specified type of object.
+	 * Defaults to a simple object, but can be any class that has
+	 * class vars with the same name as the table columns, or at least
+	 * allows them to be created.
+	 *
+	 * @param string $class Class
+	 *
+	 * @return Model
+	 */
+	public function asObject(string $class = 'object')
+	{
+		$this->tempReturnType = $this->returnType = $class;
+
+		return $this;
+	}
+
+	/**
+	 * Returns the first row of the result set. Will take any previous
+	 * Query Builder calls into account when determing the result set.
+	 *
+	 * @return array|object|null
+	 */
+	public function first()
+	{
+		$builder = $this->builder();
+
+		$row = $builder->limit(1, 0)->get();
+		$row = $row->getFirstRow($this->tempReturnType);
+
+		$this->tempReturnType = $this->returnType;
+
+		return $row;
+	}
 
 	/**
 	 * Provides a shared instance of the Query Builder.

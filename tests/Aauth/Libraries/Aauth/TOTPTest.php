@@ -8,6 +8,7 @@ use Tests\Support\Session\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
+use App\Models\Aauth\UserModel;
 use App\Models\Aauth\UserVariableModel;
 use OTPHP\TOTP;
 
@@ -59,6 +60,65 @@ class TOTPTest extends CIDatabaseTestCase
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
+
+	public function testLogin()
+	{
+		$config              = new AauthConfig();
+		$config->totpEnabled = true;
+		$session             = $this->getInstance();
+		$this->library       = new Aauth($config, $session);
+
+		$this->hasInDatabase($this->config->dbTableUserVariables, [
+			'user_id'    => 1,
+			'data_key'   => 'totp_secret',
+			'data_value' => 'JBSWY3DPEHPK3PXP',
+			'system'     => true,
+		]);
+
+		$this->assertTrue($this->library->login('admin@example.com', 'password123456'));
+
+		$config->totpLogin = true;
+		$this->library     = new Aauth($config, $session);
+
+		$this->assertFalse($this->library->login('admin@example.com', 'password123456', null, '000001'));
+		$this->assertEquals(lang('Aauth.invalidTOTPCode'), $this->library->getErrorsArray()[0]);
+		$this->library = new Aauth($config, $session);
+		$this->assertFalse($this->library->login('admin@example.com', 'password123456', null));
+		$this->assertEquals(lang('Aauth.requiredTOTPCode'), $this->library->getErrorsArray()[0]);
+		$this->library = new Aauth($config, $session);
+
+		$totp     = TOTP::create('JBSWY3DPEHPK3PXP');
+		$totpCode = $totp->now();
+		usleep(1000);
+		$this->assertTrue($this->library->login('admin@example.com', 'password123456', null, $totpCode));
+
+		$userModel = new UserModel();
+		$userModel->protect(false)->update(1, ['last_ip_address' => '99.99.99.99']);
+
+		$config->totpOnIpChange = true;
+
+		$this->assertFalse($this->library->login('admin@example.com', 'password123456', null, '000001'));
+		$this->assertEquals(lang('Aauth.invalidTOTPCode'), $this->library->getErrorsArray()[0]);
+		$this->library = new Aauth($config, $session);
+		$this->assertFalse($this->library->login('admin@example.com', 'password123456', null));
+		$this->assertEquals(lang('Aauth.requiredTOTPCode'), $this->library->getErrorsArray()[0]);
+		$this->library = new Aauth($config, $session);
+
+		$this->library = new Aauth($config, $session);
+		$this->assertTrue($this->library->login('admin@example.com', 'password123456', null, $totpCode));
+
+		$userModel->protect(false)->update(1, ['last_ip_address' => '99.99.99.99']);
+		$config->totpOnIpChange = true;
+		$config->totpLogin      = false;
+		$this->library          = new Aauth($config, $session);
+
+		$this->assertTrue($this->library->login('admin@example.com', 'password123456'));
+	}
 
 	/**
 	 * @runInSeparateProcess
@@ -124,16 +184,6 @@ class TOTPTest extends CIDatabaseTestCase
 		$config->totpEnabled = true;
 		$this->library       = new Aauth($config, $session);
 
-		$this->assertTrue($this->library->verifyUserTotpCode('999000', 1));
-
-		$this->library = new Aauth($config, $session);
-		$session->set('user', [
-			'id'       => 1,
-			'loggedIn' => true,
-		]);
-
-		$this->assertTrue($this->library->verifyUserTotpCode('999000'));
-
 		$session       = $this->getInstance();
 		$this->library = new Aauth($config, $session);
 		$session->set('user', [
@@ -141,9 +191,6 @@ class TOTPTest extends CIDatabaseTestCase
 			'loggedIn'      => true,
 			'totp_required' => true,
 		]);
-
-		$this->assertTrue($this->library->verifyUserTotpCode('999000'));
-		$this->assertTrue($this->library->verifyUserTotpCode('999000', 1));
 
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
 			'user_id'    => 1,
@@ -157,6 +204,7 @@ class TOTPTest extends CIDatabaseTestCase
 		$totpCode = $totp->now();
 		usleep(1000);
 
+		$this->assertTrue($this->library->verifyUserTotpCode($totpCode));
 		$this->assertTrue($this->library->verifyUserTotpCode($totpCode, 1));
 	}
 

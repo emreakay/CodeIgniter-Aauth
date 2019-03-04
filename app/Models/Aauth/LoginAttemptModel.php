@@ -8,6 +8,7 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
+ * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
@@ -77,11 +78,22 @@ class LoginAttemptModel
 	 *
 	 * @return void
 	 */
-	public function __construct(ConnectionInterface &$db = null)
+	public function __construct(ConnectionInterface &$db = null, $config = null, $response = null)
 	{
-		$this->config  = new AauthConfig();
-		$this->DBGroup = $this->config->dbProfile;
-		$this->table   = $this->config->dbTableLoginAttempts;
+		if (is_null($config))
+		{
+			$config = new AauthConfig();
+		}
+
+		if (is_null($response))
+		{
+			$response = service('response');
+		}
+
+		$this->response = $response;
+		$this->config   = $config;
+		$this->DBGroup  = $this->config->dbProfile;
+		$this->table    = $this->config->dbTableLoginAttempts;
 
 		if ($db instanceof ConnectionInterface)
 		{
@@ -107,11 +119,11 @@ class LoginAttemptModel
 		if ($this->config->loginAttemptCookie)
 		{
 			helper('cookie');
-			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->lologinAttemptCookie;
+			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->loginAttemptCookie;
 
-			if ($cookie === get_cookie($cookieName))
+			if ($cookie = $this->response->getCookie($cookieName))
 			{
-				return $cookie;
+				return empty($cookie['value']) ? 0 : $cookie['value'];
 			}
 		}
 		else
@@ -143,14 +155,16 @@ class LoginAttemptModel
 		if ($this->config->loginAttemptCookie)
 		{
 			helper('cookie');
-			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->lologinAttemptCookie;
+			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->loginAttemptCookie;
 			$expire     = strtotime($this->config->loginAttemptLimitTimePeriod) - strtotime('now');
 
-			if ($cookie = get_cookie($cookieName))
+			if ($cookie = $this->response->getCookie($cookieName))
 			{
-				set_cookie($cookieName, $cookie + 1, $expire);
+				$this->response->deleteCookie($cookieName);
+				(int) $cookie['value']++;
+				$this->response->setCookie($cookieName, $cookie['value'], $expire);
 
-				if ($cookie >= $this->config->loginAttemptLimit)
+				if ($cookie['value'] >= $this->config->loginAttemptLimit)
 				{
 					return false;
 				}
@@ -161,7 +175,7 @@ class LoginAttemptModel
 			}
 			else
 			{
-				set_cookie($cookieName, 1, $expire);
+				$this->response->setCookie($cookieName, 1, $expire);
 
 				return true;
 			}
@@ -219,8 +233,8 @@ class LoginAttemptModel
 		if ($this->config->loginAttemptCookie)
 		{
 			helper('cookie');
-			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->lologinAttemptCookie;
-			delete_cookie($cookieName);
+			$cookieName = $this->config->loginAttemptCookie === true ? 'logins' : $this->config->loginAttemptCookie;
+			$this->response->deleteCookie($cookieName);
 		}
 		else
 		{
