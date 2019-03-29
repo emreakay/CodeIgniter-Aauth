@@ -1,0 +1,57 @@
+Version 3.0.0
+=================================
+
+Release Date: Not released
+
+**Rewrite of the CodeIgniter framework**
+
+Highlights:
+
+- Rewritten from scratch
+- Models & Migration for all Database Tables
+- Form Validation for creating User, Group & Perm
+- aauth_helper
+- Modularity to easily extend Aauth
+- Simple UI
+
+New packages list:
+    - Config
+        - \\ Aauth
+    - Database Migrations
+        - \\ create_user_sessions_table, create_users_table, create_user_variables, create_login_attempts,
+            create_login_tokens, create_groups, create_group_variables, create_group_to_user,
+            create_group_to_group, create_perms, create_perm_to_user, create_perm_to_group,
+            create_default_groups, create_default_users
+    - Helpers
+        - \\ aauth_helper
+    - Language
+        - \\ eb
+            - \\ Aauth, Account, Admin
+        - \\ de, es, fa, fr, id, ru, sv, zh-CN, zh-TW
+            - \\ Aauth
+    - Libraries
+        - \\ Aauth
+        - \\ Aauth/CAPTCHA, Aauth/TOTP, Aauth/oAuth
+    - Models
+        - \\ Aauth
+            - \\ GroupModel, LoginAttemptModel, PermToUserModel, GroupToGroupModel, LoginTokenModel,
+            UserModel, GroupToUserModel, PermModel, UserSessionModel, GroupVariableModel, PermToGroupModel,
+            UserVariableModel
+    - Views
+        - \\ Home
+        — \\ Aauth
+            - \\ RemindPassword, ResetPassword, Verification
+        - \\ Account
+            - \\ Edit, Register, Verification, Home, RemindPassword, Login, ResetPassword
+        - \\ Admin
+            - \\ Home, Migrate
+            - \\ Groups
+                - \\ Delete, Edit, Home, New, Show
+            - \\ Perms
+                - \\ Delete, Edit, Home, New, Show
+            - \\ Users
+                - \\ Delete, Edit, Home, New, Show
+        - \\ Pagers
+            - \\ bootstrap_full
+        - \\ Templates
+            - \\ Footer, FooterBlank, HeaderAdmin, FooterAdmin, Header, HeaderBlank
