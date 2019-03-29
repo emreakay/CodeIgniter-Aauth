@@ -1,29 +1,22 @@
-# This file is a template, and might need editing before it works on your project.
-# Select image from https://hub.docker.com/_/php/
 image: rejack/php7-testing-phpunit-ci4:7.2
 
 before_script:
-  - shopt -s extglob dotglob && mkdir aauth_temp
+  - shopt -s extglob dotglob
+  - rm -rf aauth_temp && mkdir aauth_temp
   - mv !(aauth_temp) aauth_temp
   - git clone https://github.com/codeigniter4/CodeIgniter4.git CodeIgniter4 -b ${CODEIGNITER_VERSION}
   - cp -r aauth_temp/* CodeIgniter4 && cd CodeIgniter4 && cp _travis/env_gitlab .env
   - composer install --prefer-source
   - composer require spomky-labs/otphp --prefer-source
 
-# Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
-# See http://docs.gitlab.com/ce/ci/services/README.html for examples.
 services:
   - mysql:5.7
 
-# Set any variables we need
 variables:
-  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
   MYSQL_DATABASE: aauth_v3_ci4_testing
   MYSQL_ROOT_PASSWORD: root
   CODEIGNITER_VERSION: 'v4.0.0-beta.1'
 
-# Run our tests
-# If Xdebug was installed you can generate a coverage report and see code coverage metrics.
 test:
   after_script: 
   - cp -R CodeIgniter4/build/coverage coverage
