@@ -37,7 +37,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->request  = new IncomingRequest(new App(), new URI(), null, new UserAgent());
 		Services::injectMock('request', $this->request);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
 	}

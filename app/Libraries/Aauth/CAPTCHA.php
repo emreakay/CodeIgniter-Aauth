@@ -18,8 +18,6 @@
 
 namespace App\Libraries\Aauth;
 
-use \App\Models\Aauth\LoginAttemptModel;
-
 /**
  * Aauth CAPTCHA
  *
@@ -39,7 +37,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 *
 	 * @return array
 	 */
-	public function verifyCaptchaResponse($response)
+	public function verifyCaptchaResponse(string $response)
 	{
 		if ($response === null || strlen($response) === 0)
 		{
@@ -129,7 +127,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 */
 	public function isCaptchaRequired()
 	{
-		$loginAttemptModel = new LoginAttemptModel();
+		$loginAttemptModel = $this->getModel('LoginAttempt');
 
 		return $loginAttemptModel->find() >= $this->config->captchaLoginAttempts;
 	}
@@ -144,7 +142,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 *
 	 * @return string
 	 */
-	private function _submitGet($url, $data)
+	private function _submitGet(string $url, array $data)
 	{
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('GET', $url, [
@@ -164,7 +162,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 *
 	 * @return string
 	 */
-	private function _submitPost($url, $data)
+	private function _submitPost(string $url, array $data)
 	{
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('POST', $url, [

@@ -207,12 +207,7 @@ class UserModel extends Model
 		$builder->where($this->primaryKey, $userId);
 		$builder->where('banned', 1);
 
-		if ($builder->get()->getFirstRow())
-		{
-			return true;
-		}
-
-		return false;
+		return ($builder->countAllResults() ? true : false);
 	}
 
 	/**
@@ -232,6 +227,7 @@ class UserModel extends Model
 		}
 
 		$builder->where($this->primaryKey, $userId);
+
 		return ($builder->countAllResults() ? true : false);
 	}
 

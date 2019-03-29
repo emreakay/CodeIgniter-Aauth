@@ -194,16 +194,29 @@ class PermToGroupModel
 			$data['group_id'] = $groupId;
 			$data['state']    = $state;
 
-			$builder->insert($data);
-		}
-		else
-		{
-			$data['state'] = $state;
-
-			$builder->update($data, ['perm_id' => $permId, 'group_id' => $groupId]);
+			return $builder->insert($data)->resultID;
 		}
 
-		return true;
+		$data['state'] = $state;
+
+		return $builder->update($data, ['perm_id' => $permId, 'group_id' => $groupId]);
+	}
+
+	/**
+	 * Deletes by Perm Id and Group Id
+	 *
+	 * @param integer $permId  Perm Id
+	 * @param integer $groupId Group Id
+	 *
+	 * @return boolean
+	 */
+	public function delete(int $permId, int $groupId)
+	{
+		$builder = $this->builder();
+		$builder->where('perm_id', $permId);
+		$builder->where('group_id', $groupId);
+
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -217,9 +230,8 @@ class PermToGroupModel
 	{
 		$builder = $this->builder();
 		$builder->where('perm_id', $permId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -233,9 +245,8 @@ class PermToGroupModel
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**

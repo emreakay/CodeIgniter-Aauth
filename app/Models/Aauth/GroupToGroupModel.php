@@ -156,9 +156,7 @@ class GroupToGroupModel
 		$data['group_id']    = $groupId;
 		$data['subgroup_id'] = $subgroupId;
 
-		$builder->insert($data);
-
-		return true;
+		return (bool) $builder->insert($data)->resultID;
 	}
 
 	/**
@@ -174,9 +172,8 @@ class GroupToGroupModel
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
 		$builder->where('subgroup_id', $subgroupId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -190,9 +187,8 @@ class GroupToGroupModel
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -206,9 +202,8 @@ class GroupToGroupModel
 	{
 		$builder = $this->builder();
 		$builder->where('subgroup_id', $subgroupId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**

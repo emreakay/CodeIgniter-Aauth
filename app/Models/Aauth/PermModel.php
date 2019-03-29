@@ -103,7 +103,7 @@ class PermModel extends Model
 	 *
 	 * @param string $name Perm name
 	 *
-	 * @return boolean
+	 * @return string|boolean
 	 */
 	public function getByName(string $name)
 	{

@@ -92,10 +92,10 @@ class PermToUserModel
 	}
 
 	/**
-	 * Get all Perm Ids by User Id
+	 * Get all Perm Ids by User Id and optional State
 	 *
 	 * @param integer      $userId User Id
-	 * @param integer|null $state  State (0 = denied, 1 = allowed)
+	 * @param integer|null $state  Optional State (0 = denied, 1 = allowed)
 	 *
 	 * @return array|null
 	 */
@@ -194,16 +194,29 @@ class PermToUserModel
 			$data['user_id'] = $userId;
 			$data['state']   = $state;
 
-			$builder->insert($data);
-		}
-		else
-		{
-			$data['state'] = $state;
-
-			$builder->update($data, ['perm_id' => $permId, 'user_id' => $userId]);
+			return $builder->insert($data)->resultID;
 		}
 
-		return true;
+		$data['state'] = $state;
+
+		return $builder->update($data, ['perm_id' => $permId, 'user_id' => $userId]);
+	}
+
+	/**
+	 * Deletes by Perm Id and User Id
+	 *
+	 * @param integer $permId Perm Id
+	 * @param integer $userId User Id
+	 *
+	 * @return boolean
+	 */
+	public function delete(int $permId, int $userId)
+	{
+		$builder = $this->builder();
+		$builder->where('perm_id', $permId);
+		$builder->where('user_id', $userId);
+
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -217,9 +230,8 @@ class PermToUserModel
 	{
 		$builder = $this->builder();
 		$builder->where('perm_id', $permId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -233,9 +245,8 @@ class PermToUserModel
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**

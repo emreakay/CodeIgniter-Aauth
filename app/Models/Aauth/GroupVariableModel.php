@@ -205,9 +205,7 @@ class GroupVariableModel
 		$data['created_at'] = date('Y-m-d H:i:s');
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
-		$builder->insert($data);
-
-		return true;
+		return $builder->insert($data)->resultID;
 	}
 
 	/**
@@ -248,9 +246,8 @@ class GroupVariableModel
 		$builder->where('group_id', $groupId);
 		$builder->where('data_key', $dataKey);
 		$builder->where('system', ($system ? 1 : 0));
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -264,9 +261,8 @@ class GroupVariableModel
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	//--------------------------------------------------------------------

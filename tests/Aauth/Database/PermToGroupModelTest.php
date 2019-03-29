@@ -90,6 +90,21 @@ class PermToGroupModelTest extends CIDatabaseTestCase
 		$this->assertCount(1, $permToGroups);
 	}
 
+	public function testDelete()
+	{
+		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+			'perm_id'  => 99,
+			'group_id' => 99,
+		]);
+		$criteria = [
+			'perm_id'  => 99,
+			'group_id' => 99,
+		];
+		$this->seeNumRecords(1, $this->config->dbTablePermToGroup, $criteria);
+		$this->model->delete(99, 99);
+		$this->seeNumRecords(0, $this->config->dbTablePermToGroup, $criteria);
+	}
+
 	public function testDeleteAllByPermId()
 	{
 		$this->hasInDatabase($this->config->dbTablePermToGroup, [

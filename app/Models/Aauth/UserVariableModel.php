@@ -142,7 +142,7 @@ class UserVariableModel
 	 * @param integer $userId User id
 	 * @param boolean $system Whether system variable
 	 *
-	 * @return object
+	 * @return array
 	 */
 	public function findAll(int $userId, bool $system = null)
 	{
@@ -163,7 +163,7 @@ class UserVariableModel
 	 * @param string  $dataValue Value of variable
 	 * @param boolean $system    Whether system variable
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function save(int $userId, string $dataKey, string $dataValue, bool $system = null)
 	{
@@ -174,14 +174,10 @@ class UserVariableModel
 
 		if ($builder->countAllResults())
 		{
-			$response = $this->update($userId, $dataKey, $dataValue, $system);
-		}
-		else
-		{
-			$response = $this->insert($userId, $dataKey, $dataValue, $system);
+			return $this->update($userId, $dataKey, $dataValue, $system);
 		}
 
-		return $response;
+		return $this->insert($userId, $dataKey, $dataValue, $system);
 	}
 
 	/**
@@ -205,9 +201,7 @@ class UserVariableModel
 		$data['created_at'] = date('Y-m-d H:i:s');
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
-		$builder->insert($data);
-
-		return true;
+		return $builder->insert($data)->resultID;
 	}
 
 	/**
@@ -248,9 +242,8 @@ class UserVariableModel
 		$builder->where('user_id', $userId);
 		$builder->where('data_key', $dataKey);
 		$builder->where('system', ($system ? 1 : 0));
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -264,9 +257,8 @@ class UserVariableModel
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	//--------------------------------------------------------------------

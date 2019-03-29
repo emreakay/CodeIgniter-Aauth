@@ -18,8 +18,6 @@
 
 namespace App\Libraries\Aauth;
 
-use \App\Models\Aauth\UserVariableModel;
-
 use OTPHP\TOTP as OTPHP_TOTP;
 
 /**
@@ -46,7 +44,7 @@ class TOTP extends \App\Libraries\Aauth
 			$userId = (int) @$this->session->user['id'];
 		}
 
-		$userVariableModel = new UserVariableModel();
+		$userVariableModel = $this->getModel('UserVariable');
 
 		return $userVariableModel->save($userId, 'totp_secret', $secret, true);
 	}
@@ -60,7 +58,7 @@ class TOTP extends \App\Libraries\Aauth
 	{
 		$endSecret = false;
 
-		$userVariableModel = new UserVariableModel();
+		$userVariableModel = $this->getModel('UserVariable');
 
 		while (! $endSecret)
 		{
@@ -81,6 +79,7 @@ class TOTP extends \App\Libraries\Aauth
 	 * Generate TOTP QR Code URI by Secret
 	 *
 	 * @param string $secret Secret Key
+	 * @param string $label  Label
 	 *
 	 * @return string
 	 */
@@ -107,7 +106,7 @@ class TOTP extends \App\Libraries\Aauth
 			$userId = (int) @$this->session->user['id'];
 		}
 
-		$userVariableModel = new UserVariableModel();
+		$userVariableModel = $this->getModel('UserVariable');
 
 		if ($totpSecret = $userVariableModel->find($userId, 'totp_secret', true))
 		{

@@ -10,3 +10,11 @@ indent_style = tab
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+
+[*.rst]
+indent_style = space
+charset = utf-8
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true

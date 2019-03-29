@@ -137,6 +137,7 @@ class GroupToUserModel
 
 		$builder->where('group_id', $groupId);
 		$builder->where('user_id', $userId);
+
 		return ($builder->countAllResults() ? true : false);
 	}
 
@@ -155,9 +156,7 @@ class GroupToUserModel
 		$data['group_id'] = $groupId;
 		$data['user_id']  = $userId;
 
-		$builder->insert($data);
-
-		return true;
+		return (bool) $builder->insert($data)->resultID;
 	}
 
 	/**
@@ -173,9 +172,8 @@ class GroupToUserModel
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
 		$builder->where('user_id', $userId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -189,9 +187,8 @@ class GroupToUserModel
 	{
 		$builder = $this->builder();
 		$builder->where('group_id', $groupId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -205,9 +202,8 @@ class GroupToUserModel
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**

@@ -38,6 +38,10 @@ class Aauth extends BaseConfig
 	|
 	|	If user don't have permission to see the page he will be redirected
 	|	the page specified.
+	|	Available Options:
+	|       - false (control() returns booleans)
+	|       - 'error' (control() throws an error)
+	|       - any uri/url string (control() redirect to set value)
 	|	(default: false)
 	|
 	| 'linkResetPassword'

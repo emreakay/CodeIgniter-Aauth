@@ -54,7 +54,7 @@ class Migration_create_perm_to_group extends Migration
 				'default'    => 1,
 			],
 		]);
-		$this->forge->addKey(['perm_id', 'user_id'], true);
+		$this->forge->addKey(['perm_id', 'group_id'], true);
 		$this->forge->createTable($config->dbTablePermToGroup, true);
 	}
 

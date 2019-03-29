@@ -90,6 +90,21 @@ class PermToUserModelTest extends CIDatabaseTestCase
 		$this->assertCount(1, $permToUsers);
 	}
 
+	public function testDelete()
+	{
+		$this->hasInDatabase($this->config->dbTablePermToUser, [
+			'perm_id' => 99,
+			'user_id' => 99,
+		]);
+		$criteria = [
+			'perm_id' => 99,
+			'user_id' => 99,
+		];
+		$this->seeNumRecords(1, $this->config->dbTablePermToUser, $criteria);
+		$this->model->delete(99, 99);
+		$this->seeNumRecords(0, $this->config->dbTablePermToUser, $criteria);
+	}
+
 	public function testDeleteAllByPermId()
 	{
 		$this->hasInDatabase($this->config->dbTablePermToUser, [

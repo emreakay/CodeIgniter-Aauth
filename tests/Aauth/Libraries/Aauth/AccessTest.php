@@ -98,6 +98,8 @@ class AccessTest extends CIDatabaseTestCase
 			'loggedIn' => true,
 		]);
 		$this->assertTrue($this->library->isMember($config->groupDefault));
+
+		$this->assertFalse($this->library->isMember('not_existing_group'));
 		$session->remove('user');
 	}
 
@@ -168,11 +170,106 @@ class AccessTest extends CIDatabaseTestCase
 			'loggedIn'      => true,
 			'totp_required' => true,
 		]);
-		$this->assertTrue($this->library->isAllowed('testPerm1') instanceof \CodeIgniter\HTTP\RedirectResponse);
+
+		$this->assertTrue($this->library->isAllowed('testPerm1') instanceof \Tests\Support\HTTP\MockResponse);
 		$session->remove('user');
 
 		$this->assertFalse($this->library->isAllowed('testPerm99', 2));
 		$this->assertFalse($this->library->isAllowed('testPerm1', 99));
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
+	public function testControl()
+	{
+		$config = new AauthConfig();
+		$this->hasInDatabase($config->dbTablePerms, [
+			'id'         => 1,
+			'name'       => 'testPerm1',
+			'definition' => 'Test Perm 1',
+		]);
+
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
+
+		$session->set('user', [
+			'id'       => 1,
+			'loggedIn' => true,
+		]);
+		$this->assertTrue($this->library->control('testPerm1'));
+		$session->remove('user');
+
+		$config->linkNoPermission = '/noAccess';
+		$session                  = $this->getInstance();
+		$this->library            = new Aauth($config, $session);
+		$session->set('user', [
+			'id'       => 2,
+			'loggedIn' => true,
+		]);
+		$this->assertTrue($this->library->control('testPerm1') instanceof \Tests\Support\HTTP\MockResponse);
+		$session->remove('user');
+
+		$session             = $this->getInstance();
+		$config->totpEnabled = true;
+		$this->library       = new Aauth($config, $session);
+		$session->set('user', [
+			'id'            => 2,
+			'loggedIn'      => true,
+			'totp_required' => true,
+		]);
+
+		$this->assertTrue($this->library->control('testPerm1') instanceof \Tests\Support\HTTP\MockResponse);
+		$session->remove('user');
+
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
+		$this->assertFalse($this->library->control('testPerm1'));
+		$this->assertFalse($this->library->control());
+
+		$config                   = new AauthConfig();
+		$config->linkNoPermission = '/noAccess';
+		$this->library            = new Aauth($config, $session);
+		$this->assertTrue($this->library->control() instanceof \Tests\Support\HTTP\MockResponse);
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
+	public function testControlErrorNoPerm($value = '')
+	{
+		$session = $this->getInstance();
+		$config  = new AauthConfig();
+
+		$config->linkNoPermission = 'error';
+
+		$this->library = new Aauth($config, $session);
+		$this->expectException('ErrorException');
+		$this->assertFalse($this->library->control());
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState  disabled
+	 */
+	public function testControlErrorPermDenied($value = '')
+	{
+		$session = $this->getInstance();
+		$config  = new AauthConfig();
+
+		$this->hasInDatabase($config->dbTablePerms, [
+			'id'         => 1,
+			'name'       => 'testPerm1',
+			'definition' => 'Test Perm 1',
+		]);
+
+		$config->linkNoPermission = 'error';
+
+		$this->library = new Aauth($config, $session);
+		$this->expectException('ErrorException');
+		$this->assertFalse($this->library->control('testPerm1'));
 	}
 
 	/**

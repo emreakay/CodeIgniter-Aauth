@@ -65,6 +65,20 @@ if (! function_exists('is_allowed'))
 	}
 }
 
+if (! function_exists('is_denied'))
+{
+	/**
+	 * Is denied
+	 *
+	 * @return boolean
+	 */
+	function is_denied($permPar, $userId)
+	{
+		$aauth = new Aauth();
+		return $aauth->isDenied($permPar, $userId);
+	}
+}
+
 if (! function_exists('get_subgroups'))
 {
 	/**

@@ -92,7 +92,7 @@ class LoginTokenModel
 	}
 
 	/**
-	 * Get all Login Tokens by User ID
+	 * Find all Login Tokens by User ID
 	 *
 	 * @param integer $userId User id
 	 *
@@ -108,7 +108,7 @@ class LoginTokenModel
 	}
 
 	/**
-	 * Updates Login Token
+	 * Insert Login Token
 	 *
 	 * @param array $data Array with data
 	 *
@@ -122,17 +122,15 @@ class LoginTokenModel
 		$data['expires_at'] = date('Y-m-d H:i:s', strtotime($this->config->loginRemember));
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
-		$builder->insert($data);
-
-		return true;
+		return $builder->insert($data)->resultID;
 	}
 
 	/**
-	 * Updates Login Token by tokenId
+	 * Update Login Token by tokenId
 	 *
 	 * @param integer $tokenId Login Token id
 	 *
-	 * @return BaseBuilder
+	 * @return boolean
 	 */
 	public function update(int $tokenId)
 	{
@@ -157,9 +155,8 @@ class LoginTokenModel
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
 		$builder->where('expires_at <', date('Y-m-d H:i:s'));
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**
@@ -173,9 +170,8 @@ class LoginTokenModel
 	{
 		$builder = $this->builder();
 		$builder->where('user_id', $userId);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	/**

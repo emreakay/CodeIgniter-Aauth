@@ -110,10 +110,7 @@ class UserSessionModel
 	/**
 	 * Find all active user sessions
 	 *
-	 * @param integer $userId User id
-	 * @param boolean $system Whether system variable
-	 *
-	 * @return object
+	 * @return array
 	 */
 	public function findAll()
 	{
@@ -128,17 +125,16 @@ class UserSessionModel
 	/**
 	 * Delete User Session
 	 *
-	 * @param integer $id Session id
+	 * @param string $id Session id
 	 *
 	 * @return boolean
 	 */
-	public function delete($id)
+	public function delete(string $id)
 	{
 		$builder = $this->builder();
 		$builder->where('id', $id);
-		$builder->delete();
 
-		return true;
+		return $builder->delete()->resultID;
 	}
 
 	//--------------------------------------------------------------------
@@ -148,7 +144,7 @@ class UserSessionModel
 	/**
 	 * Sets the return type of the results to be as an associative array.
 	 *
-	 * @return Model
+	 * @return UserSessionModel
 	 */
 	public function asArray()
 	{
@@ -165,7 +161,7 @@ class UserSessionModel
 	 *
 	 * @param string $class Class
 	 *
-	 * @return Model
+	 * @return UserSessionModel
 	 */
 	public function asObject(string $class = 'object')
 	{
@@ -220,7 +216,7 @@ class UserSessionModel
 	 * @param string $name   Name
 	 * @param array  $params Params
 	 *
-	 * @return Model|null
+	 * @return UserSessionModel|null
 	 */
 	public function __call(string $name, array $params)
 	{
