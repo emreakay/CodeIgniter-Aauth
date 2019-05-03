@@ -35,11 +35,11 @@ New packages list:
     - Models
         - \\ Aauth
             - \\ GroupModel, LoginAttemptModel, PermToUserModel, GroupToGroupModel, LoginTokenModel,
-            UserModel, GroupToUserModel, PermModel, UserSessionModel, GroupVariableModel, PermToGroupModel,
-            UserVariableModel
+                UserModel, GroupToUserModel, PermModel, UserSessionModel, GroupVariableModel, PermToGroupModel,
+                UserVariableModel
     - Views
         - \\ Home
-        — \\ Aauth
+        - \\ Aauth
             - \\ RemindPassword, ResetPassword, Verification
         - \\ Account
             - \\ Edit, Register, Verification, Home, RemindPassword, Login, ResetPassword

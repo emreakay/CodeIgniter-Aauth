@@ -6,7 +6,6 @@ All changes inside the Aauth Config
 
 .. contents::
     :local:
-    :depth: 2
 
 Link Variables
 ==============
@@ -19,6 +18,7 @@ Available Options:
     - false (control() returns booleans)
     - 'error' (control() throws an error)
     - any uri/url string (control() redirect to set value)
+
 .. note:: Default value: false
 
 

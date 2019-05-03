@@ -25,8 +25,8 @@ What's Added?
   - setGroupVar()
   - unsetGroupVar()
   - getGroupVar()
-  - getGroupVars()
-  - listGroupVarKeys()
+  - listGroupVars()
+  - getGroupVarKeys()
   - getModel()
   - __call()
 
@@ -69,8 +69,8 @@ What's Renamed?
   - set_user_var() => setUserVar()
   - unset_user_var() => unsetUserVar()
   - get_user_var() => getUserVar()
-  - get_user_vars() => getUserVars()
-  - list_user_var_keys() => listUserVarKeys()
+  - get_user_vars() => listUserVars()
+  - list_user_var_keys() => getUserVarKeys()
 
   - create_group() => createGroup()
   - update_group() => updateGroup()

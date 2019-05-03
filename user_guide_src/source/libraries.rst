@@ -245,7 +245,7 @@ Class Reference
         :returns: Variable value if success, FALSE if failed
         :rtype: boolean|string
 
-    .. php:method:: getUserVars([int $userId = null])
+    .. php:method:: listUserVars([int $userId = null])
 
         Get all user keys & variables
 
@@ -253,12 +253,12 @@ Class Reference
         :returns: Array of User variables if success, FALSE if failed
         :rtype: boolean|array
 
-    .. php:method:: listUserVarKeys([int $userId = null])
+    .. php:method:: getUserVarKeys([int $userId = null])
 
         Get all User Variable Keys by UserId
 
         :param  integer  $userId: User id
-        :returns; Array of User variable keys if success, FALSE if failed
+        :returns: Array of User variable keys if success, FALSE if failed
         :rtype: boolean|array
 
     .. php:method:: createGroup(string $name[, string $definition = ''])
@@ -385,9 +385,9 @@ Class Reference
 
     .. php:method:: getGroupName($groupPar)
 
-        :param  string|integer $groupPar: Group name or id
         Get Group name
 
+        :param  string|integer $groupPar: Group name or id
         :returns: Group name or FALSE if group not found
         :rtype: boolean|string
 
@@ -453,7 +453,7 @@ Class Reference
         :returns: Variable value if success, FALSE if failed
         :rtype: boolean|string
 
-    .. php:method:: getGroupVars([int $groupPar = null])
+    .. php:method:: listGroupVars([int $groupPar = null])
 
         Get all Group Variables
 
@@ -461,12 +461,12 @@ Class Reference
         :returns: Array of Group variables if success, FALSE if failed
         :rtype: boolean|array
 
-    .. php:method:: listGroupVarKeys([int $groupPar = null])
+    .. php:method:: getGroupVarKeys([int $groupPar = null])
 
         List Group Variable Keys
 
         :param  string|integer $groupPar: Group name or id
-        :returns; Array of Group variable keys if success, FALSE if failed
+        :returns: Array of Group variable keys if success, FALSE if failed
         :rtype: boolean|array
 
     .. php:method:: createPerm(string $name[, string $definition = ''])

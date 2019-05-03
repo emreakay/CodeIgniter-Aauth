@@ -7,4 +7,4 @@ Extensions
 
     captcha
     totp
-    oauth2
+    social
