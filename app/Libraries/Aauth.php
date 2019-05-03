@@ -131,6 +131,10 @@ class Aauth
 		if ($this->config->totpEnabled)
 		{
 			$this->modules = array_merge($this->config->modules, ['TOTP']);
+
+		if ($this->config->socialEnabled)
+		{
+			$this->modules = array_merge($this->modules, ['Social']);
 		}
 
 		$this->cachePermIds  = [];
@@ -378,23 +382,7 @@ class Aauth
 
 			if ($remember)
 			{
-				helper('text');
-				$expire         = $this->config->loginRemember;
-				$userId         = base64_encode($user['id']);
-				$randomString   = random_string('alnum', 32);
-				$selectorString = random_string('alnum', 16);
-
-				$cookieData['name']   = $this->config->loginRememberCookie;
-				$cookieData['value']  = $userId . ';' . $randomString . ';' . $selectorString;
-				$cookieData['expire'] = YEAR;
-
-				$tokenData['user_id']       = $user['id'];
-				$tokenData['random_hash']   = password_hash($randomString, PASSWORD_DEFAULT);
-				$tokenData['selector_hash'] = password_hash($selectorString, PASSWORD_DEFAULT);
-				$tokenData['expires_at']    = date('Y-m-d H:i:s', strtotime($expire));
-
-				set_cookie($cookieData);
-				$loginTokenModel->insert($tokenData);
+				$this->generateRemember($user['id']);
 			}
 
 			$userModel->updateLastLogin($user['id']);
@@ -426,6 +414,43 @@ class Aauth
 
 			return false;
 		}
+	}
+
+	/**
+	 * Generate Remember
+	 *
+	 * @param integer        $userId User Id
+	 * @param string|integer $expire Expire Date, relative Date or Timestamp
+	 *
+	 * @return void
+	 */
+	protected function generateRemember(int $userId, string $expire = null)
+	{
+		helper('cookie');
+		helper('text');
+
+		if (! $expire)
+		{
+			$expire = $this->config->loginRemember;
+		}
+
+		$userIdEncoded  = base64_encode($userId);
+		$randomString   = random_string('alnum', 32);
+		$selectorString = random_string('alnum', 16);
+
+		$cookieData['name']   = $this->config->loginRememberCookie;
+		$cookieData['value']  = $userIdEncoded . ';' . $randomString . ';' . $selectorString;
+		$cookieData['expire'] = YEAR;
+
+		\Config\Services::response()->setCookie($cookieData)->send();
+
+		$tokenData['user_id']       = $userId;
+		$tokenData['random_hash']   = password_hash($randomString, PASSWORD_DEFAULT);
+		$tokenData['selector_hash'] = password_hash($selectorString, PASSWORD_DEFAULT);
+		$tokenData['expires_at']    = date('Y-m-d H:i:s', strtotime($expire));
+
+		$loginTokenModel = $this->getModel('LoginToken');
+		$loginTokenModel->insert($tokenData);
 	}
 
 	/**
@@ -514,6 +539,11 @@ class Aauth
 						if (strtotime($loginToken['expires_at']) > strtotime('now'))
 						{
 							$loginTokenModel->update($loginToken['id']);
+
+							if ($this->config->socialEnabled && $this->config->socialRemember)
+							{
+								$this->rebuildSocialStorage($loginToken['user_id']);
+							}
 
 							return $this->loginFast($loginToken['user_id']);
 						}

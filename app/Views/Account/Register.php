@@ -34,6 +34,12 @@
 			<p class="small">* <?=lang('Account.registerRequired')?></p>
 					<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.registerLabelSubmit')?></button>
 		<?= form_close() ?>
+		<?php if (isset($providers)): ?>
+			  <div class="text-center">&mdash;</div>
+			<?php foreach ($providers as $provider): ?>
+					<a href="<?= site_url('/account/social/register/' . $provider) ?>" class="btn btn-info btn-block"><?=lang('Account.registerLabelSocial') . $provider ?></a>
+					<?php endforeach; ?>
+				<?php endif; ?>
 	  </div>
 	  <div class="card-footer">
 				<div class="row">

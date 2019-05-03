@@ -36,6 +36,12 @@
 		  </div>
 					<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.loginLabelSubmit')?></button>
 		<?= form_close() ?>
+		<?php if ($providers): ?>
+			  <div class="text-center">&mdash;</div>
+			<?php foreach ($providers as $provider): ?>
+					<a href="<?= site_url('account/social/login/' . $provider) ?>" class="btn btn-info btn-block" type="submit"><?=lang('Account.loginLabelSocial') . $provider?></a>
+		<?php endforeach; ?>
+		<?php endif; ?>
 	  </div>
 	  <div class="card-footer">
 				<div class="row">

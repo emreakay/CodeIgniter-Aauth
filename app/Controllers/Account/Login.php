@@ -71,6 +71,11 @@ class Login extends Controller
 			'/assets/css/login.css'
 		];
 
+		if ($this->config->socialEnabled)
+		{
+			$data['providers'] = $this->aauth->getProviders();
+		}
+
 		echo view('Account/Login', $data);
 	}
 }

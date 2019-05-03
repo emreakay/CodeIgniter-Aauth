@@ -28,12 +28,15 @@ return [
    'homeText'                           => 'Account Details',
    'homeLabelUsername'                  => 'Username',
    'homeLabelEmail'                     => 'Email address',
+   'homeLabelSocial'                    => 'Connected Social Accounts',
 
    'editHeader'                         => 'Edit Profile',
    'editLabelUsername'                  => 'Username',
    'editLabelEmail'                     => 'Email address',
    'editLabelPassword'                  => 'Password',
    'editLabelSubmit'                    => 'Save changes',
+   'editLabelSocialConnect'             => 'Connect with ',
+   'editLabelSocialDisconnect'          => 'Disconnect with ',
 
    'linkBackToLogin'                    => 'Back to Login',
    'linkLogin'                          => 'Login',
@@ -46,6 +49,7 @@ return [
    'loginLabelPassword'                 => 'Password',
    'loginLabelRemember'                 => 'Remember me',
    'loginLabelSubmit'                   => 'Login',
+   'loginLabelSocial'                   => 'Login with ',
 
    'registerHeader'                     => 'Create new Account',
    'registerLabelUsername'              => 'Username',
@@ -53,6 +57,7 @@ return [
    'registerLabelPassword'              => 'Password',
    'registerLabelRemember'              => 'Remember me',
    'registerLabelSubmit'                => 'Create Account',
+   'registerLabelSocial'                => 'Create Account with ',
    'registerRequired'                   => 'Required',
 
    'verificationHeader'                 => 'Account Verification',

@@ -53,6 +53,16 @@ class Home extends Controller
 	{
 		$data['user'] = $this->aauth->getUser();
 
+		if ($this->config->socialEnabled)
+		{
+			$data['providers'] = [];
+
+			foreach ($this->aauth->getProviders() as $provider)
+			{
+				$data['providers'][$provider] = $this->aauth->getSocialIdentifier($provider, $data['user']['id']);
+			}
+		}
+
 		echo view('Account/Home', $data);
 	}
 }

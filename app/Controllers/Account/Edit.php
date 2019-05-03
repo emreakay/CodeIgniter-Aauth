@@ -85,6 +85,16 @@ class Edit extends Controller
 			}
 		}
 
+		if ($this->config->socialEnabled)
+		{
+			$data['providers'] = [];
+
+			foreach ($this->aauth->getProviders() as $provider)
+			{
+				$data['providers'][$provider] = $this->aauth->getSocialIdentifier($provider, $userId);
+			}
+		}
+
 		$data['useUsername'] = $this->config->loginUseUsername;
 
 		echo view('Account/Edit', $data);

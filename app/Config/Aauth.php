@@ -294,6 +294,49 @@ class Aauth extends BaseConfig
 
 	/*
 	|--------------------------------------------------------------------------
+	| Social Login Variables
+	|--------------------------------------------------------------------------
+	|
+	| 'socialEnabled'
+	|
+	|	Enables the oAuth2 functionalities to login or createUser trough social
+	|	logins like google, facebook, twitter, github and many more.
+	|	(default: false)
+	|
+	| 'socialRemeber'
+	|
+	|	Remember social login user.
+	|	Available Options:
+	|	 - false (disabled)
+	|	 - true (use social expires date)
+	|	 - Relative date format (e.g. '+ 1 week', '+ 1 month') for details
+	|		  see http://php.net/manual/de/datetime.formats.relative.php
+	|	(default: true)
+	|
+	| 'socialProviders'
+	|
+	|	Social Provider list
+	|	(default: [])
+	|
+	*/
+	public $socialEnabled   = false;
+	public $socialRemember  = true;
+	public $socialProviders = [];
+
+	// public $socialEnabled   = true;
+	// public $socialRemember  = true;
+	// public $socialProviders = [
+	// 	'Facebook' => [
+	// 		'enabled' => true,
+	// 		'keys'    => [
+	// 			'id'     => '307655649901891',
+	// 			'secret' => 'fb814dea3a38d36aa66222efab35c337',
+	// 		],
+	// 	],
+	// ];
+
+	/*
+	|--------------------------------------------------------------------------
 	| Group Variables
 	|--------------------------------------------------------------------------
 	|

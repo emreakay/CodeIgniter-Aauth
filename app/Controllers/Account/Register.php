@@ -74,6 +74,11 @@ class Register extends Controller
 			'/assets/css/login.css'
 		];
 
+		if ($this->config->socialEnabled)
+		{
+			$data['providers'] = $this->aauth->getProviders();
+		}
+
 		echo view('Account/Register', $data);
 	}
 }

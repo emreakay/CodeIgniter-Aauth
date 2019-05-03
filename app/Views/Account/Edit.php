@@ -31,6 +31,16 @@
 		</div>
 				<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.editLabelSubmit')?></button>
 		<?= form_close() ?>
+		<?php if (isset($providers)): ?>
+			  <div class="text-center">&mdash;</div>
+			<?php foreach ($providers as $provider => $state): ?>
+				<?php if ($state === false): ?>
+							<a href="<?= site_url('/account/social/connect/' . $provider) ?>" class="btn btn-secondary btn-block"><?=lang('Account.editLabelSocialConnect') . $provider ?></a>
+						<?php else: ?>
+							<a href="<?= site_url('/account/social/disconnect/' . $provider) ?>" class="btn btn-warning btn-block"><?=lang('Account.editLabelSocialDisconnect') . $provider ?></a>
+						<?php endif; ?>
+					<?php endforeach; ?>
+				<?php endif; ?>
 	</div>
   </div>
 <?= $this->endSection() ?>
