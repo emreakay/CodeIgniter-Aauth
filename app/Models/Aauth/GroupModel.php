@@ -8,17 +8,19 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @since     3.0.0
  */
 
 namespace App\Models\Aauth;
 
 use CodeIgniter\Model;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
 use Config\Aauth as AauthConfig;
 
 /**
@@ -51,8 +53,12 @@ class GroupModel extends Model
 
 	/**
 	 * Constructor
+	 *
+	 * @param ConnectionInterface $db         Connection Interface
+	 * @param ValidationInterface $validation Validation Interface
+	 * @param \Config\Aauth       $config     Config Object
 	 */
-	public function __construct($db = null, $validation = null, $config = null)
+	public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null, \Config\Aauth $config = null)
 	{
 		if (is_null($config))
 		{

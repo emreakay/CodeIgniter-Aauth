@@ -8,12 +8,12 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @since     3.0.0
  */
 
 namespace App\Models\Aauth;

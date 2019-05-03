@@ -8,12 +8,12 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @since     3.0.0
  */
 
 namespace App\Models\Aauth;
@@ -74,11 +74,11 @@ class LoginAttemptModel
 	/**
 	 * Constructor
 	 *
-	 * @param ConnectionInterface $db Database connection
-	 *
-	 * @return void
+	 * @param ConnectionInterface        $db       Database connection
+	 * @param \Config\Aauth              $config   Config Object
+	 * @param \CodeIgniter\HTTP\Response $response Response Class
 	 */
-	public function __construct(ConnectionInterface &$db = null, $config = null, $response = null)
+	public function __construct(ConnectionInterface &$db = null, \Config\Aauth $config = null, \CodeIgniter\HTTP\Response $response = null)
 	{
 		if (is_null($config))
 		{

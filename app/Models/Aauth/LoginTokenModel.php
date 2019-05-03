@@ -8,12 +8,12 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @since     3.0.0
  */
 
 namespace App\Models\Aauth;
@@ -128,16 +128,17 @@ class LoginTokenModel
 	/**
 	 * Update Login Token by tokenId
 	 *
-	 * @param integer $tokenId Login Token id
+	 * @param integer $tokenId   Login Token id
+	 * @param string  $expiresAt Custom expires at date
 	 *
 	 * @return boolean
 	 */
-	public function update(int $tokenId)
+	public function update(int $tokenId, string $expiresAt = null)
 	{
 		$builder = $this->builder();
 		$builder->where('id', $tokenId);
 
-		$data['expires_at'] = date('Y-m-d H:i:s', strtotime($this->config->loginRemember));
+		$data['expires_at'] = date('Y-m-d H:i:s', strtotime($expiresAt ?: $this->config->loginRemember));
 		$data['updated_at'] = date('Y-m-d H:i:s');
 
 		return $builder->set($data)->update();
