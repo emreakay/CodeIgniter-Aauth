@@ -26,6 +26,7 @@
             <file>./app/Libraries/Aauth.php</file>
             <file>./app/Libraries/Aauth/CAPTCHA.php</file>
             <file>./app/Libraries/Aauth/TOTP.php</file>
+            <file>./app/Libraries/Aauth/Social.php</file>
         </whitelist>
     </filter>
 
