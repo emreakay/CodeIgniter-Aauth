@@ -39,9 +39,9 @@ class Aauth extends BaseConfig
 	|	If user don't have permission to see the page he will be redirected
 	|	the page specified.
 	|	Available Options:
-	|       - false (control() returns booleans)
-	|       - 'error' (control() throws an error)
-	|       - any uri/url string (control() redirect to set value)
+	|	 - false (control() returns booleans)
+	|	 - 'error' (control() throws an error)
+	|	 - any uri/url string (control() redirect to set value)
 	|	(default: false)
 	|
 	| 'linkResetPassword'
@@ -78,6 +78,7 @@ class Aauth extends BaseConfig
 	|
 	|	Regex pattern for valid chars for username
 	|	(default: '^[a-zA-Z0-9]{3,}$')
+	|
 	*/
 	public $userActiveTime   = '5 minutes';
 	public $userVerification = false;
@@ -90,25 +91,26 @@ class Aauth extends BaseConfig
 	|
 	| 'passwordMin'
 	|
-	|    Password min char length
-	|    (default: 8)
+	|	Password min char length
+	|	(default: 8)
 	|
 	| 'passwordMax'
 	|
 	|	Password max char length
-	|    (default: 32)
+	|	(default: 32)
 	|
 	| 'passwordHashAlgo'
 	|
 	|	password_hash algorithm (PASSWORD_DEFAULT, PASSWORD_BCRYPT)
-	|    for details see http://php.net/manual/de/password.constants.php
-	|    (default: PASSWORD_DEFAULT)
+	|	for details see http://php.net/manual/de/password.constants.php
+	|	(default: PASSWORD_DEFAULT)
 	|
 	| 'passwordHashOptions'
 	|
 	|	password_hash options array
-	|    for details see http://php.net/manual/en/function.password-hash.php
-	|    (default: [])
+	|	for details see http://php.net/manual/en/function.password-hash.php
+	|	(default: [])
+	|
 	*/
 	public $passwordMin         = 8;
 	public $passwordMax         = 32;
@@ -173,6 +175,7 @@ class Aauth extends BaseConfig
 	|
 	|	Enables removing login attempt after successful login
 	|	(default: true)
+	|
 	*/
 	public $loginRemember                = '+14 days';
 	public $loginRememberCookie          = 'remember';
@@ -206,6 +209,7 @@ class Aauth extends BaseConfig
 	|
 	|	Array of Config for CI's Email Library
 	|	(default: [])
+	|
 	*/
 	public $emailFrom     = 'sys@xpresspaper.eu';
 	public $emailFromName = 'Aauth v3';
@@ -240,6 +244,7 @@ class Aauth extends BaseConfig
 	|
 	|	Redirect path to TOTP Verification page
 	|	(default: '/account/twofactor_verification/index')
+	|
 	*/
 	public $totpEnabled       = false;
 	public $totpOnIpChange    = false;
@@ -261,8 +266,8 @@ class Aauth extends BaseConfig
 	|
 	|	CAPTCHA Types
 	|	Available Options:
-	|       - 'recaptcha' (for details see https://www.google.com/captcha/admin)
-	|       - 'hcaptcha' (for details see https://hcaptcha.com/docs)
+	|	 - 'recaptcha' (for details see https://www.google.com/captcha/admin)
+	|	 - 'hcaptcha' (for details see https://hcaptcha.com/docs)
 	|	(default: 'recaptcha')
 	|
 	| 'captchaLoginAttempts'
@@ -279,6 +284,7 @@ class Aauth extends BaseConfig
 	|
 	|	The CAPTCHA secretKey
 	|	(default: '')
+	|
 	*/
 	public $captchaEnabled       = false;
 	public $captchaType          = 'recaptcha';
@@ -293,18 +299,19 @@ class Aauth extends BaseConfig
 	|
 	| 'groupAdmin'
 	|
-	|    Name of admin group
-	|    (default: 'admin')
+	|	Name of admin group
+	|	(default: 'admin')
 	|
 	| 'groupDefault'
 	|
-	|    Name of default group, the new user is added in it
-	|    (default: 'default')
+	|	Name of default group, the new user is added in it
+	|	(default: 'default')
 	|
 	| 'groupPublic'
 	|
-	|    Name of Public group , people who not logged in
-	|    (default: 'public')
+	|	Name of Public group , people who not logged in
+	|	(default: 'public')
+	|
 	*/
 	public $groupAdmin   = 'admin';
 	public $groupDefault = 'default';
@@ -317,8 +324,8 @@ class Aauth extends BaseConfig
 	|
 	| 'modules'
 	|
-	|    Array of active modules
-	|    (default: [])
+	|	Array of active modules
+	|	(default: [])
 	|
 	*/
 	public $modules = [];
@@ -330,95 +337,96 @@ class Aauth extends BaseConfig
 	|
 	| 'dbProfile'
 	|
-	|    The configuration database profile (defined in Config/Database.php)
-	|    (default: 'default')
+	|	The configuration database profile (defined in Config/Database.php)
+	|	(default: 'default')
 	|
 	| 'dbReturnType'
 	|
-	|    The format that the results should be returned as, for any get* &
-	|    list* function. (e.g. getUser, listUsers, ...).
-	|    Available types:
-	|       - array
-	|       - object
-	|    (default: 'array')
+	|	The format that the results should be returned as, for any get* &
+	|	list* function. (e.g. getUser, listUsers, ...).
+	|	Available types:
+	|	 - array
+	|	 - object
+	|	(default: 'array')
 	|
 	| 'dbTableUsers'
 	|
-	|    The table which contains users
-	|    (default: 'aauth_users')
+	|	The table which contains users
+	|	(default: 'aauth_users')
 	|
 	| 'dbTableUserSessions'
 	|
-	|    The table which contains user sessions
-	|    (default: 'aauth_user_sessions')
+	|	The table which contains user sessions
+	|	(default: 'aauth_user_sessions')
 	|
 	| 'dbTableUserVariables'
 	|
-	|    The table which contains users variables
-	|    (default: 'aauth_user_variables')
+	|	The table which contains users variables
+	|	(default: 'aauth_user_variables')
 	|
 	| 'dbTableLoginAttempts'
 	|
-	|    The table which contains login attempts
-	|    (default: 'aauth_login_attempts')
+	|	The table which contains login attempts
+	|	(default: 'aauth_login_attempts')
 	|
 	| 'dbTableLoginTokens'
 	|
-	|    The table which contains login tokens
-	|    (default: 'aauth_login_tokens')
+	|	The table which contains login tokens
+	|	(default: 'aauth_login_tokens')
 	|
 	| 'dbTableGroups'
 	|
-	|    The table which contains groups
-	|    (default: 'aauth_groups')
+	|	The table which contains groups
+	|	(default: 'aauth_groups')
 	|
 	| 'dbTableGroupToUser'
 	|
-	|    The table which contains join of users and groups
-	|    (default: 'aauth_group_to_user')
+	|	The table which contains join of users and groups
+	|	(default: 'aauth_group_to_user')
 	|
 	| 'dbTableGroupToGroup'
 	|
-	|    The table which contains join of subgroups and groups
-	|    (default: 'aauth_group_to_group')
+	|	The table which contains join of subgroups and groups
+	|	(default: 'aauth_group_to_group')
 	|
 	| 'dbTableGroupVariables'
 	|
-	|    The table which contains group variables
-	|    (default: 'aauth_group_variables')
+	|	The table which contains group variables
+	|	(default: 'aauth_group_variables')
 	|
 	| 'dbTablePerms'
 	|
-	|    The table which contains permissions
-	|    (default: 'aauth_perms')
+	|	The table which contains permissions
+	|	(default: 'aauth_perms')
 	|
 	| 'dbTablePermToUser'
 	|
-	|    The table which contains permissions for users
-	|    (default: 'aauth_perm_to_user')
+	|	The table which contains permissions for users
+	|	(default: 'aauth_perm_to_user')
 	|
 	| 'dbTablePermToGroup'
 	|
-	|    The table which contains permissions for groups
-	|    (default: 'aauth_perm_to_group')
+	|	The table which contains permissions for groups
+	|	(default: 'aauth_perm_to_group')
 	|
 	| 'dbSoftDeleteUsers'
 	|
-	|    Enables soft delete for Users
+	|	Enables soft delete for Users
 	|	 If this is enabled, it simply set a flag when rows are deleted.
-	|    (default: false)
+	|	(default: false)
 	|
 	| 'dbSoftDeleteGroups'
 	|
-	|    Enables soft delete for Groups
+	|	Enables soft delete for Groups
 	|	 If this is enabled, it simply set a flag when rows are deleted.
-	|    (default: false)
+	|	(default: false)
 	|
 	| 'dbSoftDeletePerms'
 	|
-	|    Enables soft delete for Perms
+	|	Enables soft delete for Perms
 	|	 If this is enabled, it simply set a flag when rows are deleted.
-	|    (default: false)
+	|	(default: false)
+	|
 	*/
 	public $dbProfile             = 'default';
 	public $dbReturnType          = 'array';
