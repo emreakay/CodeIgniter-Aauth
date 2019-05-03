@@ -12,6 +12,10 @@ use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 use App\Models\Aauth\UserVariableModel;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class UserTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -24,7 +28,7 @@ class UserTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->config  = new AauthConfig();
 		$_COOKIE       = [];
 		$_SESSION      = [];
@@ -70,27 +74,27 @@ class UserTest extends CIDatabaseTestCase
 		]);
 		$this->assertEquals(lang('Aauth.infoCreateSuccess'), $this->library->getInfosArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createUser('admin@example.com', 'password123456', null));
 		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createUser('adminexample.com', 'password123456', null));
 		$this->assertEquals(lang('Aauth.invalidEmail'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createUser('test@example.com', 'pass', null));
 		$this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createUser('test@example.com', 'password12345678901011121314151617', null));
 		$this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createUser('test@example.com', 'password123456', 'admin'));
 		$this->assertEquals(lang('Aauth.existsAlreadyUsername'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createUser('test@example.com', 'password123456', 'user+'));
 		$this->assertEquals(lang('Aauth.invalidUsername'), $this->library->getErrorsArray()[0]);
 	}
@@ -110,35 +114,35 @@ class UserTest extends CIDatabaseTestCase
 		]);
 		$this->assertEquals(lang('Aauth.infoUpdateSuccess'), $this->library->getInfosArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(2, 'admin@example.com', null, null));
 		$this->assertEquals(lang('Aauth.existsAlreadyEmail'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(2, 'adminexample.com', null, null));
 		$this->assertEquals(lang('Aauth.invalidEmail'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(2, null, 'pass', null));
 		$this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(2, null, 'password12345678901011121314151617', null));
 		$this->assertEquals(lang('Aauth.invalidPassword'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(2, null, null, 'admin'));
 		$this->assertEquals(lang('Aauth.existsAlreadyUsername'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(2, null, null, 'user+'));
 		$this->assertEquals(lang('Aauth.invalidUsername'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->updateUser(2));
 		$this->assertCount(0, $this->library->getErrorsArray());
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateUser(99));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
@@ -194,10 +198,6 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.infoVerification'), $this->library->getInfosArray()[0]);
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testGetUser()
 	{
 		$user = $this->library->getUser(1);
@@ -220,10 +220,6 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testGetUserId()
 	{
 		$userIdEmail = $this->library->getUserId('admin@example.com');
@@ -239,10 +235,6 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->getUserId('none@example.com'));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testGetActiveUsersCount()
 	{
 		$this->assertEquals(0, $this->library->getActiveUsersCount());
@@ -256,10 +248,6 @@ class UserTest extends CIDatabaseTestCase
 		// $this->assertEquals(1, $this->library->getActiveUsersCount());
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testListActiveUsers()
 	{
 		$this->assertEquals([], $this->library->listActiveUsers());
@@ -305,10 +293,6 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testBanUnbanUserSession()
 	{
 		$session       = $this->getInstance();

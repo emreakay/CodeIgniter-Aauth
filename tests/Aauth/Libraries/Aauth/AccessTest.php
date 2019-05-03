@@ -14,6 +14,10 @@ use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class AccessTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -31,7 +35,7 @@ class AccessTest extends CIDatabaseTestCase
 		$this->request  = new IncomingRequest(new App(), new URI(), null, new UserAgent());
 		Services::injectMock('request', $this->request);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
 	}
@@ -67,10 +71,6 @@ class AccessTest extends CIDatabaseTestCase
 
 	//--------------------------------------------------------------------
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsLoggedIn()
 	{
 		$session       = $this->getInstance();
@@ -82,10 +82,6 @@ class AccessTest extends CIDatabaseTestCase
 		$session->remove('user');
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsMember()
 	{
 		$config = new AauthConfig();
@@ -103,10 +99,6 @@ class AccessTest extends CIDatabaseTestCase
 		$session->remove('user');
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsAdmin()
 	{
 		$this->assertTrue($this->library->isAdmin(1));
@@ -121,18 +113,16 @@ class AccessTest extends CIDatabaseTestCase
 		$session->remove('user');
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsAllowed()
 	{
 		$config = new AauthConfig();
+
 		$this->hasInDatabase($config->dbTablePerms, [
 			'id'         => 1,
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
+		$this->library = new Aauth(null, null);
 
 		$this->assertTrue($this->library->isAllowed('testPerm1', 1));
 		$this->assertFalse($this->library->isAllowed('testPerm1', 2));
@@ -142,7 +132,7 @@ class AccessTest extends CIDatabaseTestCase
 			'group_id' => 2,
 			'state'    => 1,
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->isAllowed('testPerm1', 2));
 
 		$this->hasInDatabase($config->dbTablePermToUser, [
@@ -151,6 +141,14 @@ class AccessTest extends CIDatabaseTestCase
 			'state'   => 1,
 		]);
 		$this->assertTrue($this->library->isAllowed('testPerm1', 2));
+
+		$this->db->table($config->dbTablePermToUser)->delete(['perm_id' => 1, 'user_id' => 2]);
+		$this->hasInDatabase($config->dbTablePermToUser, [
+			'perm_id' => 1,
+			'user_id' => 2,
+			'state'   => 0,
+		]);
+		$this->assertFalse($this->library->isAllowed('testPerm1', 2));
 
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
@@ -178,10 +176,6 @@ class AccessTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->isAllowed('testPerm1', 99));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testControl()
 	{
 		$config = new AauthConfig();
@@ -234,10 +228,6 @@ class AccessTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->control() instanceof \Tests\Support\HTTP\MockResponse);
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testControlErrorNoPerm($value = '')
 	{
 		$session = $this->getInstance();
@@ -250,10 +240,6 @@ class AccessTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->control());
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testControlErrorPermDenied($value = '')
 	{
 		$session = $this->getInstance();
@@ -272,10 +258,6 @@ class AccessTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->control('testPerm1'));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsGroupAllowed()
 	{
 		$config = new AauthConfig();
@@ -318,16 +300,20 @@ class AccessTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->isGroupAllowed('testPerm1'));
 		$session->remove('user');
 
+		$this->db->table($config->dbTablePermToGroup)->delete(['perm_id' => 1, 'group_id' => 2]);
+		$this->hasInDatabase($config->dbTablePermToGroup, [
+			'perm_id'  => 1,
+			'group_id' => 2,
+			'state'    => 0,
+		]);
+		$this->assertFalse($this->library->isGroupAllowed('testPerm1', 2));
+
 		$this->assertFalse($this->library->isGroupAllowed('testPerm1'));
 		$this->assertFalse($this->library->isGroupAllowed('testPerm1', 3));
 		$this->assertFalse($this->library->isGroupAllowed('testPerm99', 2));
 		$this->assertFalse($this->library->isGroupAllowed('testPerm1', 99));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsGroupAllowedSubgroup()
 	{
 		$config = new AauthConfig();
@@ -351,7 +337,7 @@ class AccessTest extends CIDatabaseTestCase
 			'state'    => 1,
 		]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->isGroupAllowed('testPerm1', 2));
 	}
 }

@@ -14,6 +14,10 @@ use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class GroupTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -32,7 +36,7 @@ class GroupTest extends CIDatabaseTestCase
 		Services::injectMock('request', $this->request);
 
 		$this->config  = new AauthConfig();
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
 	}
@@ -79,7 +83,7 @@ class GroupTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->createGroup('admin'));
 		$this->assertEquals(lang('Aauth.existsAlreadyGroup'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createGroup(''));
 		$this->assertEquals(lang('Aauth.requiredGroupName'), $this->library->getErrorsArray()[0]);
 	}
@@ -91,7 +95,7 @@ class GroupTest extends CIDatabaseTestCase
 			'name'       => 'testGroup1',
 			'definition' => 'Test Group 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->library->updateGroup('testGroup1', 'testGroup1N', 'Test Group 1 New');
 		$this->seeInDatabase($this->config->dbTableGroups, [
 			'id'         => 4,
@@ -102,15 +106,15 @@ class GroupTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->updateGroup($this->config->groupAdmin, $this->config->groupDefault));
 		$this->assertEquals(lang('Aauth.existsAlreadyGroup'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->updateGroup($this->config->groupAdmin));
 		$this->assertCount(0, $this->library->getErrorsArray());
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateGroup(99, ''));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updateGroup('testGroup99	', ''));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 	}
@@ -122,7 +126,7 @@ class GroupTest extends CIDatabaseTestCase
 			'name'       => 'testGroup1',
 			'definition' => 'Test Group 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->deleteGroup('testGroup1'));
 		$this->dontSeeInDatabase($this->config->dbTableGroups, [
 			'id'         => 4,
@@ -130,11 +134,11 @@ class GroupTest extends CIDatabaseTestCase
 			'definition' => 'Test Group 1 New',
 		]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->deleteGroup(99, ''));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->deleteGroup('testGroup99	', ''));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 	}
@@ -147,15 +151,15 @@ class GroupTest extends CIDatabaseTestCase
 			'user_id'  => 2,
 		]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->addMember(2, 2));
 		$this->assertEquals(lang('Aauth.alreadyMemberGroup'), $this->library->getInfosArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->addMember(99, 2));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->addMember(2, 99));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
@@ -187,22 +191,23 @@ class GroupTest extends CIDatabaseTestCase
 			'definition' => 'Test Group 3',
 		]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->addSubgroup('testGroup1', 'testGroup2'));
 		$this->assertTrue($this->library->addSubgroup('testGroup1', 'testGroup3'));
 		$this->assertFalse($this->library->addSubgroup('testGroup2', 'testGroup1'));
+		$this->assertFalse($this->library->addSubgroup('testGroup1', 'testGroup1'));
 
-		$this->library = new Aauth(null, true);
-		$this->assertTrue($this->library->addSubgroup(4, 5));
-		$this->assertEquals(lang('Aauth.alreadyMemberSubgroup'), $this->library->getInfosArray()[0]);
+		$this->library = new Aauth(null, null);
+		$this->assertFalse($this->library->addSubgroup(4, 5));
 
-		$this->assertFalse($this->library->addSubgroup(4, 4));
+		$this->library = new Aauth(null, null);
+		$this->assertFalse($this->library->addSubgroup(4, 6));
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->addSubgroup(99, 1));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->addSubgroup(1, 99));
 		$this->assertEquals(lang('Aauth.notFoundSubgroup'), $this->library->getErrorsArray()[0]);
 	}
@@ -261,31 +266,69 @@ class GroupTest extends CIDatabaseTestCase
 		$this->assertEquals($this->config->groupDefault, $groupsOrderBy['groups'][1]['name']);
 	}
 
+	public function testListGroupSubgroups()
+	{
+		$groups = $this->library->listGroupSubgroups(1);
+		$this->assertCount(3, $groups);
+		$this->assertEquals($this->config->groupAdmin, $groups[0]['name']);
+		$this->assertEquals($this->config->groupDefault, $groups[1]['name']);
+		$this->assertEquals(0, $groups[0]['subgroup']);
+		$this->assertEquals(0, $groups[1]['subgroup']);
+
+		$this->assertFalse($this->library->listGroupSubgroups(0));
+	}
+
+	public function testListGroupSubgroupsPaginated()
+	{
+		$groups = $this->library->listGroupSubgroupsPaginated(1);
+		$this->assertTrue(isset($groups['pager']));
+		$this->assertCount(3, $groups['groups']);
+		$this->assertEquals($this->config->groupAdmin, $groups['groups'][0]['name']);
+		$this->assertEquals($this->config->groupDefault, $groups['groups'][1]['name']);
+		$this->assertEquals(0, $groups['groups'][0]['subgroup']);
+		$this->assertEquals(0, $groups['groups'][1]['subgroup']);
+
+		$groupsOrderBy = $this->library->listGroupSubgroupsPaginated(1, 10, 'id DESC');
+		$this->assertEquals($this->config->groupPublic, $groupsOrderBy['groups'][0]['name']);
+		$this->assertEquals($this->config->groupDefault, $groupsOrderBy['groups'][1]['name']);
+		$this->assertEquals(0, $groupsOrderBy['groups'][0]['subgroup']);
+		$this->assertEquals(0, $groupsOrderBy['groups'][1]['subgroup']);
+
+		$this->assertFalse($this->library->listGroupSubgroupsPaginated(0));
+	}
+
 	public function testListUserGroups()
 	{
 		$groups = $this->library->listUserGroups(1);
-		$this->assertCount(2, $groups);
+		$this->assertCount(3, $groups);
 		$this->assertEquals($this->config->groupAdmin, $groups[0]['name']);
 		$this->assertEquals($this->config->groupDefault, $groups[1]['name']);
+		$this->assertEquals(1, $groups[1]['member']);
+		$this->assertEquals(0, $groups[2]['member']);
 
 		$this->assertFalse($this->library->listUserGroups(99));
+
+		$session       = $this->getInstance();
+		$this->library = new Aauth(null, $session);
+		$session->set('user', [
+			'id'       => 1,
+			'loggedIn' => true,
+		]);
+		$groups = $this->library->listUserGroups();
+		$this->assertCount(3, $groups);
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testListUserGroupsPaginated()
 	{
 		$groups = $this->library->listUserGroupsPaginated(1);
 		$this->assertTrue(isset($groups['pager']));
-		$this->assertCount(2, $groups['groups']);
+		$this->assertCount(3, $groups['groups']);
 		$this->assertEquals($this->config->groupAdmin, $groups['groups'][0]['name']);
 		$this->assertEquals($this->config->groupDefault, $groups['groups'][1]['name']);
 
 		$groupsOrderBy = $this->library->listUserGroupsPaginated(1, 10, 'id DESC');
-		$this->assertEquals($this->config->groupDefault, $groupsOrderBy['groups'][0]['name']);
-		$this->assertEquals($this->config->groupAdmin, $groupsOrderBy['groups'][1]['name']);
+		$this->assertEquals($this->config->groupDefault, $groupsOrderBy['groups'][1]['name']);
+		$this->assertEquals($this->config->groupAdmin, $groupsOrderBy['groups'][2]['name']);
 
 		$this->assertFalse($this->library->listUserGroupsPaginated(99));
 
@@ -296,7 +339,7 @@ class GroupTest extends CIDatabaseTestCase
 			'loggedIn' => true,
 		]);
 		$groups = $this->library->listUserGroupsPaginated();
-		$this->assertCount(2, $groups['groups']);
+		$this->assertCount(3, $groups['groups']);
 	}
 
 	public function testGetGroupName()
@@ -340,7 +383,7 @@ class GroupTest extends CIDatabaseTestCase
 			'definition' => 'Test Group 3',
 		]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->addSubgroup('testGroup1', 'testGroup2'));
 		$this->assertTrue($this->library->addSubgroup('testGroup1', 'testGroup3'));
 

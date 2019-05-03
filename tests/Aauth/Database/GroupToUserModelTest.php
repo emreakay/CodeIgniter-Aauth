@@ -24,86 +24,86 @@ class GroupToUserModelTest extends CIDatabaseTestCase
 
 	public function testInsert()
 	{
-		$groupToGroup = $this->model->insert(99, 99);
+		$groupToGroup = $this->model->insert(1, 2);
 		$this->seeInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
 	}
 
 	public function testExists()
 	{
-		$this->assertFalse($this->model->exists(99, 99));
+		$this->assertFalse($this->model->exists(1, 2));
 
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
-		$this->assertTrue($this->model->exists(99, 99));
+		$this->assertTrue($this->model->exists(1, 2));
 	}
 
 	public function testFindAllByUserId()
 	{
-		$this->assertCount(0, $this->model->findAllByUserId(99));
+		$this->assertCount(1, $this->model->findAllByUserId(2));
 
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
-		$this->assertCount(1, $this->model->findAllByUserId(99));
+		$this->assertCount(2, $this->model->findAllByUserId(2));
 	}
 
 	public function testFindAllByGroupId()
 	{
-		$this->assertCount(0, $this->model->findAllByGroupId(99));
+		$this->assertCount(1, $this->model->findAllByGroupId(1));
 
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
-		$this->assertCount(1, $this->model->findAllByGroupId(99));
+		$this->assertCount(2, $this->model->findAllByGroupId(1));
 	}
 
 	public function testDelete()
 	{
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
 		$criteria = [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		];
 		$this->seeNumRecords(1, $this->config->dbTableGroupToUser, $criteria);
-		$this->model->delete(99, 99);
+		$this->model->delete(1, 2);
 		$this->seeNumRecords(0, $this->config->dbTableGroupToUser, $criteria);
 	}
 
 	public function testDeleteAllByGroupId()
 	{
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
 		$criteria = [
-			'group_id' => 99,
+			'group_id' => 1,
 		];
-		$this->seeNumRecords(1, $this->config->dbTableGroupToUser, $criteria);
-		$this->model->deleteAllByGroupId(99);
+		$this->seeNumRecords(2, $this->config->dbTableGroupToUser, $criteria);
+		$this->model->deleteAllByGroupId(1);
 		$this->seeNumRecords(0, $this->config->dbTableGroupToUser, $criteria);
 	}
 
 	public function testDeleteAllByUserId()
 	{
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
 		$criteria = [
-			'user_id' => 99,
+			'user_id' => 2,
 		];
-		$this->seeNumRecords(1, $this->config->dbTableGroupToUser, $criteria);
-		$this->model->deleteAllByUserId(99);
+		$this->seeNumRecords(2, $this->config->dbTableGroupToUser, $criteria);
+		$this->model->deleteAllByUserId(2);
 		$this->seeNumRecords(0, $this->config->dbTableGroupToUser, $criteria);
 	}
 
@@ -111,14 +111,10 @@ class GroupToUserModelTest extends CIDatabaseTestCase
 	{
 		$this->model = new GroupToUserModel();
 		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 99,
-			'user_id'  => 99,
+			'group_id' => 1,
+			'user_id'  => 2,
 		]);
-		$this->hasInDatabase($this->config->dbTableGroupToUser, [
-			'group_id' => 98,
-			'user_id'  => 99,
-		]);
-		$groupToUsers = $this->model->findAllByUserId(99);
+		$groupToUsers = $this->model->findAllByUserId(2);
 		$this->assertCount(2, $groupToUsers);
 	}
 }

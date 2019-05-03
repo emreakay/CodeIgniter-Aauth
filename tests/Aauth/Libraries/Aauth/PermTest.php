@@ -10,6 +10,10 @@ use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 use App\Models\Aauth\UserVariableModel;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class PermTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -22,7 +26,7 @@ class PermTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->config  = new AauthConfig();
 		$_COOKIE       = [];
 		$_SESSION      = [];
@@ -70,7 +74,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->createPerm('testPerm1'));
 		$this->assertEquals(lang('Aauth.existsAlreadyPerm'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->createPerm(''));
 		$this->assertEquals(lang('Aauth.requiredPermName'), $this->library->getErrorsArray()[0]);
 	}
@@ -87,7 +91,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm2',
 			'definition' => 'Test Perm 2',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->library->updatePerm('testPerm1', 'testPerm1N', 'Test Perm 1 New');
 		$this->seeInDatabase($this->config->dbTablePerms, [
 			'id'         => 1,
@@ -98,15 +102,15 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->updatePerm('testPerm1N', 'testPerm2'));
 		$this->assertEquals(lang('Aauth.existsAlreadyPerm'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->updatePerm('testPerm1'));
 		$this->assertCount(0, $this->library->getErrorsArray());
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updatePerm(99, ''));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->updatePerm('testPerm99', ''));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
 	}
@@ -117,7 +121,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->deletePerm('testPerm1'));
 		$this->dontSeeInDatabase($this->config->dbTablePerms, [
 			'name'       => 'testPerm1',
@@ -125,11 +129,11 @@ class PermTest extends CIDatabaseTestCase
 			'deleted'    => 0,
 		]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->deletePerm(99));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->deletePerm('testPerm99'));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
 	}
@@ -207,10 +211,6 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertFalse($this->library->getUserPerms(99, 1));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testListUserPerms()
 	{
 		$perms = $this->library->listUserPerms(1);
@@ -245,10 +245,6 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertCount(1, $perms);
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testListUserPermsPaginated()
 	{
 		$perms = $this->library->listUserPermsPaginated(1);
@@ -303,7 +299,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 
 		$this->assertEquals(1, $this->library->getPermId('testPerm1'));
 		$this->assertEquals(1, $this->library->getPermId(1));
@@ -316,7 +312,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 
 		$perm = $this->library->getPerm('testPerm1');
 		$this->assertEquals(1, $perm['id']);
@@ -333,7 +329,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->allowUser(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 1,
@@ -344,7 +340,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->allowUser(1, 1));
 		$this->assertFalse($this->library->allowUser(99, 1));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->allowUser(1, 99));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
@@ -356,7 +352,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->denyUser(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToUser, [
 			'perm_id' => 1,
@@ -367,7 +363,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->denyUser(1, 1));
 		$this->assertFalse($this->library->denyUser(99, 1));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->denyUser(1, 99));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);
 	}
@@ -379,7 +375,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->allowGroup(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 1,
@@ -390,7 +386,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->allowGroup(1, 1));
 		$this->assertFalse($this->library->allowGroup(99, 1));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->allowGroup(1, 99));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 	}
@@ -402,7 +398,7 @@ class PermTest extends CIDatabaseTestCase
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
 		]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertTrue($this->library->denyGroup(1, 1));
 		$this->seeInDatabase($this->config->dbTablePermToGroup, [
 			'perm_id'  => 1,
@@ -413,7 +409,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->denyGroup(1, 1));
 		$this->assertFalse($this->library->denyGroup(99, 1));
 		$this->assertEquals(lang('Aauth.notFoundPerm'), $this->library->getErrorsArray()[0]);
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->assertFalse($this->library->denyGroup(1, 99));
 		$this->assertEquals(lang('Aauth.notFoundGroup'), $this->library->getErrorsArray()[0]);
 	}
@@ -519,5 +515,41 @@ class PermTest extends CIDatabaseTestCase
 		$this->assertEquals('testPerm1', $groupPermsOrderBy['perms'][1]['name']);
 
 		$this->assertFalse($this->library->listGroupPermsPaginated(99));
+	}
+
+	public function testRemoveUserPerm()
+	{
+		$this->hasInDatabase($this->config->dbTablePerms, [
+			'id'         => 1,
+			'name'       => 'testPerm1',
+			'definition' => 'Test Perm 1',
+		]);
+		$this->hasInDatabase($this->config->dbTablePermToUser, [
+			'perm_id' => 1,
+			'user_id' => 1,
+			'state'   => 1,
+		]);
+		$this->library = new Aauth(null, null);
+		$this->assertTrue($this->library->removeUserPerm(1, 1));
+		$this->assertFalse($this->library->removeUserPerm(99, 1));
+		$this->assertFalse($this->library->removeUserPerm(1, 99));
+	}
+
+	public function testRemoveGroupPerm()
+	{
+		$this->hasInDatabase($this->config->dbTablePerms, [
+			'id'         => 1,
+			'name'       => 'testPerm1',
+			'definition' => 'Test Perm 1',
+		]);
+		$this->hasInDatabase($this->config->dbTablePermToGroup, [
+			'perm_id'  => 1,
+			'group_id' => 1,
+			'state'    => 1,
+		]);
+		$this->library = new Aauth(null, null);
+		$this->assertTrue($this->library->removeGroupPerm(1, 1));
+		$this->assertFalse($this->library->removeGroupPerm(99, 1));
+		$this->assertFalse($this->library->removeGroupPerm(1, 99));
 	}
 }

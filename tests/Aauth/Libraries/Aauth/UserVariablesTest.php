@@ -26,7 +26,7 @@ class UserVariablesTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->config  = new AauthConfig();
 		$_COOKIE       = [];
 		$_SESSION      = [];
@@ -145,7 +145,7 @@ class UserVariablesTest extends CIDatabaseTestCase
 			'data_value' => 'test2',
 		]);
 
-		$this->assertCount(2, $this->library->getUserVars(1));
+		$this->assertCount(2, $this->library->listUserVars(1));
 
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
@@ -153,9 +153,9 @@ class UserVariablesTest extends CIDatabaseTestCase
 			'id' => 1,
 		]);
 
-		$this->assertCount(2, $this->library->getUserVars());
+		$this->assertCount(2, $this->library->listUserVars());
 
-		$this->assertFalse($this->library->getUserVars(99));
+		$this->assertFalse($this->library->listUserVars(99));
 	}
 
 	public function testListUserVarKeys()
@@ -171,8 +171,8 @@ class UserVariablesTest extends CIDatabaseTestCase
 			'data_value' => 'test2',
 		]);
 
-		$this->assertCount(2, $this->library->listUserVarKeys(1));
-		$this->assertEquals([['key' => 'test_var'], ['key' => 'test_var2']], $this->library->listUserVarKeys(1));
+		$this->assertCount(2, $this->library->getUserVarKeys(1));
+		$this->assertEquals([['key' => 'test_var'], ['key' => 'test_var2']], $this->library->getUserVarKeys(1));
 
 		$session       = $this->getInstance();
 		$this->library = new Aauth(null, $session);
@@ -180,8 +180,8 @@ class UserVariablesTest extends CIDatabaseTestCase
 			'id' => 1,
 		]);
 
-		$this->assertCount(2, $this->library->listUserVarKeys());
+		$this->assertCount(2, $this->library->getUserVarKeys());
 
-		$this->assertFalse($this->library->listUserVarKeys(99));
+		$this->assertFalse($this->library->getUserVarKeys(99));
 	}
 }

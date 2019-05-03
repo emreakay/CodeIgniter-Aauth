@@ -10,6 +10,10 @@ use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
 use App\Models\Aauth\GroupVariableModel;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class GroupVariablesTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -22,7 +26,7 @@ class GroupVariablesTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->config  = new AauthConfig();
 	}
 
@@ -81,9 +85,9 @@ class GroupVariablesTest extends CIDatabaseTestCase
 			'data_value' => 'test2',
 		]);
 
-		$this->assertCount(2, $this->library->getGroupVars(1));
+		$this->assertCount(2, $this->library->listGroupVars(1));
 
-		$this->assertFalse($this->library->getGroupVars(99));
+		$this->assertFalse($this->library->listGroupVars(99));
 	}
 
 	public function testListGroupVarKeys()
@@ -99,9 +103,9 @@ class GroupVariablesTest extends CIDatabaseTestCase
 			'data_value' => 'test2',
 		]);
 
-		$this->assertCount(2, $this->library->listGroupVarKeys(1));
-		$this->assertEquals([['key' => 'test_var'], ['key' => 'test_var2']], $this->library->listGroupVarKeys(1));
+		$this->assertCount(2, $this->library->getGroupVarKeys(1));
+		$this->assertEquals([['key' => 'test_var'], ['key' => 'test_var2']], $this->library->getGroupVarKeys(1));
 
-		$this->assertFalse($this->library->listGroupVarKeys(99));
+		$this->assertFalse($this->library->getGroupVarKeys(99));
 	}
 }

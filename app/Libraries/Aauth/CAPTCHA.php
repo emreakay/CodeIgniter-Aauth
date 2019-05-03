@@ -8,12 +8,12 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @since     3.0.0
  */
 
 namespace App\Libraries\Aauth;
@@ -53,7 +53,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 		if ($this->config->captchaType === 'recaptcha')
 		{
 			$siteUrl = 'https://www.google.com/recaptcha/api/siteverify';
-			$request = $this->_submitGet(
+			$request = $this->submitGetCaptcha(
 				$siteUrl,
 				[
 					'secret'   => $this->config->captchaSecret,
@@ -65,7 +65,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 		else if ($this->config->captchaType === 'hcaptcha')
 		{
 			$siteUrl = 'https://hcaptcha.com/siteverify';
-			$request = $this->_submitPost(
+			$request = $this->submitPostCaptcha(
 				$siteUrl,
 				[
 					'secret'   => $this->config->captchaSecret,
@@ -107,12 +107,12 @@ class CAPTCHA extends \App\Libraries\Aauth
 
 			if ($this->config->captchaType === 'recaptcha')
 			{
-				$content  = "<div class='g-recaptcha' data-sitekey='{$siteKey}'></div>";
+				$content  = '<div class="g-recaptcha" data-sitekey="' . $siteKey . '"></div>';
 				$content .= '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 			}
 			else if ($this->config->captchaType === 'hcaptcha')
 			{
-				$content  = "<div class='h-captcha' data-sitekey='{$siteKey}'></div>";
+				$content  = '<div class="h-recaptcha" data-sitekey="' . $siteKey . '"></div>';
 				$content .= '<script src="https://hcaptcha.com/1/api.js" async defer></script>';
 			}
 		}
@@ -133,7 +133,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	}
 
 	/**
-	 * Submit GET
+	 * Submit GET CAPTCHA
 	 *
 	 * Submits an HTTP GET to a CAPTCHA server.
 	 *
@@ -142,7 +142,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 *
 	 * @return string
 	 */
-	private function _submitGet(string $url, array $data)
+	private function submitGetCaptcha(string $url, array $data)
 	{
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('GET', $url, [
@@ -153,7 +153,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	}
 
 	/**
-	 * Submit POST
+	 * Submit POST CAPTCHA
 	 *
 	 * Submits an HTTP POST to a CAPTCHA server.
 	 *
@@ -162,7 +162,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	 *
 	 * @return string
 	 */
-	private function _submitPost(string $url, array $data)
+	private function submitPostCaptcha(string $url, array $data)
 	{
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('POST', $url, [

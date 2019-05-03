@@ -8,12 +8,12 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @version   3.0.0-rc2
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @version   3.0.0-rc2
  */
 
 namespace App\Libraries;
@@ -105,15 +105,20 @@ class Aauth
 	 * Constructor
 	 *
 	 * Prepares config & session variable.
+	 *
+	 * @param \Config\Aauth                $config  Config Object
+	 * @param \CodeIgniter\Session\Session $session Session Class
+	 *
+	 * @return void
 	 */
-	public function __construct($config = null, $session = null)
+	public function __construct(\Config\Aauth $config = null, \CodeIgniter\Session\Session $session = null)
 	{
-		if (is_null($config))
+		if (! $config)
 		{
 			$config = new \Config\Aauth();
 		}
 
-		if (is_null($session))
+		if (! $session)
 		{
 			$session = \Config\Services::session();
 		}
@@ -125,12 +130,13 @@ class Aauth
 
 		if ($this->config->captchaEnabled)
 		{
-			$this->modules = array_merge($this->config->modules, ['CAPTCHA']);
+			$this->modules = array_merge($this->modules, ['CAPTCHA']);
 		}
 
 		if ($this->config->totpEnabled)
 		{
-			$this->modules = array_merge($this->config->modules, ['TOTP']);
+			$this->modules = array_merge($this->modules, ['TOTP']);
+		}
 
 		if ($this->config->socialEnabled)
 		{
@@ -152,6 +158,8 @@ class Aauth
 	 * PreCache Perms
 	 *
 	 * Caches all permission IDs for later use.
+	 *
+	 * @return void
 	 */
 	private function precachePerms()
 	{
@@ -168,6 +176,8 @@ class Aauth
 	 * PreCache Groups
 	 *
 	 * Caches all group IDs for later use.
+	 *
+	 * @return void
 	 */
 	private function precacheGroups()
 	{
@@ -225,7 +235,7 @@ class Aauth
 				$response = $request->getPostGet('h-captcha-response');
 			}
 
-			if (! $this->verifyCaptchaResponse($response)['success'])
+			if (! $this->verifyCaptchaResponse((string) $response)['success'])
 			{
 				$this->error(lang('Aauth.invalidCaptcha'));
 
@@ -463,7 +473,13 @@ class Aauth
 	public function logout()
 	{
 		helper('cookie');
-		set_cookie($this->config->loginRememberCookie, '', -3600);
+
+		$cookieData['name']   = $this->config->loginRememberCookie;
+		$cookieData['value']  = '';
+		$cookieData['expire'] = -YEAR;
+
+		\Config\Services::response()->setCookie($cookieData)->send();
+
 		$this->session->remove('user');
 		@$this->session->destroy();
 	}
@@ -477,17 +493,12 @@ class Aauth
 	 *
 	 * @return boolean
 	 */
-	protected function loginFast(int $userId)
+	private function loginFast(int $userId)
 	{
 		$userModel = $this->getModel('User');
 		$userModel->select('id, email, username');
 		$userModel->where('id', $userId);
 		$userModel->where('banned', 0);
-
-		if (! $user = $userModel->asArray()->first())
-		{
-			return false;
-		}
 
 		$this->session->set('user', [
 			'id'       => $user['id'],
@@ -662,10 +673,9 @@ class Aauth
 			else
 			{
 				$groupAllowed = false;
-
-				foreach ($this->listUserGroups($userId) as $group)
+				foreach ($this->getUserGroups($userId) as $group)
 				{
-					if ($this->isGroupAllowed($permId, $group['id']))
+					if ($this->isGroupAllowed($permId, $group['group_id']))
 					{
 						$groupAllowed = true;
 						break;
@@ -682,7 +692,7 @@ class Aauth
 	 *
 	 * Check if group is allowed to do specified action, admin always allowed
 	 *
-	 * @param integer        $permPar  Permission id or name to check
+	 * @param integer|string $permPar  Permission id or name to check
 	 * @param integer|string $groupPar Group id or name to check, or if false checks all user groups
 	 *
 	 * @return boolean
@@ -719,9 +729,13 @@ class Aauth
 				}
 			}
 
-			if ($permToGroupModel->allowed($permId, $groupId))
+			if ($permToGroupModel->denied($permId, $groupId))
 			{
 				return false;
+			}
+			else if ($permToGroupModel->allowed($permId, $groupId))
+			{
+				return true;
 			}
 			else if ($groupAllowed || $permToGroupModel->allowed($permId, $groupId))
 			{
@@ -743,9 +757,9 @@ class Aauth
 				return false;
 			}
 
-			foreach ($this->listUserGroups() as $group)
+			foreach ($this->getUserGroups() as $group)
 			{
-				if ($this->isGroupAllowed($permId, $group['id']))
+				if ($this->isGroupAllowed($permId, $group['group_id']))
 				{
 					return true;
 				}
@@ -846,7 +860,11 @@ class Aauth
 			return false;
 		}
 
-		// @codeCoverageIgnoreStart
+		if ($this->config->groupDefault)
+		{
+			$this->addMember($this->config->groupDefault, $userId);
+		}
+
 		if ($this->config->userVerification)
 		{
 			$this->sendVerification($userId, $email);
@@ -854,7 +872,6 @@ class Aauth
 
 			return $userId;
 		}
-		// @codeCoverageIgnoreEnd
 
 		$this->info(lang('Aauth.infoCreateSuccess'));
 
@@ -945,11 +962,9 @@ class Aauth
 
 		if ($userModel->transStatus() === false)
 		{
-			// @codeCoverageIgnoreStart
 			$userModel->transRollback();
 
 			return false;
-			// @codeCoverageIgnoreEnd
 		}
 		else
 		{
@@ -1005,7 +1020,6 @@ class Aauth
 	 *
 	 * @param string|integer $groupPar       Specify group id to list group or null for all users
 	 * @param integer        $limit          Limit of users to be returned
-	 * @param integer        $offset         Offset for limited number of users
 	 * @param boolean        $includeBanneds Include banned users
 	 * @param string         $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
@@ -1048,8 +1062,6 @@ class Aauth
 	 * @param string  $email  Email to send verification email to
 	 *
 	 * @return boolean
-	 *
-	 * @codeCoverageIgnore
 	 */
 	protected function sendVerification(int $userId, string $email)
 	{
@@ -1064,6 +1076,7 @@ class Aauth
 		$messageData['code'] = $verificationCode;
 		$messageData['link'] = site_url($this->config->linkVerification . '/' . $userId . '/' . $verificationCode);
 
+		// phpcs:disable CodeIgniter4.NamingConventions.ValidVariableName
 		if (isset($this->config->emailConfig->protocol))
 		{
 			if ($this->config->emailConfig->protocol === 'smtp')
@@ -1097,6 +1110,7 @@ class Aauth
 
 			return false;
 		}
+		// phpcs:enable
 
 		return true;
 
@@ -1229,8 +1243,6 @@ class Aauth
 	 * Return users as an object array
 	 *
 	 * @return array Array of active users
-	 *
-	 * @codeCoverageIgnore
 	 */
 	public function listActiveUsers()
 	{
@@ -1361,8 +1373,6 @@ class Aauth
 	 * @param string $email Email for account to remind
 	 *
 	 * @return boolean
-	 *
-	 * @codeCoverageIgnore
 	 */
 	public function remindPassword(string $email)
 	{
@@ -1384,6 +1394,7 @@ class Aauth
 		$messageData['code'] = $resetCode;
 		$messageData['link'] = site_url($this->config->linkResetPassword . '/' . $resetCode);
 
+		// phpcs:disable CodeIgniter4.NamingConventions.ValidVariableName
 		if (isset($this->config->emailConfig->protocol))
 		{
 			if ($this->config->emailConfig->protocol === 'smtp')
@@ -1417,6 +1428,7 @@ class Aauth
 
 			return false;
 		}
+		// phpcs:enable
 
 		// $emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
 		// $emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
@@ -1444,8 +1456,6 @@ class Aauth
 	 * @param string $resetCode Verification code for account
 	 *
 	 * @return boolean
-	 *
-	 * @codeCoverageIgnore
 	 */
 	public function resetPassword(string $resetCode)
 	{
@@ -1490,6 +1500,7 @@ class Aauth
 
 		$messageData['password'] = $password;
 
+		// phpcs:disable CodeIgniter4.NamingConventions.ValidVariableName
 		if (isset($this->config->emailConfig->protocol))
 		{
 			if ($this->config->emailConfig->protocol === 'smtp')
@@ -1523,6 +1534,7 @@ class Aauth
 
 			return false;
 		}
+		// phpcs:enable
 
 		// $emailService->initialize(isset($this->config->emailConfig) ? $this->config->emailConfig : []);
 		// $emailService->setFrom($this->config->emailFrom, $this->config->emailFromName);
@@ -1545,11 +1557,11 @@ class Aauth
 	/**
 	 * Set User Variable as key value
 	 *
-	 * if variable not set before, it will be set
+	 * If variable not set before, it will be set
 	 * if set, overwrites the value
 	 *
-	 * @param string  $key
-	 * @param string  $value
+	 * @param string  $key    User Variable Key
+	 * @param string  $value  User Variable Value
 	 * @param integer $userId User id, can be null to use session user
 	 *
 	 * @return boolean
@@ -1576,7 +1588,7 @@ class Aauth
 	/**
 	 * Unset User Variable as key value
 	 *
-	 * @param string  $key
+	 * @param string  $key    User Variable Key
 	 * @param integer $userId User id, can be null to use session user
 	 *
 	 * @return boolean
@@ -1603,7 +1615,7 @@ class Aauth
 	/**
 	 * Get User Variable by key
 	 *
-	 * @param string  $key    Variable Key
+	 * @param string  $key    User Variable Key
 	 * @param integer $userId User id, can be null to use session user
 	 *
 	 * @return boolean|string false if var is not set, the value of var if set
@@ -1633,7 +1645,7 @@ class Aauth
 	}
 
 	/**
-	 * Get User Variables by user id
+	 * List User Variables by user id
 	 *
 	 * Return array with all user keys & variables
 	 *
@@ -1641,7 +1653,7 @@ class Aauth
 	 *
 	 * @return boolean|array , false if var is not set, the value of var if set
 	 */
-	public function getUserVars(int $userId = null)
+	public function listUserVars(int $userId = null)
 	{
 		if (! $userId)
 		{
@@ -1661,7 +1673,7 @@ class Aauth
 	}
 
 	/**
-	 * List User Variable Keys by UserId
+	 * Get User Variable Keys by UserId
 	 *
 	 * Return array of variable keys or false
 	 *
@@ -1669,7 +1681,7 @@ class Aauth
 	 *
 	 * @return boolean|array
 	 */
-	public function listUserVarKeys(int $userId = null)
+	public function getUserVarKeys(int $userId = null)
 	{
 		if (! $userId)
 		{
@@ -1696,7 +1708,7 @@ class Aauth
 	/**
 	 * Create group
 	 *
-	 * @param string $groupName  New group name
+	 * @param string $name       New group name
 	 * @param string $definition Description of the group
 	 *
 	 * @return integer|boolean Group id or false on fail
@@ -1799,11 +1811,9 @@ class Aauth
 
 		if ($groupModel->transStatus() === false)
 		{
-			// @codeCoverageIgnoreStart
 			$groupModel->transRollback();
 
 			return false;
-			// @codeCoverageIgnoreEnd
 		}
 		else
 		{
@@ -1817,8 +1827,8 @@ class Aauth
 	/**
 	 * Add member to group
 	 *
-	 * @param integer        $userId   User id to add to group
 	 * @param integer|string $groupPar Group id or name to add user to
+	 * @param integer        $userId   User id to add to group
 	 *
 	 * @return boolean
 	 */
@@ -1852,8 +1862,8 @@ class Aauth
 	/**
 	 * Remove member from group
 	 *
-	 * @param integer        $userId   User id to remove from group
 	 * @param integer|string $groupPar Group id or name to remove user from
+	 * @param integer        $userId   User id to remove from group
 	 *
 	 * @return boolean
 	 */
@@ -1869,13 +1879,18 @@ class Aauth
 	/**
 	 * Get User Groups
 	 *
-	 * @param integer|string $userId User id
+	 * @param integer $userId User id
 	 *
 	 * @return boolean|array
 	 */
-	public function getUserGroups($userId)
+	public function getUserGroups(int $userId = null)
 	{
 		$userModel = $this->getModel('User');
+
+		if (! $userId)
+		{
+			$userId = (int) @$this->session->user['id'];
+		}
 
 		if (! $userModel->existsById($userId))
 		{
@@ -1938,12 +1953,6 @@ class Aauth
 		{
 			return false;
 		}
-		else if ($groupToGroupModel->exists($groupId, $subgroupId))
-		{
-			$this->info(lang('Aauth.alreadyMemberSubgroup'));
-
-			return true;
-		}
 
 		if ($groupGroups = $groupToGroupModel->findAllByGroupId($groupId))
 		{
@@ -1996,8 +2005,6 @@ class Aauth
 	 */
 	public function getSubgroups($groupPar)
 	{
-		$groupModel = $this->getModel('Group');
-
 		if (! $groupId = $this->getGroupId($groupPar))
 		{
 			return false;
@@ -2006,6 +2013,61 @@ class Aauth
 		$groupToGroupModel = $this->getModel('GroupToGroup');
 
 		return $groupToGroupModel->findAllByGroupId($groupId);
+	}
+
+	/**
+	 * List all group subgroups
+	 *
+	 * @param integer|string $groupPar Group id or name to remove
+	 *
+	 * @return array
+	 */
+	public function listGroupSubgroups($groupPar)
+	{
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			return false;
+		}
+
+		$groupModel = $this->getModel('Group');
+
+		$groupModel->select('id, name, definition, IF(group_id = ' . $groupId . ', 1, 0)  as subgroup');
+		$groupModel->join($this->config->dbTableGroupToGroup, '(' . $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToGroup . '.subgroup_id AND ' . $this->config->dbTableGroupToGroup . '.group_id = ' . $groupId . ')', 'left');
+
+		return $groupModel->findAll();
+	}
+
+	/**
+	 * List group subgroups with paginate
+	 *
+	 * Return groups as an object array
+	 *
+	 * @param integer|string $groupPar Group id or name to remove
+	 * @param integer        $limit    Limit of users to be returned
+	 * @param string         $orderBy  Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 *
+	 * @return array
+	 */
+	public function listGroupSubgroupsPaginated($groupPar, int $limit = 10, string $orderBy = null)
+	{
+		if (! $groupId = $this->getGroupId($groupPar))
+		{
+			return false;
+		}
+
+		$groupModel = $this->getModel('Group');
+		$groupModel->select('id, name, definition, IF(group_id = ' . $groupId . ', 1, 0)  as subgroup');
+		$groupModel->join($this->config->dbTableGroupToGroup, '(' . $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToGroup . '.subgroup_id AND ' . $this->config->dbTableGroupToGroup . '.group_id = ' . $groupId . ')', 'left');
+
+		if (! is_null($orderBy))
+		{
+			$groupModel->orderBy($orderBy);
+		}
+
+		return [
+			'groups' => $groupModel->paginate($limit),
+			'pager'  => $groupModel->pager,
+		];
 	}
 
 	/**
@@ -2169,9 +2231,8 @@ class Aauth
 
 		$groupModel = $this->getModel('Group');
 
-		$groupModel->select('id, name, definition');
-		$groupModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToUser . '.group_id');
-		$groupModel->where($this->config->dbTableGroupToUser . '.user_id', $userId);
+		$groupModel->select('id, name, definition, IF(user_id = ' . $userId . ', 1, 0) as member');
+		$groupModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToUser . '.group_id AND ' . $this->config->dbTableGroupToUser . '.user_id = ' . $userId, 'left');
 
 		return $groupModel->get()->getResult('array');
 	}
@@ -2203,9 +2264,8 @@ class Aauth
 
 		$groupModel = $this->getModel('Group');
 
-		$groupModel->select('id, name, definition');
-		$groupModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToUser . '.group_id');
-		$groupModel->where($this->config->dbTableGroupToUser . '.user_id', $userId);
+		$groupModel->select('id, name, definition, IF(user_id = ' . $userId . ', 1, 0) as member');
+		$groupModel->join($this->config->dbTableGroupToUser, $this->config->dbTableGroups . '.id = ' . $this->config->dbTableGroupToUser . '.group_id AND ' . $this->config->dbTableGroupToUser . '.user_id = ' . $userId, 'left');
 
 		if (! is_null($orderBy))
 		{
@@ -2221,16 +2281,16 @@ class Aauth
 	/**
 	 * Set Group Variable as key value
 	 *
-	 * if variable not set before, it will be set
+	 * If variable not set before, it will be set
 	 * if set, overwrites the value
 	 *
-	 * @param string  $key
-	 * @param string  $value
-	 * @param integer $groupPar Group name or id
+	 * @param string         $key      Group Variable Key
+	 * @param string         $value    Group Variable Value
+	 * @param integer|string $groupPar Group id or name to remove
 	 *
 	 * @return boolean
 	 */
-	public function setGroupVar(string $key, string $value, string $groupPar)
+	public function setGroupVar(string $key, string $value, $groupPar)
 	{
 		$groupModel = $this->getModel('Group');
 
@@ -2247,12 +2307,12 @@ class Aauth
 	/**
 	 * Unset Group Variable as key value
 	 *
-	 * @param string  $key
-	 * @param integer $groupPar Group name or id
+	 * @param string         $key      Group Variable Key
+	 * @param integer|string $groupPar Group id or name to remove
 	 *
 	 * @return boolean
 	 */
-	public function unsetGroupVar(string $key, string $groupPar)
+	public function unsetGroupVar(string $key, $groupPar)
 	{
 		$groupModel = $this->getModel('Group');
 
@@ -2269,8 +2329,8 @@ class Aauth
 	/**
 	 * Get Group Variable by key
 	 *
-	 * @param string  $key      Variable Key
-	 * @param integer $groupPar Group name or id
+	 * @param string $key      Variable Key
+	 * @param string $groupPar Group name or id
 	 *
 	 * @return boolean|string
 	 */
@@ -2294,15 +2354,15 @@ class Aauth
 	}
 
 	/**
-	 * Get Group Variables by group id
+	 * List Group Variables by group id
 	 *
 	 * Return array with all group keys & variables
 	 *
-	 * @param integer $groupPar Group name or id
+	 * @param string $groupPar Group name or id
 	 *
 	 * @return array
 	 */
-	public function getGroupVars(string $groupPar = null)
+	public function listGroupVars(string $groupPar = null)
 	{
 		$groupModel = $this->getModel('Group');
 
@@ -2317,15 +2377,15 @@ class Aauth
 	}
 
 	/**
-	 * List Group Variable Keys by GroupId
+	 * Get Group Variable Keys by GroupId
 	 *
 	 * Return array of variable keys or false
 	 *
-	 * @param integer $groupPar Group name or id
+	 * @param string $groupPar Group name or id
 	 *
 	 * @return boolean|array
 	 */
-	public function listGroupVarKeys(string $groupPar = null)
+	public function getGroupVarKeys(string $groupPar = null)
 	{
 		$groupModel = $this->getModel('Group');
 
@@ -2453,11 +2513,9 @@ class Aauth
 
 		if ($permModel->transStatus() === false)
 		{
-			// @codeCoverageIgnoreStart
 			$permModel->transRollback();
 
 			return false;
-			// @codeCoverageIgnoreEnd
 		}
 		else
 		{
@@ -2766,9 +2824,8 @@ class Aauth
 
 		$permModel = $this->getModel('Perm');
 
-		$permModel->select('id, name, definition, state');
-		$permModel->join($this->config->dbTablePermToGroup, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToGroup . '.perm_id');
-		$permModel->where($this->config->dbTablePermToGroup . '.group_id', $groupId);
+		$permModel->select('id, name, definition, IF(state = 0 OR state = 1, state, -1) as state');
+		$permModel->join($this->config->dbTablePermToGroup, '(' . $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToGroup . '.perm_id AND ' . $this->config->dbTablePermToGroup . '.group_id = ' . $groupId . ')', 'left');
 
 		return $permModel->get()->getResult('array');
 	}
@@ -2778,14 +2835,13 @@ class Aauth
 	 *
 	 * Return users as an object array
 	 *
-	 * @param integer $limit          Limit of users to be returned
-	 * @param integer $offset         Offset for limited number of users
-	 * @param boolean $includeBanneds Include banned users
-	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 * @param integer|string $groupPar Group id or name to get
+	 * @param integer        $limit    Limit of users to be returned
+	 * @param string         $orderBy  Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
 	 * @return boolean|array
 	 */
-	public function listGroupPermsPaginated(string $groupPar, int $limit = 10, string $orderBy = null)
+	public function listGroupPermsPaginated($groupPar, int $limit = 10, string $orderBy = null)
 	{
 		if (! $groupId = $this->getGroupId($groupPar))
 		{
@@ -2794,9 +2850,8 @@ class Aauth
 
 		$permModel = $this->getModel('Perm');
 
-		$permModel->select('id, name, definition, state');
-		$permModel->join($this->config->dbTablePermToGroup, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToGroup . '.perm_id');
-		$permModel->where($this->config->dbTablePermToGroup . '.group_id', $groupId);
+		$permModel->select('id, name, definition, IF(state = 0 OR state = 1, state, -1) as state');
+		$permModel->join($this->config->dbTablePermToGroup, '(' . $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToGroup . '.perm_id AND ' . $this->config->dbTablePermToGroup . '.group_id = ' . $groupId . ')', 'left');
 
 		if (! is_null($orderBy))
 		{
@@ -2812,7 +2867,7 @@ class Aauth
 	/**
 	 * List user permissions
 	 *
-	 * @param integer|string $groupPar Group id or name to get
+	 * @param integer $userId User id
 	 *
 	 * @return boolean|array
 	 */
@@ -2830,7 +2885,7 @@ class Aauth
 
 		$permModel = $this->getModel('Perm');
 
-		$permModel->select('id, name, definition, state');
+		$permModel->select('id, name, definition, IF(state = 0 OR state = 1, state, -1) as state');
 		$permModel->join($this->config->dbTablePermToUser, '(' . $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToUser . '.perm_id AND ' . $this->config->dbTablePermToUser . '.user_id = ' . $userId . ')', 'left');
 
 		return $permModel->get()->getResult('array');
@@ -2841,10 +2896,9 @@ class Aauth
 	 *
 	 * Return users as an object array
 	 *
-	 * @param integer $limit          Limit of users to be returned
-	 * @param integer $offset         Offset for limited number of users
-	 * @param boolean $includeBanneds Include banned users
-	 * @param string  $orderBy        Order by MYSQL string (e.g. 'name ASC', 'email DESC')
+	 * @param integer $userId  User id
+	 * @param integer $limit   Limit of users to be returned
+	 * @param string  $orderBy Order by MYSQL string (e.g. 'name ASC', 'email DESC')
 	 *
 	 * @return boolean|array
 	 */
@@ -2862,9 +2916,8 @@ class Aauth
 
 		$permModel = $this->getModel('Perm');
 
-		$permModel->select('id, name, definition, state');
-		$permModel->join($this->config->dbTablePermToUser, $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToUser . '.perm_id');
-		$permModel->where($this->config->dbTablePermToUser . '.user_id', $userId);
+		$permModel->select('id, name, definition, IF(state = 0 OR state = 1, state, -1) as state');
+		$permModel->join($this->config->dbTablePermToUser, '(' . $this->config->dbTablePerms . '.id = ' . $this->config->dbTablePermToUser . '.perm_id AND ' . $this->config->dbTablePermToUser . '.user_id = ' . $userId . ')', 'left');
 
 		if (! is_null($orderBy))
 		{
@@ -3147,12 +3200,12 @@ class Aauth
 	 * Provides direct access to method in the builder (if available)
 	 * and the database connection.
 	 *
-	 * @param string $name
-	 * @param array  $params
+	 * @param string $name   Call name
+	 * @param array  $params Call params
 	 *
 	 * @return Model|null
 	 */
-	public function __call($name, array $params)
+	public function __call(string $name, array $params)
 	{
 		$config  = $this->config;
 		$session = $this->session;

@@ -8,12 +8,12 @@
  * access management, public access etc..
  *
  * @package   CodeIgniter-Aauth
- * @since     3.0.0
  * @author    Emre Akay
  * @author    Raphael "REJack" Jackstadt
  * @copyright 2014-2019 Emre Akay
  * @license   https://opensource.org/licenses/MIT   MIT License
  * @link      https://github.com/emreakay/CodeIgniter-Aauth
+ * @since     3.0.0
  */
 
 namespace App\Libraries\Aauth;
@@ -64,7 +64,12 @@ class TOTP extends \App\Libraries\Aauth
 		{
 			$secret = OTPHP_TOTP::create();
 
-			if ($secret->getSecret() !== $userVariableModel->where(['data_key' => 'totp_secret', 'data_value' => $secret->getSecret(), 'system' => 1])->getFirstRow('array'))
+			$where = [
+				'data_key'   => 'totp_secret',
+				'data_value' => $secret->getSecret(),
+				'system'     => 1,
+			];
+			if ($secret->getSecret() !== $userVariableModel->where($where)->getFirstRow('array'))
 			{
 				$endSecret = $secret->getSecret();
 			}

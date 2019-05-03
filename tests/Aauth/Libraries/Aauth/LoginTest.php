@@ -42,6 +42,14 @@ class LoginTest extends CIDatabaseTestCase
 		$_SESSION      = [];
 	}
 
+	public function invokeMethod(&$object, $methodName, array $parameters = [])
+	{
+		$reflection = new \ReflectionClass(get_class($object));
+		$method     = $reflection->getMethod($methodName);
+		$method->setAccessible(true);
+		return $method->invokeArgs($object, $parameters);
+	}
+
 	public function tearDown()
 	{
 	}
@@ -177,7 +185,7 @@ class LoginTest extends CIDatabaseTestCase
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
 
-		$_COOKIE['remember'] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
+		$_COOKIE[$config->loginRememberCookie] = base64_encode(1) . ';' . $randomString . ';' . $selectorString;
 
 		$this->hasInDatabase($config->dbTableLoginTokens, [
 			'user_id'       => 1,
@@ -189,7 +197,7 @@ class LoginTest extends CIDatabaseTestCase
 		$this->library->logout();
 	}
 
-	public function testIsLoggedInCookieInvalidUser($value = '')
+	public function testIsLoggedInCookieInvalidUser()
 	{
 		helper('text');
 		$session        = $this->getInstance();
@@ -198,16 +206,16 @@ class LoginTest extends CIDatabaseTestCase
 		$randomString   = random_string('alnum', 32);
 		$selectorString = random_string('alnum', 16);
 		$this->hasInDatabase($config->dbTableLoginTokens, [
-			'user_id'       => 99,
+			'user_id'       => 1,
 			'random_hash'   => password_hash($randomString, PASSWORD_DEFAULT),
 			'selector_hash' => password_hash($selectorString, PASSWORD_DEFAULT),
 			'expires_at'    => date('Y-m-d H:i:s', strtotime('+1 week')),
 		]);
 
-		$_COOKIE['remember'] = base64_encode(99) . ';' . $randomString . ';' . $selectorString;
+		$_COOKIE['remember'] = base64_encode(2) . ';' . $randomString . ';' . $selectorString;
 
 		$this->assertFalse($this->library->isLoggedIn());
-		unset($_COOKIE['remember']);
+		unset($_COOKIE);
 	}
 
 	public function testIsLoggedInCookieInvalidCookie($value = '')

@@ -2,13 +2,17 @@
 
 use App\Libraries\Aauth;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class UtilityTest extends \CIUnitTestCase
 {
 	public function setUp()
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 	}
 
 	//--------------------------------------------------------------------

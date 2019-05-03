@@ -7,13 +7,17 @@ use Tests\Support\Session\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use App\Libraries\Aauth;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class InfosTest extends \CIUnitTestCase
 {
 	public function setUp()
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
 	}
@@ -74,10 +78,6 @@ class InfosTest extends \CIUnitTestCase
 		$this->expectOutputString('test message 1<br />test message 2');
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testClearInfos()
 	{
 		$session       = $this->getInstance();
@@ -89,10 +89,6 @@ class InfosTest extends \CIUnitTestCase
 		$this->assertNull($session->getFlashdata('infos'));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testInfosFlash()
 	{
 		$session       = $this->getInstance();
@@ -108,10 +104,6 @@ class InfosTest extends \CIUnitTestCase
 		$this->assertEquals(['test message 1', 'test message 2'], $session->getFlashdata('infos'));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testKeepInfos()
 	{
 		$session       = $this->getInstance();

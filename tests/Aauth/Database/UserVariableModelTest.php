@@ -24,41 +24,41 @@ class UserVariableModelTest extends CIDatabaseTestCase
 
 	public function testFind()
 	{
-		$userVariable = $this->model->find(99, 'test');
+		$userVariable = $this->model->find(1, 'test');
 		$this->assertFalse($userVariable);
 
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
-		$userVariable = $this->model->find(99, 'test');
+		$userVariable = $this->model->find(1, 'test');
 		$this->assertEquals('TRUE', $userVariable);
 	}
 
 	public function testFindAll()
 	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
-		$userVariables = $this->model->findAll(99);
+		$userVariables = $this->model->findAll(1);
 		$this->assertCount(1, $userVariables);
 	}
 
 	public function testSave()
 	{
-		$this->model->save(99, 'test', 'TRUE');
+		$this->model->save(1, 'test', 'TRUE');
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
 
-		$this->model->save(99, 'test', 'TRUE2');
+		$this->model->save(1, 'test', 'TRUE2');
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE2',
 		]);
@@ -67,37 +67,37 @@ class UserVariableModelTest extends CIDatabaseTestCase
 	public function testDelete()
 	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
 		$criteria = [
-			'user_id' => 99,
+			'user_id' => 1,
 		];
 		$this->seeNumRecords(1, $this->config->dbTableUserVariables, $criteria);
-		$this->model->delete(99, 'test');
+		$this->model->delete(1, 'test');
 		$this->seeNumRecords(0, $this->config->dbTableUserVariables, $criteria);
 	}
 
 	public function testDeleteAllByUserId()
 	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
 		$criteria = [
-			'user_id' => 99,
+			'user_id' => 1,
 		];
 		$this->seeNumRecords(1, $this->config->dbTableUserVariables, $criteria);
-		$this->model->deleteAllByUserId(99);
+		$this->model->deleteAllByUserId(1);
 		$this->seeNumRecords(0, $this->config->dbTableUserVariables, $criteria);
 	}
 
 	public function testAsArrayFirst()
 	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
@@ -108,7 +108,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 	public function testAsObjectFirst()
 	{
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
@@ -120,7 +120,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 	{
 		$this->model = new UserVariableModel();
 		$this->hasInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 1,
 			'data_key'   => 'test',
 			'data_value' => 'TRUE',
 		]);
@@ -135,7 +135,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 
 	public function testDBCall()
 	{
-		$this->model->save(99, 'test', 'TRUE');
+		$this->model->save(1, 'test', 'TRUE');
 		$this->assertEquals(1, $this->model->insertID());
 	}
 

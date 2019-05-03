@@ -12,6 +12,10 @@ use App\Models\Aauth\UserModel;
 use App\Models\Aauth\UserVariableModel;
 use OTPHP\TOTP;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class TOTPTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -24,7 +28,7 @@ class TOTPTest extends CIDatabaseTestCase
 	{
 		parent::setUp();
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$this->config  = new AauthConfig();
 		$_COOKIE       = [];
 		$_SESSION      = [];
@@ -60,11 +64,6 @@ class TOTPTest extends CIDatabaseTestCase
 	}
 
 	//--------------------------------------------------------------------
-
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 
 	public function testLogin()
 	{
@@ -121,19 +120,15 @@ class TOTPTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->login('admin@example.com', 'password123456'));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testUpdateUserTotpSecret()
 	{
 		$config              = new AauthConfig();
 		$config->totpEnabled = true;
-		$this->library       = new Aauth($config, true);
+		$this->library       = new Aauth($config, null);
 
-		$this->assertTrue($this->library->updateUserTotpSecret(99, 'TESTSECRET99'));
+		$this->assertTrue($this->library->updateUserTotpSecret(2, 'TESTSECRET99'));
 		$this->seeInDatabase($this->config->dbTableUserVariables, [
-			'user_id'    => 99,
+			'user_id'    => 2,
 			'data_key'   => 'totp_secret',
 			'data_value' => 'TESTSECRET99',
 			'system'     => true,
@@ -159,7 +154,7 @@ class TOTPTest extends CIDatabaseTestCase
 	{
 		$config              = new AauthConfig();
 		$config->totpEnabled = true;
-		$this->library       = new Aauth($config, true);
+		$this->library       = new Aauth($config, null);
 
 		$this->assertInternalType('string', $this->library->generateUniqueTotpSecret());
 	}
@@ -168,15 +163,11 @@ class TOTPTest extends CIDatabaseTestCase
 	{
 		$config              = new AauthConfig();
 		$config->totpEnabled = true;
-		$this->library       = new Aauth($config, true);
+		$this->library       = new Aauth($config, null);
 
 		$this->assertInternalType('string', $this->library->generateTotpQrCode('testsecret'));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testVerifyUserTotpCode()
 	{
 		$config  = new AauthConfig();
@@ -208,15 +199,11 @@ class TOTPTest extends CIDatabaseTestCase
 		$this->assertTrue($this->library->verifyUserTotpCode($totpCode, 1));
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState  disabled
-	 */
 	public function testIsTotpRequired()
 	{
 		$config              = new AauthConfig();
 		$config->totpEnabled = true;
-		$this->library       = new Aauth($config, true);
+		$this->library       = new Aauth($config, null);
 
 		$this->assertFalse($this->library->isTotpRequired());
 

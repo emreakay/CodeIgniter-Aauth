@@ -16,6 +16,10 @@ use App\Libraries\Aauth;
 use App\Models\Aauth\UserVariableModel;
 use App\Models\Aauth\LoginTokenModel;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState         disabled
+ */
 class CAPTCHATest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
@@ -33,7 +37,7 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$this->request  = new IncomingRequest(new App(), new URI(), null, new UserAgent());
 		Services::injectMock('request', $this->request);
 
-		$this->library = new Aauth(null, true);
+		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
 	}
@@ -73,7 +77,7 @@ class CAPTCHATest extends CIDatabaseTestCase
 	{
 		$config                 = new AauthConfig();
 		$config->captchaEnabled = true;
-		$this->library          = new Aauth($config, true);
+		$this->library          = new Aauth($config, null);
 
 		$this->assertEquals('', $this->library->generateCaptchaHtml());
 
@@ -89,7 +93,7 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$this->assertContains('https://www.google.com/recaptcha', $this->library->generateCaptchaHtml());
 
 		$config->captchaType           = 'hcaptcha';
-		$this->library                 = new Aauth($config, true);
+		$this->library                 = new Aauth($config, null);
 		$_POST['h-recaptcha-response'] = '0123456789';
 		$this->library->login('admina@example.com', 'password123456');
 		$this->assertEquals(lang('Aauth.invalidCaptcha'), $this->library->getErrorsArray()[0]);
@@ -100,17 +104,17 @@ class CAPTCHATest extends CIDatabaseTestCase
 	{
 		$config                 = new AauthConfig();
 		$config->captchaEnabled = true;
-		$this->library          = new Aauth($config, true);
+		$this->library          = new Aauth($config, null);
 
-		$this->assertContains('missing-input', $this->library->verifyCaptchaResponse(null)['errorCodes']);
+		$this->assertContains('missing-input', $this->library->verifyCaptchaResponse('')['errorCodes']);
 		$this->assertContains('invalid-input-response', $this->library->verifyCaptchaResponse('0123456789')['errorCodes']);
 
 		$config->captchaType = 'hcaptcha';
-		$this->library       = new Aauth($config, true);
+		$this->library       = new Aauth($config, null);
 		$this->assertContains('invalid-input-response', $this->library->verifyCaptchaResponse('0123456789')['errorCodes']);
 
 		$config->captchaType = 'hcaptcha';
-		$this->library       = new Aauth($config, true);
+		$this->library       = new Aauth($config, null);
 		$this->assertTrue($this->library->verifyCaptchaResponse('testing')['success']);
 	}
 }
