@@ -34,11 +34,17 @@ class Users extends Controller
 	 */
 	public function __construct()
 	{
-		$this->config  = new AauthConfig();
+		helper('aauth');
+
+		if (! is_admin())
+		{
+			return service('response')->redirect('/');
+		}
+
 		$this->aauth   = new Aauth();
+		$this->config  = new AauthConfig();
 		$this->request = Services::request();
 		helper('form');
-		helper('aauth');
 	}
 
 	/**
@@ -50,13 +56,12 @@ class Users extends Controller
 	{
 		$data = $this->aauth->listUsersPaginated();
 
-		$data['cssFiles'] = [
+		$data['pagerLinks'] = $data['pager']->links();
+		$data['cssFiles']   = [
 			'/assets/css/admin/users/index.css'
 		];
 
-		echo view('Templates/HeaderAdmin', $data);
 		echo view('Admin/Users/Home', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
@@ -70,15 +75,13 @@ class Users extends Controller
 		$data['groups']      = $this->aauth->listGroups();
 		$data['perms']       = $this->aauth->listPerms();
 
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Users/New', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
 	 * Create
 	 *
-	 * @return void
+	 * @return redirect
 	 */
 	public function create()
 	{
@@ -97,26 +100,33 @@ class Users extends Controller
 	/**
 	 * Edit
 	 *
-	 * @return void
+	 * @param integer $userId User Id
+	 *
+	 * @return redirect|void
 	 */
-	public function edit($userId)
+	public function edit(int $userId)
 	{
+		if (! $this->aauth->getUser($userId))
+		{
+			return redirect()->to('/admin/users');
+		}
+
 		$data['useUsername'] = $this->config->loginUseUsername;
 		$data['user']        = $this->aauth->getUser($userId);
-		$data['groups']      = $this->aauth->listGroups();
-		$data['perms']       = $this->aauth->listPerms();
+		$data['groups']      = $this->aauth->listUserGroups($userId);
+		$data['perms']       = $this->aauth->listUserPerms($userId);
 
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Users/Edit', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
 	 * Update
 	 *
-	 * @return void
+	 * @param integer $userId User Id
+	 *
+	 * @return redirect
 	 */
-	public function update($userId)
+	public function update(int $userId)
 	{
 		$email    = $this->request->getPost('email');
 		$username = $this->request->getPost('username');
@@ -139,11 +149,11 @@ class Users extends Controller
 				continue;
 			}
 
-			if (! in_array(['group_id' => $groupId], $activeGroups) && $state === 1)
+			if (! in_array(['group_id' => $groupId], $activeGroups) && (int) $state === 1)
 			{
 				$this->aauth->addMember($groupId, $userId);
 			}
-			else if (in_array(['group_id' => $groupId], $activeGroups) && $state === 0)
+			else if (in_array(['group_id' => $groupId], $activeGroups) && (int) $state === 0)
 			{
 				$this->aauth->removeMember($groupId, $userId);
 			}
@@ -151,11 +161,11 @@ class Users extends Controller
 
 		foreach ($perms as $permId => $state)
 		{
-			if (! in_array(['perm_id' => $permId], $activePerms) && $state === 1)
+			if (! in_array(['perm_id' => $permId], $activePerms) && (int) $state === 1)
 			{
 				$this->aauth->allowUser($permId, $userId);
 			}
-			else if (in_array(['perm_id' => $permId], $activePerms) && $state === 0)
+			else if (in_array(['perm_id' => $permId], $activePerms) && (int) $state === 0)
 			{
 				$this->aauth->denyUser($permId, $userId);
 			}
@@ -167,33 +177,39 @@ class Users extends Controller
 	/**
 	 * Show
 	 *
-	 * @return void
-	 */
-	public function show($userId)
-	{
-		$data['user']   = $this->aauth->getUser($userId);
-		$data['groups'] = $this->aauth->listGroups();
-		$data['perms']  = $this->aauth->listPerms();
-
-		echo view('Templates/HeaderAdmin');
-		echo view('Admin/Users/Show', $data);
-		echo view('Templates/FooterAdmin');
-	}
-
-	/**
-	 * Delete
+	 * @param integer $userId User Id
 	 *
-	 * @return void
+	 * @return redirect|void
 	 */
-	public function delete($userId)
+	public function show(int $userId)
 	{
 		if (! $this->aauth->getUser($userId))
 		{
 			return redirect()->to('/admin/users');
 		}
 
-		$id = $this->request->getPost('id');
-		if ($userId === $id)
+		$data['user']   = $this->aauth->getUser($userId);
+		$data['groups'] = $this->aauth->listUserGroups($userId);
+		$data['perms']  = $this->aauth->listUserPerms($userId);
+
+		echo view('Admin/Users/Show', $data);
+	}
+
+	/**
+	 * Delete
+	 *
+	 * @param integer $userId User Id
+	 *
+	 * @return redirect|void
+	 */
+	public function delete(int $userId)
+	{
+		if (! $this->aauth->getUser($userId))
+		{
+			return redirect()->to('/admin/users');
+		}
+
+		if ($userId === $this->request->getPost('id'))
 		{
 			if ($this->aauth->deleteUser($userId))
 			{
@@ -205,9 +221,7 @@ class Users extends Controller
 		$data['groups'] = $this->aauth->listGroups();
 		$data['perms']  = $this->aauth->listPerms();
 
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Users/Delete', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 }

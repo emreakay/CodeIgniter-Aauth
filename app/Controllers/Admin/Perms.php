@@ -33,10 +33,16 @@ class Perms extends Controller
 	 */
 	public function __construct()
 	{
+		helper('aauth');
+
+		if (! is_admin())
+		{
+			return service('response')->redirect('/');
+		}
+
 		$this->aauth   = new Aauth();
 		$this->request = Services::request();
 		helper('form');
-		helper('aauth');
 	}
 
 	/**
@@ -48,13 +54,12 @@ class Perms extends Controller
 	{
 		$data = $this->aauth->listPermsPaginated();
 
-		$data['cssFiles'] = [
+		$data['pagerLinks'] = $data['pager']->links();
+		$data['cssFiles']   = [
 			'/assets/css/admin/perms/index.css'
 		];
 
-		echo view('Templates/HeaderAdmin', $data);
 		echo view('Admin/Perms/Home', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
@@ -64,15 +69,13 @@ class Perms extends Controller
 	 */
 	public function new()
 	{
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Perms/New');
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
 	 * Create
 	 *
-	 * @return void
+	 * @return redirect
 	 */
 	public function create()
 	{
@@ -90,23 +93,30 @@ class Perms extends Controller
 	/**
 	 * Edit
 	 *
-	 * @return void
+	 * @param integer $permId Perm Id
+	 *
+	 * @return redirect|void
 	 */
-	public function edit($permId)
+	public function edit(int $permId)
 	{
+		if (! $this->aauth->getPerm($permId))
+		{
+			return redirect()->to('/admin/perms');
+		}
+
 		$data['perm'] = $this->aauth->getPerm($permId);
 
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Perms/Edit', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
 	 * Update
 	 *
-	 * @return void
+	 * @param integer $permId Perm Id
+	 *
+	 * @return redirect
 	 */
-	public function update($permId)
+	public function update(int $permId)
 	{
 		$name       = $this->request->getPost('name');
 		$definition = $this->request->getPost('definition');
@@ -122,31 +132,37 @@ class Perms extends Controller
 	/**
 	 * Show
 	 *
-	 * @return void
-	 */
-	public function show($permId)
-	{
-		$data['perm'] = $this->aauth->getPerm($permId);
-
-		echo view('Templates/HeaderAdmin');
-		echo view('Admin/Perms/Show', $data);
-		echo view('Templates/FooterAdmin');
-	}
-
-	/**
-	 * Delete
+	 * @param integer $permId Perm Id
 	 *
-	 * @return void
+	 * @return redirect|void
 	 */
-	public function delete($permId)
+	public function show(int $permId)
 	{
 		if (! $this->aauth->getPerm($permId))
 		{
 			return redirect()->to('/admin/perms');
 		}
 
-		$id = $this->request->getPost('id');
-		if ($permId === $id)
+		$data['perm'] = $this->aauth->getPerm($permId);
+
+		echo view('Admin/Perms/Show', $data);
+	}
+
+	/**
+	 * Delete
+	 *
+	 * @param integer $permId Perm Id
+	 *
+	 * @return redirect|void
+	 */
+	public function delete(int $permId)
+	{
+		if (! $this->aauth->getPerm($permId))
+		{
+			return redirect()->to('/admin/perms');
+		}
+
+		if ($permId === $this->request->getPost('id'))
 		{
 			if ($this->aauth->deletePerm($permId))
 			{
@@ -156,9 +172,7 @@ class Perms extends Controller
 
 		$data['perm'] = $this->aauth->getPerm($permId);
 
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Perms/Delete', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 }

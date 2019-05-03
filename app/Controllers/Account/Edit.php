@@ -34,11 +34,17 @@ class Edit extends Controller
 	 */
 	public function __construct()
 	{
+		helper('aauth');
+
+		if (! is_loggedin())
+		{
+			return service('response')->redirect('/');
+		}
+
 		$this->config  = new AauthConfig();
 		$this->aauth   = new Aauth();
 		$this->request = Services::request();
 		helper('form');
-		helper('aauth');
 	}
 
 	/**
@@ -81,8 +87,6 @@ class Edit extends Controller
 
 		$data['useUsername'] = $this->config->loginUseUsername;
 
-		echo view('Templates/Header', $data);
 		echo view('Account/Edit', $data);
-		echo view('Templates/Footer', $data);
 	}
 }

@@ -29,13 +29,17 @@ class Home extends Controller
 	/**
 	 * Index
 	 *
-	 * @return void
+	 * @return void|redirect
 	 */
 	public function index()
 	{
 		helper('aauth');
-		echo view('Templates/HeaderAdmin');
+
+		if (! is_admin())
+		{
+			return service('response')->redirect('/');
+		}
+
 		echo view('Admin/Home');
-		echo view('Templates/FooterAdmin');
 	}
 }

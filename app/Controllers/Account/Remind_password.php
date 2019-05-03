@@ -61,8 +61,6 @@ class Remind_password extends Controller
 			'/assets/css/login.css'
 		];
 
-		echo view('Templates/HeaderBlank', $data);
 		echo view('Account/RemindPassword', $data);
-		echo view('Templates/FooterBlank', $data);
 	}
 }

@@ -57,8 +57,13 @@ class Login extends Controller
 			}
 			else
 			{
-				$this->response->redirect('/account');
+				$this->response->redirect(site_url('/account'));
 			}
+		}
+
+		if (session('errors'))
+		{
+			$data['errors'] = isset($data['errors']) ? $data['errors'] . '<br />' . session('errors') : session('errors');
 		}
 
 		$data['useUsername'] = $this->config->loginUseUsername;
@@ -66,8 +71,6 @@ class Login extends Controller
 			'/assets/css/login.css'
 		];
 
-		echo view('Templates/HeaderBlank', $data);
 		echo view('Account/Login', $data);
-		echo view('Templates/FooterBlank', $data);
 	}
 }

@@ -59,13 +59,21 @@ class Register extends Controller
 			}
 		}
 
+		if (session('errors'))
+		{
+			$data['errors'] = isset($data['errors']) ? $data['errors'] . '<br />' . session('errors') : session('errors');
+		}
+
+		if (session('infos'))
+		{
+			$data['infos'] = isset($data['infos']) ? $data['infos'] . '<br />' . session('infos') : session('infos');
+		}
+
 		$data['useUsername'] = $this->config->loginUseUsername;
 		$data['cssFiles']    = [
 			'/assets/css/login.css'
 		];
 
-		echo view('Templates/HeaderBlank', $data);
 		echo view('Account/Register', $data);
-		echo view('Templates/FooterBlank', $data);
 	}
 }

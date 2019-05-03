@@ -34,20 +34,18 @@ class Migrate extends Controller
 	public function index()
 	{
 		helper('aauth');
+
 		$config  = new \Config\Aauth();
 		$migrate = \Config\Services::migrations();
+		$db      = \Config\Database::connect();
 
 		try
 		{
-			$migrated = $migrate->latest('App', $config->dbProfile);
+				$migrate->latest('App', $config->dbProfile);
 		}
 		catch (\Exception $e)
 		{
-			// Do something with the error here...
+			echo $e->getMessage();
 		}
-
-		echo view('Templates/Header');
-		echo view('Admin/Migrate');
-		echo view('Templates/Footer');
 	}
 }

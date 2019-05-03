@@ -64,8 +64,6 @@ class Reset_password extends Controller
 			'/assets/css/login.css'
 		];
 
-		echo view('Templates/HeaderBlank', $data);
 		echo view('Account/ResetPassword', $data);
-		echo view('Templates/FooterBlank', $data);
 	}
 }

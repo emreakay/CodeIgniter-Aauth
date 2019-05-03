@@ -13,8 +13,9 @@
 		<?php if (isset($cssFiles)): ?>
 			<?php foreach ($cssFiles as $cssFile): ?>
 		<link href="<?= $cssFile; ?>" rel="stylesheet">
-	<?php endforeach; ?>
-	<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		<?= $this->renderSection('header') ?>
 	</head>
 	<body id="page-top">
 		<nav class="navbar navbar-expand navbar-dark bg-dark static-top">
@@ -34,7 +35,12 @@
 							<i class="fas fa-user-circle fa-fw"></i>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-							<a class="dropdown-item" href="<?= site_url('account/edit') ?>">Edit Profile</a>
+						<?php if (is_admin()): ?>
+							<a class="dropdown-item" href="<?= site_url('admin') ?>">Admin Area</a>
+							<div class="dropdown-divider"></div>
+						<?php endif; ?>
+							<a class="dropdown-item <?= uri_string() === 'account' ? 'active' : '' ?>" href="<?= site_url('account') ?>">Profile</a>
+							<a class="dropdown-item <?= uri_string() === 'account/edit' ? 'active' : '' ?>" href="<?= site_url('account/edit') ?>">Edit Profile</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="<?= site_url('account/logout') ?>">Logout</a>
 						</div>
@@ -73,3 +79,32 @@
 
 			<div id="content-wrapper">
 				<div class="container-fluid">
+					<?= $this->renderSection('content') ?>
+				</div>
+
+				<footer class="sticky-footer">
+				  <div class="container my-auto">
+					<div class="copyright text-center my-auto">
+					  <span>Copyright © Aauth 2018</span>
+					</div>
+				  </div>
+				</footer>
+			  </div>
+		   </div>
+
+		<a class="scroll-to-top rounded" href="#page-top">
+		  <i class="fas fa-angle-up"></i>
+		</a>
+
+		<script src="/assets/vendor/jquery/jquery.min.js"></script>
+		<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+		<script src="/assets/js/sb-admin.min.js"></script>
+		<?php if (isset($jsFiles)): ?>
+			<?php foreach ($jsFiles as $jsFiles): ?>
+		<script type="text/javascript" src="<?= $jsFile; ?>"></script>
+		<?php endforeach; ?>
+		<?php endif; ?>
+		<?= $this->renderSection('footer') ?>
+  </body>
+</html>

@@ -33,10 +33,16 @@ class Groups extends Controller
 	 */
 	public function __construct()
 	{
+		helper('aauth');
+
+		if (! is_admin())
+		{
+			return service('response')->redirect('/');
+		}
+
 		$this->aauth   = new Aauth();
 		$this->request = Services::request();
 		helper('form');
-		helper('aauth');
 	}
 
 	/**
@@ -48,13 +54,12 @@ class Groups extends Controller
 	{
 		$data = $this->aauth->listGroupsPaginated();
 
-		$data['cssFiles'] = [
+		$data['pagerLinks'] = $data['pager']->links();
+		$data['cssFiles']   = [
 			'/assets/css/admin/groups/index.css'
 		];
 
-		echo view('Templates/HeaderAdmin', $data);
 		echo view('Admin/Groups/Home', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
@@ -66,15 +71,13 @@ class Groups extends Controller
 	{
 		$data['groups'] = $this->aauth->listGroups();
 		$data['perms']  = $this->aauth->listPerms();
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Groups/New', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
 	 * Create
 	 *
-	 * @return void
+	 * @return redirect
 	 */
 	public function create()
 	{
@@ -90,7 +93,7 @@ class Groups extends Controller
 
 		foreach ($subGroups as $subgroupId => $state)
 		{
-			if ($state === 1)
+			if ((int) $state === 1)
 			{
 				$this->aauth->addSubgroup($groupId, $subgroupId);
 			}
@@ -98,7 +101,7 @@ class Groups extends Controller
 
 		foreach ($perms as $permId => $state)
 		{
-			if ($state === 1)
+			if ((int) $state === 1)
 			{
 				$this->aauth->allowGroup($permId, $groupId);
 			}
@@ -110,62 +113,68 @@ class Groups extends Controller
 	/**
 	 * Edit
 	 *
-	 * @return void
+	 * @param integer $groupId Group Id
+	 *
+	 * @return redirect|void
 	 */
-	public function edit($groupId)
+	public function edit(int $groupId)
 	{
-		$data['group']        = $this->aauth->getGroup($groupId);
-		$data['groups']       = $this->aauth->listGroups();
-		$data['perms']        = $this->aauth->listPerms();
-		$data['activeGroups'] = $this->aauth->getSubgroups($groupId);
-		$data['activePerms']  = $this->aauth->getGroupPerms($groupId);
+		if (! $this->aauth->getGroup($groupId))
+		{
+			return redirect()->to('/admin/groups');
+		}
 
-		echo view('Templates/HeaderAdmin');
+		$data['group']  = $this->aauth->getGroup($groupId);
+		$data['groups'] = $this->aauth->listGroupSubgroups($groupId);
+		$data['perms']  = $this->aauth->listGroupPerms($groupId);
+
 		echo view('Admin/Groups/Edit', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 	/**
 	 * Update
 	 *
-	 * @return void
+	 * @param integer $groupId Group Id
+	 *
+	 * @return redirect
 	 */
-	public function update($groupId)
+	public function update(int $groupId)
 	{
 		$name       = $this->request->getPost('name');
 		$definition = $this->request->getPost('definition');
 		$subGroups  = $this->request->getPost('sub_groups');
 		$perms      = $this->request->getPost('perms');
-
 		if (! $this->aauth->updateGroup($groupId, empty($name) ? null : $name, empty($definition) ? null : $definition))
 		{
 			return redirect()->back()->with('errors', $this->aauth->getErrorsArray());
 		}
 
 		$activeSubGroups = $this->aauth->getSubgroups($groupId);
-		$activePerms     = $this->aauth->getGroupPerms($groupId, 1);
-
+		$activePerms     = $this->aauth->getGroupPerms($groupId);
 		foreach ($subGroups as $subgroupId => $state)
 		{
-			if (! in_array(['subgroup_id' => $subgroupId], $activeSubGroups) && $state === 1)
+			if (! in_array(['subgroup_id' => $subgroupId], $activeSubGroups) && (int) $state === 1)
 			{
 				$this->aauth->addSubgroup($groupId, $subgroupId);
 			}
-			else if (in_array(['subgroup_id' => $subgroupId], $activeSubGroups) && $state === 0)
+			else if (in_array(['subgroup_id' => $subgroupId], $activeSubGroups) && (int) $state === 0)
 			{
 				$this->aauth->removeSubgroup($groupId, $subgroupId);
 			}
 		}
-
 		foreach ($perms as $permId => $state)
 		{
-			if (! in_array(['perm_id' => $permId], $activePerms) && $state === 1)
+			if (! in_array(['perm_id' => $permId, 'state' => '1'], $activePerms) && (int) $state === 1)
 			{
 				$this->aauth->allowGroup($permId, $groupId);
 			}
-			else if (! in_array(['perm_id' => $permId], $activePerms) && $state === 0)
+			else if (! in_array(['perm_id' => $permId, 'state' => '0'], $activePerms) && (int) $state === 0)
 			{
 				$this->aauth->denyGroup($permId, $groupId);
+			}
+			else if ((in_array(['perm_id' => $permId, 'state' => '0'], $activePerms) || in_array(['perm_id' => $permId, 'state' => '1'], $activePerms)) && (int) $state === -1)
+			{
+				$this->aauth->removeGroupPerm($permId, $groupId);
 			}
 		}
 
@@ -175,35 +184,39 @@ class Groups extends Controller
 	/**
 	 * Show
 	 *
-	 * @return void
-	 */
-	public function show($groupId)
-	{
-		$data['group']        = $this->aauth->getGroup($groupId);
-		$data['groups']       = $this->aauth->listGroups();
-		$data['perms']        = $this->aauth->listPerms();
-		$data['activeGroups'] = $this->aauth->getSubgroups($groupId);
-		$data['activePerms']  = $this->aauth->getGroupPerms($groupId);
-
-		echo view('Templates/HeaderAdmin');
-		echo view('Admin/Groups/Show', $data);
-		echo view('Templates/FooterAdmin');
-	}
-
-	/**
-	 * Delete
+	 * @param integer $groupId Group Id
 	 *
-	 * @return void
+	 * @return redirect|void
 	 */
-	public function delete($groupId)
+	public function show(int $groupId)
 	{
 		if (! $this->aauth->getGroup($groupId))
 		{
 			return redirect()->to('/admin/groups');
 		}
 
-		$id = $this->request->getPost('id');
-		if ($groupId === $id)
+		$data['group']  = $this->aauth->getGroup($groupId);
+		$data['groups'] = $this->aauth->listGroupSubgroups($groupId);
+		$data['perms']  = $this->aauth->listGroupPerms($groupId);
+
+		echo view('Admin/Groups/Show', $data);
+	}
+
+	/**
+	 * Delete
+	 *
+	 * @param integer $groupId Group Id
+	 *
+	 * @return redirect|void
+	 */
+	public function delete(int $groupId)
+	{
+		if (! $this->aauth->getGroup($groupId))
+		{
+			return redirect()->to('/admin/groups');
+		}
+
+		if ($groupId === $this->request->getPost('id'))
 		{
 			if ($this->aauth->deleteGroup($groupId))
 			{
@@ -211,15 +224,11 @@ class Groups extends Controller
 			}
 		}
 
-		$data['group']        = $this->aauth->getGroup($groupId);
-		$data['groups']       = $this->aauth->listGroups();
-		$data['perms']        = $this->aauth->listPerms();
-		$data['activeGroups'] = $this->aauth->getSubgroups($groupId);
-		$data['activePerms']  = $this->aauth->getGroupPerms($groupId);
+		$data['group']  = $this->aauth->getGroup($groupId);
+		$data['groups'] = $this->aauth->listGroupSubgroups($groupId);
+		$data['perms']  = $this->aauth->listGroupPerms($groupId);
 
-		echo view('Templates/HeaderAdmin');
 		echo view('Admin/Groups/Delete', $data);
-		echo view('Templates/FooterAdmin');
 	}
 
 }

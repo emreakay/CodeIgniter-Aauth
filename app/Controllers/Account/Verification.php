@@ -64,8 +64,6 @@ class Verification extends Controller
 			'/assets/css/login.css'
 		];
 
-		echo view('Templates/HeaderBlank', $data);
 		echo view('Account/Verification', $data);
-		echo view('Templates/FooterBlank', $data);
 	}
 }
