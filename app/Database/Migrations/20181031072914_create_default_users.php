@@ -61,11 +61,15 @@ class Migration_create_default_users extends Migration
 				'group_id' => 2,
 				'user_id'  => 1,
 			],
-			[
+		];
+
+		if ($config->groupDefault)
+		{
+			$data[] = [
 				'group_id' => 2,
 				'user_id'  => 2,
-			],
-		];
+			];
+		}
 
 		$this->db->table($config->dbTableGroupToUser)->insertBatch($data);
 	}
@@ -80,7 +84,9 @@ class Migration_create_default_users extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->db->simpleQuery('SET FOREIGN_KEY_CHECKS = 0;');
 		$this->db->table($config->dbTableUsers)->truncate();
 		$this->db->table($config->dbTableGroupToUser)->truncate();
+		$this->db->simpleQuery('SET FOREIGN_KEY_CHECKS = 1;');
 	}
 }

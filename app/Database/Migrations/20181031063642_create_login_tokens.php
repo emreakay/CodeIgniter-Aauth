@@ -47,7 +47,7 @@ class Migration_create_login_tokens extends Migration
 			'user_id' => [
 				'type'       => 'INT',
 				'constraint' => 11,
-				'default'    => 0,
+				'unsigned'   => true,
 			],
 			'random_hash' => [
 				'type'       => 'VARCHAR',
@@ -62,6 +62,7 @@ class Migration_create_login_tokens extends Migration
 			'expires_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 		]);
 		$this->forge->addKey('id', true);
+		$this->forge->addForeignKey('user_id', $config->dbTableUsers, 'id');
 		$this->forge->createTable($config->dbTableLoginTokens, true);
 	}
 
@@ -75,6 +76,7 @@ class Migration_create_login_tokens extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->forge->dropForeignKey($config->dbTableLoginTokens, $config->dbTableLoginTokens . '_user_id_foreign');
 		$this->forge->dropTable($config->dbTableLoginTokens, true);
 	}
 }

@@ -37,20 +37,35 @@ class Migration_create_default_groups extends Migration
 	public function up()
 	{
 		$config = new AauthConfig();
-		$data   = [
-			[
-				'name'       => $config->groupAdmin,
-				'definition' => 'Administators',
-			],
-			[
-				'name'       => $config->groupDefault,
-				'definition' => 'Users',
-			],
-			[
-				'name'       => $config->groupPublic,
-				'definition' => 'Guests',
-			],
+
+		$adminGroup   = [
+			'name'       => $config->groupAdmin,
+			'definition' => 'Administators',
 		];
+		$defaultGroup = [
+			'name'       => $config->groupDefault,
+			'definition' => 'Users',
+		];
+		$publicGroup  = [
+			'name'       => $config->groupPublic,
+			'definition' => 'Guests',
+		];
+
+		if ($config->groupDefault)
+		{
+			$data = [
+				$adminGroup,
+				$defaultGroup,
+				$publicGroup,
+			];
+		}
+		else
+		{
+			$data = [
+				$adminGroup,
+				$publicGroup,
+			];
+		}
 
 		$this->db->table($config->dbTableGroups)->insertBatch($data);
 	}
@@ -65,6 +80,8 @@ class Migration_create_default_groups extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->db->simpleQuery('SET FOREIGN_KEY_CHECKS = 0;');
 		$this->db->table($config->dbTableGroups)->truncate();
+		$this->db->simpleQuery('SET FOREIGN_KEY_CHECKS = 1;');
 	}
 }

@@ -65,6 +65,7 @@ class Migration_create_user_variables extends Migration
 			],
 		]);
 		$this->forge->addKey('id', true);
+		$this->forge->addForeignKey('user_id', $config->dbTableUsers, 'id');
 		$this->forge->createTable($config->dbTableUserVariables, true);
 	}
 
@@ -78,6 +79,7 @@ class Migration_create_user_variables extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->forge->dropForeignKey($config->dbTableUserVariables, $config->dbTableUserVariables . '_user_id_foreign');
 		$this->forge->dropTable($config->dbTableUserVariables, true);
 	}
 }

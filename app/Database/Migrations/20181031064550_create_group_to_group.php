@@ -50,6 +50,8 @@ class Migration_create_group_to_group extends Migration
 			],
 		]);
 		$this->forge->addKey(['group_id', 'subgroup_id'], true);
+		$this->forge->addForeignKey('group_id', $config->dbTableGroups, 'id');
+		$this->forge->addForeignKey('subgroup_id', $config->dbTableGroups, 'id');
 		$this->forge->createTable($config->dbTableGroupToGroup, true);
 	}
 
@@ -63,6 +65,8 @@ class Migration_create_group_to_group extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->forge->dropForeignKey($config->dbTableGroupToGroup, $config->dbTableGroupToGroup . '_group_id_foreign');
+		$this->forge->dropForeignKey($config->dbTableGroupToGroup, $config->dbTableGroupToGroup . '_subgroup_id_foreign');
 		$this->forge->dropTable($config->dbTableGroupToGroup, true);
 	}
 }

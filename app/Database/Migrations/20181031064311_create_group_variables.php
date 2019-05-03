@@ -65,6 +65,7 @@ class Migration_create_group_variables extends Migration
 			],
 		]);
 		$this->forge->addKey('id', true);
+		$this->forge->addForeignKey('group_id', $config->dbTableGroups, 'id');
 		$this->forge->createTable($config->dbTableGroupVariables, true);
 	}
 
@@ -78,6 +79,7 @@ class Migration_create_group_variables extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->forge->dropForeignKey($config->dbTableGroupVariables, $config->dbTableGroupVariables . '_group_id_foreign');
 		$this->forge->dropTable($config->dbTableGroupVariables, true);
 	}
 }

@@ -55,6 +55,8 @@ class Migration_create_perm_to_user extends Migration
 			],
 		]);
 		$this->forge->addKey(['perm_id', 'user_id'], true);
+		$this->forge->addForeignKey('perm_id', $config->dbTablePerms, 'id', 'CASCADE', 'CASCADE');
+		$this->forge->addForeignKey('user_id', $config->dbTableUsers, 'id', 'CASCADE', 'CASCADE');
 		$this->forge->createTable($config->dbTablePermToUser, true);
 	}
 
@@ -68,6 +70,8 @@ class Migration_create_perm_to_user extends Migration
 	public function down()
 	{
 		$config = new AauthConfig();
+		$this->forge->dropForeignKey($config->dbTablePermToUser, $config->dbTablePermToUser . '_perm_id_foreign');
+		$this->forge->dropForeignKey($config->dbTablePermToUser, $config->dbTablePermToUser . '_user_id_foreign');
 		$this->forge->dropTable($config->dbTablePermToUser, true);
 	}
 }
