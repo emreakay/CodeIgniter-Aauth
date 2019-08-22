@@ -11,13 +11,13 @@
 		<?php endif;?>
 		  <div class="form-group">
 			<div class="form-label-group">
-							<?php if ($useUsername):?>
-								<input type="text" name="username" id="inputUsername" class="form-control" placeholder="<?=lang('Account.loginLabelUsername')?>" required autofocus>
-								<label for="inputUsername"><?=lang('Account.loginLabelUsername')?></label>
-							<?php else:?>
-								<input type="email" name="email" id="inputEmail" class="form-control" placeholder="<?=lang('Account.loginLabelEmail')?>" required autofocus>
-								<label for="inputEmail"><?=lang('Account.loginLabelEmail')?></label>
-							<?php endif;?>
+				<?php if ($useUsername):?>
+					<input type="text" name="username" id="inputUsername" class="form-control" placeholder="<?=lang('Account.loginLabelUsername')?>" required autofocus>
+					<label for="inputUsername"><?=lang('Account.loginLabelUsername')?></label>
+				<?php else:?>
+					<input type="email" name="email" id="inputEmail" class="form-control" placeholder="<?=lang('Account.loginLabelEmail')?>" required autofocus>
+					<label for="inputEmail"><?=lang('Account.loginLabelEmail')?></label>
+				<?php endif;?>
 			</div>
 		  </div>
 		  <div class="form-group">
@@ -36,7 +36,7 @@
 		  </div>
 					<button class="btn btn-primary btn-block" type="submit"><?=lang('Account.loginLabelSubmit')?></button>
 		<?= form_close() ?>
-		<?php if ($providers): ?>
+		<?php if (isset($providers) && $providers): ?>
 			  <div class="text-center">&mdash;</div>
 			<?php foreach ($providers as $provider): ?>
 					<a href="<?= site_url('account/social/login/' . $provider) ?>" class="btn btn-info btn-block" type="submit"><?=lang('Account.loginLabelSocial') . $provider?></a>

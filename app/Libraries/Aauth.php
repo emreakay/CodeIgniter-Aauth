@@ -500,6 +500,8 @@ class Aauth
 		$userModel->where('id', $userId);
 		$userModel->where('banned', 0);
 
+		$user = $userModel->asArray()->first();
+
 		$this->session->set('user', [
 			'id'       => $user['id'],
 			'username' => $user['username'],
@@ -611,8 +613,6 @@ class Aauth
 		{
 			$userId = (int) @$this->session->user['id'];
 		}
-
-		$userModel = $this->getModel('User');
 
 		return $this->isMember($this->config->groupAdmin, $userId);
 	}

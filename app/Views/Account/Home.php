@@ -22,6 +22,7 @@
 				<?= $user['email'] ?>
 			</div>
 		</div>
+		<?php if (isset($providers)): ?>
 		<div class="row">
 			<div class="col-sm-4">
 				<b><?= lang('Account.homeLabelSocial') ?></b>
@@ -34,6 +35,7 @@
 				<?php endforeach; ?>
 			</div>
 		</div>
+		<?php endif; ?>
 	</div>
 </div>
 
