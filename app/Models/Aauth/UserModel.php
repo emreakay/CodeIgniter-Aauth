@@ -137,7 +137,7 @@ class UserModel extends Model
 	 *
 	 * @return boolean
 	 */
-	public function update($id = null, $data = null)
+	public function update($id = null, $data = null): bool
 	{
 		$this->validationRules['email']    = 'if_exist|valid_email|is_unique[' . $this->table . '.email,id,{id}]';
 		$this->validationRules['password'] = 'if_exist|min_length[' . $this->config->passwordMin . ']|max_length[' . $this->config->passwordMax . ']';
