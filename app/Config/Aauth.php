@@ -323,18 +323,6 @@ class Aauth extends BaseConfig
 	public $socialRemember  = true;
 	public $socialProviders = [];
 
-	// public $socialEnabled   = true;
-	// public $socialRemember  = true;
-	// public $socialProviders = [
-	// 	'Facebook' => [
-	// 		'enabled' => true,
-	// 		'keys'    => [
-	// 			'id'     => '307655649901891',
-	// 			'secret' => 'fb814dea3a38d36aa66222efab35c337',
-	// 		],
-	// 	],
-	// ];
-
 	/*
 	|--------------------------------------------------------------------------
 	| Group Variables
