@@ -168,7 +168,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('POST', $url, [
 			'debug' => null,
-			'query' => $data,
+			'form_params' => $data,
 		]);
 
 		return $response->getBody();
