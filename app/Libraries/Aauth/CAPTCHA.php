@@ -146,6 +146,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	{
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('GET', $url, [
+			'debug' => null,
 			'query' => $data,
 		]);
 
@@ -166,6 +167,7 @@ class CAPTCHA extends \App\Libraries\Aauth
 	{
 		$client   = \Config\Services::curlrequest();
 		$response = $client->request('POST', $url, [
+			'debug' => null,
 			'query' => $data,
 		]);
 
