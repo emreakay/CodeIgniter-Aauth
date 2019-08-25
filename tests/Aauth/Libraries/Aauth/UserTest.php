@@ -149,9 +149,9 @@ class UserTest extends CIDatabaseTestCase
 
 	public function testDeleteUser()
 	{
-		$this->seeNumRecords(2, $this->config->dbTableUsers, ['deleted' => 0]);
+		$this->seeNumRecords(2, $this->config->dbTableUsers, ['deleted_at' => null]);
 		$this->library->deleteUser(2);
-		$this->seeNumRecords(1, $this->config->dbTableUsers, ['deleted' => 0]);
+		$this->seeNumRecords(1, $this->config->dbTableUsers, ['deleted_at' => null]);
 
 		$this->assertFalse($this->library->deleteUser(99));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);

@@ -126,7 +126,7 @@ class PermTest extends CIDatabaseTestCase
 		$this->dontSeeInDatabase($this->config->dbTablePerms, [
 			'name'       => 'testPerm1',
 			'definition' => 'Test Perm 1',
-			'deleted'    => 0,
+			'deleted_at' => null,
 		]);
 
 		$this->library = new Aauth(null, null);
