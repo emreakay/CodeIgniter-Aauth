@@ -22,7 +22,7 @@ class PermTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -30,10 +30,6 @@ class PermTest extends CIDatabaseTestCase
 		$this->config  = new AauthConfig();
 		$_COOKIE       = [];
 		$_SESSION      = [];
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

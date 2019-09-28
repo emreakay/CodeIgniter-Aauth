@@ -26,7 +26,7 @@ class GroupTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -39,10 +39,6 @@ class GroupTest extends CIDatabaseTestCase
 		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

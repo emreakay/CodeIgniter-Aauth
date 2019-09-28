@@ -12,7 +12,7 @@ class UserVariableModelTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -126,11 +126,6 @@ class UserVariableModelTest extends CIDatabaseTestCase
 		]);
 		$userVariable = $this->model->asObject()->where(['data_key' => 'test', 'data_value' => 'TRUE'])->first();
 		$this->assertInternalType('object', $userVariable);
-	}
-
-	public function testDBCallEmpty()
-	{
-		$this->assertEquals(0, $this->model->insertID());
 	}
 
 	public function testDBCall()

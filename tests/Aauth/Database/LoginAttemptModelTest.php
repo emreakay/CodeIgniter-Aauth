@@ -13,7 +13,7 @@ class LoginAttemptModelTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

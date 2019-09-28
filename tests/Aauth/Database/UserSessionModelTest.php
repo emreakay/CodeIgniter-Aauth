@@ -12,7 +12,7 @@ class UserSessionModelTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -75,7 +75,6 @@ class UserSessionModelTest extends CIDatabaseTestCase
 
 	public function testDBCall()
 	{
-		$this->assertEquals(0, $this->model->insertID());
 		$this->seeNumRecords(0, $this->config->dbTableUserSessions, []);
 		$this->model->insert([
 			'id'         => md5(time()),

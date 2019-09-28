@@ -8,7 +8,7 @@ use App\Libraries\Aauth;
  */
 class UtilityTest extends \CIUnitTestCase
 {
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

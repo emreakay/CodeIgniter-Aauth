@@ -13,17 +13,13 @@ use App\Libraries\Aauth;
  */
 class ErrorsTest extends \CIUnitTestCase
 {
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
 		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

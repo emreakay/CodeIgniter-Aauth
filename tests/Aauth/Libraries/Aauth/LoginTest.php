@@ -28,7 +28,7 @@ class LoginTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -48,10 +48,6 @@ class LoginTest extends CIDatabaseTestCase
 		$method     = $reflection->getMethod($methodName);
 		$method->setAccessible(true);
 		return $method->invokeArgs($object, $parameters);
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

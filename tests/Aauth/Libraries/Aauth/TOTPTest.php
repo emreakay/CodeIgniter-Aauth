@@ -24,7 +24,7 @@ class TOTPTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -32,10 +32,6 @@ class TOTPTest extends CIDatabaseTestCase
 		$this->config  = new AauthConfig();
 		$_COOKIE       = [];
 		$_SESSION      = [];
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

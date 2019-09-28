@@ -24,7 +24,7 @@ class SocialTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -35,10 +35,6 @@ class SocialTest extends CIDatabaseTestCase
 		$this->library = new Aauth($this->config, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

@@ -26,7 +26,7 @@ class AccessTest extends CIDatabaseTestCase
 
 	protected $namespace = 'App';
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -38,10 +38,6 @@ class AccessTest extends CIDatabaseTestCase
 		$this->library = new Aauth(null, null);
 		$_COOKIE       = [];
 		$_SESSION      = [];
-	}
-
-	public function tearDown()
-	{
 	}
 
 	protected function getInstance($options = [])

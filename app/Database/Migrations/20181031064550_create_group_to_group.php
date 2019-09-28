@@ -50,8 +50,8 @@ class Migration_create_group_to_group extends Migration
 			],
 		]);
 		$this->forge->addKey(['group_id', 'subgroup_id'], true);
-		$this->forge->addForeignKey('group_id', $config->dbTableGroups, 'id');
-		$this->forge->addForeignKey('subgroup_id', $config->dbTableGroups, 'id');
+		$this->forge->addForeignKey('group_id', $config->dbTableGroups, 'id', false, 'CASCADE');
+		$this->forge->addForeignKey('subgroup_id', $config->dbTableGroups, 'id', false, 'CASCADE');
 		$this->forge->createTable($config->dbTableGroupToGroup, true);
 	}
 
