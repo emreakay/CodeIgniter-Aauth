@@ -22,7 +22,7 @@ $lang['aauth_email_reset_success_new_password'] = 'Kata sandi anda berhasil diub
 $lang['aauth_error_email_exists'] = 'Email sudah digunakan di sistem. Jika anda lupa kata sandi, silahkan klik tautan dibawah ini.';
 $lang['aauth_error_username_exists'] = "Username telah digunakan oleh akun lain pada sistem.  Silahkan masukan username lain, atau jika anda lupa kata sandi, silahkan klik tautan dibawah ini.";
 $lang['aauth_error_email_invalid'] = 'Alamat email tidak valid';
-$lang['aauth_error_password_invalid'] = 'kata sandi tidak valid';
+$lang['aauth_error_password_invalid'] = 'Kata sandi tidak valid';
 $lang['aauth_error_username_invalid'] = 'Username tidak valid';
 $lang['aauth_error_username_required'] = 'Username tidak boleh kosong';
 $lang['aauth_error_totp_code_required'] = 'Kode autentikasi tidak boleh kosong';
@@ -44,7 +44,7 @@ $lang['aauth_error_recaptcha_not_correct'] = 'Maaf, teks reCAPTCHA yang anda dim
 
 // Misc. errors
 $lang['aauth_error_no_user'] = 'Pengguna tidak ada';
-$lang['aauth_error_vercode_invalid'] = 'Invalid Verification Code';
+$lang['aauth_error_vercode_invalid'] = 'Kode verifikasi tidak valid';
 $lang['aauth_error_account_not_verified'] = 'Akun anda belum diverifikasi. Silakan cek email anda dan verifikasi akun anda .';
 $lang['aauth_error_no_group'] = 'Grup tidak ada';
 $lang['aauth_error_no_subgroup'] = 'Sub-grup tidak ada';
