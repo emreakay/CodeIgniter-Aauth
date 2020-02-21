@@ -298,46 +298,48 @@ class Aauth {
 		$row = $query->row();
 
 		// if email and pass matches and not banned
-		$password = ($this->config_vars['use_password_hash'] ? $pass : $this->hash_password($pass, $row->id));
 
-		if ( $query->num_rows() != 0 && $this->verify_password($password, $row->pass) ) {
+		if ($query->num_rows() != 0) {
+			$password = ($this->config_vars['use_password_hash'] ? $pass : $this->hash_password($pass, $row->id));
 
-			// If email and pass matches
-			// create session
-			$data = array(
-				'id' => $row->id,
-				'username' => $row->username,
-				'email' => $row->email,
-				'loggedin' => true
-			);
-
-			$this->CI->session->set_userdata($data);
-
-			if ( $remember ){
-				$this->CI->load->helper('string');
-				$expire = $this->config_vars['remember'];
-				$today = date("Y-m-d");
-				$remember_date = date("Y-m-d", strtotime($today . $expire) );
-				$random_string = random_string('alnum', 16);
-				$this->update_remember($row->id, $random_string, $remember_date );
-				$cookie = array(
-					'name'	 => 'user',
-					'value'	 => $row->id . "-" . $random_string,
-					'expire' => 99*999*999,
-					'path'	 => '/',
+			if ($this->verify_password($password, $row->pass)) {
+				// If email and pass matches
+				// create session
+				$data = array(
+					'id' => $row->id,
+					'username' => $row->username,
+					'email' => $row->email,
+					'loggedin' => true
 				);
-				$this->CI->input->set_cookie($cookie);
+
+				$this->CI->session->set_userdata($data);
+
+				if ($remember){
+					$this->CI->load->helper('string');
+					$expire = $this->config_vars['remember'];
+					$today = date("Y-m-d");
+					$remember_date = date("Y-m-d", strtotime($today . $expire) );
+					$random_string = random_string('alnum', 16);
+					$this->update_remember($row->id, $random_string, $remember_date );
+					$cookie = array(
+						'name'	 => 'user',
+						'value'	 => $row->id . "-" . $random_string,
+						'expire' => 99*999*999,
+						'path'	 => '/',
+					);
+					$this->CI->input->set_cookie($cookie);
+				}
+
+				// update last login
+				$this->update_last_login($row->id);
+				$this->update_activity();
+
+				if($this->config_vars['remove_successful_attempts'] == true){
+					$this->reset_login_attempts();
+				}
+
+				return true;
 			}
-
-			// update last login
-			$this->update_last_login($row->id);
-			$this->update_activity();
-
-			if($this->config_vars['remove_successful_attempts'] == true){
-				$this->reset_login_attempts();
-			}
-
-			return true;
 		}
 		// if not matches
 		else {
