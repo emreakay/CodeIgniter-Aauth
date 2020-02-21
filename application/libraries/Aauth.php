@@ -1292,8 +1292,9 @@ class Aauth {
 				'definition'=> $definition
 			);
 			$this->aauth_db->insert($this->config_vars['groups'], $data);
+			$group_id = $this->aauth_db->insert_id();
 			$this->precache_groups();
-			return $this->aauth_db->insert_id();
+			return $group_id;
 		}
 
 		$this->info($this->CI->lang->line('aauth_info_group_exists'));
@@ -1678,8 +1679,9 @@ class Aauth {
 				'definition'=> $definition
 			);
 			$this->aauth_db->insert($this->config_vars['perms'], $data);
+			$perm_id = $this->aauth_db->insert_id();
 			$this->precache_perms();
-			return $this->aauth_db->insert_id();
+			return $perm_id;
 		}
 		$this->info($this->CI->lang->line('aauth_info_perm_exists'));
 		return false;
