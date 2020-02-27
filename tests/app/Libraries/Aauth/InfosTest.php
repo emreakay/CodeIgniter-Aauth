@@ -1,4 +1,4 @@
-<?php namespace App\Libraries\Aauth;
+<?php namespace App\Libraries;
 
 use Config\Logger;
 use Config\Services;
@@ -11,7 +11,7 @@ use App\Libraries\Aauth;
  * @runTestsInSeparateProcesses
  * @preserveGlobalState         disabled
  */
-class InfosTest extends \CIUnitTestCase
+class InfosTest extends \CodeIgniter\Test\CIUnitTestCase
 {
 	public function setUp(): void
 	{

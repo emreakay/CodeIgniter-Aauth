@@ -1,4 +1,4 @@
-<?php namespace App\Libraries\Aauth;
+<?php namespace App\Libraries;
 
 use App\Libraries\Aauth;
 
@@ -6,7 +6,7 @@ use App\Libraries\Aauth;
  * @runTestsInSeparateProcesses
  * @preserveGlobalState         disabled
  */
-class UtilityTest extends \CIUnitTestCase
+class UtilityTest extends \CodeIgniter\Test\CIUnitTestCase
 {
 	public function setUp(): void
 	{
