@@ -3,8 +3,8 @@
 use Config\Aauth as AauthConfig;
 use Config\Logger;
 use Config\Services;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
@@ -20,7 +20,7 @@ class TOTPTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -152,7 +152,7 @@ class TOTPTest extends CIDatabaseTestCase
 		$config->totpEnabled = true;
 		$this->library       = new Aauth($config, null);
 
-		$this->assertInternalType('string', $this->library->generateUniqueTotpSecret());
+		$this->assertIsString($this->library->generateUniqueTotpSecret());
 	}
 
 	public function testGenerateTotpQrCode()
@@ -161,7 +161,7 @@ class TOTPTest extends CIDatabaseTestCase
 		$config->totpEnabled = true;
 		$this->library       = new Aauth($config, null);
 
-		$this->assertInternalType('string', $this->library->generateTotpQrCode('testsecret'));
+		$this->assertIsString($this->library->generateTotpQrCode('testsecret'));
 	}
 
 	public function testVerifyUserTotpCode()

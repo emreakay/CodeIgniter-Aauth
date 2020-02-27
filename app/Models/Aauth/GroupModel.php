@@ -97,7 +97,7 @@ class GroupModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where($this->primaryKey, $groupId);
@@ -117,7 +117,7 @@ class GroupModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where('name', $groupName);

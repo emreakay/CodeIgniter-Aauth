@@ -211,7 +211,7 @@ class UserModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->select('banned');
@@ -234,7 +234,7 @@ class UserModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where($this->primaryKey, $userId);
@@ -255,7 +255,7 @@ class UserModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where('email', $email);
@@ -280,7 +280,7 @@ class UserModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where('username', $username);

@@ -79,7 +79,7 @@ class Migration_create_users_table extends Migration
 				'type'    => 'DATETIME',
 				'default' => null,
 			],
-			'deleted_at DATETIME NOT NULL',
+			'deleted_at DATETIME',
 		]);
 		$this->forge->addKey('id', true);
 		$this->forge->createTable($config->dbTableUsers, true);

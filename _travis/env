@@ -57,7 +57,7 @@ aauth.dbSoftDeletePerms = true
 # database.default.password = 
 # database.default.DBDriver = MySQLi
 
-database.tests.hostname = localhost
+database.tests.hostname = 127.0.0.1
 database.tests.database = aauth_test
 database.tests.username = travis
 # database.tests.password = 

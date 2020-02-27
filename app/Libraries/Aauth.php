@@ -1210,7 +1210,7 @@ class Aauth
 
 		if (! $email)
 		{
-			$where = ['id' => $this->session->user['id']];
+			$where = ['id' => $this->session->user['id'] ?? 0];
 		}
 		else
 		{

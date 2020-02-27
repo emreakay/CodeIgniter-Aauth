@@ -8,7 +8,7 @@ class UserModelTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 

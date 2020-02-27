@@ -4,8 +4,8 @@ use Config\App;
 use Config\Aauth as AauthConfig;
 use Config\Logger;
 use Config\Services;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Session\Handlers\DatabaseHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
@@ -20,7 +20,7 @@ class UserTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -210,7 +210,7 @@ class UserTest extends CIDatabaseTestCase
 		$this->assertEquals('admin', $userIdNone['username']);
 
 		$userVar = $this->library->getUser(1, true);
-		$this->assertInternalType('array', $userVar['variables']);
+		$this->assertIsArray($userVar['variables']);
 
 		$this->assertFalse($this->library->getUser(99));
 		$this->assertEquals(lang('Aauth.notFoundUser'), $this->library->getErrorsArray()[0]);

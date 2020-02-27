@@ -2,8 +2,8 @@
 
 use Config\Logger;
 use Config\Services;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use App\Libraries\Aauth;
 

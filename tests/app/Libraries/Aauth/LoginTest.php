@@ -3,9 +3,9 @@
 use Config\Aauth as AauthConfig;
 use Config\App;
 use Config\Logger;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\HTTP\MockResponse;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockResponse;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Config\Services;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\URI;
@@ -24,7 +24,7 @@ class LoginTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 

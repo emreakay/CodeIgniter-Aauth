@@ -3,9 +3,9 @@
 use Config\Aauth as AauthConfig;
 use Config\App;
 use Config\Logger;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\HTTP\MockResponse;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockResponse;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Config\Services;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\URI;
@@ -24,7 +24,7 @@ class CAPTCHATest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -86,14 +86,14 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$_POST['g-recaptcha-response'] = '0123456789';
 		$this->library->login('admina@example.com', 'password123456');
 
-		$this->assertContains('https://www.google.com/recaptcha', $this->library->generateCaptchaHtml());
+		$this->assertStringContainsString('https://www.google.com/recaptcha', $this->library->generateCaptchaHtml());
 
 		$config->captchaType           = 'hcaptcha';
 		$this->library                 = new Aauth($config, null);
 		$_POST['h-recaptcha-response'] = '0123456789';
 		$this->library->login('admina@example.com', 'password123456');
 		$this->assertEquals(lang('Aauth.invalidCaptcha'), $this->library->getErrorsArray()[0]);
-		$this->assertContains('https://hcaptcha.com/1', $this->library->generateCaptchaHtml());
+		$this->assertStringContainsString('https://hcaptcha.com/1', $this->library->generateCaptchaHtml());
 	}
 
 	public function testVerifyCaptchaResponse()
@@ -102,7 +102,7 @@ class CAPTCHATest extends CIDatabaseTestCase
 		$config->captchaEnabled = true;
 		$this->library          = new Aauth($config, null);
 
-		$this->assertContains('missing-input', $this->library->verifyCaptchaResponse('')['errorCodes']);
+		$this->assertStringContainsString('missing-input', $this->library->verifyCaptchaResponse('')['errorCodes']);
 		$this->assertContains('invalid-input-response', $this->library->verifyCaptchaResponse('0123456789')['errorCodes']);
 
 		// $config->captchaType    = 'hcaptcha';

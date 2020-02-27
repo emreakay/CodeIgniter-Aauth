@@ -53,7 +53,7 @@ class Migration_create_groups extends Migration
 			],
 			'created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
 			'updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
-			'deleted_at DATETIME NOT NULL',
+			'deleted_at DATETIME',
 		]);
 		$this->forge->addKey('id', true);
 		$this->forge->createTable($config->dbTableGroups, true);

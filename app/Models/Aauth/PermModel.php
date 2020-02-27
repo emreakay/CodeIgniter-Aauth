@@ -97,7 +97,7 @@ class PermModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where($this->primaryKey, $permId);
@@ -117,7 +117,7 @@ class PermModel extends Model
 
 		if ($this->tempUseSoftDeletes === true)
 		{
-			$builder->where($this->deletedField, 0);
+			$builder->where($this->deletedField, null);
 		}
 
 		$builder->where('name', $name);

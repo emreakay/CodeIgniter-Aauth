@@ -3,8 +3,8 @@
 use Config\Aauth as AauthConfig;
 use Config\Logger;
 use Config\Services;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Session\Handlers\FileHandler;
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Libraries\Aauth;
@@ -18,7 +18,7 @@ class PermTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 

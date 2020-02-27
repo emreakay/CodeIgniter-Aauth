@@ -8,7 +8,7 @@ class GroupVariableModelTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -102,7 +102,7 @@ class GroupVariableModelTest extends CIDatabaseTestCase
 			'data_value' => 'TRUE',
 		]);
 		$groupVariable = $this->model->asArray()->where(['data_key' => 'test', 'data_value' => 'TRUE'])->first();
-		$this->assertInternalType('array', $groupVariable);
+		$this->assertIsArray($groupVariable);
 	}
 
 	public function testAsObjectFirst()
@@ -113,7 +113,7 @@ class GroupVariableModelTest extends CIDatabaseTestCase
 			'data_value' => 'TRUE',
 		]);
 		$groupVariable = $this->model->asObject()->where(['data_key' => 'test', 'data_value' => 'TRUE'])->first();
-		$this->assertInternalType('object', $groupVariable);
+		$this->assertIsObject($groupVariable);
 	}
 
 	public function testConfigDBGroup()
@@ -125,7 +125,7 @@ class GroupVariableModelTest extends CIDatabaseTestCase
 			'data_value' => 'TRUE',
 		]);
 		$groupVariable = $this->model->asObject()->where(['data_key' => 'test', 'data_value' => 'TRUE'])->first();
-		$this->assertInternalType('object', $groupVariable);
+		$this->assertIsObject($groupVariable);
 	}
 
 	public function testDBCall()

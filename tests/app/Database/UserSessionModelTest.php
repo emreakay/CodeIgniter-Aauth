@@ -8,7 +8,7 @@ class UserSessionModelTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -45,7 +45,7 @@ class UserSessionModelTest extends CIDatabaseTestCase
 			'data'       => 'user|',
 		]);
 		$userSession = $this->model->asArray()->findAll();
-		$this->assertInternalType('array', $userSession[0]);
+		$this->assertIsArray($userSession[0]);
 	}
 
 	public function testAsObjectFirst()
@@ -57,7 +57,7 @@ class UserSessionModelTest extends CIDatabaseTestCase
 			'data'       => 'user|',
 		]);
 		$userSession = $this->model->asObject()->findAll();
-		$this->assertInternalType('object', $userSession[0]);
+		$this->assertIsObject($userSession[0]);
 	}
 
 	public function testConfigDBGroup()
@@ -70,7 +70,7 @@ class UserSessionModelTest extends CIDatabaseTestCase
 			'data'       => 'user|',
 		]);
 		$userSession = $this->model->asObject()->where(['ip_address' => '127.0.0.1'])->first();
-		$this->assertInternalType('object', $userSession);
+		$this->assertIsObject($userSession);
 	}
 
 	public function testDBCall()

@@ -3,9 +3,9 @@
 use Config\Aauth as AauthConfig;
 use Config\App;
 use Config\Logger;
-use Tests\Support\Log\TestLogger;
-use Tests\Support\HTTP\MockResponse;
-use Tests\Support\Session\MockSession;
+use CodeIgniter\Test\TestLogger;
+use CodeIgniter\Test\Mock\MockResponse;
+use CodeIgniter\Test\Mock\MockSession;
 use CodeIgniter\Config\Services;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\URI;
@@ -22,7 +22,7 @@ class AccessTest extends CIDatabaseTestCase
 {
 	protected $refresh = true;
 
-	protected $basePath = FCPATH . '../app/Database/Migrations';
+	protected $basePath = APPPATH . 'Database/Migrations';
 
 	protected $namespace = 'App';
 
@@ -165,7 +165,7 @@ class AccessTest extends CIDatabaseTestCase
 			'totp_required' => true,
 		]);
 
-		$this->assertTrue($this->library->isAllowed('testPerm1') instanceof \Tests\Support\HTTP\MockResponse);
+		$this->assertTrue($this->library->isAllowed('testPerm1') instanceof \CodeIgniter\Test\Mock\MockResponse);
 		$session->remove('user');
 
 		$this->assertFalse($this->library->isAllowed('testPerm99', 2));
@@ -198,7 +198,7 @@ class AccessTest extends CIDatabaseTestCase
 			'id'       => 2,
 			'loggedIn' => true,
 		]);
-		$this->assertTrue($this->library->control('testPerm1') instanceof \Tests\Support\HTTP\MockResponse);
+		$this->assertTrue($this->library->control('testPerm1') instanceof \CodeIgniter\Test\Mock\MockResponse);
 		$session->remove('user');
 
 		$session             = $this->getInstance();
@@ -210,7 +210,7 @@ class AccessTest extends CIDatabaseTestCase
 			'totp_required' => true,
 		]);
 
-		$this->assertTrue($this->library->control('testPerm1') instanceof \Tests\Support\HTTP\MockResponse);
+		$this->assertTrue($this->library->control('testPerm1') instanceof \CodeIgniter\Test\Mock\MockResponse);
 		$session->remove('user');
 
 		$session       = $this->getInstance();
@@ -221,7 +221,7 @@ class AccessTest extends CIDatabaseTestCase
 		$config                   = new AauthConfig();
 		$config->linkNoPermission = '/noAccess';
 		$this->library            = new Aauth($config, $session);
-		$this->assertTrue($this->library->control() instanceof \Tests\Support\HTTP\MockResponse);
+		$this->assertTrue($this->library->control() instanceof \CodeIgniter\Test\Mock\MockResponse);
 	}
 
 	public function testControlErrorNoPerm($value = '')
