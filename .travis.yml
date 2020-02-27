@@ -3,6 +3,7 @@ language: php
 php:
   - 7.2
   - 7.3
+  - 7.4
   - nightly
 
 matrix:
@@ -35,7 +36,7 @@ before_install:
 before_script:
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - shopt -s extglob dotglob && mkdir aauth_temp && mv !(aauth_temp) aauth_temp
-  - git clone https://github.com/codeigniter4/CodeIgniter4.git CodeIgniter4 -b v4.0.0-rc.2
+  - git clone --depth=1 https://github.com/codeigniter4/CodeIgniter4.git CodeIgniter4
   - cp -r aauth_temp/* CodeIgniter4 && cd CodeIgniter4 && cp _travis/env .env
   - composer install --prefer-source
   - composer require spomky-labs/otphp:^9.0 --prefer-source
