@@ -1,4 +1,4 @@
-<?php namespace Tests\Aauth\Database;
+<?php namespace App\Database;
 
 use CodeIgniter\Test\CIDatabaseTestCase;
 use App\Models\Aauth\GroupModel;

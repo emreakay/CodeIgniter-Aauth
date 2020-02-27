@@ -1,4 +1,4 @@
-<?php namespace Tests\Aauth\Libraries\Aauth;
+<?php namespace App\Libraries\Aauth;
 
 use Config\Aauth as AauthConfig;
 use Config\Logger;

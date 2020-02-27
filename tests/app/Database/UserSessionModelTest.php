@@ -1,4 +1,4 @@
-<?php namespace Tests\Aauth\Database;
+<?php namespace App\Database;
 
 use Config\Aauth as AauthConfig;
 use CodeIgniter\Test\CIDatabaseTestCase;
