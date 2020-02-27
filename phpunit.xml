@@ -11,12 +11,12 @@
         stopOnSkipped="false">
     <testsuites>
         <testsuite name="aauth">
-            <directory>./tests/App</directory>
-            <exclude>./tests/App/Database</exclude>
+            <directory>./tests/app</directory>
+            <exclude>./tests/app/Database</exclude>
             <exclude>./tests/system</exclude>
         </testsuite>
         <testsuite name="database">
-            <directory>./tests/App/Database</directory>
+            <directory>./tests/app/Database</directory>
         </testsuite>
     </testsuites>
 
