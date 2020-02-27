@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/_support/_bootstrap.php"
+<phpunit bootstrap="system/Test/bootstrap.php"
         backupGlobals="false"
         colors="true"
         convertErrorsToExceptions="true"
@@ -32,10 +32,18 @@
 
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
-        <log type="coverage-html" target="build/coverage"/>
     </logging>
 
     <php>
-        <env name="app.baseURL" value="http://example.com"/>
+        <server name="app.baseURL" value="http://example.com"/>
+
+        <!-- Directory containing phpunit.xml -->
+        <const name="HOMEPATH" value="./"/>
+
+        <!-- Directory containing the Paths config file -->
+        <const name="CONFIGPATH" value="./app/Config/"/>
+
+        <!-- Directory containing the front controller (index.php) -->
+        <const name="PUBLICPATH" value="./public/"/>
     </php>
 </phpunit>
