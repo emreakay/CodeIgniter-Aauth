@@ -2661,7 +2661,7 @@ class Aauth {
 		return $content;
 	}
 
-	public function update_user_totp_secret($user_id = false, $secret) {
+	public function update_user_totp_secret($user_id, $secret) {
 
 		if ($user_id == false)
 			$user_id = $this->CI->session->userdata('id');
