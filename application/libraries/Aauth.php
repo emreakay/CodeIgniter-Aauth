@@ -1507,11 +1507,11 @@ class Aauth {
 		$this->aauth_db->where('user_id', $user_id);
 		return $this->aauth_db->delete($this->config_vars['user_to_group']);
 	}
-	//tested
+
 	/**
 	 * Is member
 	 * Check if current user is a member of a group
-	 * @param int|string $group_par Group id or name to check
+	 * @param int|string $group_par Group id or name to check, use pipe | for check multiple groups same time
 	 * @param int|bool $user_id User id, if not given current user
 	 * @return bool
 	 */
@@ -1522,10 +1522,19 @@ class Aauth {
 			$user_id = $this->CI->session->userdata('id');
 		}
 
-		$group_id = $this->get_group_id($group_par);
+		$this->aauth_db->where('user_id', $user_id);
 
-		$query = $this->aauth_db->where('user_id', $user_id);
-		$query = $this->aauth_db->where('group_id', $group_id);
+		$groups_par = explode('|', $group_par);
+		if(count($groups_par) > 1){
+			foreach ($groups_par as $key => $group_par) {
+				$group_id = $this->get_group_id($group_par);
+				$this->aauth_db->or_where('group_id', $group_id);
+			}
+		} else {
+			$group_id = $this->get_group_id($group_par);
+			$this->aauth_db->where('group_id', $group_id);
+		}
+		
 		$query = $this->aauth_db->get($this->config_vars['user_to_group']);
 
 		$row = $query->row();
@@ -2661,7 +2670,7 @@ class Aauth {
 		return $content;
 	}
 
-	public function update_user_totp_secret($user_id = false, $secret) {
+	public function update_user_totp_secret($user_id, $secret) {
 
 		if ($user_id == false)
 			$user_id = $this->CI->session->userdata('id');
